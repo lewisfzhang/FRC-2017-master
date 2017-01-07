@@ -1,4 +1,4 @@
-package com.team254.frc2016.auto;
+package com.team254.frc2017.auto;
 
 public class AutoModeEndedException extends Exception {
 
