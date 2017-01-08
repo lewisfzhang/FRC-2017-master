@@ -1,6 +1,11 @@
 package com.team254.frc2017;
 
+import com.team254.lib.util.CheesyDriveHelper;
+import com.team254.lib.util.DriveSignal;
+import edu.wpi.first.wpilibj.CANSpeedController;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -12,21 +17,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
-	String autoSelected;
-	SendableChooser<String> chooser = new SendableChooser<>();
+	CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
+	ControlBoard mControlBoard = ControlBoard.getInstance();
+
+	TalonSRX mLeftDrive = new TalonSRX(0);
+	TalonSRX mRightDrive = new TalonSRX(1);
+
 
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
-	public void robotInit() {
-		chooser.addDefault("Default Auto", defaultAuto);
-		chooser.addObject("My Auto", customAuto);
-		SmartDashboard.putData("Auto choices", chooser);
-	}
+	public void robotInit() {}
 
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
@@ -40,34 +43,25 @@ public class Robot extends IterativeRobot {
 	 * SendableChooser make sure to add them to the chooser code above as well.
 	 */
 	@Override
-	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + autoSelected);
-	}
+	public void autonomousInit() {}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	@Override
-	public void autonomousPeriodic() {
-		switch (autoSelected) {
-		case customAuto:
-			// Put custom auto code here
-			break;
-		case defaultAuto:
-		default:
-			// Put default auto code here
-			break;
-		}
-	}
+	public void autonomousPeriodic() {}
 
 	/**
 	 * This function is called periodically during operator control
 	 */
 	@Override
 	public void teleopPeriodic() {
+		DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(
+				mControlBoard.getThrottle(),
+				mControlBoard.getTurn(),
+				mControlBoard.getQuickTurn());
+		mLeftDrive.set(driveSignal.leftMotor);
+		mRightDrive.set(driveSignal.rightMotor);
 	}
 
 	/**
