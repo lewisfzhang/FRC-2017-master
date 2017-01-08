@@ -1,13 +1,9 @@
 package com.team254.frc2017;
 
+import com.ctre.CANTalon;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
-import edu.wpi.first.wpilibj.CANSpeedController;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.TalonSRX;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,9 +16,8 @@ public class Robot extends IterativeRobot {
 	CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
 	ControlBoard mControlBoard = ControlBoard.getInstance();
 
-	TalonSRX mLeftDrive = new TalonSRX(0);
-	TalonSRX mRightDrive = new TalonSRX(1);
-
+	CANTalon mLeftDrive = new CANTalon(0);
+	CANTalon mRightDrive = new CANTalon(1);
 
 	/**
 	 * This function is run when the robot is first started up and should be
