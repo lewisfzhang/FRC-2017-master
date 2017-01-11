@@ -6,7 +6,7 @@ import com.team254.lib.util.Rotation2d;
 /**
  * Provides forward and inverse kinematics equations for the robot modeling the
  * wheelbase as a differential drive (with a corrective factor to account for
- * the inherent skidding of the center 4 wheels quasi-kinematically).
+ * the any skidding).
  */
 
 public class Kinematics {
@@ -19,7 +19,7 @@ public class Kinematics {
     public static RigidTransform2d.Delta forwardKinematics(double left_wheel_delta, double right_wheel_delta) {
         double linear_velocity = (left_wheel_delta + right_wheel_delta) / 2;
         double delta_v = (right_wheel_delta - left_wheel_delta) / 2;
-        double delta_rotation = delta_v * 2 * Constants.kTrackScrubFactor / Constants.kTrackEffectiveDiameter;
+        double delta_rotation = delta_v * 2 * Constants.kTrackScrubFactor / Constants.kTrackEffectiveDiameterInches;
         return new RigidTransform2d.Delta(linear_velocity, 0, delta_rotation);
     }
 
@@ -54,7 +54,7 @@ public class Kinematics {
         if (Math.abs(velocity.dtheta) < kEpsilon) {
             return new DriveVelocity(velocity.dx, velocity.dx);
         }
-        double delta_v = Constants.kTrackEffectiveDiameter * velocity.dtheta / (2 * Constants.kTrackScrubFactor);
+        double delta_v = Constants.kTrackEffectiveDiameterInches * velocity.dtheta / (2 * Constants.kTrackScrubFactor);
         return new DriveVelocity(velocity.dx - delta_v, velocity.dx + delta_v);
     }
 }
