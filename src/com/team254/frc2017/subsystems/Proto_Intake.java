@@ -1,20 +1,18 @@
 package com.team254.frc2017.subsystems;
 
+import com.ctre.CANTalon;
 import com.team254.frc2017.ControlBoard;
-import com.team254.lib.util.CheesyDriveHelper;
-import com.team254.lib.util.DriveSignal;
 
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Intake extends Subsystem {
-    Talon mIntake;
+    CANTalon mIntake;
 
     private static Proto_Intake mInstance;
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Proto_Intake() {
-        mIntake = new Talon(7);
+        mIntake = new CANTalon(7);
     }
 
     public static Proto_Intake getInstance() {
@@ -28,14 +26,15 @@ public class Proto_Intake extends Subsystem {
     }
 
     public void run() {
-        if (mControlBoard.getIntakeButton())
-            mIntake.set(1);
-        else
-            mIntake.set(0);
+        if (mControlBoard.getIntakeButton()) {
+            mIntake.set(1.0);
+        } else {
+            mIntake.set(0.0);
+        }
     }
 
     public void stop() {
-        mIntake.stopMotor();
+        mIntake.set(0.0);
     }
 
     public void zeroSensors() {

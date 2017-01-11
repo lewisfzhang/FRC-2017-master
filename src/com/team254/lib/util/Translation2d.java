@@ -3,8 +3,7 @@ package com.team254.lib.util;
 import java.text.DecimalFormat;
 
 /**
- * A translation in a 2d coordinate frame. Translations are simply shifts in an
- * (x, y) plane.
+ * A translation in a 2d coordinate frame. Translations are simply shifts in an (x, y) plane.
  */
 public class Translation2d implements Interpolable<Translation2d> {
     protected double x_;
@@ -62,8 +61,7 @@ public class Translation2d implements Interpolable<Translation2d> {
     }
 
     /**
-     * We can also rotate Translation2d's. See:
-     * https://en.wikipedia.org/wiki/Rotation_matrix
+     * We can also rotate Translation2d's. See: https://en.wikipedia.org/wiki/Rotation_matrix
      * 
      * @param rotation
      *            The rotation to apply.

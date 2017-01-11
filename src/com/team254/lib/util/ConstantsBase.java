@@ -15,8 +15,8 @@ import java.util.*;
 /**
  * ConstantsBase
  * 
- * Base class for storing robot constants. Anything stored as a public static
- * field will be reflected and be able to set externally
+ * Base class for storing robot constants. Anything stored as a public static field will be reflected and be able to set
+ * externally
  */
 public abstract class ConstantsBase {
     HashMap<String, Boolean> modifiedKeys = new HashMap<String, Boolean>();

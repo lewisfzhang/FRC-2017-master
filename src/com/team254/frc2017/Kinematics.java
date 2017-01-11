@@ -4,17 +4,16 @@ import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
 
 /**
- * Provides forward and inverse kinematics equations for the robot modeling the
- * wheelbase as a differential drive (with a corrective factor to account for
- * the any skidding).
+ * Provides forward and inverse kinematics equations for the robot modeling the wheelbase as a differential drive (with
+ * a corrective factor to account for the any skidding).
  */
 
 public class Kinematics {
     private static final double kEpsilon = 1E-9;
 
     /**
-     * Forward kinematics using only encoders, rotation is implicit (less
-     * accurate than below, but useful for predicting motion)
+     * Forward kinematics using only encoders, rotation is implicit (less accurate than below, but useful for predicting
+     * motion)
      */
     public static RigidTransform2d.Delta forwardKinematics(double left_wheel_delta, double right_wheel_delta) {
         double linear_velocity = (left_wheel_delta + right_wheel_delta) / 2;
@@ -24,8 +23,7 @@ public class Kinematics {
     }
 
     /**
-     * Forward kinematics using encoders and explicitly measured rotation (ex.
-     * from gyro)
+     * Forward kinematics using encoders and explicitly measured rotation (ex. from gyro)
      */
     public static RigidTransform2d.Delta forwardKinematics(double left_wheel_delta, double right_wheel_delta,
             double delta_rotation_rads) {

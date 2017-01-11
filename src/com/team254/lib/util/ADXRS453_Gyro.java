@@ -21,18 +21,13 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 
 /**
- * Use a rate gyro to return the robots heading relative to a starting position.
- * The Gyro class tracks the robots heading based on the starting position. As
- * the robot rotates the new heading is computed by integrating the rate of
- * rotation returned by the sensor. When the class is instantiated, it does a
- * short calibration routine where it samples the gyro while at rest to
- * determine the default offset. This is subtracted from each sample to
- * determine the heading.
+ * Use a rate gyro to return the robots heading relative to a starting position. The Gyro class tracks the robots
+ * heading based on the starting position. As the robot rotates the new heading is computed by integrating the rate of
+ * rotation returned by the sensor. When the class is instantiated, it does a short calibration routine where it samples
+ * the gyro while at rest to determine the default offset. This is subtracted from each sample to determine the heading.
  *
- * This class is for the digital ADXRS453 gyro sensor that connects via SPI. A
- * datasheet can be found here:
- * http://www.analog.com/media/en/technical-documentation/data-sheets/ADXRS453.
- * pdf
+ * This class is for the digital ADXRS453 gyro sensor that connects via SPI. A datasheet can be found here:
+ * http://www.analog.com/media/en/technical-documentation/data-sheets/ADXRS453. pdf
  */
 public class ADXRS453_Gyro extends GyroBase implements Gyro, PIDSource, LiveWindowSendable {
     public static final double kCalibrationSampleTime = 5.0;
@@ -84,8 +79,7 @@ public class ADXRS453_Gyro extends GyroBase implements Gyro, PIDSource, LiveWind
     }
 
     /**
-     * This is a blocking calibration call. There are also non-blocking options
-     * available in this class!
+     * This is a blocking calibration call. There are also non-blocking options available in this class!
      * 
      * {@inheritDoc}
      */

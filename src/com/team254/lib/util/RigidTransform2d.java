@@ -1,8 +1,7 @@
 package com.team254.lib.util;
 
 /**
- * Represents a 2d pose (rigid transform) containing translational and
- * rotational elements.
+ * Represents a 2d pose (rigid transform) containing translational and rotational elements.
  * 
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */
@@ -86,8 +85,8 @@ public class RigidTransform2d implements Interpolable<RigidTransform2d> {
     }
 
     /**
-     * Transforming this RigidTransform2d means first translating by
-     * other.translation and then rotating by other.rotation
+     * Transforming this RigidTransform2d means first translating by other.translation and then rotating by
+     * other.rotation
      * 
      * @param other
      *            The other transform.
@@ -99,8 +98,7 @@ public class RigidTransform2d implements Interpolable<RigidTransform2d> {
     }
 
     /**
-     * The inverse of this transform "undoes" the effect of translating by this
-     * transform.
+     * The inverse of this transform "undoes" the effect of translating by this transform.
      * 
      * @return The opposite of this transform.
      */
@@ -110,8 +108,8 @@ public class RigidTransform2d implements Interpolable<RigidTransform2d> {
     }
 
     /**
-     * Do linear interpolation of this transform (there are more accurate ways
-     * using constant curvature, but this is good enough).
+     * Do linear interpolation of this transform (there are more accurate ways using constant curvature, but this is
+     * good enough).
      */
     @Override
     public RigidTransform2d interpolate(RigidTransform2d other, double x) {

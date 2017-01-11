@@ -6,8 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 
 /**
- * A 12-bit PWM MA3 absolute encoder.
- * http://cdn.usdigital.com/assets/datasheets/MA3_datasheet.pdf
+ * A 12-bit PWM MA3 absolute encoder. http://cdn.usdigital.com/assets/datasheets/MA3_datasheet.pdf
  */
 public class MA3Encoder {
     static final double kNominalPeriodS = 4098 * 1E-6;

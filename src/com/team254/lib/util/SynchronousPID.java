@@ -5,8 +5,7 @@ import edu.wpi.first.wpilibj.util.BoundaryException;
 /**
  * This class implements a PID Control Loop.
  * 
- * Does all computation synchronously (i.e. the calculate() function must be
- * called by the user from his own thread)
+ * Does all computation synchronously (i.e. the calculate() function must be called by the user from his own thread)
  */
 public class SynchronousPID {
     private double m_P; // factor for "proportional" control
@@ -53,9 +52,8 @@ public class SynchronousPID {
     }
 
     /**
-     * Read the input, calculate the output accordingly, and write to the
-     * output. This should be called at a constant rate by the user (ex. in a
-     * timed thread)
+     * Read the input, calculate the output accordingly, and write to the output. This should be called at a constant
+     * rate by the user (ex. in a timed thread)
      *
      * @param input
      *            the input
@@ -94,8 +92,7 @@ public class SynchronousPID {
     }
 
     /**
-     * Set the PID controller gain parameters. Set the proportional, integral,
-     * and differential coefficients.
+     * Set the PID controller gain parameters. Set the proportional, integral, and differential coefficients.
      *
      * @param p
      *            Proportional coefficient
@@ -138,8 +135,7 @@ public class SynchronousPID {
     }
 
     /**
-     * Return the current PID result This is always centered on zero and
-     * constrained the the max and min outs
+     * Return the current PID result This is always centered on zero and constrained the the max and min outs
      *
      * @return the latest calculated output
      */
@@ -148,9 +144,8 @@ public class SynchronousPID {
     }
 
     /**
-     * Set the PID controller to consider the input to be continuous, Rather
-     * then using the max and min in as constraints, it considers them to be the
-     * same point and automatically calculates the shortest route to the
+     * Set the PID controller to consider the input to be continuous, Rather then using the max and min in as
+     * constraints, it considers them to be the same point and automatically calculates the shortest route to the
      * setpoint.
      *
      * @param continuous
@@ -165,9 +160,8 @@ public class SynchronousPID {
     }
 
     /**
-     * Set the PID controller to consider the input to be continuous, Rather
-     * then using the max and min in as constraints, it considers them to be the
-     * same point and automatically calculates the shortest route to the
+     * Set the PID controller to consider the input to be continuous, Rather then using the max and min in as
+     * constraints, it considers them to be the same point and automatically calculates the shortest route to the
      * setpoint.
      */
     public void setContinuous() {

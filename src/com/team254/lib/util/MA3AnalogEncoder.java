@@ -3,8 +3,7 @@ package com.team254.lib.util;
 import edu.wpi.first.wpilibj.*;
 
 /**
- * A 10-bit analog MA3 absolute encoder.
- * http://cdn.usdigital.com/assets/datasheets/MA3_datasheet.pdf
+ * A 10-bit analog MA3 absolute encoder. http://cdn.usdigital.com/assets/datasheets/MA3_datasheet.pdf
  */
 public class MA3AnalogEncoder {
 

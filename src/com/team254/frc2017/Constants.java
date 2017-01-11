@@ -6,8 +6,8 @@ import com.team254.lib.util.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.Solenoid;
 
 /**
- * A list of constants used by the rest of the robot code. This include physics
- * constants as well as constants determined through calibrations.
+ * A list of constants used by the rest of the robot code. This include physics constants as well as constants
+ * determined through calibrations.
  */
 public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.01;
@@ -24,11 +24,10 @@ public class Constants extends ConstantsBase {
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
     // https://docs.google.com/spreadsheets/d/12_Mrd6xKmxCjKtsWNpWZDqT7ukrB9-1KKFCuRrO4aPM/edit#gid=0
-    // Talons
-    // (Note that if multiple talons are dedicated to a mechanism, any sensors
-    // are attached to the master)
 
     // TALONS
+    // (Note that if multiple talons are dedicated to a mechanism, any sensors
+    // are attached to the master)
     // TODO add some!
 
     // SOLENOIDS
@@ -38,8 +37,7 @@ public class Constants extends ConstantsBase {
     // TODO add some!
 
     /**
-     * Make an {@link Solenoid} instance for the single-number ID of the
-     * solenoid
+     * Make an {@link Solenoid} instance for the single-number ID of the solenoid
      * 
      * @param solenoidId
      *            One of the kXyzSolenoidId constants
