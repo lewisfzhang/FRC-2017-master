@@ -1,6 +1,8 @@
 package com.team254.frc2017;
 
 import com.ctre.CANTalon;
+import com.team254.frc2017.subsystems.Drive;
+import com.team254.frc2017.subsystems.Proto_Intake;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -13,12 +15,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
-	ControlBoard mControlBoard = ControlBoard.getInstance();
-
-	CANTalon mLeftDrive = new CANTalon(0);
-	CANTalon mRightDrive = new CANTalon(1);
-
+	Drive mDrive = Drive.getInstance();
+	Proto_Intake mIntake = Proto_Intake.getInstance();
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -51,12 +49,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(
-				mControlBoard.getThrottle(),
-				mControlBoard.getTurn(),
-				mControlBoard.getQuickTurn());
-		mLeftDrive.set(driveSignal.leftMotor);
-		mRightDrive.set(driveSignal.rightMotor);
+		mDrive.run();
+		mIntake.run();
+	}
+	
+	@Override
+	public void disabledInit()
+	{
+		mDrive.stop();
+		mIntake.stop();
 	}
 
 	/**
