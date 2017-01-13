@@ -35,7 +35,18 @@ public class Constants extends ConstantsBase {
 
     // Analog Inputs
     // TODO add some!
-
+    
+    // Flywheel PID
+    // TODO give these actual values
+    public static double kFlywheelKp = 0.12;
+    public static double kFlywheelKi = 0.0;
+    public static double kFlywheelKd = 0.5;
+    public static double kFlywheelKf = 0.014;
+    public static double kFlywheelOnTargetTolerance = 100.0;
+    public static double kFlywheelTarget = 6200.0;
+   
+    public static double kFlywheelIntakeVoltage = 5;
+    
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid
      * 

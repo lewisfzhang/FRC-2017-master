@@ -41,6 +41,10 @@ public class ControlBoard {
     }
 
     // OPERATOR CONTROLS
+    public boolean getFireButton() {
+        return mButtonBoard.getRawAxis(1) < -0.1;
+    }
+    
     public boolean getIntakeButton() {
         return mButtonBoard.getRawAxis(2) < -0.1;
     }

@@ -11,6 +11,7 @@ public class SynchronousPID {
     private double m_P; // factor for "proportional" control
     private double m_I; // factor for "integral" control
     private double m_D; // factor for "derivative" control
+    private double m_F; // factor for feed forward gain
     private double m_maximumOutput = 1.0; // |maximum output|
     private double m_minimumOutput = -1.0; // |minimum output|
     private double m_maximumInput = 0.0; // maximum input - limit setpoint to
@@ -49,8 +50,28 @@ public class SynchronousPID {
         m_P = Kp;
         m_I = Ki;
         m_D = Kd;
+        m_F = 0;
     }
-
+    
+    /**
+     * Allocate a PID object with the given constants for P, I, D
+     *
+     * @param Kp
+     *            the proportional coefficient
+     * @param Ki
+     *            the integral coefficient
+     * @param Kd
+     *            the derivative coefficient
+     * @param Kf
+     *            the feed forward gain coefficient
+     */
+    public SynchronousPID(double Kp, double Ki, double Kd, double Kf) {
+        m_P = Kp;
+        m_I = Ki;
+        m_D = Kd;
+        m_F = Kf;
+    }
+    
     /**
      * Read the input, calculate the output accordingly, and write to the output. This should be called at a constant
      * rate by the user (ex. in a timed thread)
@@ -80,7 +101,50 @@ public class SynchronousPID {
         // Don't blow away m_error so as to not break derivative
         double proportionalError = Math.abs(m_error) < m_deadband ? 0 : m_error;
 
-        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError));
+        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) + m_F * m_setpoint);
+        m_prevError = m_error;
+
+        if (m_result > m_maximumOutput) {
+            m_result = m_maximumOutput;
+        } else if (m_result < m_minimumOutput) {
+            m_result = m_minimumOutput;
+        }
+        return m_result;
+    }
+
+    /**
+     * Read the input, calculate the output accordingly, and write to the output. This should be called at a constant
+     * rate by the user (ex. in a timed thread)
+     *
+     * @param input
+     *            the input
+     * @param dt
+     *            time passed since previous call to calculate
+     */
+    public double calculate(double input, double dt) {
+    	if (dt < 1E-6) dt = 1E-6;
+        m_last_input = input;
+        m_error = m_setpoint - input;
+        if (m_continuous) {
+            if (Math.abs(m_error) > (m_maximumInput - m_minimumInput) / 2) {
+                if (m_error > 0) {
+                    m_error = m_error - m_maximumInput + m_minimumInput;
+                } else {
+                    m_error = m_error + m_maximumInput - m_minimumInput;
+                }
+            }
+        }
+
+        if ((m_error * m_P < m_maximumOutput) && (m_error * m_P > m_minimumOutput)) {
+            m_totalError += m_error * dt;
+        } else {
+            m_totalError = 0;
+        }
+
+        // Don't blow away m_error so as to not break derivative
+        double proportionalError = Math.abs(m_error) < m_deadband ? 0 : m_error;
+
+        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) / dt + m_F * m_setpoint);
         m_prevError = m_error;
 
         if (m_result > m_maximumOutput) {
@@ -105,6 +169,25 @@ public class SynchronousPID {
         m_P = p;
         m_I = i;
         m_D = d;
+    }
+    
+    /**
+     * Set the PID controller gain parameters. Set the proportional, integral, and differential coefficients.
+     *
+     * @param p
+     *            Proportional coefficient
+     * @param i
+     *            Integral coefficient
+     * @param d
+     *            Differential coefficient
+     * @param f
+     *            Feed forward coefficient
+     */
+    public void setPID(double p, double i, double d, double f) {
+        m_P = p;
+        m_I = i;
+        m_D = d;
+        m_F = f;
     }
 
     /**
@@ -132,6 +215,15 @@ public class SynchronousPID {
      */
     public double getD() {
         return m_D;
+    }
+    
+    /**
+     * Get the Feed forward coefficient
+     *
+     * @return feed forward coefficient
+     */
+    public double getF() {
+        return m_F;
     }
 
     /**
