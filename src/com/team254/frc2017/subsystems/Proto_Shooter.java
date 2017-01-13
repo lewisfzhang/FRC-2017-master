@@ -9,7 +9,6 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.SynchronousPIDF;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Shooter extends Subsystem {
@@ -55,10 +54,12 @@ public class Proto_Shooter extends Subsystem {
         private double mPrevRotations = 0;
 
         public void onStart(double timestamp) {
-            mController.reset();
-            mPrevTimestamp = timestamp;
-            mPrevRotations = mMaster.getPosition();
-            mVelocityRpm = 0.0;
+            synchronized (Proto_Shooter.this) {
+                mController.reset();
+                mPrevTimestamp = timestamp;
+                mPrevRotations = mMaster.getPosition();
+                mVelocityRpm = 0.0;
+            }
         }
 
         public void onLoop(double timestamp) {
@@ -80,12 +81,13 @@ public class Proto_Shooter extends Subsystem {
                 mPrevTimestamp = timestamp;
                 mPrevRotations = curr_rotations;
             }
-            outputToSmartDashboard();
         }
 
         public void onStop(double timestamp) {
-            mClosedLoop = false;
-            stop();
+            synchronized (Proto_Shooter.this) {
+                mClosedLoop = false;
+                stop();
+            }
         }
     }
 
