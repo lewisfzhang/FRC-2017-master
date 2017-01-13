@@ -43,10 +43,10 @@ public class Drive extends Subsystem {
 					mControlBoard.getThrottle(),
 					mControlBoard.getTurn(),
 					mControlBoard.getQuickTurn());
-			mLeftMaster.set(driveSignal.leftMotor);
-			mLeftSlave.set(driveSignal.leftMotor);
-			mRightMaster.set(driveSignal.rightMotor);
-			mRightSlave.set(driveSignal.rightMotor);
+			mLeftMaster.set(driveSignal.getLeft());
+			mLeftSlave.set(driveSignal.getLeft());
+			mRightMaster.set(driveSignal.getRight());
+			mRightSlave.set(driveSignal.getRight());
 			
 	    	outputToSmartDashboard();
 	    }
@@ -80,4 +80,5 @@ public class Drive extends Subsystem {
 	{
 		
 	}
+
 }

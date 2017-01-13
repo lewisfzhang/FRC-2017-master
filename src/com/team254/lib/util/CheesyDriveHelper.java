@@ -15,7 +15,6 @@ public class CheesyDriveHelper {
     public static final double kThrottleDeadband = 0.02;
     private static final double kWheelDeadband = 0.02;
     private static final double kTurnSensitivity = 1.0;
-    private DriveSignal mSignal = new DriveSignal(0, 0);
 
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn) {
 
@@ -60,9 +59,7 @@ public class CheesyDriveHelper {
             leftPwm += overPower * (-1.0 - rightPwm);
             rightPwm = -1.0;
         }
-        mSignal.rightMotor = rightPwm;
-        mSignal.leftMotor = leftPwm;
-        return mSignal;
+        return new DriveSignal(leftPwm, rightPwm);
     }
 
     public double handleDeadband(double val, double deadband) {
