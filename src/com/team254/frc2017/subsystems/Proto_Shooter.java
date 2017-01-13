@@ -141,6 +141,7 @@ public class Proto_Shooter extends Subsystem {
 
     @Override
     public synchronized void stop() {
+        mClosedLoop = false;
         mController.reset();
         mMaster.set(0.0);
         mSlave.set(0.0);
