@@ -4,12 +4,7 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.StatusFrameRate;
 import com.ctre.CANTalon.TalonControlMode;
-/*
- * TO-DO: Set other CANTalon as a follower
- * Actually make the thing vroom vroom
- */
 import com.team254.frc2017.Constants;
-import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.SynchronousPIDF;
@@ -18,120 +13,140 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Shooter extends Subsystem {
-	private static Proto_Shooter mInstance = null;
-	private double velocity_rpm = 0;
-	
-	private CANTalon mMaster, mSlave, mIntake;
-	private SynchronousPIDF pid;
+    private static Proto_Shooter mInstance = null;
 
-	private Proto_Shooter() {
-		mMaster = new CANTalon(3);
-		mMaster.changeControlMode(TalonControlMode.Voltage);
-		mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
-		mMaster.setStatusFrameRateMs(StatusFrameRate.General, 1); // 1ms (1 KHz)
-		mMaster.setVoltageCompensationRampRate(10000.0);
-		mMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+    public static Proto_Shooter getInstance() {
+        if (mInstance == null) {
+            mInstance = new Proto_Shooter();
+        }
+        return mInstance;
+    }
 
-		mSlave = new CANTalon(4);
-		mSlave.changeControlMode(TalonControlMode.Voltage);
-		mSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
-		mSlave.setVoltageCompensationRampRate(10000.0);
-		
-		mIntake = new CANTalon(5);
-		mIntake.changeControlMode(TalonControlMode.Voltage);
-		mIntake.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
-		mIntake.setVoltageCompensationRampRate(10000.0);
-		
-		pid = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
-		pid.setSetpoint(Constants.kFlywheelTarget);
+    private CANTalon mMaster, mSlave, mIntake;
+    private SynchronousPIDF mController;
+    private boolean mClosedLoop = false;
 
-		//mMaster.setPID(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd);
-	}
+    private double mVelocityRpm = 0;
 
-	public static Proto_Shooter getInstance() {
-		if (mInstance == null)
-			mInstance = new Proto_Shooter();
-		return mInstance;
-	}
+    private Proto_Shooter() {
+        mMaster = new CANTalon(3);
+        mMaster.changeControlMode(TalonControlMode.Voltage);
+        mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
+        mMaster.setStatusFrameRateMs(StatusFrameRate.General, 1); // 1ms (1 KHz)
+        mMaster.setVoltageCompensationRampRate(10000.0);
+        mMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 
-	public class Proto_Shooter_Looper implements Loop {
-		private double prev_timestamp = 0;
-		private double prev_rotations = 0;
-		
-		public void onStart() {
-			prev_timestamp = Timer.getFPGATimestamp();
-			prev_rotations = mMaster.getPosition();
-		}
+        mSlave = new CANTalon(4);
+        mSlave.changeControlMode(TalonControlMode.Voltage);
+        mSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
+        mSlave.setVoltageCompensationRampRate(10000.0);
 
-		public void onLoop() {
-			double curr_timestamp = Timer.getFPGATimestamp();
-			double curr_rotations = mMaster.getPosition();
-			velocity_rpm = ((curr_rotations - prev_rotations) * 60) / ((curr_timestamp - prev_timestamp) * 1000);
-						
-			if (ControlBoard.getInstance().getFireButton()) {
-				double voltage = pid.calculate(velocity_rpm, (curr_timestamp - prev_timestamp) / 1000);
-				setVoltage(voltage);
-				mIntake.set(Constants.kFlywheelIntakeVoltage);
-			} else {
-				setRpm(0.0);
-				mIntake.set(0.0);
-			}	
-								
-			prev_timestamp = Timer.getFPGATimestamp();
-			prev_rotations = mMaster.getPosition();
-			outputToSmartDashboard();
-		}
+        mIntake = new CANTalon(5);
+        mIntake.changeControlMode(TalonControlMode.Voltage);
+        mIntake.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
+        mIntake.setVoltageCompensationRampRate(10000.0);
 
-		public void onStop() {
-			stop();
-			velocity_rpm = 0; //loop is no longer calculating velocity so set it to 0 for now
-		}
-	}
+        mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd,
+                Constants.kFlywheelKf);
+    }
 
-	@Override
-	public void registerEnabledLoops(Looper in) {
-		in.register(new Proto_Shooter_Looper());
-	}
+    public class Proto_Shooter_Loop implements Loop {
+        private double mPrevTimestamp = 0;
+        private double mPrevRotations = 0;
 
-	public synchronized double getRpm() {
-		return velocity_rpm;
-	}
+        public void onStart(double timestamp) {
+            mController.reset();
+            mPrevTimestamp = timestamp;
+            mPrevRotations = mMaster.getPosition();
+            mVelocityRpm = 0.0;
+        }
 
-	public synchronized void setRpm(double rpm) {
-		mMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
-		mMaster.set(rpm);
-	}
-	
-	public synchronized void setVoltage(double voltage) {
-		mMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
-		mMaster.set(voltage);
-	}
+        public void onLoop(double timestamp) {
+            synchronized (Proto_Shooter.this) {
+                double curr_rotations = mMaster.getPosition();
+                double delta_t = (timestamp - mPrevTimestamp) * 1000.0; // ms to seconds
+                if (delta_t < 1E-3) {
+                    delta_t = 1E-3; // Prevent divide-by-zero
+                }
+                mVelocityRpm = ((curr_rotations - mPrevRotations) * 60.0) / delta_t;
 
-	public synchronized double getSetpoint() {
-		return mMaster.getSetpoint();
-	}
+                if (mClosedLoop) {
+                    double voltage = mController.calculate(mVelocityRpm, delta_t);
+                    setVoltage(voltage);
+                } else {
+                    setVoltage(0.0);
+                }
 
-	public synchronized boolean isOnTarget() {
-		return (Math.abs(getRpm() - getSetpoint()) < Constants.kFlywheelOnTargetTolerance);
-	}
+                mPrevTimestamp = timestamp;
+                mPrevRotations = curr_rotations;
+            }
+            outputToSmartDashboard();
+        }
 
-	@Override
-	public void outputToSmartDashboard() {
-		SmartDashboard.putNumber("flywheel_rpm", getRpm());
-		SmartDashboard.putNumber("flywheel_setpoint", mMaster.getSetpoint());
-		SmartDashboard.putBoolean("flywheel_on_target", isOnTarget());
-		SmartDashboard.putNumber("flywheel_master_current", mMaster.getOutputCurrent());
-		SmartDashboard.putNumber("flywheel_slave_current", mSlave.getOutputCurrent());
-		SmartDashboard.putNumber("intake_voltage", mIntake.getOutputVoltage());
-	}
+        public void onStop(double timestamp) {
+            mClosedLoop = false;
+            stop();
+        }
+    }
 
-	@Override
-	public void stop() {
-		mMaster.set(0.0);
-		mIntake.set(0.0);
-	}
+    @Override
+    public void registerEnabledLoops(Looper in) {
+        in.register(new Proto_Shooter_Loop());
+    }
 
-	@Override
-	public void zeroSensors() {
-	}
+    public synchronized void setRpmSetpoint(double rpm) {
+        mClosedLoop = true;
+        mController.setSetpoint(rpm);
+    }
+
+    public synchronized void setManualVoltage(double voltage) {
+        mClosedLoop = false;
+        setVoltage(voltage);
+    }
+
+    public synchronized double getRpm() {
+        return mVelocityRpm;
+    }
+
+    // This is protected since it should only ever be called by a public synchronized method or the loop.
+    protected void setVoltage(double voltage) {
+        mMaster.set(voltage);
+        mSlave.set(voltage);
+    }
+
+    // TODO: Move this to its own subsystem.
+    public synchronized void setFeedRoller(double voltage) {
+        mIntake.set(voltage);
+    }
+
+    public synchronized double getSetpoint() {
+        return mController.getSetpoint();
+    }
+
+    public synchronized boolean isOnTarget() {
+        return (Math.abs(getRpm() - getSetpoint()) < Constants.kFlywheelOnTargetTolerance);
+    }
+
+    @Override
+    public void outputToSmartDashboard() {
+        SmartDashboard.putNumber("flywheel_rpm", getRpm());
+        SmartDashboard.putNumber("flywheel_setpoint", getSetpoint());
+        SmartDashboard.putBoolean("flywheel_on_target", isOnTarget());
+        SmartDashboard.putNumber("flywheel_master_current", mMaster.getOutputCurrent());
+        SmartDashboard.putNumber("flywheel_slave_current", mSlave.getOutputCurrent());
+        SmartDashboard.putNumber("intake_voltage", mIntake.getOutputVoltage());
+    }
+
+    @Override
+    public synchronized void stop() {
+        mController.reset();
+        mMaster.set(0.0);
+        mSlave.set(0.0);
+        mIntake.set(0.0);
+    }
+
+    @Override
+    public synchronized void zeroSensors() {
+        // Nothing to do.
+    }
 }

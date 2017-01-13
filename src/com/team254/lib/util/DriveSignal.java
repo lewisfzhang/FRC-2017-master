@@ -21,9 +21,17 @@ public class DriveSignal {
     public static DriveSignal NEUTRAL = new DriveSignal(0, 0);
     public static DriveSignal BRAKE = new DriveSignal(0, 0, true);
 
-    public double getLeft() { return mLeftMotor; }
-    public double getRight() { return mRightMotor; }
-    public boolean getBrakeMode() { return mBrakeMode; }
+    public double getLeft() {
+        return mLeftMotor;
+    }
+
+    public double getRight() {
+        return mRightMotor;
+    }
+
+    public boolean getBrakeMode() {
+        return mBrakeMode;
+    }
 
     @Override
     public String toString() {

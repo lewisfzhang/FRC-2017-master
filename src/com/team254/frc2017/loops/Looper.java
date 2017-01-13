@@ -31,7 +31,7 @@ public class Looper {
                 if (running_) {
                     double now = Timer.getFPGATimestamp();
                     for (Loop loop : loops_) {
-                        loop.onLoop();
+                        loop.onLoop(now);
                     }
                     dt_ = now - timestamp_;
                     timestamp_ = now;
@@ -58,7 +58,7 @@ public class Looper {
             synchronized (taskRunningLock_) {
                 timestamp_ = Timer.getFPGATimestamp();
                 for (Loop loop : loops_) {
-                    loop.onStart();
+                    loop.onStart(timestamp_);
                 }
                 running_ = true;
             }
@@ -72,9 +72,10 @@ public class Looper {
             notifier_.stop();
             synchronized (taskRunningLock_) {
                 running_ = false;
+                timestamp_ = Timer.getFPGATimestamp();
                 for (Loop loop : loops_) {
                     System.out.println("Stopping " + loop);
-                    loop.onStop();
+                    loop.onStop(timestamp_);
                 }
             }
         }

@@ -52,7 +52,7 @@ public class SynchronousPIDF {
         m_D = Kd;
         m_F = 0;
     }
-    
+
     /**
      * Allocate a PID object with the given constants for P, I, D
      *
@@ -71,7 +71,7 @@ public class SynchronousPIDF {
         m_D = Kd;
         m_F = Kf;
     }
-    
+
     /**
      * Read the input, calculate the output accordingly, and write to the output. This should be called at a constant
      * rate by the user (ex. in a timed thread)
@@ -82,7 +82,8 @@ public class SynchronousPIDF {
      *            time passed since previous call to calculate
      */
     public double calculate(double input, double dt) {
-    	if (dt < 1E-6) dt = 1E-6;
+        if (dt < 1E-6)
+            dt = 1E-6;
         m_last_input = input;
         m_error = m_setpoint - input;
         if (m_continuous) {
@@ -104,7 +105,8 @@ public class SynchronousPIDF {
         // Don't blow away m_error so as to not break derivative
         double proportionalError = Math.abs(m_error) < m_deadband ? 0 : m_error;
 
-        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) / dt + m_F * m_setpoint);
+        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) / dt
+                + m_F * m_setpoint);
         m_prevError = m_error;
 
         if (m_result > m_maximumOutput) {
@@ -130,7 +132,7 @@ public class SynchronousPIDF {
         m_I = i;
         m_D = d;
     }
-    
+
     /**
      * Set the PID controller gain parameters. Set the proportional, integral, and differential coefficients.
      *
@@ -176,7 +178,7 @@ public class SynchronousPIDF {
     public double getD() {
         return m_D;
     }
-    
+
     /**
      * Get the Feed forward coefficient
      *

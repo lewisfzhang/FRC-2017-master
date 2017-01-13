@@ -10,75 +10,64 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends Subsystem {
-	private static Talon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; //Master and slave motor
-	
-	private static Drive mInstance;
-	CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
-	ControlBoard mControlBoard = ControlBoard.getInstance();
-	
-	private Drive()
-	{
-		mLeftMaster = new Talon(0);
-    	mLeftSlave = new Talon(1);
-    	mRightMaster = new Talon(2);
-    	mRightSlave = new Talon(3);
-	}
-	
-	public static Drive getInstance()
-	{
-		if (mInstance == null) mInstance = new Drive();
-		return mInstance;
-	} 
-	
-	protected class Drive_Looper implements Loop
-	{
-	    public void onStart()
-	    {
-	    	
-	    }
+    private static Talon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
 
-	    public void onLoop()
-	    {
-			DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(
-					mControlBoard.getThrottle(),
-					mControlBoard.getTurn(),
-					mControlBoard.getQuickTurn());
-			mLeftMaster.set(driveSignal.getLeft());
-			mLeftSlave.set(driveSignal.getLeft());
-			mRightMaster.set(driveSignal.getRight());
-			mRightSlave.set(driveSignal.getRight());
-			
-	    	outputToSmartDashboard();
-	    }
+    private static Drive mInstance;
+    CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
+    ControlBoard mControlBoard = ControlBoard.getInstance();
 
-	    public void onStop()
-	    {
-	    	stop();
-	    }
-	}
-	
-	public void registerEnabledLoops(Looper in)
-	{
-		in.register(new Drive_Looper());
-	}
-	
-	public void stop()
-	{
-		mLeftMaster.stopMotor();
-    	mLeftSlave.stopMotor();
-    	mRightMaster.stopMotor();
-    	mRightSlave.stopMotor();
-	}
-	
-	public void outputToSmartDashboard()
-	{
-    	SmartDashboard.putNumber("Left Drive Motor RPM", mLeftMaster.getSpeed());
-    	SmartDashboard.putNumber("Right Drive Motor RPM", mRightMaster.getSpeed());
-	}
-	
-	public void zeroSensors()
-	{
-		
-	}
+    private Drive() {
+        mLeftMaster = new Talon(0);
+        mLeftSlave = new Talon(1);
+        mRightMaster = new Talon(2);
+        mRightSlave = new Talon(3);
+    }
+
+    public static Drive getInstance() {
+        if (mInstance == null)
+            mInstance = new Drive();
+        return mInstance;
+    }
+
+    protected class Drive_Loop implements Loop {
+        public void onStart(double timestamp) {
+
+        }
+
+        public void onLoop(double timestamp) {
+            DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(),
+                    mControlBoard.getTurn(), mControlBoard.getQuickTurn());
+            mLeftMaster.set(driveSignal.getLeft());
+            mLeftSlave.set(driveSignal.getLeft());
+            mRightMaster.set(driveSignal.getRight());
+            mRightSlave.set(driveSignal.getRight());
+
+            outputToSmartDashboard();
+        }
+
+        public void onStop(double timestamp) {
+            stop();
+        }
+    }
+
+    public void registerEnabledLoops(Looper in) {
+        in.register(new Drive_Loop());
+    }
+
+    public void stop() {
+        mLeftMaster.stopMotor();
+        mLeftSlave.stopMotor();
+        mRightMaster.stopMotor();
+        mRightSlave.stopMotor();
+    }
+
+    public void outputToSmartDashboard() {
+        SmartDashboard.putNumber("Left Drive Motor RPM", mLeftMaster.getSpeed());
+        SmartDashboard.putNumber("Right Drive Motor RPM", mRightMaster.getSpeed());
+    }
+
+    public void zeroSensors() {
+
+    }
 
 }

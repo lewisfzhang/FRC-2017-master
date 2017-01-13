@@ -18,6 +18,6 @@ public abstract class Subsystem {
     public abstract void stop();
 
     public abstract void zeroSensors();
-    
+
     public abstract void registerEnabledLoops(Looper in);
 }
