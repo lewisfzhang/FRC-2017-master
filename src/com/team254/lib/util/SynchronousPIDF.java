@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.util.BoundaryException;
  * 
  * Does all computation synchronously (i.e. the calculate() function must be called by the user from his own thread)
  */
-public class SynchronousPID {
+public class SynchronousPIDF {
     private double m_P; // factor for "proportional" control
     private double m_I; // factor for "integral" control
     private double m_D; // factor for "derivative" control
@@ -33,7 +33,7 @@ public class SynchronousPID {
                                      // then treat error for the proportional
                                      // term as 0
 
-    public SynchronousPID() {
+    public SynchronousPIDF() {
     }
 
     /**
@@ -46,7 +46,7 @@ public class SynchronousPID {
      * @param Kd
      *            the derivative coefficient
      */
-    public SynchronousPID(double Kp, double Ki, double Kd) {
+    public SynchronousPIDF(double Kp, double Ki, double Kd) {
         m_P = Kp;
         m_I = Ki;
         m_D = Kd;
@@ -65,53 +65,13 @@ public class SynchronousPID {
      * @param Kf
      *            the feed forward gain coefficient
      */
-    public SynchronousPID(double Kp, double Ki, double Kd, double Kf) {
+    public SynchronousPIDF(double Kp, double Ki, double Kd, double Kf) {
         m_P = Kp;
         m_I = Ki;
         m_D = Kd;
         m_F = Kf;
     }
     
-    /**
-     * Read the input, calculate the output accordingly, and write to the output. This should be called at a constant
-     * rate by the user (ex. in a timed thread)
-     *
-     * @param input
-     *            the input
-     */
-    public double calculate(double input) {
-        m_last_input = input;
-        m_error = m_setpoint - input;
-        if (m_continuous) {
-            if (Math.abs(m_error) > (m_maximumInput - m_minimumInput) / 2) {
-                if (m_error > 0) {
-                    m_error = m_error - m_maximumInput + m_minimumInput;
-                } else {
-                    m_error = m_error + m_maximumInput - m_minimumInput;
-                }
-            }
-        }
-
-        if ((m_error * m_P < m_maximumOutput) && (m_error * m_P > m_minimumOutput)) {
-            m_totalError += m_error;
-        } else {
-            m_totalError = 0;
-        }
-
-        // Don't blow away m_error so as to not break derivative
-        double proportionalError = Math.abs(m_error) < m_deadband ? 0 : m_error;
-
-        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) + m_F * m_setpoint);
-        m_prevError = m_error;
-
-        if (m_result > m_maximumOutput) {
-            m_result = m_maximumOutput;
-        } else if (m_result < m_minimumOutput) {
-            m_result = m_minimumOutput;
-        }
-        return m_result;
-    }
-
     /**
      * Read the input, calculate the output accordingly, and write to the output. This should be called at a constant
      * rate by the user (ex. in a timed thread)

@@ -12,7 +12,7 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import com.team254.lib.util.SynchronousPID;
+import com.team254.lib.util.SynchronousPIDF;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,28 +22,27 @@ public class Proto_Shooter extends Subsystem {
 	private double velocity_rpm = 0;
 	
 	private CANTalon mMaster, mSlave, mIntake;
-	private SynchronousPID pid;
+	private SynchronousPIDF pid;
 
 	private Proto_Shooter() {
 		mMaster = new CANTalon(3);
 		mMaster.changeControlMode(TalonControlMode.Voltage);
 		mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
-		mMaster.setStatusFrameRateMs(StatusFrameRate.General, 5); // 5ms (200 Hz)
+		mMaster.setStatusFrameRateMs(StatusFrameRate.General, 1); // 1ms (1 KHz)
 		mMaster.setVoltageCompensationRampRate(10000.0);
 		mMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 
 		mSlave = new CANTalon(4);
-		mSlave.changeControlMode(TalonControlMode.Follower);
+		mSlave.changeControlMode(TalonControlMode.Voltage);
+		mSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
 		mSlave.setVoltageCompensationRampRate(10000.0);
-		mSlave.set(5);
 		
 		mIntake = new CANTalon(5);
 		mIntake.changeControlMode(TalonControlMode.Voltage);
 		mIntake.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
-		mIntake.setStatusFrameRateMs(StatusFrameRate.General, 5); // 5ms (200 Hz)
 		mIntake.setVoltageCompensationRampRate(10000.0);
 		
-		pid = new SynchronousPID(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
+		pid = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
 		pid.setSetpoint(Constants.kFlywheelTarget);
 
 		//mMaster.setPID(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd);
