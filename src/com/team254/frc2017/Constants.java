@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Solenoid;
  * determined through calibrations.
  */
 public class Constants extends ConstantsBase {
-    public static double kLooperDt = 0.01;
+    public static double kLooperDt = 0.005;
 
     // ROBOT PHYSICAL CONSTANTS
     public static double kTrackScrubFactor = 1.0; // FIXME placeholder

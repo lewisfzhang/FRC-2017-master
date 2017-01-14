@@ -7,6 +7,7 @@ import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.MovingAverage;
 import com.team254.lib.util.SynchronousPIDF;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +24,7 @@ public class Proto_Shooter extends Subsystem {
 
     private CANTalon mMaster, mSlave, mIntake;
     private SynchronousPIDF mController;
+    private MovingAverage mMovingAverageRPM;
     private boolean mClosedLoop = false;
 
     private double mVelocityRpm = 0;
@@ -31,7 +33,7 @@ public class Proto_Shooter extends Subsystem {
         mMaster = new CANTalon(1);
         mMaster.changeControlMode(TalonControlMode.Voltage);
         mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
-        mMaster.setStatusFrameRateMs(StatusFrameRate.General, 1); // 1ms (1 KHz)
+        mMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 1); // 1ms (1 KHz)
         mMaster.setVoltageCompensationRampRate(10000.0);
         mMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
         mMaster.enableBrakeMode(false);
@@ -51,6 +53,7 @@ public class Proto_Shooter extends Subsystem {
         mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd,
                 Constants.kFlywheelKf);
         mController.setOutputRange(-12.0, 12.0);
+        mMovingAverageRPM = new MovingAverage(5);
     }
 
     public class Proto_Shooter_Loop implements Loop {
@@ -69,15 +72,25 @@ public class Proto_Shooter extends Subsystem {
         public void onLoop(double timestamp) {
             synchronized (Proto_Shooter.this) {
                 double curr_rotations = mMaster.getPosition();
-                double delta_t = (timestamp - mPrevTimestamp) * 1000.0; // ms to seconds
-                if (delta_t < 1E-3) {
-                    delta_t = 1E-3; // Prevent divide-by-zero
+                //System.out.println("Position " + curr_rotations);
+                double delta_t = timestamp - mPrevTimestamp;
+                if (delta_t < 1E-6) {
+                    delta_t = 1E-6; // Prevent divide-by-zero
                 }
                 mVelocityRpm = ((curr_rotations - mPrevRotations) * 60.0) / delta_t;
+                mMovingAverageRPM.addNumber(mVelocityRpm);
 
                 if (mClosedLoop) {
-                    double voltage = mController.calculate(mVelocityRpm, delta_t);
-                    setVoltage(voltage);
+                	if (mMovingAverageRPM.isUnderMaxSize()){
+                		double voltage = mController.calculate(mVelocityRpm, delta_t);
+                		setVoltage(voltage);
+                	}
+                	else
+                	{
+                		double voltage = mController.calculate(mMovingAverageRPM.getAverage(), delta_t);
+                		setVoltage(voltage);
+                	}                	
+                    
                 }
 
                 mPrevTimestamp = timestamp;
@@ -139,6 +152,7 @@ public class Proto_Shooter extends Subsystem {
         SmartDashboard.putNumber("flywheel_master_current", mMaster.getOutputCurrent());
         SmartDashboard.putNumber("flywheel_slave_current", mSlave.getOutputCurrent());
         SmartDashboard.putNumber("intake_voltage", mIntake.getOutputVoltage());
+        SmartDashboard.putNumber("Flywheel Moving Average RPM", mMovingAverageRPM.getAverage());
     }
 
     @Override

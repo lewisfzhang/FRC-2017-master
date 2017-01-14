@@ -1,0 +1,39 @@
+package com.team254.lib.util;
+
+import java.util.ArrayList;
+
+public class MovingAverage {
+	
+	ArrayList<Double> numbers = new ArrayList<Double>();
+	int maxSize;
+	
+	public MovingAverage(int maxSize) {
+		this.maxSize = maxSize;
+	}
+	
+	public void addNumber(double newNumber) {
+		numbers.add(newNumber);
+		if (numbers.size() > maxSize) {
+			numbers.remove(0);
+		}
+	}
+	
+	public double getAverage() {
+		double total = 0;
+		
+		for (double number : numbers) {
+			total += number;
+		}
+		
+		return total / numbers.size();
+	}
+	
+	public int getSize() {
+		return numbers.size();
+	}
+	
+	public boolean isUnderMaxSize() {
+		return getSize() < maxSize;
+	}
+
+}
