@@ -36,14 +36,16 @@ public class Constants extends ConstantsBase {
 
     // Flywheel PID
     // TODO give these actual values
-    public static double kFlywheelKp = 0.12;
+    public static double kFlywheelReduction = 3.0;
+    public static double kFlywheelKp = 0.0;
     public static double kFlywheelKi = 0.0;
-    public static double kFlywheelKd = 0.5;
-    public static double kFlywheelKf = 0.014;
-    public static double kFlywheelOnTargetTolerance = 100.0;
-    public static double kFlywheelTarget = 6200.0;
+    public static double kFlywheelKd = 0.0;
+    public static double kFlywheelKf = 0.0006667;  // 12.0 / 18000
+    public static double kFlywheelOnTargetTolerance = 20.0;
+    public static double kFlywheelTarget = 3000.0;
+    public static double kFlywheelFeedRollerVoltage = 9.0;
 
-    public static double kFlywheelIntakeVoltage = 5;
+    public static double kFlywheelIntakeVoltage = 5.0;
 
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid

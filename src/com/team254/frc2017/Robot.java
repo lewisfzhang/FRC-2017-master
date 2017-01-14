@@ -16,6 +16,8 @@ public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
     Proto_Intake mIntake = Proto_Intake.getInstance();
     Proto_Shooter mShooter = Proto_Shooter.getInstance();
+    
+    ControlBoard mControlBoard = ControlBoard.getInstance();
 
     Looper mEnabledLooper = new Looper();
 
@@ -59,7 +61,19 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-
+        if (mControlBoard.getSpinShooterButton()) {
+            mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
+        } else {
+            mShooter.setManualVoltage(0.0);
+        }
+        
+        if (mControlBoard.getShootButton() && mShooter.isOnTarget()) {
+            mShooter.setFeedRoller(Constants.kFlywheelFeedRollerVoltage);
+        } else {
+            mShooter.setFeedRoller(0.0);
+        }
+        
+        mShooter.outputToSmartDashboard();
     }
 
     @Override

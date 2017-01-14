@@ -28,25 +28,29 @@ public class Proto_Shooter extends Subsystem {
     private double mVelocityRpm = 0;
 
     private Proto_Shooter() {
-        mMaster = new CANTalon(3);
+        mMaster = new CANTalon(1);
         mMaster.changeControlMode(TalonControlMode.Voltage);
         mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mMaster.setStatusFrameRateMs(StatusFrameRate.General, 1); // 1ms (1 KHz)
         mMaster.setVoltageCompensationRampRate(10000.0);
         mMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        mMaster.enableBrakeMode(false);
 
-        mSlave = new CANTalon(4);
+        mSlave = new CANTalon(2);
         mSlave.changeControlMode(TalonControlMode.Voltage);
         mSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mSlave.setVoltageCompensationRampRate(10000.0);
+        mSlave.enableBrakeMode(false);
 
-        mIntake = new CANTalon(5);
+        mIntake = new CANTalon(3);
         mIntake.changeControlMode(TalonControlMode.Voltage);
         mIntake.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mIntake.setVoltageCompensationRampRate(10000.0);
-
+        mIntake.enableBrakeMode(false);
+        
         mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd,
                 Constants.kFlywheelKf);
+        mController.setOutputRange(-12.0, 12.0);
     }
 
     public class Proto_Shooter_Loop implements Loop {
@@ -74,8 +78,6 @@ public class Proto_Shooter extends Subsystem {
                 if (mClosedLoop) {
                     double voltage = mController.calculate(mVelocityRpm, delta_t);
                     setVoltage(voltage);
-                } else {
-                    setVoltage(0.0);
                 }
 
                 mPrevTimestamp = timestamp;
@@ -98,7 +100,7 @@ public class Proto_Shooter extends Subsystem {
 
     public synchronized void setRpmSetpoint(double rpm) {
         mClosedLoop = true;
-        mController.setSetpoint(rpm);
+        mController.setSetpoint(Constants.kFlywheelReduction * rpm);
     }
 
     public synchronized void setManualVoltage(double voltage) {
@@ -107,7 +109,7 @@ public class Proto_Shooter extends Subsystem {
     }
 
     public synchronized double getRpm() {
-        return mVelocityRpm;
+        return mVelocityRpm / Constants.kFlywheelReduction;
     }
 
     // This is protected since it should only ever be called by a public synchronized method or the loop.
