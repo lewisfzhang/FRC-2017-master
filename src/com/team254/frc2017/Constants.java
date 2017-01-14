@@ -1,8 +1,6 @@
 package com.team254.frc2017;
 
 import com.team254.lib.util.ConstantsBase;
-import com.team254.lib.util.InterpolatingDouble;
-import com.team254.lib.util.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.Solenoid;
 
 /**
