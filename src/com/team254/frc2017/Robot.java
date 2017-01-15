@@ -48,8 +48,7 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     @Override
-    public void autonomousPeriodic() {
-    }
+    public void autonomousPeriodic() { }
 
     @Override
     public void teleopInit() {
@@ -85,6 +84,5 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during test mode
      */
     @Override
-    public void testPeriodic() {
-    }
+    public void testPeriodic() { }
 }
