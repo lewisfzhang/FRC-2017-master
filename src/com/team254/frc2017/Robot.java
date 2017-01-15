@@ -26,8 +26,8 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        // mDrive.registerEnabledLoops(mEnabledLooper);
-        // mIntake.registerEnabledLoops(mEnabledLooper);
+        //mDrive.registerEnabledLoops(mEnabledLooper);
+        //mIntake.registerEnabledLoops(mEnabledLooper);
         mShooter.registerEnabledLoops(mEnabledLooper);
     }
 
@@ -41,15 +41,13 @@ public class Robot extends IterativeRobot {
      * strings. If using the SendableChooser make sure to add them to the chooser code above as well.
      */
     @Override
-    public void autonomousInit() {
-    }
+    public void autonomousInit() { }
 
     /**
      * This function is called periodically during autonomous
      */
     @Override
-    public void autonomousPeriodic() {
-    }
+    public void autonomousPeriodic() { }
 
     @Override
     public void teleopInit() {
@@ -61,6 +59,7 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
+    	/*
         if (mControlBoard.getSpinShooterButton()) {
             mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
@@ -71,9 +70,7 @@ public class Robot extends IterativeRobot {
             mShooter.setFeedRoller(Constants.kFlywheelFeedRollerVoltage);
         } else {
             mShooter.setFeedRoller(0.0);
-        }
-        
-        mShooter.outputToSmartDashboard();
+        }*/
     }
 
     @Override
@@ -85,6 +82,5 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during test mode
      */
     @Override
-    public void testPeriodic() {
-    }
+    public void testPeriodic() { }
 }

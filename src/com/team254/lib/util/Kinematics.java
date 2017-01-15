@@ -1,7 +1,6 @@
-package com.team254.frc2017;
+package com.team254.lib.util;
 
-import com.team254.lib.util.RigidTransform2d;
-import com.team254.lib.util.Rotation2d;
+import com.team254.frc2017.Constants;
 
 /**
  * Provides forward and inverse kinematics equations for the robot modeling the wheelbase as a differential drive (with

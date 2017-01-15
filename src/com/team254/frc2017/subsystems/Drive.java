@@ -1,5 +1,6 @@
 package com.team254.frc2017.subsystems;
 
+import com.ctre.CANTalon;
 import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
@@ -10,17 +11,17 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends Subsystem {
-    private static Talon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
+    private static CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
 
     private static Drive mInstance;
     CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Drive() {
-        mLeftMaster = new Talon(0);
-        mLeftSlave = new Talon(1);
-        mRightMaster = new Talon(2);
-        mRightSlave = new Talon(3);
+        mLeftMaster = new CANTalon(11);
+        mLeftSlave = new CANTalon(12);
+        mRightMaster = new CANTalon(3);
+        mRightSlave = new CANTalon(4);
     }
 
     public static Drive getInstance() {

@@ -10,11 +10,23 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.MovingAverage;
 import com.team254.lib.util.SynchronousPIDF;
 
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Shooter extends Subsystem {
     private static Proto_Shooter mInstance = null;
 
+    private CANTalon mMaster, mSlave, mIntake;
+    Encoder mRPMEncoder = new Encoder(0, 1, true, EncodingType.k4X);
+    
+    private SynchronousPIDF mController;
+    private boolean mClosedLoop = false;
+
+    private double mVelocityRpm = 0;
+    
     public static Proto_Shooter getInstance() {
         if (mInstance == null) {
             mInstance = new Proto_Shooter();
@@ -22,20 +34,13 @@ public class Proto_Shooter extends Subsystem {
         return mInstance;
     }
 
-    private CANTalon mMaster, mSlave, mIntake;
-    private SynchronousPIDF mController;
-    private MovingAverage mMovingAverageRPM;
-    private boolean mClosedLoop = false;
-
-    private double mVelocityRpm = 0;
-
     private Proto_Shooter() {
         mMaster = new CANTalon(1);
         mMaster.changeControlMode(TalonControlMode.Voltage);
         mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 1); // 1ms (1 KHz)
         mMaster.setVoltageCompensationRampRate(10000.0);
-        mMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        //mMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); Mag Encoder connected directly to RoboRIO
         mMaster.enableBrakeMode(false);
 
         mSlave = new CANTalon(2);
@@ -50,15 +55,18 @@ public class Proto_Shooter extends Subsystem {
         mIntake.setVoltageCompensationRampRate(10000.0);
         mIntake.enableBrakeMode(false);
         
-        mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd,
-                Constants.kFlywheelKf);
+        mRPMEncoder.setDistancePerPulse(0.0009765625); // 1/1024 (1024 counts per revolution)
+        mRPMEncoder.setSamplesToAverage(50);
+        
+        mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
+        this.setRpmSetpoint(Constants.kFlywheelTarget);
         mController.setOutputRange(-12.0, 12.0);
-        mMovingAverageRPM = new MovingAverage(5);
     }
 
     public class Proto_Shooter_Loop implements Loop {
         private double mPrevTimestamp = 0;
         private double mPrevRotations = 0;
+        boolean mIsFirstLoop;
 
         public void onStart(double timestamp) {
             synchronized (Proto_Shooter.this) {
@@ -66,35 +74,47 @@ public class Proto_Shooter extends Subsystem {
                 mPrevTimestamp = timestamp;
                 mPrevRotations = mMaster.getPosition();
                 mVelocityRpm = 0.0;
+                mIsFirstLoop = true;
             }
         }
 
         public void onLoop(double timestamp) {
             synchronized (Proto_Shooter.this) {
-                double curr_rotations = mMaster.getPosition();
+            	if (mIsFirstLoop) {
+            		mPrevTimestamp = timestamp;
+            		mIsFirstLoop = false;
+            	}
+            	
+            	double mTimestamp = Timer.getFPGATimestamp();
+                //double curr_rotations = mMaster.getPosition();
                 //System.out.println("Position " + curr_rotations);
-                double delta_t = timestamp - mPrevTimestamp;
+            	mVelocityRpm = mRPMEncoder.getRate();
+            	System.out.println("Encoder rate: " + mRPMEncoder.getRate());
+                double delta_t = mTimestamp - mPrevTimestamp;
                 if (delta_t < 1E-6) {
                     delta_t = 1E-6; // Prevent divide-by-zero
                 }
-                mVelocityRpm = ((curr_rotations - mPrevRotations) * 60.0) / delta_t;
-                mMovingAverageRPM.addNumber(mVelocityRpm);
+                
+                //mVelocityRpm = ((curr_rotations - mPrevRotations) * 60.0) / delta_t;
+            	
+            	//mMovingAverageRPM.addNumber(mVelocityRpm);
 
                 if (mClosedLoop) {
-                	if (mMovingAverageRPM.isUnderMaxSize()){
+                	//if (mMovingAverageRPM.isUnderMaxSize()){
                 		double voltage = mController.calculate(mVelocityRpm, delta_t);
                 		setVoltage(voltage);
-                	}
-                	else
-                	{
-                		double voltage = mController.calculate(mMovingAverageRPM.getAverage(), delta_t);
-                		setVoltage(voltage);
-                	}                	
+                	//}
+                	//else
+                	//{
+                		//double voltage = mController.calculate(mMovingAverageRPM.getAverage(), delta_t);
+                		//setVoltage(voltage);
+                	//}                
                     
                 }
 
-                mPrevTimestamp = timestamp;
-                mPrevRotations = curr_rotations;
+                mPrevTimestamp = mTimestamp;
+                //mPrevRotations = curr_rotations;
+                outputToSmartDashboard();
             }
         }
 
@@ -122,7 +142,7 @@ public class Proto_Shooter extends Subsystem {
     }
 
     public synchronized double getRpm() {
-        return mVelocityRpm / Constants.kFlywheelReduction;
+        return mRPMEncoder.getRate()*60 / Constants.kFlywheelReduction;
     }
 
     // This is protected since it should only ever be called by a public synchronized method or the loop.
@@ -146,13 +166,8 @@ public class Proto_Shooter extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("flywheel_rpm", getRpm());
-        SmartDashboard.putNumber("flywheel_setpoint", getSetpoint());
-        SmartDashboard.putBoolean("flywheel_on_target", isOnTarget());
-        SmartDashboard.putNumber("flywheel_master_current", mMaster.getOutputCurrent());
-        SmartDashboard.putNumber("flywheel_slave_current", mSlave.getOutputCurrent());
-        SmartDashboard.putNumber("intake_voltage", mIntake.getOutputVoltage());
-        SmartDashboard.putNumber("Flywheel Moving Average RPM", mMovingAverageRPM.getAverage());
+        SmartDashboard.putNumber("Flywheel RPM", getRpm());
+        SmartDashboard.putNumber("Encoder Count", mRPMEncoder.get());
     }
 
     @Override
