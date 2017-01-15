@@ -139,7 +139,7 @@ public class Proto_Shooter extends Subsystem {
     public synchronized void setManualVoltage(double voltage) {
         mClosedLoop = false;
         setVoltage(voltage);
-    }
+    } 
 
     public synchronized double getRpm() {
         return mRPMEncoder.getRate()*60 / Constants.kFlywheelReduction;
