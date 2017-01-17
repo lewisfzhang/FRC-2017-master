@@ -4,6 +4,7 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.subsystems.Proto_Intake;
 import com.team254.frc2017.subsystems.Proto_Shooter;
+import com.team254.frc2017.web.WebServer;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 /**
@@ -19,6 +20,8 @@ public class Robot extends IterativeRobot {
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     Looper mEnabledLooper = new Looper();
+    
+    WebServer mHTTPServer = new WebServer();
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
@@ -28,6 +31,8 @@ public class Robot extends IterativeRobot {
         mDrive.registerEnabledLoops(mEnabledLooper);
         mIntake.registerEnabledLoops(mEnabledLooper);
         //mShooter.registerEnabledLoops(mEnabledLooper);
+        mHTTPServer.startServer();
+
     }
 
     /**
