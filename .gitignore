@@ -6,4 +6,4 @@ bin/
 dist/
 sysProps.xml
 .classpath
-
+.DS_Store

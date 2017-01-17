@@ -18,10 +18,11 @@ public class Drive extends Subsystem {
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Drive() {
-        mLeftMaster = new CANTalon(11);
-        mLeftSlave = new CANTalon(12);
-        mRightMaster = new CANTalon(3);
-        mRightSlave = new CANTalon(4);
+        mLeftMaster = new CANTalon(3);
+        mLeftSlave = new CANTalon(4);
+        mRightMaster = new CANTalon(11);
+        mRightSlave = new CANTalon(12);
+        mRightMaster.reverseOutput(true);
     }
 
     public static Drive getInstance() {
@@ -32,16 +33,20 @@ public class Drive extends Subsystem {
 
     protected class Drive_Loop implements Loop {
         public void onStart(double timestamp) {
-
+        	mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        	mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+        	mRightSlave.set(11);
+        	
+        	mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        	mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+        	mLeftSlave.set(3);
         }
 
         public void onLoop(double timestamp) {
             DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(),
                     mControlBoard.getTurn(), mControlBoard.getQuickTurn());
             mLeftMaster.set(driveSignal.getLeft());
-            mLeftSlave.set(driveSignal.getLeft());
             mRightMaster.set(driveSignal.getRight());
-            mRightSlave.set(driveSignal.getRight());
 
             outputToSmartDashboard();
         }
@@ -56,10 +61,8 @@ public class Drive extends Subsystem {
     }
 
     public void stop() {
-        mLeftMaster.stopMotor();
-        mLeftSlave.stopMotor();
-        mRightMaster.stopMotor();
-        mRightSlave.stopMotor();
+        mLeftMaster.set(0);
+        mRightMaster.set(0);
     }
 
     public void outputToSmartDashboard() {

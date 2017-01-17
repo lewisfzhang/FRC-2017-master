@@ -6,7 +6,6 @@ import com.team254.frc2017.subsystems.Proto_Intake;
 import com.team254.frc2017.subsystems.Proto_Shooter;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
  * described in the IterativeRobot documentation. If you change the name of this class or the package after creating
@@ -26,9 +25,9 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        //mDrive.registerEnabledLoops(mEnabledLooper);
-        //mIntake.registerEnabledLoops(mEnabledLooper);
-        mShooter.registerEnabledLoops(mEnabledLooper);
+        mDrive.registerEnabledLoops(mEnabledLooper);
+        mIntake.registerEnabledLoops(mEnabledLooper);
+        //mShooter.registerEnabledLoops(mEnabledLooper);
     }
 
     /**
