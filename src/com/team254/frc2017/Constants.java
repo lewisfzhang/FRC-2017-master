@@ -45,6 +45,11 @@ public class Constants extends ConstantsBase {
     public static double kFlywheelOnTargetTolerance = 20.0;
     public static double kFlywheelTarget = 3000.0;
     public static double kFlywheelFeedRollerVoltage = 9.0;
+    
+    public static double kShooterOneKf = 1000.0/108414.3;
+    public static double kShooterOneKp = 1023.0/1084143000;
+    public static double kShooterTwoKf = 1023.0/11386880;
+    public static double kShooterTwoKp = 1024.0/113868.8;
 
     public static double kFlywheelIntakeVoltage = 5.0;
 
