@@ -689,7 +689,7 @@ int main(int argc, char* argv[])
 
 
 
-    for(int i = 0; getChar() != 13;++i)
+    for(int i = 0; getchar() != 13;++i)
 
     {
 
