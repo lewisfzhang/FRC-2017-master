@@ -29,8 +29,8 @@ public class ConstantsServlet extends HttpServlet {
             out.println("<tr>");
             out.println("<td>(" + c.type + ")</td>");
             out.println("<td>" + c.name + "</td>");
-            out.println("<td><input type='text' name='" + c.name + "' id='" + c.name + "' value='"
-                    + c.value + "'></td>");
+            out.println(
+                    "<td><input type='text' name='" + c.name + "' id='" + c.name + "' value='" + c.value + "'></td>");
             out.println("</tr>");
         }
         out.println("</table>");
@@ -42,12 +42,13 @@ public class ConstantsServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request,
-                         HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         buildPage(response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         Constants constants = new Constants();
         for (String key : request.getParameterMap().keySet()) {
             String value = request.getParameter(key);
