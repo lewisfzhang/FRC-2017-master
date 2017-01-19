@@ -13,7 +13,7 @@ Team 254's code for the 2017 FRC Season.
 		<th>Example</th>
 	</tr>
 	<tr>
-		<td>Hardware (motors, pneumatics, actuators, sensors</td>
+		<td>Hardware</td>
 		<td>m_, type of hardware at the end</td>
 		<td>mShooterMasterTalon<br />
 		mIntakeSolenoid<br />
