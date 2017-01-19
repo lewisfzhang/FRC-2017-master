@@ -37,7 +37,7 @@ public class Constants extends ConstantsBase {
     // Flywheel PID
     // TODO give these actual values
     public static double kFlywheelReduction = 3.0;
-//    public static double kFlywheelKp = 0.00070175438/30;
+    // public static double kFlywheelKp = 0.00070175438/30;
     public static double kFlywheelKp = 0.005;
     public static double kFlywheelKi = 0.001;
     public static double kFlywheelKd = 0.0;

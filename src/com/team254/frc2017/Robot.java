@@ -17,11 +17,11 @@ public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
     Proto_Intake mIntake = Proto_Intake.getInstance();
     Proto_Shooter mShooter = Proto_Shooter.getInstance();
-    
+
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     Looper mEnabledLooper = new Looper();
-    
+
     WebServer mHTTPServer = new WebServer();
 
     /**
@@ -29,8 +29,8 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        //mDrive.registerEnabledLoops(mEnabledLooper);
-        //mIntake.registerEnabledLoops(mEnabledLooper);
+        // mDrive.registerEnabledLoops(mEnabledLooper);
+        // mIntake.registerEnabledLoops(mEnabledLooper);
         mShooter.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
     }
@@ -45,13 +45,15 @@ public class Robot extends IterativeRobot {
      * strings. If using the SendableChooser make sure to add them to the chooser code above as well.
      */
     @Override
-    public void autonomousInit() { }
+    public void autonomousInit() {
+    }
 
     /**
      * This function is called periodically during autonomous
      */
     @Override
-    public void autonomousPeriodic() { }
+    public void autonomousPeriodic() {
+    }
 
     @Override
     public void teleopInit() {
@@ -63,13 +65,13 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-    	
+
         if (mControlBoard.getSpinShooterButton()) {
             mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
             mShooter.setManualVoltage(0.0);
         }
-        
+
         if (mControlBoard.getShootButton()) {
             mShooter.setFeedRoller(Constants.kFlywheelFeedRollerVoltage);
         } else {
@@ -87,5 +89,6 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during test mode
      */
     @Override
-    public void testPeriodic() { }
+    public void testPeriodic() {
+    }
 }
