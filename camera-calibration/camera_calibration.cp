@@ -165,7 +165,8 @@ public:
 
             goodInput = false;
 
-        }
+        } else
+            cout << "Board size: " << boardSize.width << "(width) by " << boardSize.height << "(height)" << endl;
 
         if (squareSize <= 10e-6)
 
@@ -175,7 +176,8 @@ public:
 
             goodInput = false;
 
-        }
+        } else
+            cout << "Square size: " << squareSize << endl;
 
         if (nrFrames <= 0)
 
@@ -185,7 +187,8 @@ public:
 
             goodInput = false;
 
-        }
+        } else
+            cout << "Number of Frames: " << nrFrames << endl;
 
 
 
@@ -207,6 +210,7 @@ public:
 
                 inputType = CAMERA;
 
+                goodInput = true;
             }
 
             else
@@ -231,15 +235,13 @@ public:
 
             }
 
-            if (inputType == CAMERA)
-
-                inputCapture.open(cameraID);
+            //if (inputType == CAMERA)
 
             if (inputType == VIDEO_FILE)
 
                 inputCapture.open(input);
 
-            if (inputType != IMAGE_LIST && !inputCapture.isOpened())
+            if (inputType != IMAGE_LIST && inputType != VIDEO_FILE && inputType != CAMERA)
 
                     inputType = INVALID;
 
@@ -249,11 +251,12 @@ public:
 
         {
 
-            cerr << " Inexistent input: " << input;
+            cerr << " Inexistent input: " << inputType;
 
             goodInput = false;
 
-        }
+        } else
+            cout << "Valid input: " << inputType << endl;
 
 
 
@@ -286,6 +289,8 @@ public:
                 goodInput = false;
 
             }
+        else
+            cout << "This is the pattern: " << patternToUse << endl;
 
         atImageList = 0;
 
@@ -302,10 +307,10 @@ public:
         //if( inputCapture.isOpened() )
 
         //{
+            //stream1.read(result);
+            //Mat view0 = getImage();
 
-            Mat view0 = getImage();
-
-            view0.copyTo(result);
+            //view0.copyTo(result);
 
         //}
 
@@ -400,6 +405,7 @@ public:
     int atImageList;
 
     VideoCapture inputCapture;
+    VideoCapture stream1(0);
 
     InputType inputType;
 
@@ -641,7 +647,10 @@ int main(int argc, char* argv[])
 
     Settings s;
 
-    const string inputSettingsFile = argc > 1 ? argv[1] : "default.xml";
+    const string inputSettingsFile = argc > 1 ? argv[1] : "in_VID5.xml";
+    VideoCapture cap(0); // open the default camera
+    if(!cap.isOpened())  // check if we succeeded
+        return -1;
 
     FileStorage fs(inputSettingsFile, FileStorage::READ); // Read the settings
 
@@ -652,13 +661,11 @@ int main(int argc, char* argv[])
         cout << "Could not open the configuration file: \"" << inputSettingsFile << "\"" << endl;
 
         return -1;
-
     }
 
     fs["Settings"] >> s;
 
     fs.release();                                         // close Settings file
-
 
 
     if (!s.goodInput)
@@ -687,9 +694,7 @@ int main(int argc, char* argv[])
 
     const char ESC_KEY = 27;
 
-
-
-    for(int i = 0; getchar() != 13;++i)
+    for(int i = 0; cvWaitKey(1000) != 13;++i)
 
     {
 
@@ -697,9 +702,7 @@ int main(int argc, char* argv[])
 
       bool blinkOutput = false;
 
-
-
-      view = s.nextImage();
+      cap >> view;
 
       printf("Staring image\n");
 
@@ -1321,4 +1324,9 @@ bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat&
 
     return ok;
 
+}
+
+Mat viewImage(VideoCapture& stream1) {
+  Mat view;
+  stream1.read(view);
 }
