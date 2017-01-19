@@ -33,6 +33,9 @@ public class Constants extends ConstantsBase {
 
     // Analog Inputs
     // TODO add some!
+    
+    // Drivebase - Collision Detection
+    public static double kCollisionThreshold = 0.5; //Unit in Gs (multiples of 9.8 m/s^2)
 
     // Flywheel PID
     // TODO give these actual values
