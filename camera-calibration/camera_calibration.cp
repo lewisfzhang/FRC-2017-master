@@ -204,9 +204,9 @@ public:
 
             {
 
-                stringstream ss(input);
+                /*stringstream ss(input);
 
-                ss >> cameraID;
+                ss >> cameraID;*/
 
                 inputType = CAMERA;
 
@@ -307,10 +307,9 @@ public:
         //if( inputCapture.isOpened() )
 
         //{
-            //stream1.read(result);
-            //Mat view0 = getImage();
+        Mat view0 = getImage();
 
-            //view0.copyTo(result);
+        view0.copyTo(result);
 
         //}
 
@@ -405,7 +404,6 @@ public:
     int atImageList;
 
     VideoCapture inputCapture;
-    VideoCapture stream1(0);
 
     InputType inputType;
 
@@ -471,11 +469,8 @@ Mat getImage()
 
     // printf("width: %d, height: %d \n", width, height);
 
-    cout << "width: " << width << ", height: " << height << endl;
-
+    cout << "width: " << rwidth << ", height: " << rheight << endl;
     //return_value = pixy_command("run", END_OUT_ARGS, &response, END_IN_ARGS);
-
-
 
     return renderBA81(renderflags,rwidth,rheight,numPixels,pixels);
 
@@ -556,7 +551,6 @@ inline void interpolateBayer(uint16_t width, uint16_t x, uint16_t y, uint8_t *pi
 Mat renderBA81(uint8_t renderFlags, uint16_t width, uint16_t height, uint32_t frameLen, uint8_t *frame)
 
 {
-
     uint16_t x, y;
 
     uint8_t r, g, b;
@@ -566,10 +560,8 @@ Mat renderBA81(uint8_t renderFlags, uint16_t width, uint16_t height, uint32_t fr
 
 
     frame += width;
-
-    uchar data[3*((height-2)*(width-2))];
-
-
+    cout << sizeof(uchar[3*((height-2)*(width-2))]) << endl;
+    uchar *data = new uchar[3*((height-2)*(width-2))];
 
     uint m = 0;
 
@@ -600,7 +592,7 @@ Mat renderBA81(uint8_t renderFlags, uint16_t width, uint16_t height, uint32_t fr
 
 
     imageRGB =  Mat(height - 2,width -2, CV_8UC3, data);
-
+    delete[] data;
 
 
     return imageRGB;
@@ -647,11 +639,13 @@ int main(int argc, char* argv[])
 
     Settings s;
 
-    const string inputSettingsFile = argc > 1 ? argv[1] : "in_VID5.xml";
-    VideoCapture cap(0); // open the default camera
+    const string inputSettingsFile = ((argc > 1) ? argv[1] : "in_VID5.xml");
+    // if using webcam use commented out code
+    /*int cameraIndex = 0;
+    VideoCapture cap(cameraIndex); // open the default camera
     if(!cap.isOpened())  // check if we succeeded
         return -1;
-
+    */
     FileStorage fs(inputSettingsFile, FileStorage::READ); // Read the settings
 
     if (!fs.isOpened())
@@ -666,9 +660,16 @@ int main(int argc, char* argv[])
     fs["Settings"] >> s;
 
     fs.release();                                         // close Settings file
-
-
-    if (!s.goodInput)
+    int pixy_init_status;
+    pixy_init_status = pixy_init();
+    printf("initialized Pixy - %d\n", pixy_init_status);
+    if(pixy_init_status != 0)
+    {
+      // Error initializing Pixy
+      pixy_error(pixy_init_status);
+      return pixy_init_status;
+    }
+    /*if (!s.goodInput)
 
     {
 
@@ -676,7 +677,8 @@ int main(int argc, char* argv[])
 
         return -1;
 
-    }
+    } else*/
+        cout << "Valid Input Detected." << endl;
 
 
 
@@ -693,18 +695,15 @@ int main(int argc, char* argv[])
     const Scalar RED(0,0,255), GREEN(0,255,0);
 
     const char ESC_KEY = 27;
-
-    for(int i = 0; cvWaitKey(1000) != 13;++i)
+    cout << "Starting calibration now..." << endl;
+    for(int i = 0; cvWaitKey(1) != 13;++i)
 
     {
-
       Mat view;
-
       bool blinkOutput = false;
-
-      cap >> view;
-
-      printf("Staring image\n");
+      view = s.nextImage();
+      imshow("Image View", view);
+      printf("Starting image\n");
 
       //-----  If no more image, or got enough, then stop calibration and show result -------------
 
@@ -752,7 +751,7 @@ int main(int argc, char* argv[])
 
         vector<Point2f> pointBuf;
 
-      printf("Doing image: %d.\n", i);
+        printf("Doing image: %d.\n", i);
 
 
 
@@ -792,7 +791,7 @@ int main(int argc, char* argv[])
 
         printf("found?: %d", found);
 
-        if ( found)                // If done with success,
+        if (found)                // If done with success,
 
         {
 
@@ -912,7 +911,7 @@ int main(int argc, char* argv[])
 
 
 
-        if( s.inputCapture.isOpened() && key == 'g' )
+        if(key == 'g' )
 
         {
 
@@ -1324,9 +1323,4 @@ bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat&
 
     return ok;
 
-}
-
-Mat viewImage(VideoCapture& stream1) {
-  Mat view;
-  stream1.read(view);
 }
