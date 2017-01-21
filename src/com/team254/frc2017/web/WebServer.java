@@ -47,6 +47,9 @@ public class WebServer {
 
         ServletHolder constantsHolder = new ServletHolder("constants", new ConstantsServlet());
         context.addServlet(constantsHolder, "/constants");
+        
+        ServletHolder resetConstantsHolder = new ServletHolder("resetConstants", new ResetConstantsServlet());
+        context.addServlet(resetConstantsHolder, "/resetconstants");
 
         // ServletHolder getAutoModesHolder = new ServletHolder("autoModes", new GetAutoModesServlet());
         // context.addServlet(getAutoModesHolder, "/autoModes");
