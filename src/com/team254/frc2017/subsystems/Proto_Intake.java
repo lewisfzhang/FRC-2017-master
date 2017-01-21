@@ -10,13 +10,17 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Intake extends Subsystem {
-    private static CANTalon mIntake;
+    private static CANTalon mIntake, mIntake2;
 
     private static Proto_Intake mInstance;
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Proto_Intake() {
-        mIntake = new CANTalon(7);
+        mIntake = new CANTalon(1);
+        mIntake.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mIntake2 = new CANTalon(14);
+        mIntake2.changeControlMode(CANTalon.TalonControlMode.Follower);
+        mIntake2.set(1);
     }
 
     public static Proto_Intake getInstance() {
