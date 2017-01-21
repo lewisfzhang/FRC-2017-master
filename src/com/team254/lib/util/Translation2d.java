@@ -23,6 +23,11 @@ public class Translation2d implements Interpolable<Translation2d> {
         x_ = other.x_;
         y_ = other.y_;
     }
+    
+    public Translation2d(Translation2d start, Translation2d end) {
+        x_ = end.x_ - start.x_;
+        y_ = end.y_ - start.y_;
+    }
 
     /**
      * The "norm" of a transform is the Euclidean distance in x and y.
@@ -92,6 +97,10 @@ public class Translation2d implements Interpolable<Translation2d> {
 
     public Translation2d extrapolate(Translation2d other, double x) {
         return new Translation2d(x * (other.x_ - x_) + x_, x * (other.y_ - y_) + y_);
+    }
+    
+    public Translation2d scale(double s) {
+        return new Translation2d(x_ * s, y_ * s);
     }
 
     @Override
