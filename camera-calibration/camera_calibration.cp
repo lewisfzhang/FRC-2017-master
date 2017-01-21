@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <time.h>
+#include <string>
 #include <stdio.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -12,7 +14,6 @@
 #include <signal.h>
 #include <string.h>
 #include <math.h>
-
 extern "C" {
 #include "pixy.h"
 }
@@ -1262,6 +1263,20 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
 
     fs << "Distortion_Coefficients" << distCoeffs;
 
+    ofstream myfile;
+    myfile.open ("output.txt");
+    myfile << "Camera Matrix:\n";
+    myfile << "Fx: " << cameraMatrix.at<double> (0, 0) << "\n";
+    myfile << "Fy: " << cameraMatrix.at<double> (1, 1) << "\n";
+    myfile << "Cx: " << cameraMatrix.at<double> (0, 2) << "\n";
+    myfile << "Cy: " << cameraMatrix.at<double> (1, 2) << "\n\n";
+    myfile << "Distortion Coefficients:\n";
+    myfile << "K1: " << distCoeffs.at<double> (0, 0) << "\n";
+    myfile << "K2: " << distCoeffs.at<double> (1, 0) << "\n";
+    myfile << "K3: " << distCoeffs.at<double> (4, 0) << "\n";
+    myfile << "P1: " << distCoeffs.at<double> (2, 0) << "\n";
+    myfile << "P2: " << distCoeffs.at<double> (3, 0);
+    myfile.close();
 
 
     fs << "Avg_Reprojection_Error" << totalAvgErr;
