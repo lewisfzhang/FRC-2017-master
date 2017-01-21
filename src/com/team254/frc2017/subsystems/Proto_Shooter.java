@@ -35,13 +35,15 @@ public class Proto_Shooter extends Subsystem {
         mMaster.changeControlMode(TalonControlMode.Voltage);
         mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mMaster.setVoltageCompensationRampRate(10000.0);
-        mMaster.enableBrakeMode(true);
+        mMaster.enableBrakeMode(false);
+        mMaster.setInverted(Constants.kFlywheelMotor1Inverted);
 
         mSlave = new CANTalon(2);
         mSlave.changeControlMode(TalonControlMode.Voltage);
         mSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mSlave.setVoltageCompensationRampRate(10000.0);
-        mSlave.enableBrakeMode(true);
+        mSlave.enableBrakeMode(false);
+        mSlave.setInverted(Constants.kFlywheelMotor2Inverted);
 
         mIntakeMaster = new CANTalon(3);
         mIntakeMaster.changeControlMode(TalonControlMode.Voltage);
@@ -55,7 +57,7 @@ public class Proto_Shooter extends Subsystem {
         mIntakeSlave.setVoltageCompensationRampRate(10000.0);
         mIntakeSlave.enableBrakeMode(false);
 
-        mRPMEncoder = new Encoder(0, 1, false /* reverse */, EncodingType.k4X);
+        mRPMEncoder = new Encoder(0, 1, Constants.kFlywheelEncoderInverted /* reverse */, EncodingType.k4X);
         mRPMEncoder.setDistancePerPulse(1.0 / 1024.0);
 
         mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd,
