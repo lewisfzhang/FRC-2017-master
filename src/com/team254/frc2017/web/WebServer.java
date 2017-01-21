@@ -15,6 +15,17 @@ public class WebServer {
     private static ArrayList<StateStreamSocket> updateStreams = new ArrayList<StateStreamSocket>();
     private static TaskQueue streamUpdate = new TaskQueue(200);
 
+    public static void main(String args[]) {
+        
+        startServer();
+        while(true) {
+            try {
+                Thread.sleep(1000000);
+            } catch(Exception e) {}
+        }
+        
+    }
+    
     public static void startServer() {
         if (server != null) {
             return;
