@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 /**
@@ -48,6 +50,18 @@ public abstract class ConstantsBase {
         String filePath = getFileLocation();
         filePath = filePath.replaceFirst("^~", System.getProperty("user.home"));
         return new File(filePath);
+    }
+    
+    public boolean truncateUserConstants() {
+        try {
+            Files.write(getFile().toPath(), new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
+            loadFromFile();
+            return true;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean setConstant(String name, Double value) {

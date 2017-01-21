@@ -55,7 +55,6 @@ public class Drive extends Subsystem {
             mLeftSlave.set(driveSignal.getLeft());
             mRightMaster.set(driveSignal.getRight());
             mRightSlave.set(driveSignal.getRight());
-            checkForCollision();
             outputToSmartDashboard();
         }
 
@@ -90,19 +89,6 @@ public class Drive extends Subsystem {
     public void registerCollisionListener(CollisionDetectionListener listen) {
     	mCollisionListeners.add(listen);
     }
-    
-    private Double getAccelerometerMagnitude() {
-    	return Math.hypot(mAccel.getX(), mAccel.getY());
-    }
-    
-    private void checkForCollision() {
-    	if (true/*TODO: Check if base locked*/ && getAccelerometerMagnitude() > Constants.kCollisionThreshold) {
-    		for(CollisionDetectionListener listen : mCollisionListeners) {
-    			listen.didCollide();
-    		}
-    	}
-    }
-    
     
 
 }

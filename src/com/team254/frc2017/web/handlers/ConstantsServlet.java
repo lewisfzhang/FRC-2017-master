@@ -37,6 +37,7 @@ public class ConstantsServlet extends HttpServlet {
         out.println("<input type='submit' value='Save'>");
         out.println("<input type='reset' value='Reset'>");
         out.println("</form>");
+        out.println("<a href='/resetconstants'>RESET ALL CONSTANTS</a>");
         out.println("</body>");
         out.println("</html>");
     }

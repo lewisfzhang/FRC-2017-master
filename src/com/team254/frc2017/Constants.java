@@ -33,21 +33,48 @@ public class Constants extends ConstantsBase {
 
     // Analog Inputs
     // TODO add some!
-    
-    // Drivebase - Collision Detection
-    public static double kCollisionThreshold = 0.5; //Unit in Gs (multiples of 9.8 m/s^2)
 
     // Flywheel PID
     // TODO give these actual values
+
+    /* 2" single wheel shooter constants
+    public static boolean kFlywheelMotor1Inverted = true;
+    public static boolean kFlywheelMotor2Inverted = false;
+    public static boolean kFlywheelEncoderInverted = false;
+    public static double kFlywheelReduction = 1.0;
+    public static double kFlywheelKp = 0.008;
+    public static double kFlywheelKi = 0.001;
+    public static double kFlywheelKd = 0.0;
+    public static double kFlywheelKf = 0.001;
+    public static double kFlywheelOnTargetTolerance = 20.0;
+    public static double kFlywheelTarget = 9000.0;
+    public static double kFlywheelFeedRollerVoltage = 9.0;
+    */
+    
+    /* 4" single wheel shooter constants */
+    public static boolean kFlywheelMotor1Inverted = true;
+    public static boolean kFlywheelMotor2Inverted = false;
+    public static boolean kFlywheelEncoderInverted = true;
     public static double kFlywheelReduction = 3.0;
-    // public static double kFlywheelKp = 0.00070175438/30;
+    public static double kFlywheelKp = 0.003;
+    public static double kFlywheelKi = 0.001;
+    public static double kFlywheelKd = 0.0;
+    public static double kFlywheelKf = 0.0007;
+    public static double kFlywheelOnTargetTolerance = 20.0;
+    public static double kFlywheelTarget = 4000.0;
+    public static double kFlywheelFeedRollerVoltage = 9.0;
+    
+    /* Triple roller shooter constants
+    public static boolean kFlywheelMotor1Inverted = true;
+    public static boolean kFlywheelMotor2Inverted = false;
+    public static boolean kFlywheelEncoderInverted = true;
     public static double kFlywheelKp = 0.005;
     public static double kFlywheelKi = 0.001;
     public static double kFlywheelKd = 0.0;
     public static double kFlywheelKf = 0.00085;
     public static double kFlywheelOnTargetTolerance = 20.0;
     public static double kFlywheelTarget = 2800.0;
-    public static double kFlywheelFeedRollerVoltage = 9.0;
+     */
 
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid
