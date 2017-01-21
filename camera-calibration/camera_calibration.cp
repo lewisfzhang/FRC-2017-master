@@ -469,7 +469,7 @@ Mat getImage()
 
     // printf("width: %d, height: %d \n", width, height);
 
-    cout << "width: " << rwidth << ", height: " << rheight << endl;
+    //cout << "width: " << rwidth << ", height: " << rheight << endl;
     //return_value = pixy_command("run", END_OUT_ARGS, &response, END_IN_ARGS);
 
     return renderBA81(renderflags,rwidth,rheight,numPixels,pixels);
@@ -560,7 +560,6 @@ Mat renderBA81(uint8_t renderFlags, uint16_t width, uint16_t height, uint32_t fr
 
 
     frame += width;
-    cout << sizeof(uchar[3*((height-2)*(width-2))]) << endl;
     uchar *data = new uchar[3*((height-2)*(width-2))];
 
     uint m = 0;
@@ -701,10 +700,60 @@ int main(int argc, char* argv[])
     {
       Mat view;
       bool blinkOutput = false;
+      char getkey = (char)waitKey(s.inputCapture.isOpened() ? 50 : s.delay);
       view = s.nextImage();
       imshow("Image View", view);
+      bool isGetKeyPressed = false;
+      while (!isGetKeyPressed && mode != CALIBRATED) {
+        view = s.nextImage();
+        imshow("Image View", view);
+        vector<Point2f> pointBuf;
+        bool found;
+        switch( s.calibrationPattern ) // Find feature points on the input format
+        {
+        case Settings::CHESSBOARD:
+            found = findChessboardCorners( view, s.boardSize, pointBuf,
+                CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+            break;
+        case Settings::CIRCLES_GRID:
+            found = findCirclesGrid( view, s.boardSize, pointBuf );
+            break;
+        case Settings::ASYMMETRIC_CIRCLES_GRID:
+            found = findCirclesGrid( view, s.boardSize, pointBuf, CALIB_CB_ASYMMETRIC_GRID );
+            break;
+        default:
+            found = false;
+            break;
+        }
+        printf("found?: %d", found);
+        if (found)                // If done with success,
+        {
+              // improve the found corners' coordinate accuracy for chessboard
+                if( s.calibrationPattern == Settings::CHESSBOARD)
+                {
+                    Mat viewGray;
+                    cvtColor(view, viewGray, COLOR_BGR2GRAY);
+                    cornerSubPix( viewGray, pointBuf, Size(11,11),
+                        Size(-1,-1), TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
+                }
+                if( mode == CAPTURING &&  // For camera only take new samples after delay time
+                    (!s.inputCapture.isOpened() || clock() - prevTimestamp > s.delay*1e-3*CLOCKS_PER_SEC) )
+                {
+                    imagePoints.push_back(pointBuf);
+                    prevTimestamp = clock();
+                    blinkOutput = s.inputCapture.isOpened();
+                }
+                // Draw the corners.
+                drawChessboardCorners( view, s.boardSize, Mat(pointBuf), found );
+        }
+        imshow("Image View", view);
+        if (getkey == ' ')
+          isGetKeyPressed = true;
+        getkey = (char)waitKey(s.inputCapture.isOpened() ? 50 : s.delay);
+      }
+      isGetKeyPressed = false;
+      cout << "Took Pic" << endl;
       printf("Starting image\n");
-
       //-----  If no more image, or got enough, then stop calibration and show result -------------
 
       if( mode == CAPTURING && imagePoints.size() >= (unsigned)s.nrFrames )
@@ -745,17 +794,17 @@ int main(int argc, char* argv[])
 
         imageSize = view.size();  // Format input image.
 
-        if( s.flipVertical )    flip( view, view, 0 );
+        if(s.flipVertical)    flip( view, view, 0 );
 
 
 
-        vector<Point2f> pointBuf;
+        //vector<Point2f> pointBuf;
 
         printf("Doing image: %d.\n", i);
 
 
 
-        bool found;
+        /*bool found;
 
         switch( s.calibrationPattern ) // Find feature points on the input format
 
@@ -833,21 +882,20 @@ int main(int argc, char* argv[])
 
                 drawChessboardCorners( view, s.boardSize, Mat(pointBuf), found );
 
-        }
+        }*/
 
 
 
         //----------------------------- Output Text ------------------------------------------------
 
         string msg = (mode == CAPTURING) ? "100/100" :
-
-                      mode == CALIBRATED ? "Calibrated" : "Press 'g' to start";
+                      (mode == CALIBRATED && s.showUndistorsed) ? "Undistorted" :
+                      (mode == CALIBRATED) ? "Distorted" : "Press 'g' to start";
         int baseLine = 0;
 
         Size textSize = getTextSize(msg, 1, 1, 1, &baseLine);
 
         Point textOrigin(view.cols - 2*textSize.width - 10, view.rows - 2*baseLine - 10);
-
 
 
         if( mode == CAPTURING )
@@ -894,19 +942,17 @@ int main(int argc, char* argv[])
 
         char key = (char)waitKey(s.inputCapture.isOpened() ? 50 : s.delay);
 
-
-
         if( key  == ESC_KEY )
 
             break;
 
 
 
-        if( key == 'u' && mode == CALIBRATED )
-
+        if( key == 'u' && mode == CALIBRATED ) {
            s.showUndistorsed = !s.showUndistorsed;
-
-
+           if (s.showUndistorsed == 1) cout << "Showing: Undistorted" << endl;
+           else cout << "Showing: Distorted" << endl;
+         }
 
         if(key == 'g' )
 
