@@ -662,12 +662,12 @@ int main(int argc, char* argv[])
     fs.release();                                         // close Settings file
     int pixy_init_status;
     pixy_init_status = pixy_init();
-    printf("initialized Pixy - %d\n", pixy_init_status);
+    cout << "initialized Pixy - " << pixy_init_status << endl;
     if(pixy_init_status != 0)
     {
       // Error initializing Pixy
       pixy_error(pixy_init_status);
-      return pixy_init_status;
+      return -1;
     }
     /*if (!s.goodInput)
 
@@ -842,7 +842,6 @@ int main(int argc, char* argv[])
         string msg = (mode == CAPTURING) ? "100/100" :
 
                       mode == CALIBRATED ? "Calibrated" : "Press 'g' to start";
-
         int baseLine = 0;
 
         Size textSize = getTextSize(msg, 1, 1, 1, &baseLine);
@@ -861,11 +860,9 @@ int main(int argc, char* argv[])
 
             else
 
-                msg = format( "%d/%d", (int)imagePoints.size(), s.nrFrames );
+                msg = format( "%d/%d Dist", (int)imagePoints.size(), s.nrFrames );
 
         }
-
-
 
         putText( view, msg, textOrigin, 1, 1, mode == CALIBRATED ?  GREEN : RED);
 

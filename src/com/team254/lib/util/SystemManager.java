@@ -106,7 +106,7 @@ public class SystemManager {
     }
 
     public JSONObject get(String k) {
-        return get(new String[]{k});
+        return get(new String[] { k });
     }
 
     // Returns a map of states for the devices specified in args
