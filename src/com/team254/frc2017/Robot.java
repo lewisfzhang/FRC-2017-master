@@ -28,9 +28,9 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        mDrive.registerEnabledLoops(mEnabledLooper);
-        mIntake.registerEnabledLoops(mEnabledLooper);
-        //mShooter.registerEnabledLoops(mEnabledLooper);
+        //mDrive.registerEnabledLoops(mEnabledLooper);
+        //mIntake.registerEnabledLoops(mEnabledLooper);
+        mShooter.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
 
     }
@@ -63,7 +63,7 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-    	/*
+    	
         if (mControlBoard.getSpinShooterButton()) {
             mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
@@ -74,7 +74,7 @@ public class Robot extends IterativeRobot {
             mShooter.setFeedRoller(Constants.kFlywheelFeedRollerVoltage);
         } else {
             mShooter.setFeedRoller(0.0);
-        }*/
+        }
     }
 
     @Override
