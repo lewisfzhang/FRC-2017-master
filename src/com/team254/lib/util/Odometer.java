@@ -29,6 +29,7 @@ public class Odometer {
     
     protected class Odometer_Loop implements Loop {
         public void onStart(double timestamp) {
+            mDrive.zeroSensors();
             // ZERO THE NAVX SENSOR!!!
         }
 
