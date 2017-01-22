@@ -10,7 +10,7 @@ import java.util.Set;
  * Basically, we find a spot on the path we'd like to follow and calculate the wheel speeds necessary to make us land on
  * that spot. The target spot is a specified distance ahead of us, and we look further ahead the greater our tracking
  * error.
- */
+ 
 public class AdaptivePurePursuitController {
     private static final double kEpsilon = 1E-9;
 
@@ -147,3 +147,4 @@ public class AdaptivePurePursuitController {
     }
 
 }
+*/

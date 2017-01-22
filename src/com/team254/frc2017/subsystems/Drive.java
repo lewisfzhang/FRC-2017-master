@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
@@ -22,16 +24,25 @@ public class Drive extends Subsystem {
     private static Accelerometer mAccel;
     
     private static Drive mInstance;
-    CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
-    ControlBoard mControlBoard = ControlBoard.getInstance();
     
     private Collection<CollisionDetectionListener> mCollisionListeners = new LinkedList<CollisionDetectionListener>();
 
     private Drive() {
-        mLeftMaster = new CANTalon(11);
-        mLeftSlave = new CANTalon(12);
+        // What kind of encoder will we be using in the drivetrain? Regular quadrature encoders?
+        
+        mLeftMaster = new CANTalon(2);
+        mLeftMaster.changeControlMode(TalonControlMode.PercentVbus);
+        mLeftMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+        mLeftSlave = new CANTalon(1);
+        mLeftSlave.changeControlMode(TalonControlMode.Follower);
+        mLeftSlave.set(2);
+        
         mRightMaster = new CANTalon(3);
+        mRightMaster.changeControlMode(TalonControlMode.PercentVbus);
+        mRightMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
         mRightSlave = new CANTalon(4);
+        mRightSlave.changeControlMode(TalonControlMode.Follower);
+        mRightSlave.set(3);
         
         mAccel = new BuiltInAccelerometer(); 
     	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
@@ -49,12 +60,6 @@ public class Drive extends Subsystem {
         }
 
         public void onLoop(double timestamp) {
-            DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(),
-                    mControlBoard.getTurn(), mControlBoard.getQuickTurn());
-            mLeftMaster.set(driveSignal.getLeft());
-            mLeftSlave.set(driveSignal.getLeft());
-            mRightMaster.set(driveSignal.getRight());
-            mRightSlave.set(driveSignal.getRight());
             checkForCollision();
             outputToSmartDashboard();
         }
@@ -67,23 +72,36 @@ public class Drive extends Subsystem {
     public void registerEnabledLoops(Looper in) {
         in.register(new Drive_Loop());
     }
-
-    public void stop() {
-        mLeftMaster.stopMotor();
-        mLeftSlave.stopMotor();
-        mRightMaster.stopMotor();
-        mRightSlave.stopMotor();
+    
+    public synchronized void setLRPower(double left, double right) {
+        mLeftMaster.set(left);
+        mRightMaster.set(right);
     }
     
-    
+    public void zeroSensors() {
+        mLeftMaster.setPosition(0.0);
+        mRightMaster.setPosition(0.0);
+    }
+
+    public void stop() {
+        mLeftMaster.set(0);
+        mRightMaster.set(0);
+    }
 
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Left Drive Motor RPM", mLeftMaster.getSpeed());
         SmartDashboard.putNumber("Right Drive Motor RPM", mRightMaster.getSpeed());
+        SmartDashboard.putNumber("Left Encoder Position", getLEncoderTicks());
+        SmartDashboard.putNumber("Right Encoder Position", getREncoderTicks());
     }
 
-    public void zeroSensors() {
-
+    // Returns 4096 ticks per rotation
+    public int getLEncoderTicks() {
+        return mLeftMaster.getEncPosition();
+    }
+    
+    public int getREncoderTicks() {
+        return mRightMaster.getEncPosition();
     }
     
     //Collision Code
@@ -102,7 +120,4 @@ public class Drive extends Subsystem {
     		}
     	}
     }
-    
-    
-
 }

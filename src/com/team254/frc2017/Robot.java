@@ -5,6 +5,9 @@ import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.subsystems.Proto_Intake;
 import com.team254.frc2017.subsystems.Proto_Shooter;
 import com.team254.frc2017.web.WebServer;
+import com.team254.lib.util.CheesyDriveHelper;
+import com.team254.lib.util.DriveSignal;
+import com.team254.lib.util.Odometer;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -17,11 +20,13 @@ public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
     Proto_Intake mIntake = Proto_Intake.getInstance();
     Proto_Shooter mShooter = Proto_Shooter.getInstance();
+    Odometer mOdometer = Odometer.getInstance();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     Looper mEnabledLooper = new Looper();
 
+    CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
     WebServer mHTTPServer = new WebServer();
 
     /**
@@ -29,9 +34,10 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        // mDrive.registerEnabledLoops(mEnabledLooper);
+        mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
         mShooter.registerEnabledLoops(mEnabledLooper);
+        mOdometer.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
     }
 
@@ -66,6 +72,10 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopPeriodic() {
 
+        DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(),
+                mControlBoard.getTurn(), mControlBoard.getQuickTurn());
+        mDrive.setLRPower(driveSignal.getLeft(), driveSignal.getRight());
+        
         if (mControlBoard.getSpinShooterButton()) {
             mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
