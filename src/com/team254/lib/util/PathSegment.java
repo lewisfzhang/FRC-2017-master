@@ -100,7 +100,7 @@ public class PathSegment {
             }
         }
         
-        public Translation2d getClosest(Translation2d from) {
+        public Translation2d getClosestPoint(Translation2d from) {
             if(curvature == 0) {
                 Translation2d delta = new Translation2d(start, end);
                 double u = ((from.getX() - start.getX()) * delta.getX() + (from.getY() - start.getY()) * delta.getY()) / (delta.getX() * delta.getX() + delta.getY() * delta.getY());
@@ -112,13 +112,10 @@ public class PathSegment {
                     return new Translation2d(start.getX() + u * delta.getX(), start.getY() + u * delta.getY());
             } else {
                 Translation2d delta = new Translation2d(center, from);
-                System.out.println("Center to Robot: " + delta);
                 double s = (1/curvature) / delta.norm();
-                System.out.println("Scalar: " + s);
                 delta = delta.scale(s);
                 double a = Math.atan2(-delta.getY(), delta.getX());
                 a = (a < 0) ? a + Math.PI*2 : a;
-                System.out.println("Angle: " + a);
                 if(((endAngle - startAngle) <= Math.PI && a < startAngle && a > endAngle) || ((endAngle - startAngle) > Math.PI && a > startAngle && a < endAngle)) {
                     Translation2d startDist = new Translation2d(from, start);
                     Translation2d endDist = new Translation2d(from, start);
@@ -131,6 +128,43 @@ public class PathSegment {
                 return center.translateBy(delta);
             }
             
+        }
+        
+        public Translation2d getLookAheadPoint(double dist) throws Error {
+            double length = getLength();
+            if(dist > length)
+                throw new Error("Distance cannot be longer than the length of the segment");
+            if(curvature == 0) {
+                Translation2d delta = new Translation2d(start, end);
+                return start.translateBy( delta.scale(dist / length) );
+            } else {
+                Double deltaAngle;
+                if(endAngle - startAngle <= Math.PI) {
+                    deltaAngle = (dist / length) * (endAngle - startAngle);
+                } else {
+                    deltaAngle = (dist / length) * (Math.PI * 2 - endAngle + startAngle);
+                }
+                Translation2d t = new Translation2d(Math.cos(deltaAngle + startAngle), Math.sin(deltaAngle + startAngle)).scale(1/curvature);
+                return center.translateBy(t);
+            }
+        }
+        
+        public double getRemainingDistance(Translation2d point) {
+            if(curvature == 0) {
+                return new Translation2d(end, point).norm();
+            } else {
+                Double angle = Math.atan2(center.getY()-point.getY(), point.getX()-center.getX());
+                angle = (angle < 0) ? angle + Math.PI*2 : angle;
+                double totalAngle;
+                if(endAngle - startAngle <= Math.PI) {
+                    totalAngle = (endAngle - startAngle);
+                } else {
+                    totalAngle = (Math.PI * 2 - endAngle + startAngle);
+                }
+                double deltaAngle = Math.abs(endAngle - angle);
+                deltaAngle = (deltaAngle > Math.PI) ? Math.PI*2 - deltaAngle : deltaAngle;
+                return deltaAngle/totalAngle * getLength();
+            }
         }
         
         

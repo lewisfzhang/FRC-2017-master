@@ -32,21 +32,24 @@ public class Path {
              }
              sc.close();
          } catch (Exception e) {
-             e.printStackTrace();
+             e.printStackTrace(); 
          }
      }
      
      public static void main(String[] args) {
-         PathSegment.Segment curve = new PathSegment.Segment(10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.1, 0, 3.0 * Math.PI/2, 1.0);
-         Translation2d p = new Translation2d(1.0, 0.0);
-         System.out.println(curve.getClosest(p));
-         System.out.println(curve.getLength());
-         PathSegment.Segment line = new PathSegment.Segment(0.0, 0.0, 20.0, 20.0, 1.0);
-         p = new Translation2d(15.0, 10.0);
-         System.out.println(line.getClosest(p));
-         System.out.println(line.getLength());
+//         PathSegment.Segment curve = new PathSegment.Segment(10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.1, 0, 3.0 * Math.PI/2, 1.0);
+//         Translation2d p = new Translation2d(1.0, 1.0);
+//         System.out.println(curve.getRemainingDistance(curve.getClosestPoint(p)));
+//         System.out.println(curve.getLength());
+//         System.out.println(curve.getLookAheadPoint(15.707963267948964/2));
+//         PathSegment.Segment line = new PathSegment.Segment(0.0, 0.0, 20.0, 20.0, 1.0);
+//         p = new Translation2d(15.0, 10.0);
+//         System.out.println(line.getClosestPoint(p));
+//         System.out.println(line.getLength());
          
-         Path test = new Path("~/path.txt");
+         
+         
+         //Path test = new Path("~/path.txt");
      }
      
 }

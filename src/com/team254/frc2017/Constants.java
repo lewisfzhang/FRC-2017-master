@@ -48,6 +48,9 @@ public class Constants extends ConstantsBase {
     public static double kFlywheelOnTargetTolerance = 20.0;
     public static double kFlywheelTarget = 2800.0;
     public static double kFlywheelFeedRollerVoltage = 9.0;
+    
+    public static double kAutoLookAhead = 100.0;
+    public static double kAutoSegmentThreshold = 0.95;
 
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid
