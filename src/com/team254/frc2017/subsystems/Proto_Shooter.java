@@ -22,6 +22,8 @@ public class Proto_Shooter extends Subsystem {
     private boolean mClosedLoop = false;
 
     private double mVelocityRpm = 0;
+    
+    private int satcount = 0;
 
     public static Proto_Shooter getInstance() {
         if (mInstance == null) {
@@ -127,6 +129,11 @@ public class Proto_Shooter extends Subsystem {
     // This is protected since it should only ever be called by a public
     // synchronized method or the loop.
     protected void setVoltage(double voltage) {
+        SmartDashboard.putNumber("PID (v)", voltage);
+        if (voltage > 11.9) {
+            satcount++;
+        }
+        SmartDashboard.putNumber("PID Saturation", satcount);
         mMaster.set(-voltage);
         mSlave.set(voltage);
     }

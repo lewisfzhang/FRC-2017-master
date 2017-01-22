@@ -13,47 +13,43 @@ public class ControlBoard {
         return mInstance;
     }
 
-    private final Joystick mThrottleStick;
-    private final Joystick mTurnStick;
-    private final Joystick mButtonBoard;
+    private final Joystick mStick;
 
     private ControlBoard() {
-        mThrottleStick = new Joystick(0);
-        mTurnStick = new Joystick(1);
-        mButtonBoard = new Joystick(2);
+        mStick = new Joystick(0);
     }
 
     // DRIVER CONTROLS
     public double getThrottle() {
-        return -mThrottleStick.getY();
+        return -mStick.getY();
     }
 
     public double getTurn() {
-        return mTurnStick.getX();
+        return mStick.getX();
     }
 
     public boolean getQuickTurn() {
-        return mTurnStick.getRawButton(1);
+        return mStick.getRawButton(6);
     }
 
     public boolean getLowGear() {
-        return mThrottleStick.getRawButton(2);
+        return mStick.getRawButton(5);
     }
 
     // OPERATOR CONTROLS
     public boolean getFireButton() {
-        return mButtonBoard.getRawAxis(1) < -0.1;
+        return mStick.getRawButton(4);
     }
 
     public boolean getIntakeButton() {
-        return mButtonBoard.getRawAxis(2) < -0.1;
+        return mStick.getRawButton(3);
     }
 
     public boolean getSpinShooterButton() {
-        return mButtonBoard.getRawButton(1);
+        return mStick.getRawButton(1);
     }
 
     public boolean getShootButton() {
-        return mButtonBoard.getRawButton(2);
+        return mStick.getRawButton(2);
     }
 }

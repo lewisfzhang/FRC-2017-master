@@ -34,6 +34,9 @@ public class Constants extends ConstantsBase {
     // Analog Inputs
     // TODO add some!
 
+    //FEED
+    public static double kFeedSensorThreshold = 0.8;
+    
     // Flywheel PID
     // TODO give these actual values
 
@@ -54,7 +57,7 @@ public class Constants extends ConstantsBase {
     /* 4" single wheel shooter constants */
     public static boolean kFlywheelMotor1Inverted = true;
     public static boolean kFlywheelMotor2Inverted = false;
-    public static boolean kFlywheelEncoderInverted = true;
+    public static boolean kFlywheelEncoderInverted = false;
     public static double kFlywheelReduction = 3.0;
     public static double kFlywheelKp = 0.003;
     public static double kFlywheelKi = 0.001;

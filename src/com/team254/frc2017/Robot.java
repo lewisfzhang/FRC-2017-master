@@ -2,6 +2,7 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
+import com.team254.frc2017.subsystems.Feed;
 import com.team254.frc2017.subsystems.Proto_Intake;
 import com.team254.frc2017.subsystems.Proto_Shooter;
 import com.team254.frc2017.web.WebServer;
@@ -17,6 +18,7 @@ public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
     Proto_Intake mIntake = Proto_Intake.getInstance();
     Proto_Shooter mShooter = Proto_Shooter.getInstance();
+    Feed mFeed = new Feed();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
@@ -32,6 +34,7 @@ public class Robot extends IterativeRobot {
         // mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
         mShooter.registerEnabledLoops(mEnabledLooper);
+        mFeed.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
     }
 
@@ -67,7 +70,8 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
 
         if (mControlBoard.getSpinShooterButton()) {
-            mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
+            
+            mShooter.setRpmSetpoint((mControlBoard.getFireButton())? Constants.kFlywheelTarget - 100 : Constants.kFlywheelTarget);
         } else {
             mShooter.setManualVoltage(0.0);
         }
