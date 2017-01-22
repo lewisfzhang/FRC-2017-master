@@ -34,11 +34,6 @@ public class AdaptivePurePursuitController {
         mPathCompletionTolerance = path_completion_tolerance;
     }
 
-    public boolean isDone() {
-        double remainingLength = mPath.getRemainingLength();
-        return remainingLength <= mPathCompletionTolerance;
-    }
-
     public RigidTransform2d.Delta update(RigidTransform2d robot_pose, double now) {
         RigidTransform2d pose = robot_pose;
         if (mReversed) {
@@ -46,46 +41,16 @@ public class AdaptivePurePursuitController {
                     robot_pose.getRotation().rotateBy(Rotation2d.fromRadians(Math.PI)));
         }
 
-        double distance_from_path = mPath.update(robot_pose.getTranslation());
-        if (this.isDone()) {
-            return new RigidTransform2d.Delta(0, 0, 0);
-        }
+        Translation2d lookaheadPoint = mPath.getTargetPoint(pose.getTranslation());
+        Optional<Circle> circle = joinPath(pose, lookaheadPoint);
 
-        PathSegment.Sample lookahead_point = mPath.getLookaheadPoint(robot_pose.getTranslation(),
-                distance_from_path + mFixedLookahead);
-        Optional<Circle> circle = joinPath(pose, lookahead_point.translation);
-
-        double speed = lookahead_point.speed;
+        //TODO: Implement speed controller
+        //double speed = mSpeedController.getSpeed(pose.getTranslation());
+        double speed = 10.0;
         if (mReversed) {
             speed *= -1;
         }
         // Ensure we don't accelerate too fast from the previous command
-        double dt = now - mLastTime;
-        if (mLastCommand == null) {
-            mLastCommand = new RigidTransform2d.Delta(0, 0, 0);
-            dt = mDt;
-        }
-        double accel = (speed - mLastCommand.dx) / dt;
-        if (accel < -mMaxAccel) {
-            speed = mLastCommand.dx - mMaxAccel * dt;
-        } else if (accel > mMaxAccel) {
-            speed = mLastCommand.dx + mMaxAccel * dt;
-        }
-
-        // Ensure we slow down in time to stop
-        // vf^2 = v^2 + 2*a*d
-        // 0 = v^2 + 2*a*d
-        double remaining_distance = mPath.getRemainingLength();
-        double max_allowed_speed = Math.sqrt(2 * mMaxAccel * remaining_distance);
-        if (Math.abs(speed) > max_allowed_speed) {
-            speed = max_allowed_speed * Math.signum(speed);
-        }
-        final double kMinSpeed = 4.0;
-        if (Math.abs(speed) < kMinSpeed) {
-            // Hack for dealing with problems tracking very low speeds with
-            // Talons
-            speed = kMinSpeed * Math.signum(speed);
-        }
 
         RigidTransform2d.Delta rv;
         if (circle.isPresent()) {
@@ -99,9 +64,6 @@ public class AdaptivePurePursuitController {
         return rv;
     }
 
-    public Set<String> getMarkersCrossed() {
-        return mPath.getMarkersCrossed();
-    }
 
     public static class Circle {
         public final Translation2d center;

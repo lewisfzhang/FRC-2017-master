@@ -1,6 +1,8 @@
 package com.team254.lib.util;
 
-public class PathSegment {
+public abstract class PathSegment {
+    
+    abstract boolean isTurn();
     
     static class Segment extends PathSegment {
         private Translation2d start;
@@ -68,13 +70,17 @@ public class PathSegment {
             calcArc();
         }
         
+        public boolean isTurn() {
+            return false;
+        }
+        
         private void calcArc() {
             Translation2d deltaS = new Translation2d(center, start);
             Translation2d deltaE = new Translation2d(center, end);
             this.startAngle = Math.atan2(-deltaS.getY(), deltaS.getX());
-            startAngle = (startAngle < 0) ? startAngle + Math.PI : startAngle;
+            startAngle = (startAngle < 0) ? startAngle + Math.PI*2 : startAngle;
             this.endAngle = Math.atan2(-deltaE.getY(), deltaE.getX());
-            endAngle = (endAngle < 0) ? endAngle + Math.PI : endAngle;
+            endAngle = (endAngle < 0) ? endAngle + Math.PI*2 : endAngle;
             this.curvature = 1/deltaS.norm();
         }
         
@@ -133,10 +139,10 @@ public class PathSegment {
         public Translation2d getLookAheadPoint(double dist) throws Error {
             double length = getLength();
             if(dist > length)
-                throw new Error("Distance cannot be longer than the length of the segment");
+                dist = length;
             if(curvature == 0) {
                 Translation2d delta = new Translation2d(start, end);
-                return start.translateBy( delta.scale(dist / length) );
+                return start.translateBy( delta.scale(dist / length));
             } else {
                 Double deltaAngle;
                 if(endAngle - startAngle <= Math.PI) {
@@ -144,7 +150,7 @@ public class PathSegment {
                 } else {
                     deltaAngle = (dist / length) * (Math.PI * 2 - endAngle + startAngle);
                 }
-                Translation2d t = new Translation2d(Math.cos(deltaAngle + startAngle), Math.sin(deltaAngle + startAngle)).scale(1/curvature);
+                Translation2d t = new Translation2d(Math.cos(deltaAngle + startAngle), -Math.sin(deltaAngle + startAngle)).scale(1/curvature);
                 return center.translateBy(t);
             }
         }
@@ -197,6 +203,28 @@ public class PathSegment {
         
         public double getTurnSpeed() {
             return turnSpeed;
+        }
+        
+        public boolean isTurn() {
+            return true;
+        }
+    }
+    
+    static class ClosestPointReport {
+        private Translation2d point;
+        private double remainingDistance;
+        
+        public ClosestPointReport(Translation2d point, double remainingDistance) {
+            this.point = point;
+            this.remainingDistance = remainingDistance;
+        }
+        
+        public double getRemainingDistance(double totalDist) {
+            return totalDist - remainingDistance;
+        }
+        
+        public Translation2d getPoint() {
+            return point;
         }
     }
 }
