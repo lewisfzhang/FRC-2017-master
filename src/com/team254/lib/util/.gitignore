@@ -37,3 +37,6 @@
 /TimeDelayedBoolean.class
 /Translation2d.class
 /Util.class
+/TrajectoryFollower$GoalState.class
+/TrajectoryFollower$MotionState.class
+/TrajectoryFollower.class

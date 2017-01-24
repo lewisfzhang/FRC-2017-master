@@ -39,10 +39,11 @@ public class Proto_Shooter extends Subsystem {
         mMaster.setInverted(Constants.kFlywheelMotor1Inverted);
 
         mSlave = new CANTalon(2);
-        mSlave.changeControlMode(TalonControlMode.Voltage);
+        mSlave.changeControlMode(TalonControlMode.Follower);
         mSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mSlave.setVoltageCompensationRampRate(10000.0);
         mSlave.enableBrakeMode(false);
+        mSlave.set(1);
         mSlave.setInverted(Constants.kFlywheelMotor2Inverted);
 
         mRPMEncoder = new Encoder(0, 1, Constants.kFlywheelEncoderInverted /* reverse */, EncodingType.k4X);
