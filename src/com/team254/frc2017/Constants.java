@@ -33,6 +33,17 @@ public class Constants extends ConstantsBase {
 
     // Analog Inputs
     // TODO add some!
+    
+    //Feeder
+    public static double kFeedKp = 0.0;
+    public static double kFeedKi = 0.0;
+    public static double kFeedKd = 0.0;
+    public static double kFeedKf = 0.0;
+    public static int kFeedIZone = 0;
+    public static double kFeedRampRate = 10000; //hella ramp
+    public static int kFeedVelocityAllowableError = 0;
+    
+    public static double kFeedRPM = 1000;
 
     // Flywheel PID
     // TODO give these actual values
@@ -55,7 +66,7 @@ public class Constants extends ConstantsBase {
     public static boolean kFlywheelMotor1Inverted = true;
     public static boolean kFlywheelMotor2Inverted = false;
     public static boolean kFlywheelEncoderInverted = true;
-    public static double kFlywheelReduction = 3.0;
+    public static double kFlywheelReduction = 1.0;
     public static double kFlywheelKp = 0.003;
     public static double kFlywheelKi = 0.001;
     public static double kFlywheelKd = 0.0;

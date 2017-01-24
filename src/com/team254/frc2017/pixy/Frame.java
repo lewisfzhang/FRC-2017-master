@@ -1,4 +1,4 @@
-package org.usfirst.frc.team252.robot;
+package com.team254.frc2017.pixy;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class Frame {
 			NORMAL, COLOR_CODE
 		}
 		SyncType sync;
-		int checksum, signature, centerX, centerY, width, height;
+		public int checksum, signature, centerX, centerY, width, height;
 		@Override
 		public String toString() {
 			return ":Block { signature: "+signature+", center: ("+centerX+", "+centerY+"), size: "+width+"x"+height+" }";

@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Proto_Shooter extends Subsystem {
     private static Proto_Shooter mInstance = null;
 
-    private CANTalon mMaster, mSlave, mIntakeMaster, mIntakeSlave;
+    private CANTalon mMaster, mSlave;
     private Encoder mRPMEncoder;
 
     private SynchronousPIDF mController;
@@ -29,7 +29,7 @@ public class Proto_Shooter extends Subsystem {
         }
         return mInstance;
     }
-
+    
     private Proto_Shooter() {
         mMaster = new CANTalon(1);
         mMaster.changeControlMode(TalonControlMode.Voltage);
@@ -45,23 +45,10 @@ public class Proto_Shooter extends Subsystem {
         mSlave.enableBrakeMode(false);
         mSlave.setInverted(Constants.kFlywheelMotor2Inverted);
 
-        mIntakeMaster = new CANTalon(3);
-        mIntakeMaster.changeControlMode(TalonControlMode.Voltage);
-        mIntakeMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
-        mIntakeMaster.setVoltageCompensationRampRate(10000.0);
-        mIntakeMaster.enableBrakeMode(false);
-
-        mIntakeSlave = new CANTalon(4);
-        mIntakeSlave.changeControlMode(TalonControlMode.Voltage);
-        mIntakeSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
-        mIntakeSlave.setVoltageCompensationRampRate(10000.0);
-        mIntakeSlave.enableBrakeMode(false);
-
         mRPMEncoder = new Encoder(0, 1, Constants.kFlywheelEncoderInverted /* reverse */, EncodingType.k4X);
         mRPMEncoder.setDistancePerPulse(1.0 / 1024.0);
 
-        mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd,
-                Constants.kFlywheelKf);
+        mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
         mController.setOutputRange(-12.0, 12.0);
     }
 
@@ -80,6 +67,7 @@ public class Proto_Shooter extends Subsystem {
 
         public void onLoop(double timestamp) {
             synchronized (Proto_Shooter.this) {
+                mController.setGains(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
                 double now = Timer.getFPGATimestamp();
                 double distance_now = mRPMEncoder.getDistance();
                 double delta_t = now - mPrevTimestamp;
@@ -127,14 +115,9 @@ public class Proto_Shooter extends Subsystem {
     // This is protected since it should only ever be called by a public
     // synchronized method or the loop.
     protected void setVoltage(double voltage) {
+        SmartDashboard.putNumber("PIDF (v)", voltage);
         mMaster.set(-voltage);
         mSlave.set(voltage);
-    }
-
-    // TODO: Move this to its own subsystem.
-    public synchronized void setFeedRoller(double voltage) {
-        mIntakeMaster.set(voltage);
-        mIntakeSlave.set(-voltage);
     }
 
     public synchronized double getSetpoint() {
@@ -157,8 +140,6 @@ public class Proto_Shooter extends Subsystem {
         mController.reset();
         mMaster.set(0.0);
         mSlave.set(0.0);
-        mIntakeMaster.set(0.0);
-        mIntakeSlave.set(0.0);
     }
 
     @Override

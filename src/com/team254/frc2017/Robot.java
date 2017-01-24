@@ -2,6 +2,7 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
+import com.team254.frc2017.subsystems.Proto_Feeder;
 import com.team254.frc2017.subsystems.Proto_Intake;
 import com.team254.frc2017.subsystems.Proto_Shooter;
 import com.team254.frc2017.web.WebServer;
@@ -17,6 +18,7 @@ public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
     Proto_Intake mIntake = Proto_Intake.getInstance();
     Proto_Shooter mShooter = Proto_Shooter.getInstance();
+    Proto_Feeder mFeeder = Proto_Feeder.getInstance();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
@@ -58,6 +60,9 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopInit() {
         mEnabledLooper.start();
+        
+        //re-update feeder constants & apply to talons
+        mFeeder.updateConstants();
     }
 
     /**
@@ -73,11 +78,12 @@ public class Robot extends IterativeRobot {
         }
 
         if (mControlBoard.getShootButton()) {
-            mShooter.setFeedRoller(Constants.kFlywheelFeedRollerVoltage);
+            mFeeder.setSetpoint(Constants.kFeedRPM);
         } else {
-            mShooter.setFeedRoller(0.0);
+            mFeeder.setSetpoint(0.0);
         }
         mShooter.outputToSmartDashboard();
+        mFeeder.outputToSmartDashboard();
     }
 
     @Override
