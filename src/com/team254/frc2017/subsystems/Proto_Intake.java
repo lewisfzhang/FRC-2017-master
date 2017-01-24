@@ -1,5 +1,7 @@
 package com.team254.frc2017.subsystems;
 
+import com.ctre.CANTalon;
+import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
@@ -9,13 +11,24 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Intake extends Subsystem {
-    private static Talon mIntake;
+    private static CANTalon mIntakeSlave, mIntakeMaster;
 
     private static Proto_Intake mInstance;
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Proto_Intake() {
-        mIntake = new Talon(7);
+        mIntakeMaster = new CANTalon(1);
+        mIntakeMaster.changeControlMode(TalonControlMode.Voltage);
+        mIntakeMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
+        mIntakeMaster.setVoltageCompensationRampRate(10000.0);
+        mIntakeMaster.enableBrakeMode(false);
+        
+        mIntakeSlave = new CANTalon(2);
+        mIntakeSlave.changeControlMode(TalonControlMode.Follower);
+        mIntakeSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
+        mIntakeSlave.setVoltageCompensationRampRate(10000.0);
+        mIntakeSlave.enableBrakeMode(false);
+        mIntakeSlave.set(1);
     }
 
     public static Proto_Intake getInstance() {
@@ -30,11 +43,7 @@ public class Proto_Intake extends Subsystem {
         }
 
         public void onLoop(double timestamp) {
-            if (mControlBoard.getIntakeButton())
-                mIntake.set(1);
-            else
-                mIntake.set(0);
-            outputToSmartDashboard();
+            
         }
 
         public void onStop(double timestamp) {
@@ -47,19 +56,24 @@ public class Proto_Intake extends Subsystem {
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Flywheel Motor RPM", mIntake.getSpeed());
+        SmartDashboard.putNumber("Flywheel Motor RPM", mIntakeMaster.getSpeed());
+    }
+    
+    public synchronized void setManualVoltage(double voltage) {
+        setVoltage(voltage);
     }
 
-    public void run() {
-        if (mControlBoard.getIntakeButton()) {
-            mIntake.set(1.0);
-        } else {
-            mIntake.set(0.0);
-        }
+ // This is protected since it should only ever be called by a public
+    // synchronized method or the loop.
+    protected void setVoltage(double voltage) {
+        SmartDashboard.putNumber("PIDF (v)", voltage);
+        mIntakeMaster.set(-voltage);
+        mIntakeSlave.set(voltage);
     }
-
+    
     public void stop() {
-        mIntake.set(0.0);
+        mIntakeMaster.set(0.0);
+        mIntakeSlave.set(0.0);
     }
 
     public void zeroSensors() {

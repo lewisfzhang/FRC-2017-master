@@ -15,10 +15,10 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * this project, you must also update the manifest file in the resource directory.
  */
 public class Robot extends IterativeRobot {
-    Drive mDrive = Drive.getInstance();
+    //Drive mDrive = Drive.getInstance();
     Proto_Intake mIntake = Proto_Intake.getInstance();
-    Proto_Shooter mShooter = Proto_Shooter.getInstance();
-    Proto_Feeder mFeeder = Proto_Feeder.getInstance();
+    //Proto_Shooter mShooter = Proto_Shooter.getInstance();
+    //Proto_Feeder mFeeder = Proto_Feeder.getInstance();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
@@ -33,7 +33,9 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         // mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
-        mShooter.registerEnabledLoops(mEnabledLooper);
+        // mShooter.registerEnabledLoops(mEnabledLooper);
+        mIntake.registerEnabledLoops(mEnabledLooper);
+        
         mHTTPServer.startServer();
     }
 
@@ -62,7 +64,7 @@ public class Robot extends IterativeRobot {
         mEnabledLooper.start();
         
         //re-update feeder constants & apply to talons
-        mFeeder.updateConstants();
+        //mFeeder.updateConstants();
     }
 
     /**
@@ -70,20 +72,26 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-
+        /*
         if (mControlBoard.getSpinShooterButton()) {
             mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
             mShooter.setManualVoltage(0.0);
+        }*/
+        
+        if (mControlBoard.getIntakeButton()) {
+            mIntake.setManualVoltage(3.0);
+        } else {
+            mIntake.setManualVoltage(0.0);
         }
-
+/*
         if (mControlBoard.getShootButton()) {
             mFeeder.setSetpoint(Constants.kFeedRPM);
         } else {
             mFeeder.setSetpoint(0.0);
         }
-        mShooter.outputToSmartDashboard();
-        mFeeder.outputToSmartDashboard();
+        mShooter.outputToSmartDashboard();*/
+        mIntake.outputToSmartDashboard();
     }
 
     @Override
