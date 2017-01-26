@@ -16,11 +16,11 @@ public class Proto_Intake extends Subsystem {
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Proto_Intake() {
-        mIntake = new CANTalon(1);
+        mIntake = new CANTalon(7);
         mIntake.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-        mIntake2 = new CANTalon(14);
+        mIntake2 = new CANTalon(8);
         mIntake2.changeControlMode(CANTalon.TalonControlMode.Follower);
-        mIntake2.set(1);
+        mIntake2.set(7);
     }
 
     public static Proto_Intake getInstance() {
