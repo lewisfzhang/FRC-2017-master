@@ -10,8 +10,13 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.AdaptivePurePursuitController;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
+import com.team254.lib.util.Kinematics;
+import com.team254.lib.util.Odometer;
+import com.team254.lib.util.RigidTransform2d;
+import com.team254.lib.util.Translation2d;
 import com.team254.lib.util.CollisionDetectionListener;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
@@ -23,7 +28,9 @@ public class Drive extends Subsystem {
     private static CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
     private static Accelerometer mAccel;
     
+    private static AdaptivePurePursuitController mPathController;
     private static Drive mInstance;
+
     
     private Collection<CollisionDetectionListener> mCollisionListeners = new LinkedList<CollisionDetectionListener>();
 
@@ -46,6 +53,7 @@ public class Drive extends Subsystem {
         
         mAccel = new BuiltInAccelerometer(); 
     	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
+    	//mPathController = new AdaptivePurePursuitController(fixed_lookahead, max_accel, nominal_dt, path, reversed, path_completion_tolerance)
     }
 
     public static Drive getInstance() {
@@ -61,6 +69,7 @@ public class Drive extends Subsystem {
 
         public void onLoop(double timestamp) {
             checkForCollision();
+            
             outputToSmartDashboard();
         }
 
@@ -119,5 +128,34 @@ public class Drive extends Subsystem {
     			listen.didCollide();
     		}
     	}
+    }
+    
+    private void updatePathFollower() {
+        RigidTransform2d robot_pose = new RigidTransform2d();//Odometer.getInstance().getTranslation();
+        RigidTransform2d.Delta command = mPathController.update(robot_pose);
+        Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+
+        // Scale the command to respect the max velocity limits
+        double max_vel = 0.0;
+        max_vel = Math.max(max_vel, Math.abs(setpoint.left));
+        max_vel = Math.max(max_vel, Math.abs(setpoint.right));
+        if (max_vel > Constants.kPathFollowingMaxVel) {
+            double scaling = Constants.kPathFollowingMaxVel / max_vel;
+            setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
+        }
+        updateVelocitySetpoint(setpoint.left, setpoint.right);
+    }
+    
+    private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+        mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec));
+        mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec));
+    }
+
+    private static double inchesPerSecondToRpm(double inches_per_second) {
+        return inchesToRotations(inches_per_second) * 60;
+    }
+    
+    private static double inchesToRotations(double inches) {
+        return inches / (Constants.kWheelRadius * Math.PI);
     }
 }

@@ -9,10 +9,15 @@ import com.team254.frc2017.Constants;
 
 public class Path {
      List<PathSegment> segments;
+     PathSegment prevSegment;
      
      public Path(String filepath) {
          segments = new ArrayList<PathSegment>();
          loadFile(filepath);
+     }
+     
+     public Path() {
+         segments = new ArrayList<PathSegment>();
      }
      
      private void loadFile(String filepath) {
@@ -36,6 +41,16 @@ public class Path {
          } catch (Exception e) {
              e.printStackTrace(); 
          }
+     }
+     
+     public double getSegmentRemainingDist(Translation2d robotPos) {
+         PathSegment.Segment currentSegment = (PathSegment.Segment) segments.get(0);
+         return currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
+     }
+     
+     public double getSegmentLength() {
+         PathSegment.Segment currentSegment = (PathSegment.Segment) segments.get(0);
+         return currentSegment.getLength();
      }
      
      public Translation2d getTargetPoint(Translation2d robotPos) {
@@ -69,8 +84,22 @@ public class Path {
          double length = currentSegment.getLength();
          double remainingDist = currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
          if((length - remainingDist) / length > Constants.kAutoSegmentThreshold) {
-             segments.remove(0);
+             prevSegment = segments.remove(0);
          }
+     }
+     
+     public double getMaxSpeed() {
+         return (segments.size() == 0) ? 0.0 : segments.get(0).getSpeed();
+     }
+     
+     public double getStartSpeed() {
+         if(prevSegment == null)
+             return 0.0;
+         return (segments.size() == 0) ? 0.0 : prevSegment.getSpeed();
+     }
+     
+     public double getEndSpeed() {
+         return (segments.size() < 2) ? 0.0 : segments.get(1).getSpeed();
      }
      
      public static void main(String[] args) {
@@ -86,8 +115,15 @@ public class Path {
          
          //PathSegment.Segment curve = new PathSegment.Segment(43.533040796611594, 200.4199794406889, 100, 250.0, 100, 193.05472389242087, 100);
          //System.out.println(curve.getLookAheadPoint(18.05));
-         Path test = new Path("~/path.txt");
-         System.out.println(test.getTargetPoint(new Translation2d(20, 20)));
+         //Path test = new Path("~/path.txt");
+         //System.out.println(test.getTargetPoint(new Translation2d(20, 20)));
+         Path mPath = new Path();
+         mPath.segments.add(new PathSegment.Segment(0.0, 0.0, 50.0, 0.0, 100.0));
+         mPath.segments.add(new PathSegment.Segment(50.0, 0.0, 60.0, 0.0, 1000.0));
+         mPath.segments.add(new PathSegment.Segment(60.0, 0.0, 150.0, 0.0, 20.0));
+         SpeedController mSpeed = new SpeedController(mPath);
+         mPath.getTargetPoint(new Translation2d(49.6, 0));
+         System.out.println(mSpeed.getSpeed(new Translation2d(55, 0)));
      }
      
 }

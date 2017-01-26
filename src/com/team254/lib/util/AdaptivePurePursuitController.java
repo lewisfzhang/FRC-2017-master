@@ -17,6 +17,7 @@ public class AdaptivePurePursuitController {
 
     double mFixedLookahead;
     Path mPath;
+    SpeedController mSpeedController;
     RigidTransform2d.Delta mLastCommand;
     double mLastTime;
     double mMaxAccel;
@@ -33,21 +34,19 @@ public class AdaptivePurePursuitController {
         mLastCommand = null;
         mReversed = reversed;
         mPathCompletionTolerance = path_completion_tolerance;
+        mSpeedController = new SpeedController(mPath);
     }
 
-    public RigidTransform2d.Delta update(RigidTransform2d robot_pose, double now) {
-        RigidTransform2d pose = robot_pose;
+    public RigidTransform2d.Delta update(RigidTransform2d pose) {
         if (mReversed) {
-            pose = new RigidTransform2d(robot_pose.getTranslation(),
-                    robot_pose.getRotation().rotateBy(Rotation2d.fromRadians(Math.PI)));
+            pose = new RigidTransform2d(pose.getTranslation(),
+                    pose.getRotation().rotateBy(Rotation2d.fromRadians(Math.PI)));
         }
 
         Translation2d lookaheadPoint = mPath.getTargetPoint(pose.getTranslation());
         Optional<Circle> circle = joinPath(pose, lookaheadPoint);
 
-        //TODO: Implement speed controller
-        //double speed = mSpeedController.getSpeed(pose.getTranslation());
-        double speed = 10.0;
+        double speed = mSpeedController.getSpeed(pose.getTranslation());
         if (mReversed) {
             speed *= -1;
         }
@@ -60,7 +59,6 @@ public class AdaptivePurePursuitController {
         } else {
             rv = new RigidTransform2d.Delta(speed, 0, 0);
         }
-        mLastTime = now;
         mLastCommand = rv;
         return rv;
     }

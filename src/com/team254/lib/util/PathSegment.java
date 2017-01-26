@@ -3,6 +3,7 @@ package com.team254.lib.util;
 public abstract class PathSegment {
     
     abstract boolean isTurn();
+    abstract double getSpeed();
     
     static class Segment extends PathSegment {
         private Translation2d start;
@@ -72,6 +73,10 @@ public abstract class PathSegment {
         
         public boolean isTurn() {
             return false;
+        }
+        
+        public double getSpeed() {
+            return maxSpeed;
         }
         
         private void calcArc() {
@@ -207,6 +212,10 @@ public abstract class PathSegment {
         
         public boolean isTurn() {
             return true;
+        }
+        
+        public double getSpeed() {
+            return 0.0;
         }
     }
     
