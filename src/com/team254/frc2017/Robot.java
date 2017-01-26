@@ -1,5 +1,7 @@
 package com.team254.frc2017;
 
+import com.ctre.CANTalon;
+import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.subsystems.Proto_Feeder;
@@ -15,26 +17,32 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * this project, you must also update the manifest file in the resource directory.
  */
 public class Robot extends IterativeRobot {
-    Drive mDrive = Drive.getInstance();
-    Proto_Intake mIntake = Proto_Intake.getInstance();
+    //Drive mDrive = Drive.getInstance();
+    //Proto_Intake mIntake = Proto_Intake.getInstance();
     Proto_Shooter mShooter = Proto_Shooter.getInstance();
-    Proto_Feeder mFeeder = Proto_Feeder.getInstance();
+    //Proto_Feeder mFeeder = Proto_Feeder.getInstance();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     Looper mEnabledLooper = new Looper();
 
     WebServer mHTTPServer = new WebServer();
+    
+    CANTalon feeda, feedb;
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
      */
     @Override
     public void robotInit() {
+        feeda = new CANTalon(3);
+        feeda.changeControlMode(TalonControlMode.Voltage);
+        feedb = new CANTalon(6);
+        feedb.changeControlMode(TalonControlMode.Voltage);
         // mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
         mShooter.registerEnabledLoops(mEnabledLooper);
-        mHTTPServer.startServer();
+        //mHTTPServer.startServer();
     }
 
     /**
@@ -62,7 +70,7 @@ public class Robot extends IterativeRobot {
         mEnabledLooper.start();
         
         //re-update feeder constants & apply to talons
-        mFeeder.updateConstants();
+        //mFeeder.updateConstants();
     }
 
     /**
@@ -78,12 +86,16 @@ public class Robot extends IterativeRobot {
         }
 
         if (mControlBoard.getShootButton()) {
-            mFeeder.setSetpoint(Constants.kFeedRPM);
+            //mFeeder.setSetpoint(Constants.kFeedRPM);
+            feeda.set(-9);
+            feedb.set(-9);
         } else {
-            mFeeder.setSetpoint(0.0);
+            //mFeeder.setSetpoint(0.0);
+            feeda.set(0);
+            feedb.set(0);
         }
         mShooter.outputToSmartDashboard();
-        mFeeder.outputToSmartDashboard();
+        //mFeeder.outputToSmartDashboard();
     }
 
     @Override

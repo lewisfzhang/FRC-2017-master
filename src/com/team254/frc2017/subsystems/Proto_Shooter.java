@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Proto_Shooter extends Subsystem {
     private static Proto_Shooter mInstance = null;
 
-    private CANTalon mMaster, mSlave;
+    private CANTalon mMaster, mSlave, mSlaveB, mSlaveC;
     private Encoder mRPMEncoder;
 
     private SynchronousPIDF mController;
@@ -36,6 +36,7 @@ public class Proto_Shooter extends Subsystem {
         mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mMaster.setVoltageCompensationRampRate(10000.0);
         mMaster.enableBrakeMode(false);
+        mMaster.reverseOutput(true);
         mMaster.setInverted(Constants.kFlywheelMotor1Inverted);
 
         mSlave = new CANTalon(2);
@@ -43,7 +44,15 @@ public class Proto_Shooter extends Subsystem {
         mSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mSlave.setVoltageCompensationRampRate(10000.0);
         mSlave.enableBrakeMode(false);
+        mSlave.reverseOutput(true);
         mSlave.setInverted(Constants.kFlywheelMotor2Inverted);
+        
+        mSlaveB = new CANTalon(4);
+        mSlaveB.changeControlMode(TalonControlMode.Voltage);
+        
+        mSlaveC = new CANTalon(5);
+        mSlaveC.changeControlMode(TalonControlMode.Voltage);
+        
 
         mRPMEncoder = new Encoder(0, 1, Constants.kFlywheelEncoderInverted /* reverse */, EncodingType.k4X);
         mRPMEncoder.setDistancePerPulse(1.0 / 1024.0);
@@ -118,6 +127,8 @@ public class Proto_Shooter extends Subsystem {
         SmartDashboard.putNumber("PIDF (v)", voltage);
         mMaster.set(-voltage);
         mSlave.set(voltage);
+        mSlaveB.set(voltage);
+        mSlaveC.set(voltage);
     }
 
     public synchronized double getSetpoint() {
