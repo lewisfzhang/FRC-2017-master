@@ -72,23 +72,23 @@ public class PixyCam {
         return new Frame(blocks, frameCount++);
     }
 
-    // public void setServoPosition(int pan, int tilt) {
-    // pspi.writeWord(0xff00);
-    // pspi.writeWord(pan);
-    // pspi.writeWord(tilt);
-    // }
-    //
-    // public void setBrightness(int brightness) {
-    // pspi.writeWord(0xfe00);
-    // pspi.writeByte(brightness);
-    // }
-    //
-    // public void setLEDOptions(int r, int g, int b) {
-    // pspi.writeWord(0xfd00);
-    // pspi.writeByte(r);
-    // pspi.writeByte(g);
-    // pspi.writeByte(b);
-    // }
+    public void setServoPosition(int pan, int tilt) {
+        pspi.writeWord(0xff00);
+        pspi.writeWord(pan);
+        pspi.writeWord(tilt);
+    }
+
+    public void setBrightness(int brightness) {
+        pspi.writeWord(0xfe00);
+        pspi.writeByte(brightness);
+    }
+
+    public void setLEDOptions(int r, int g, int b) {
+        pspi.writeWord(0xfd00);
+        pspi.writeByte(r);
+        pspi.writeByte(g);
+        pspi.writeByte(b);
+    }
 
     @Override
     public String toString() {

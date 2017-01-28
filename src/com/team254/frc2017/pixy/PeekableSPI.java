@@ -11,15 +11,23 @@ public class PeekableSPI {
         getNextWord();
     }
 
-    private byte getByte(byte data) {
+    public void writeWord(int word) {
+        byte lower = (byte) (word & 0xFF);
+        byte upper = (byte) ((word >>> 8) & 0xFF);
+        // data should be sent little-endian
+        transferByte(lower);
+        transferByte(upper);
+    }
+
+    public void writeByte(int data) {
+        transferByte((byte) (data & 0xFF));
+    }
+
+    private byte transferByte(byte data) {
         byte[] send = new byte[] { data };
         byte[] recv = new byte[send.length];
         spi.transaction(send, recv, recv.length);
         return recv[0];
-    }
-
-    private int getWord() {
-        return makeWord(getByte((byte) 0), getByte((byte) 0));
     }
 
     public int readByte() {
@@ -33,7 +41,7 @@ public class PeekableSPI {
     }
 
     private void getNextByte() {
-        int b = Byte.toUnsignedInt(getByte((byte) 0));
+        int b = Byte.toUnsignedInt(transferByte((byte) 0));
         nextWord = ((nextWord & 0xFF) << 8) | b;
     }
 
@@ -48,7 +56,7 @@ public class PeekableSPI {
     }
 
     private void getNextWord() {
-        nextWord = getWord();
+        nextWord = makeWord(transferByte((byte) 0), transferByte((byte) 0));
         ++wordsRead;
     }
 
