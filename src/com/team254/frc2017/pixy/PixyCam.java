@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj.SPI;
 public class PixyCam {
 
     public PixyCam() {
-        this(500000);
+        this(500000, SPI.Port.kOnboardCS0);
     }
 
-    public PixyCam(int clockRate) {
-        SPI spi = new SPI(SPI.Port.kOnboardCS0);
+    public PixyCam(int clockRate, SPI.Port port) {
+        SPI spi = new SPI(port);
         spi.setMSBFirst();
         spi.setClockActiveHigh();
         spi.setSampleDataOnRising();
