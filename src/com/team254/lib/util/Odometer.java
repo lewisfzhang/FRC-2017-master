@@ -54,7 +54,7 @@ public class Odometer {
     {
         //mY = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderTicks() + mDrive.getREncoderTicks())) / (4096 * 2.0);
         //mX = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderTicks() - mDrive.getREncoderTicks())) / (4096 * Constants.kRobotWidth / 2);
-        double dist = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderRotations() - mPrevLeftEncoderRotations + mDrive.getREncoderTicks() - mPrevRightEncoderRotations) / 2.0);
+        double dist = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderRotations() - mPrevLeftEncoderRotations + mDrive.getREncoderRotations() - mPrevRightEncoderRotations) / 2.0);
         mPrevRightEncoderRotations = mDrive.getREncoderRotations();
         mPrevLeftEncoderRotations = mDrive.getLEncoderRotations();
         
@@ -81,5 +81,10 @@ public class Odometer {
     
     public Rotation2d getHeading() {
         return mHeading;
+    }
+
+    public void resetPosition() {
+        mX = 0;
+        mY = 0;
     }
 }

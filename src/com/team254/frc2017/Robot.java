@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
-    Proto_Intake mIntake = Proto_Intake.getInstance();
+    Proto_Intake mIntake =  Proto_Intake.getInstance();
     Proto_Shooter mShooter = Proto_Shooter.getInstance();
     Odometer mOdometer = Odometer.getInstance();
 

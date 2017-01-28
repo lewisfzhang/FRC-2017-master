@@ -109,6 +109,7 @@ public class Drive extends Subsystem {
         mLeftMaster.setPosition(0.0);
         mRightMaster.setPosition(0.0);
         mNavXBoard.reset();
+        Odometer.getInstance().resetPosition();
     }
 
     public void stop() {
@@ -125,6 +126,8 @@ public class Drive extends Subsystem {
         SmartDashboard.putNumber("Field X Position", Odometer.getInstance().getX());
         SmartDashboard.putNumber("Field Y Position", Odometer.getInstance().getY());
         SmartDashboard.putNumber("Heading", Odometer.getInstance().getHeading().getDegrees());
+        System.out.println("Field X: " + Odometer.getInstance().getX());
+        System.out.println("Field Y: " + Odometer.getInstance().getY());
     }
 
     // Returns 4096 ticks per rotation
@@ -141,7 +144,7 @@ public class Drive extends Subsystem {
         return mLeftEncoder.getDistance();
     }
     
-  //Returns the number of rotations in the right encoder
+  //Returns the number of rotations in the right 
     public double getREncoderRotations() {
         return mRightEncoder.getDistance();
     }

@@ -14,7 +14,7 @@ public class Constants extends ConstantsBase {
     public static double kRobotWidth = 20;                     // FIXME placeholder
     public static double kTrackScrubFactor = 1.0;              // FIXME placeholder
     public static double kTrackEffectiveDiameterInches = 25.0; // FIXME placeholder
-    public static double kWheelRadius = 3.0;                   // FIXME placeholder
+    public static double kWheelRadius = 2.0;                   // FIXME placeholder
     
 
     // CONTROL LOOP GAINS
