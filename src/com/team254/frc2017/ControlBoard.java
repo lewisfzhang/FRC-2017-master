@@ -50,10 +50,12 @@ public class ControlBoard {
     }
 
     public boolean getSpinShooterButton() {
-        return mButtonBoard.getRawButton(1);
+        //return mButtonBoard.getRawButton(1);
+        return mThrottleStick.getRawButton(3);
     }
 
     public boolean getShootButton() {
-        return mButtonBoard.getRawButton(2);
+        //return mButtonBoard.getRawButton(2);
+        return mThrottleStick.getRawButton(1);
     }
 }

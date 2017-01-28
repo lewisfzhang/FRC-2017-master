@@ -40,7 +40,7 @@ public class SynchronousPIDF {
     
     private boolean smartDashboardMode = false;
     
-    private PowerDistributionPanel pdp = new PowerDistributionPanel(13);
+    private PowerDistributionPanel pdp = new PowerDistributionPanel(10);
     
     private CSVWriter logger;
 
@@ -70,7 +70,7 @@ public class SynchronousPIDF {
         m_D = Kd;
         m_F = Kf;
         this.name=name;
-        logger = new CSVWriter("/home/lvuser/SHOOTER-LOGS-" + name + ".csv", 12);
+        logger = new CSVWriter("/home/lvuser/SHOOTER-LOGS-" + name + ".csv", 11);
     }
 
     /**
@@ -157,8 +157,6 @@ public class SynchronousPIDF {
         logger.addValue(8, m_D); //Kd
         logger.addValue(9, m_F); //Kf
         logger.addValue(10, input); //RPM
-        logger.addValue(11, pdp.getVoltage()); //voltage
-        logger.addValue(12, pdp.getCurrent(0)); //current
         logger.write();
         
         

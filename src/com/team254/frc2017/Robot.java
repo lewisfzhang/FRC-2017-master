@@ -82,8 +82,8 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
 
         if (mControlBoard.getSpinShooterButton()) {
-            mShooterA.setRpmSetpoint(Constants.kFlywheelTarget);
-            mShooterB.setRpmSetpoint(Constants.kFlywheelTarget);
+            mShooterA.setRpmSetpoint(Constants.kFlywheelATarget);
+            mShooterB.setRpmSetpoint(Constants.kFlywheelBTarget);
         } else {
             mShooterA.setManualVoltage(0.0);
             mShooterB.setManualVoltage(0.0);
