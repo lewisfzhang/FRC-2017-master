@@ -6,14 +6,18 @@ import java.util.List;
 import edu.wpi.first.wpilibj.SPI;
 
 public class PixyCam {
+    
+    public PixyCam() {
+        this(500000);
+    }
 	
-	public PixyCam() {
+	public PixyCam(int clockRate) {
 		SPI spi = new SPI(SPI.Port.kOnboardCS0);
 		spi.setMSBFirst();
 		spi.setClockActiveHigh();
 		spi.setSampleDataOnRising();
 		spi.setChipSelectActiveLow();
-//		spi.setClockRate(50000);
+		spi.setClockRate(clockRate);
 		pspi = new PeekableSPI(spi);
 	}
 	
