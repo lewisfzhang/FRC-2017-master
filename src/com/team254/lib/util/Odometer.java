@@ -10,14 +10,18 @@ public class Odometer {
     
     private double mX;
     private double mY;
-    private double mHeading;
+    private double mPrevRightEncoderRotations;
+    private double mPrevLeftEncoderRotations;
+    private Rotation2d mHeading;
     
     private Drive mDrive = Drive.getInstance();
          
     private Odometer() {
         mX = 0;
         mY = 0;
-        mHeading = 0;
+        mPrevRightEncoderRotations = 0;
+        mPrevLeftEncoderRotations = 0;
+        mHeading = new Rotation2d();
         mDrive.zeroSensors();
     }
     
@@ -48,13 +52,23 @@ public class Odometer {
     
     public synchronized void update()
     {
-        mY = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderTicks() + mDrive.getREncoderTicks())) / (4096 * 2.0);
-        mX = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderTicks() - mDrive.getREncoderTicks())) / (4096 * Constants.kRobotWidth / 2);
-        // TO BE IMPLEMENTED W/ KauaiLabs NavX SENSOR: mHeading = 
+        //mY = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderTicks() + mDrive.getREncoderTicks())) / (4096 * 2.0);
+        //mX = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderTicks() - mDrive.getREncoderTicks())) / (4096 * Constants.kRobotWidth / 2);
+        double dist = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderRotations() - mPrevLeftEncoderRotations + mDrive.getREncoderTicks() - mPrevRightEncoderRotations) / 2.0);
+        mPrevRightEncoderRotations = mDrive.getREncoderRotations();
+        mPrevLeftEncoderRotations = mDrive.getLEncoderRotations();
+        
+        mHeading = Drive.getInstance().getGyroAngle();
+        mX += mHeading.cos() * dist;
+        mY += mHeading.sin() * dist;
     }
     
     public Translation2d getTranslation() {
         return new Translation2d(mX, mY);
+    }
+    
+    public RigidTransform2d getPose() {
+        return new RigidTransform2d(new Translation2d(mX, mY), mHeading);
     }
     
     public double getX() {
@@ -65,7 +79,7 @@ public class Odometer {
         return mY;
     }
     
-    public double getHeading() {
+    public Rotation2d getHeading() {
         return mHeading;
     }
 }

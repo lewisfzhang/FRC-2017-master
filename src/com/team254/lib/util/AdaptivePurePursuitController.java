@@ -15,25 +15,31 @@ import java.util.Set;
 public class AdaptivePurePursuitController {
     private static final double kEpsilon = 1E-9;
 
-    double mFixedLookahead;
+    //double mFixedLookahead;
     Path mPath;
     SpeedController mSpeedController;
-    RigidTransform2d.Delta mLastCommand;
-    double mLastTime;
-    double mMaxAccel;
-    double mDt;
+    //RigidTransform2d.Delta mLastCommand;
+    //double mLastTime;
+    //double mMaxAccel;
+    //double mDt;
     boolean mReversed;
-    double mPathCompletionTolerance;
+    //double mPathCompletionTolerance;
 
-    public AdaptivePurePursuitController(double fixed_lookahead, double max_accel, double nominal_dt, Path path,
-            boolean reversed, double path_completion_tolerance) {
-        mFixedLookahead = fixed_lookahead;
-        mMaxAccel = max_accel;
-        mPath = path;
-        mDt = nominal_dt;
-        mLastCommand = null;
-        mReversed = reversed;
-        mPathCompletionTolerance = path_completion_tolerance;
+//    public AdaptivePurePursuitController(double fixed_lookahead, double max_accel, double nominal_dt, Path path,
+//            boolean reversed, double path_completion_tolerance) {
+//        mFixedLookahead = fixed_lookahead;
+//        mMaxAccel = max_accel;
+//        mPath = path;
+//        mDt = nominal_dt;
+//        mLastCommand = null;
+//        mReversed = reversed;
+//        mPathCompletionTolerance = path_completion_tolerance;
+//        mSpeedController = new SpeedController(mPath);
+//    }
+    
+    public AdaptivePurePursuitController(String filepath) {
+        mPath = new Path(filepath);
+        mReversed = false;
         mSpeedController = new SpeedController(mPath);
     }
 
@@ -59,7 +65,6 @@ public class AdaptivePurePursuitController {
         } else {
             rv = new RigidTransform2d.Delta(speed, 0, 0);
         }
-        mLastCommand = rv;
         return rv;
     }
 

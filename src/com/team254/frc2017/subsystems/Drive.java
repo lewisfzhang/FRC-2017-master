@@ -10,23 +10,29 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.ADXRS453_Gyro;
 import com.team254.lib.util.AdaptivePurePursuitController;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.Kinematics;
 import com.team254.lib.util.Odometer;
 import com.team254.lib.util.RigidTransform2d;
+import com.team254.lib.util.Rotation2d;
 import com.team254.lib.util.Translation2d;
 import com.team254.lib.util.CollisionDetectionListener;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends Subsystem {
     private static CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
     private static Accelerometer mAccel;
+    private static ADXRS453_Gyro mGyro;
+    private static Encoder mRightEncoder, mLeftEncoder;    
     
     private static AdaptivePurePursuitController mPathController;
     private static Drive mInstance;
@@ -53,7 +59,16 @@ public class Drive extends Subsystem {
         
         mAccel = new BuiltInAccelerometer(); 
     	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
-    	//mPathController = new AdaptivePurePursuitController(fixed_lookahead, max_accel, nominal_dt, path, reversed, path_completion_tolerance)
+    	
+    	mGyro = new ADXRS453_Gyro();
+    	
+    	mRightEncoder = new Encoder(0, 1, false /* reverse */, EncodingType.k4X);
+        mRightEncoder.setDistancePerPulse(1.0 / 250.0);
+        
+        mLeftEncoder = new Encoder(0, 1, false /* reverse */, EncodingType.k4X);
+        mLeftEncoder.setDistancePerPulse(1.0 / 250.0);
+        
+    	mPathController = new AdaptivePurePursuitController("~/path.txt");
     }
 
     public static Drive getInstance() {
@@ -70,6 +85,7 @@ public class Drive extends Subsystem {
         public void onLoop(double timestamp) {
             checkForCollision();
             
+            //updatePathFollower();
             outputToSmartDashboard();
         }
 
@@ -85,11 +101,12 @@ public class Drive extends Subsystem {
     public synchronized void setLRPower(double left, double right) {
         mLeftMaster.set(left);
         mRightMaster.set(right);
-    }
+    } 
     
     public void zeroSensors() {
         mLeftMaster.setPosition(0.0);
         mRightMaster.setPosition(0.0);
+        mGyro.reset();
     }
 
     public void stop() {
@@ -102,6 +119,9 @@ public class Drive extends Subsystem {
         SmartDashboard.putNumber("Right Drive Motor RPM", mRightMaster.getSpeed());
         SmartDashboard.putNumber("Left Encoder Position", getLEncoderTicks());
         SmartDashboard.putNumber("Right Encoder Position", getREncoderTicks());
+        SmartDashboard.putNumber("Field X Position", Odometer.getInstance().getX());
+        SmartDashboard.putNumber("Field Y Position", Odometer.getInstance().getY());
+        SmartDashboard.putNumber("Heading", Odometer.getInstance().getHeading().getDegrees());
     }
 
     // Returns 4096 ticks per rotation
@@ -111,6 +131,16 @@ public class Drive extends Subsystem {
     
     public int getREncoderTicks() {
         return mRightMaster.getEncPosition();
+    }
+    
+    //Returns the number of rotations in the left encoder
+    public double getLEncoderRotations() {
+        return mLeftEncoder.getDistance();
+    }
+    
+  //Returns the number of rotations in the right encoder
+    public double getREncoderRotations() {
+        return mRightEncoder.getDistance();
     }
     
     //Collision Code
@@ -131,7 +161,7 @@ public class Drive extends Subsystem {
     }
     
     private void updatePathFollower() {
-        RigidTransform2d robot_pose = new RigidTransform2d();//Odometer.getInstance().getTranslation();
+        RigidTransform2d robot_pose = Odometer.getInstance().getPose();
         RigidTransform2d.Delta command = mPathController.update(robot_pose);
         Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
 
@@ -157,5 +187,13 @@ public class Drive extends Subsystem {
     
     private static double inchesToRotations(double inches) {
         return inches / (Constants.kWheelRadius * Math.PI);
+    }
+    
+    public ADXRS453_Gyro getGyro() {
+        return mGyro;
+    }
+    
+    public synchronized Rotation2d getGyroAngle() {
+        return Rotation2d.fromDegrees(mGyro.getAngle());
     }
 }

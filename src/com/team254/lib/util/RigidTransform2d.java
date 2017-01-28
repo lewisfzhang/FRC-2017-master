@@ -35,6 +35,11 @@ public class RigidTransform2d implements Interpolable<RigidTransform2d> {
         translation_ = translation;
         rotation_ = rotation;
     }
+    
+    public RigidTransform2d(double x, double y, double angle) {
+        translation_ = new Translation2d(x, y);
+        rotation_ = Rotation2d.fromDegrees(angle);
+    }
 
     public RigidTransform2d(RigidTransform2d other) {
         translation_ = new Translation2d(other.translation_);
