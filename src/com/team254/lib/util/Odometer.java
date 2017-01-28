@@ -22,7 +22,7 @@ public class Odometer {
         mPrevRightEncoderRotations = 0;
         mPrevLeftEncoderRotations = 0;
         mHeading = new Rotation2d();
-        mDrive.zeroSensors();
+        //mDrive.zeroSensors();
     }
     
     public static Odometer getInstance() {
@@ -58,7 +58,7 @@ public class Odometer {
         mPrevRightEncoderRotations = mDrive.getREncoderRotations();
         mPrevLeftEncoderRotations = mDrive.getLEncoderRotations();
         
-        mHeading = Drive.getInstance().getGyroAngle();
+        mHeading = mDrive.getAngle();
         mX += mHeading.cos() * dist;
         mY += mHeading.sin() * dist;
     }

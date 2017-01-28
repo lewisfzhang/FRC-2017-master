@@ -23,15 +23,17 @@ import com.team254.lib.util.CollisionDetectionListener;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.kauailabs.navx.frc.AHRS;
 
 public class Drive extends Subsystem {
     private static CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
     private static Accelerometer mAccel;
-    private static ADXRS453_Gyro mGyro;
+    private static AHRS mNavXBoard;
     private static Encoder mRightEncoder, mLeftEncoder;    
     
     private static AdaptivePurePursuitController mPathController;
@@ -60,12 +62,12 @@ public class Drive extends Subsystem {
         mAccel = new BuiltInAccelerometer(); 
     	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
     	
-    	mGyro = new ADXRS453_Gyro();
+    	mNavXBoard = new AHRS(SPI.Port.kMXP);
     	
-    	mRightEncoder = new Encoder(0, 1, false /* reverse */, EncodingType.k4X);
+    	mRightEncoder = new Encoder(8, 9, false /* reverse */, EncodingType.k4X);
         mRightEncoder.setDistancePerPulse(1.0 / 250.0);
         
-        mLeftEncoder = new Encoder(0, 1, false /* reverse */, EncodingType.k4X);
+        mLeftEncoder = new Encoder(6, 7, false /* reverse */, EncodingType.k4X);
         mLeftEncoder.setDistancePerPulse(1.0 / 250.0);
         
     	mPathController = new AdaptivePurePursuitController("~/path.txt");
@@ -106,12 +108,13 @@ public class Drive extends Subsystem {
     public void zeroSensors() {
         mLeftMaster.setPosition(0.0);
         mRightMaster.setPosition(0.0);
-        mGyro.reset();
+        mNavXBoard.reset();
     }
 
     public void stop() {
         mLeftMaster.set(0);
         mRightMaster.set(0);
+        zeroSensors();
     }
 
     public void outputToSmartDashboard() {
@@ -189,11 +192,7 @@ public class Drive extends Subsystem {
         return inches / (Constants.kWheelRadius * Math.PI);
     }
     
-    public ADXRS453_Gyro getGyro() {
-        return mGyro;
-    }
-    
-    public synchronized Rotation2d getGyroAngle() {
-        return Rotation2d.fromDegrees(mGyro.getAngle());
+    public Rotation2d getAngle() {
+        return Rotation2d.fromDegrees(mNavXBoard.getFusedHeading());
     }
 }

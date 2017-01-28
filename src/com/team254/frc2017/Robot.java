@@ -72,22 +72,22 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopPeriodic() {
 
-        DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(),
-                mControlBoard.getTurn(), mControlBoard.getQuickTurn());
-        mDrive.setLRPower(driveSignal.getLeft(), driveSignal.getRight());
-        
-        if (mControlBoard.getSpinShooterButton()) {
-            mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
-        } else {
-            mShooter.setManualVoltage(0.0);
-        }
-
-        if (mControlBoard.getShootButton()) {
-            mShooter.setFeedRoller(Constants.kFlywheelFeedRollerVoltage);
-        } else {
-            mShooter.setFeedRoller(0.0);
-        }
-        mShooter.outputToSmartDashboard();
+//        DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(),
+//                mControlBoard.getTurn(), mControlBoard.getQuickTurn());
+//        mDrive.setLRPower(driveSignal.getLeft(), driveSignal.getRight());
+//        
+//        if (mControlBoard.getSpinShooterButton()) {
+//            mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
+//        } else {
+//            mShooter.setManualVoltage(0.0);
+//        }
+//
+//        if (mControlBoard.getShootButton()) {
+//            mShooter.setFeedRoller(Constants.kFlywheelFeedRollerVoltage);
+//        } else {
+//            mShooter.setFeedRoller(0.0);
+//        }
+//        mShooter.outputToSmartDashboard();
     }
 
     @Override
