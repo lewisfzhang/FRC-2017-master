@@ -67,7 +67,7 @@ public class Proto_Shooter extends Subsystem {
 
         public void onLoop(double timestamp) {
             synchronized (Proto_Shooter.this) {
-                mController.setGains(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
+                mController.setPID(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
                 double now = Timer.getFPGATimestamp();
                 double distance_now = mRPMEncoder.getDistance();
                 double delta_t = now - mPrevTimestamp;

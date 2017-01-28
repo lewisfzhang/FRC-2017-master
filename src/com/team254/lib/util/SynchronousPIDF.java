@@ -330,11 +330,4 @@ public class SynchronousPIDF {
     public String getType() {
         return "PIDController";
     }
-    
-    public void setGains(double p, double i, double d, double f) {
-        m_P = p;
-        m_I = i;
-        m_D = d;
-        m_F = f;
-    }
 }
