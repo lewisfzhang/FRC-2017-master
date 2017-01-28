@@ -56,7 +56,7 @@ public class PixyCam {
 
     public Frame getFrame() {
         List<Frame.Block> blocks = new ArrayList<>();
-        while (true) { // don't judge, it werks
+        while (true) {
             Frame.Block b = parseBlock();
             if (b == null)
                 break;
@@ -68,8 +68,8 @@ public class PixyCam {
                 e.printStackTrace();
             }
         }
-
         return new Frame(blocks, frameCount++);
+        ;
     }
 
     public void setServoPosition(int pan, int tilt) {

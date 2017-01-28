@@ -26,11 +26,6 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        // chooser.addDefault("Default Auto", defaultAuto);
-        // chooser.addObject("My Auto", customAuto);
-        // SmartDashboard.putData("Auto choices", chooser);
-
-        SmartDashboard.putString("cp1", "checkpoint #1 what");
         try {
             while (true) {
                 Frame f = _p.getFrame();
@@ -43,13 +38,6 @@ public class Robot extends IterativeRobot {
             e.printStackTrace(new PrintWriter(writer));
             SmartDashboard.putString("err", writer.toString());
         }
-        // try {
-        // _spiLogger.startLogging();
-        // } catch (Exception e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-        SmartDashboard.putString("cp2", "test plz work");
     }
 
     /**
