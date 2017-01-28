@@ -1,5 +1,7 @@
 package com.team254.lib.util;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
@@ -37,6 +39,10 @@ public class SynchronousPIDF {
     private String name = "Default";
     
     private boolean smartDashboardMode = false;
+    
+    private PowerDistributionPanel pdp = new PowerDistributionPanel(13);
+    
+    private CSVWriter logger;
 
     public SynchronousPIDF() {
     }
@@ -64,6 +70,7 @@ public class SynchronousPIDF {
         m_D = Kd;
         m_F = Kf;
         this.name=name;
+        logger = new CSVWriter("/home/lvuser/SHOOTER-LOGS-" + name + ".csv", 12);
     }
 
     /**
@@ -127,6 +134,7 @@ public class SynchronousPIDF {
         SmartDashboard.putNumber("PID Tuner kF (" + name + ")", m_F * m_setpoint);
         
         
+        
         m_prevError = m_error;
 
         if (m_result > m_maximumOutput) {
@@ -136,6 +144,24 @@ public class SynchronousPIDF {
         }
         
         SmartDashboard.putNumber("PID Tuner Total (" + name + ")",  m_result);
+        
+        
+        logger.addValue(0, Timer.getFPGATimestamp()); //Timestamp
+        logger.addValue(1, m_result); //Total Voltage
+        logger.addValue(2, m_P * proportionalError); //Voltage Kp
+        logger.addValue(3, m_I * m_totalError); //Voltage Ki
+        logger.addValue(4, m_D * (m_error - m_prevError) / dt); //Voltage Kd
+        logger.addValue(5, m_F * m_setpoint); //Voltage Kf
+        logger.addValue(6, m_P); //Kp
+        logger.addValue(7, m_I); //Ki
+        logger.addValue(8, m_D); //Kd
+        logger.addValue(9, m_F); //Kf
+        logger.addValue(10, input); //RPM
+        logger.addValue(11, pdp.getVoltage()); //voltage
+        logger.addValue(12, pdp.getCurrent(0)); //current
+        logger.write();
+        
+        
         return m_result;
     }
 
