@@ -63,6 +63,11 @@ public class PixyCamSystem extends Subsystem {
 
         @Override
         public void onStart(double timestamp) {
+
+        }
+
+        @Override
+        public void onLoop(double timestamp) {
             synchronized (PixyCamSystem.this) {
                 if (mClosedLoop) {
                     // update camera, read data
@@ -71,13 +76,6 @@ public class PixyCamSystem extends Subsystem {
                     mLastFrames.put(mCamera, lastFrame);
                 }
             }
-
-        }
-
-        @Override
-        public void onLoop(double timestamp) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override

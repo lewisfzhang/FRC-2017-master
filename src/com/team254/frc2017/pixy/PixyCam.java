@@ -69,7 +69,6 @@ public class PixyCam {
             }
         }
         return new Frame(blocks, frameCount++);
-        ;
     }
 
     public void setServoPosition(int pan, int tilt) {
