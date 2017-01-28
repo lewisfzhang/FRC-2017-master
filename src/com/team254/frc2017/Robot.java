@@ -71,7 +71,7 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-
+/*
         DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(),
                 mControlBoard.getTurn(), mControlBoard.getQuickTurn());
         mDrive.setLRPower(driveSignal.getLeft(), driveSignal.getRight());
@@ -87,7 +87,8 @@ public class Robot extends IterativeRobot {
         } else {
             mShooter.setFeedRoller(0.0);
         }
-        mShooter.outputToSmartDashboard();
+        mShooter.outputToSmartDashboard();*/
+        System.out.println(mOdometer.getPose());
     }
 
     @Override

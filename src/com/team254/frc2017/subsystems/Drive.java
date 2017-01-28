@@ -6,13 +6,11 @@ import java.util.LinkedList;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
+import com.kauailabs.navx.frc.AHRS;
 import com.team254.frc2017.Constants;
-import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.AdaptivePurePursuitController;
-import com.team254.lib.util.CheesyDriveHelper;
-import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.Kinematics;
 import com.team254.lib.util.Odometer;
 import com.team254.lib.util.RigidTransform2d;
@@ -20,6 +18,7 @@ import com.team254.lib.util.Translation2d;
 import com.team254.lib.util.CollisionDetectionListener;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Drive extends Subsystem {
     private static CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
     private static Accelerometer mAccel;
+    private static AHRS mNavXBoard;
     
     private static AdaptivePurePursuitController mPathController;
     private static Drive mInstance;
@@ -54,6 +54,8 @@ public class Drive extends Subsystem {
         mAccel = new BuiltInAccelerometer(); 
     	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
     	//mPathController = new AdaptivePurePursuitController(fixed_lookahead, max_accel, nominal_dt, path, reversed, path_completion_tolerance)
+    	
+    	mNavXBoard = new AHRS(SPI.Port.kMXP);
     }
 
     public static Drive getInstance() {
@@ -75,6 +77,7 @@ public class Drive extends Subsystem {
 
         public void onStop(double timestamp) {
             stop();
+            mNavXBoard.reset();
         }
     }
 
@@ -90,6 +93,7 @@ public class Drive extends Subsystem {
     public void zeroSensors() {
         mLeftMaster.setPosition(0.0);
         mRightMaster.setPosition(0.0);
+        
     }
 
     public void stop() {
@@ -118,8 +122,12 @@ public class Drive extends Subsystem {
     	mCollisionListeners.add(listen);
     }
     
-    private Double getAccelerometerMagnitude() {
+    public Double getAccelerometerMagnitude() {
     	return Math.hypot(mAccel.getX(), mAccel.getY());
+    }
+    
+    public float getAngle() {
+        return mNavXBoard.getFusedHeading();
     }
     
     private void checkForCollision() {

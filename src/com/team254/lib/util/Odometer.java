@@ -1,16 +1,18 @@
 package com.team254.lib.util;
 
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
+import com.kauailabs.navx.frc.AHRS;
 
 public class Odometer {
     private static Odometer mOdometer;
     
     private double mX;
     private double mY;
-    private double mHeading;
+    private float mHeading;
     
     private Drive mDrive = Drive.getInstance();
          
@@ -30,7 +32,6 @@ public class Odometer {
     protected class Odometer_Loop implements Loop {
         public void onStart(double timestamp) {
             mDrive.zeroSensors();
-            // ZERO THE NAVX SENSOR!!!
         }
 
         public void onLoop(double timestamp) {
@@ -50,11 +51,19 @@ public class Odometer {
     {
         mY = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderTicks() + mDrive.getREncoderTicks())) / (4096 * 2.0);
         mX = (2 * Math.PI * Constants.kWheelRadius * (mDrive.getLEncoderTicks() - mDrive.getREncoderTicks())) / (4096 * Constants.kRobotWidth / 2);
-        // TO BE IMPLEMENTED W/ KauaiLabs NavX SENSOR: mHeading = 
+        mHeading = mDrive.getAngle();
     }
     
     public Translation2d getTranslation() {
         return new Translation2d(mX, mY);
+    }
+    
+    public Rotation2d getAngle() {
+        return Rotation2d.fromDegrees(mHeading);
+    }
+    
+    public RigidTransform2d getPose() {
+        return new RigidTransform2d(getTranslation(), getAngle());
     }
     
     public double getX() {
@@ -65,7 +74,7 @@ public class Odometer {
         return mY;
     }
     
-    public double getHeading() {
+    public float getHeading() {
         return mHeading;
     }
 }
