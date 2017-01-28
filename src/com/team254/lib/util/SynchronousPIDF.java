@@ -1,5 +1,6 @@
 package com.team254.lib.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
 /**
@@ -32,6 +33,10 @@ public class SynchronousPIDF {
                                      // deadband
                                      // then treat error for the proportional
                                      // term as 0
+    
+    private String name = "Default";
+    
+    private boolean smartDashboardMode = false;
 
     public SynchronousPIDF() {
     }
@@ -51,6 +56,14 @@ public class SynchronousPIDF {
         m_I = Ki;
         m_D = Kd;
         m_F = 0;
+    }
+    
+    public SynchronousPIDF(double Kp, double Ki, double Kd, double Kf, String name) {
+        m_P = Kp;
+        m_I = Ki;
+        m_D = Kd;
+        m_F = Kf;
+        this.name=name;
     }
 
     /**
@@ -107,6 +120,13 @@ public class SynchronousPIDF {
 
         m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) / dt
                 + m_F * m_setpoint);
+        
+        SmartDashboard.putNumber("PID Tuner kP (" + name + ")", m_P * proportionalError);
+        SmartDashboard.putNumber("PID Tuner kI (" + name + ")", m_I * m_totalError);
+        SmartDashboard.putNumber("PID Tuner kD (" + name + ")", m_D * (m_error - m_prevError) / dt);
+        SmartDashboard.putNumber("PID Tuner kF (" + name + ")", m_F * m_setpoint);
+        
+        
         m_prevError = m_error;
 
         if (m_result > m_maximumOutput) {
@@ -114,6 +134,8 @@ public class SynchronousPIDF {
         } else if (m_result < m_minimumOutput) {
             m_result = m_minimumOutput;
         }
+        
+        SmartDashboard.putNumber("PID Tuner Total (" + name + ")",  m_result);
         return m_result;
     }
 
@@ -336,5 +358,9 @@ public class SynchronousPIDF {
         m_I = i;
         m_D = d;
         m_F = f;
+    }
+    
+    public void enableLogging(boolean mode) {
+        
     }
 }

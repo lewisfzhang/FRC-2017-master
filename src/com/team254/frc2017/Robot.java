@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public class Robot extends IterativeRobot {
     //Drive mDrive = Drive.getInstance();
     //Proto_Intake mIntake = Proto_Intake.getInstance();
-    Proto_Shooter mShooter = Proto_Shooter.getInstance();
+    Proto_Shooter mShooterA = new Proto_Shooter(1, 2, Constants.kFlywheelAMotor1Inverted, Constants.kFlywheelAMotor2Inverted, 0, 1, Constants.kFlywheelAEncoderInverted, 0, 0, 0, 0, "A");
+    Proto_Shooter mShooterB = new Proto_Shooter(4, 5, Constants.kFlywheelBMotor1Inverted, Constants.kFlywheelBMotor2Inverted, 2, 3, Constants.kFlywheelBEncoderInverted, 0, 0, 0, 0, "B");
     //Proto_Feeder mFeeder = Proto_Feeder.getInstance();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
@@ -41,8 +42,9 @@ public class Robot extends IterativeRobot {
         feedb.changeControlMode(TalonControlMode.Voltage);
         // mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
-        mShooter.registerEnabledLoops(mEnabledLooper);
-        //mHTTPServer.startServer();
+        mShooterA.registerEnabledLoops(mEnabledLooper);
+        mShooterB.registerEnabledLoops(mEnabledLooper);
+        mHTTPServer.startServer();
     }
 
     /**
@@ -80,9 +82,11 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
 
         if (mControlBoard.getSpinShooterButton()) {
-            mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
+            mShooterA.setRpmSetpoint(Constants.kFlywheelTarget);
+            mShooterB.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
-            mShooter.setManualVoltage(0.0);
+            mShooterA.setManualVoltage(0.0);
+            mShooterB.setManualVoltage(0.0);
         }
 
         if (mControlBoard.getShootButton()) {
@@ -94,8 +98,13 @@ public class Robot extends IterativeRobot {
             feeda.set(0);
             feedb.set(0);
         }
-        mShooter.outputToSmartDashboard();
+        mShooterA.outputToSmartDashboard();
+        mShooterB.outputToSmartDashboard();
         //mFeeder.outputToSmartDashboard();
+        
+        // Set gains for tuning
+        mShooterA.setPIDF(Constants.kFlywheelAKp, Constants.kFlywheelAKi, Constants.kFlywheelAKd, Constants.kFlywheelAKf);
+        mShooterB.setPIDF(Constants.kFlywheelBKp, Constants.kFlywheelBKi, Constants.kFlywheelBKd, Constants.kFlywheelBKf);
     }
 
     @Override

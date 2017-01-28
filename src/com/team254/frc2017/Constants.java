@@ -63,16 +63,26 @@ public class Constants extends ConstantsBase {
     */
     
     /* 4" single wheel shooter constants */
-    public static boolean kFlywheelMotor1Inverted = true;
-    public static boolean kFlywheelMotor2Inverted = false;
-    public static boolean kFlywheelEncoderInverted = false;
     public static double kFlywheelReduction = 1.0;
-    public static double kFlywheelKp = 0.003;
-    public static double kFlywheelKi = 0.001;
-    public static double kFlywheelKd = 0.0;
-    public static double kFlywheelKf = 0.002;
+    
+    public static boolean kFlywheelAMotor1Inverted = true;
+    public static boolean kFlywheelAMotor2Inverted = false;
+    public static boolean kFlywheelAEncoderInverted = false;
+    public static double kFlywheelAKp = 0.003;
+    public static double kFlywheelAKi = 0.001;
+    public static double kFlywheelAKd = 0.0;
+    public static double kFlywheelAKf = 0.0023;
+    
+    public static boolean kFlywheelBMotor1Inverted = true;
+    public static boolean kFlywheelBMotor2Inverted = false;
+    public static boolean kFlywheelBEncoderInverted = true;
+    public static double kFlywheelBKp = 0.003;
+    public static double kFlywheelBKi = 0.001;
+    public static double kFlywheelBKd = 0.0;
+    public static double kFlywheelBKf = 0.0025;
+    
     public static double kFlywheelOnTargetTolerance = 20.0;
-    public static double kFlywheelTarget = 3500.0;
+    public static double kFlywheelTarget = 4000.0;
     public static double kFlywheelFeedRollerVoltage = 9.0;
     
     /* Triple roller shooter constants

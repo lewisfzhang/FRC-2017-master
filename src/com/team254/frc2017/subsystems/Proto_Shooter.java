@@ -13,52 +13,44 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Shooter extends Subsystem {
-    private static Proto_Shooter mInstance = null;
-
-    private CANTalon mMaster, mSlave, mSlaveB, mSlaveC;
+    private CANTalon mMaster, mSlave;
     private Encoder mRPMEncoder;
+    
+    private String name;
 
     private SynchronousPIDF mController;
     private boolean mClosedLoop = false;
 
     private double mVelocityRpm = 0;
-
-    public static Proto_Shooter getInstance() {
-        if (mInstance == null) {
-            mInstance = new Proto_Shooter();
-        }
-        return mInstance;
-    }
     
-    private Proto_Shooter() {
-        mMaster = new CANTalon(1);
+    public Proto_Shooter(int FlywheelMasterID, int FlywheelSlaveID, boolean invertedMaster, boolean invertedSlave, int quadEncoderA, int quadEncoderB, boolean encoderInverted, double Kp, double Ki, double Kd, double Kf, String name) {
+        this.name = name;
+        
+        mMaster = new CANTalon(FlywheelMasterID);
         mMaster.changeControlMode(TalonControlMode.Voltage);
         mMaster.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mMaster.setVoltageCompensationRampRate(10000.0);
         mMaster.enableBrakeMode(false);
-        mMaster.reverseOutput(true);
-        mMaster.setInverted(Constants.kFlywheelMotor1Inverted);
+        mMaster.setInverted(invertedMaster);
 
-        mSlave = new CANTalon(2);
+        mSlave = new CANTalon(FlywheelSlaveID);
         mSlave.changeControlMode(TalonControlMode.Voltage);
         mSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mSlave.setVoltageCompensationRampRate(10000.0);
         mSlave.enableBrakeMode(false);
-        mSlave.reverseOutput(true);
-        mSlave.setInverted(Constants.kFlywheelMotor2Inverted);
-        
-        mSlaveB = new CANTalon(4);
-        mSlaveB.changeControlMode(TalonControlMode.Voltage);
-        
-        mSlaveC = new CANTalon(5);
-        mSlaveC.changeControlMode(TalonControlMode.Voltage);
+        mSlave.setInverted(invertedSlave);
         
 
-        mRPMEncoder = new Encoder(0, 1, Constants.kFlywheelEncoderInverted /* reverse */, EncodingType.k4X);
+        mRPMEncoder = new Encoder(quadEncoderA, quadEncoderB, encoderInverted, EncodingType.k4X);
         mRPMEncoder.setDistancePerPulse(1.0 / 1024.0);
 
-        mController = new SynchronousPIDF(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
+        mController = new SynchronousPIDF(Kp, Ki, Kd, Kf, name);
+        mController.enableLogging(true);
         mController.setOutputRange(-12.0, 12.0);
+    }
+    
+    public void setPIDF(double p, double i, double d, double f) {
+        mController.setPID(p, i, d, f);
     }
 
     public class Proto_Shooter_Loop implements Loop {
@@ -76,7 +68,7 @@ public class Proto_Shooter extends Subsystem {
 
         public void onLoop(double timestamp) {
             synchronized (Proto_Shooter.this) {
-                mController.setGains(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
+                //mController.setGains(Constants.kFlywheelKp, Constants.kFlywheelKi, Constants.kFlywheelKd, Constants.kFlywheelKf);
                 double now = Timer.getFPGATimestamp();
                 double distance_now = mRPMEncoder.getDistance();
                 double delta_t = now - mPrevTimestamp;
@@ -124,11 +116,9 @@ public class Proto_Shooter extends Subsystem {
     // This is protected since it should only ever be called by a public
     // synchronized method or the loop.
     protected void setVoltage(double voltage) {
-        SmartDashboard.putNumber("PIDF (v)", voltage);
-        mMaster.set(-voltage);
+        //SmartDashboard.putNumber("PIDF (v)", voltage);
+        mMaster.set(voltage);
         mSlave.set(voltage);
-        mSlaveB.set(voltage);
-        mSlaveC.set(voltage);
     }
 
     public synchronized double getSetpoint() {
@@ -141,8 +131,8 @@ public class Proto_Shooter extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Flywheel RPM", getRpm());
-        SmartDashboard.putNumber("Encoder Count", mRPMEncoder.get());
+        SmartDashboard.putNumber("Flywheel RPM (" + name + ")", getRpm());
+        SmartDashboard.putNumber("Encoder Count (" + name + ")", mRPMEncoder.get());
     }
 
     @Override
