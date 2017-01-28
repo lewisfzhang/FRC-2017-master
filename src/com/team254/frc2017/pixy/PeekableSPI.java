@@ -62,9 +62,7 @@ public class PeekableSPI {
 	
 	private SPI spi;
 	private int nextWord;
-	private long wordsRead = 0;
-	
-	
+	private long wordsRead = 0;	
 	
 	
 	public static String hexByte(int b) {
