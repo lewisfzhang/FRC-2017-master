@@ -60,7 +60,7 @@ public class Odometer {
         
         mHeading = mDrive.getAngle();
         mX += mHeading.cos() * dist;
-        mY += mHeading.sin() * dist;
+        mY -= mHeading.sin() * dist;
     }
     
     public Translation2d getTranslation() {
@@ -86,5 +86,11 @@ public class Odometer {
     public void resetPosition() {
         mX = 0;
         mY = 0;
+    }
+    
+    public void setPose(RigidTransform2d pose) {
+        mX = pose.getTranslation().getX();
+        mY = pose.getTranslation().getY();
+        mHeading = pose.getRotation();
     }
 }

@@ -15,11 +15,6 @@ public class SpeedController {
         double maxSpd = mPath.getMaxSpeed();
         double length = mPath.getSegmentLength();
         double dist = length - mPath.getSegmentRemainingDist(robotPos);
-        System.out.println("Start: "+startSpd);
-        System.out.println("End: "+endSpd);
-        System.out.println("Max: "+maxSpd);
-        System.out.println("Length: "+length);
-        System.out.println("Dist: "+dist);
         
         if(maxSpd < endSpd && maxSpd < startSpd) {
             return maxSpd;

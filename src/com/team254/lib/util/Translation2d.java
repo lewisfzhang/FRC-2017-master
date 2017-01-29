@@ -24,6 +24,11 @@ public class Translation2d implements Interpolable<Translation2d> {
         y_ = other.y_;
     }
     
+    public Translation2d(Rotation2d other) {
+        x_ = other.cos();
+        y_ = other.sin();
+    }
+    
     public Translation2d(Translation2d start, Translation2d end) {
         x_ = end.x_ - start.x_;
         y_ = end.y_ - start.y_;

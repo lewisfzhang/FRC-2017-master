@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
     Proto_Intake mIntake =  Proto_Intake.getInstance();
-    Proto_Shooter mShooter = Proto_Shooter.getInstance();
+    //Proto_Shooter mShooter = Proto_Shooter.getInstance();
     Odometer mOdometer = Odometer.getInstance();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
@@ -36,7 +36,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
-        mShooter.registerEnabledLoops(mEnabledLooper);
+        //mShooter.registerEnabledLoops(mEnabledLooper);
         mOdometer.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
     }
@@ -88,6 +88,7 @@ public class Robot extends IterativeRobot {
 //            mShooter.setFeedRoller(0.0);
 //        }
 //        mShooter.outputToSmartDashboard();
+        mDrive.outputToSmartDashboard();
     }
 
     @Override

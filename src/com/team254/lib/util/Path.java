@@ -14,6 +14,7 @@ public class Path {
      public Path(String filepath) {
          segments = new ArrayList<PathSegment>();
          loadFile(filepath);
+         //Odometer.getInstance().setPose(new RigidTransform2d(new Translation2d(0, 100), new Rotation2d()));
      }
      
      public Path() {
@@ -94,7 +95,7 @@ public class Path {
      
      public double getStartSpeed() {
          if(prevSegment == null)
-             return 0.0;
+             return Constants.kMaxAccel;
          return (segments.size() == 0) ? 0.0 : prevSegment.getSpeed();
      }
      
@@ -118,7 +119,7 @@ public class Path {
          //Path test = new Path("~/path.txt");
          //System.out.println(test.getTargetPoint(new Translation2d(20, 20)));
          Path mPath = new Path();
-         mPath.segments.add(new PathSegment.Segment(0.0, 0.0, 50.0, 0.0, 100.0));
+         mPath.segments.add(new PathSegment.Segment(0.0, 0.0, 117.677669, 0.0, 100.0));
          mPath.segments.add(new PathSegment.Segment(50.0, 0.0, 60.0, 0.0, 1000.0));
          mPath.segments.add(new PathSegment.Segment(60.0, 0.0, 150.0, 0.0, 20.0));
          SpeedController mSpeed = new SpeedController(mPath);

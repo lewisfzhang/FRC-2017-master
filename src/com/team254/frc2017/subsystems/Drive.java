@@ -18,6 +18,7 @@ import com.team254.lib.util.Kinematics;
 import com.team254.lib.util.Odometer;
 import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
+import com.team254.lib.util.SynchronousPIDF;
 import com.team254.lib.util.Translation2d;
 import com.team254.lib.util.CollisionDetectionListener;
 
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,26 +40,33 @@ public class Drive extends Subsystem {
     
     private static AdaptivePurePursuitController mPathController;
     private static Drive mInstance;
+    
+    private double mLeftRpm, mRightRpm;
+    private SynchronousPIDF mLeftController, mRightController;
 
     
     private Collection<CollisionDetectionListener> mCollisionListeners = new LinkedList<CollisionDetectionListener>();
-
+    
     private Drive() {
         // What kind of encoder will we be using in the drivetrain? Regular quadrature encoders?
         
-        mLeftMaster = new CANTalon(2);
-        mLeftMaster.changeControlMode(TalonControlMode.PercentVbus);
-        mLeftMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-        mLeftSlave = new CANTalon(1);
-        mLeftSlave.changeControlMode(TalonControlMode.Follower);
-        mLeftSlave.set(2);
+        mLeftMaster = new CANTalon(11);
+        mLeftMaster.changeControlMode(TalonControlMode.Voltage);
+        //mLeftMaster.setInverted(true);
+        //mLeftMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+//        mLeftSlave = new CANTalon(12);
+//        mLeftSlave.changeControlMode(TalonControlMode.Follower);
+//        mLeftSlave.setInverted(true);
+//        mLeftSlave.set(11);
         
-        mRightMaster = new CANTalon(3);
-        mRightMaster.changeControlMode(TalonControlMode.PercentVbus);
-        mRightMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-        mRightSlave = new CANTalon(4);
-        mRightSlave.changeControlMode(TalonControlMode.Follower);
-        mRightSlave.set(3);
+        mRightMaster = new CANTalon(4);
+        mRightMaster.changeControlMode(TalonControlMode.Voltage);
+        mRightMaster.setInverted(true);
+        //mRightMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+//        mRightSlave = new CANTalon(3);
+//        mRightSlave.changeControlMode(TalonControlMode.Follower);
+//        mRightSlave.setInverted(true);
+//        mRightSlave.set(4);
         
         mAccel = new BuiltInAccelerometer(); 
     	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
@@ -65,12 +74,19 @@ public class Drive extends Subsystem {
     	mNavXBoard = new AHRS(SPI.Port.kMXP);
     	
     	mRightEncoder = new Encoder(8, 9, false /* reverse */, EncodingType.k4X);
-        mRightEncoder.setDistancePerPulse(1.0 / 250.0);
+        mRightEncoder.setDistancePerPulse(1.0 / Constants.kDriveTicksPerRotation);
         
         mLeftEncoder = new Encoder(6, 7, false /* reverse */, EncodingType.k4X);
         mLeftEncoder.setDistancePerPulse(1.0 / 250.0);
         
     	mPathController = new AdaptivePurePursuitController("~/path.txt");
+    	
+    	mLeftController = new SynchronousPIDF(0, 0, 0, Constants.kLeftDriveKf);
+    	mLeftController.setOutputRange(-12.0, 12.0);
+
+    	mRightController = new SynchronousPIDF(0, 0, 0, Constants.kRightDriveKf);
+        mRightController.setOutputRange(-12.0, 12.0);
+
     }
 
     public static Drive getInstance() {
@@ -80,15 +96,43 @@ public class Drive extends Subsystem {
     }
 
     protected class Drive_Loop implements Loop {
+        private double mPrevTimestamp = 0;
+        private double mLPrevRotations = 0;
+        private double mRPrevRotations = 0;
+        
         public void onStart(double timestamp) {
-
+            mPathController.reset();
+            mLeftMaster.set(0.0);
+            mRightMaster.set(0.0);
+            //mLeftController.setSetpoint(50.0);
+            //mRightController.setSetpoint(50.0);
+            zeroSensors();
         }
 
         public void onLoop(double timestamp) {
             checkForCollision();
+            synchronized (Drive.this) {
+                double now = Timer.getFPGATimestamp();
+                double left_rotations_now = getLEncoderRotations();
+                double right_rotations_now = getREncoderRotations();
+                double delta_t = now - mPrevTimestamp;
+                if (delta_t < 1E-6) {
+                    delta_t = 1E-6; // Prevent divide-by-zero
+                }
+                mLeftRpm = (left_rotations_now - mLPrevRotations) / delta_t * 60.0;
+                mRightRpm = (right_rotations_now - mRPrevRotations) / delta_t * 60.0;
+                mPrevTimestamp = now;
+                
+                mLPrevRotations = left_rotations_now;
+                mRPrevRotations = right_rotations_now;
+                
+                mLeftMaster.set(mLeftController.calculate(RpmToInchesPerSecond(mLeftRpm), delta_t));
+                mRightMaster.set(mRightController.calculate(RpmToInchesPerSecond(mRightRpm), delta_t));
+            }
+            if(!mPathController.isFinished()) {
+                updatePathFollower();
+            }
             
-            //updatePathFollower();
-            outputToSmartDashboard();
         }
 
         public void onStop(double timestamp) {
@@ -106,8 +150,6 @@ public class Drive extends Subsystem {
     } 
     
     public void zeroSensors() {
-        mLeftMaster.setPosition(0.0);
-        mRightMaster.setPosition(0.0);
         mNavXBoard.reset();
         Odometer.getInstance().resetPosition();
     }
@@ -115,19 +157,18 @@ public class Drive extends Subsystem {
     public void stop() {
         mLeftMaster.set(0);
         mRightMaster.set(0);
-        zeroSensors();
+        updateVelocitySetpoint(0,0);
+        //zeroSensors();
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Left Drive Motor RPM", mLeftMaster.getSpeed());
-        SmartDashboard.putNumber("Right Drive Motor RPM", mRightMaster.getSpeed());
+        SmartDashboard.putNumber("Left Drive Motor Inches sec", RpmToInchesPerSecond(mLeftRpm));
+        SmartDashboard.putNumber("Right Drive Motor Inches sec", RpmToInchesPerSecond(mRightRpm));
         SmartDashboard.putNumber("Left Encoder Position", getLEncoderTicks());
         SmartDashboard.putNumber("Right Encoder Position", getREncoderTicks());
         SmartDashboard.putNumber("Field X Position", Odometer.getInstance().getX());
         SmartDashboard.putNumber("Field Y Position", Odometer.getInstance().getY());
         SmartDashboard.putNumber("Heading", Odometer.getInstance().getHeading().getDegrees());
-        System.out.println("Field X: " + Odometer.getInstance().getX());
-        System.out.println("Field Y: " + Odometer.getInstance().getY());
     }
 
     // Returns 4096 ticks per rotation
@@ -169,26 +210,36 @@ public class Drive extends Subsystem {
     private void updatePathFollower() {
         RigidTransform2d robot_pose = Odometer.getInstance().getPose();
         RigidTransform2d.Delta command = mPathController.update(robot_pose);
-        Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
-
-        // Scale the command to respect the max velocity limits
-        double max_vel = 0.0;
-        max_vel = Math.max(max_vel, Math.abs(setpoint.left));
-        max_vel = Math.max(max_vel, Math.abs(setpoint.right));
-        if (max_vel > Constants.kPathFollowingMaxVel) {
-            double scaling = Constants.kPathFollowingMaxVel / max_vel;
-            setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
+        if(!mPathController.isFinished()) {
+            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+    
+            // Scale the command to respect the max velocity limits
+            double max_vel = 0.0;
+            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
+            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
+            if (max_vel > Constants.kPathFollowingMaxVel) {
+                double scaling = Constants.kPathFollowingMaxVel / max_vel;
+                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
+            }
+            updateVelocitySetpoint(setpoint.left, setpoint.right);
+        } else {
+            stop();
         }
-        updateVelocitySetpoint(setpoint.left, setpoint.right);
     }
     
     private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
-        mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec));
-        mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec));
+        mRightController.setSetpoint(right_inches_per_sec);
+        mLeftController.setSetpoint(left_inches_per_sec);
+        SmartDashboard.putNumber("Right Wheel Speed", right_inches_per_sec);
+        SmartDashboard.putNumber("Left Wheel Speed", left_inches_per_sec );
     }
-
+ 
     private static double inchesPerSecondToRpm(double inches_per_second) {
         return inchesToRotations(inches_per_second) * 60;
+    }
+    
+    private static double RpmToInchesPerSecond(double rpm) {
+        return rpm / 60 * Constants.kWheelRadius * Math.PI * 2;
     }
     
     private static double inchesToRotations(double inches) {
@@ -196,6 +247,6 @@ public class Drive extends Subsystem {
     }
     
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(mNavXBoard.getFusedHeading());
+        return Rotation2d.fromDegrees(-mNavXBoard.getFusedHeading());
     }
 }

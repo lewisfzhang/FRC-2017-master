@@ -11,10 +11,10 @@ public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
 
     // ROBOT PHYSICAL CONSTANTS
-    public static double kRobotWidth = 20;                     // FIXME placeholder
+    public static double kRobotWidth = 24;                     // FIXME placeholder
     public static double kTrackScrubFactor = 1.0;              // FIXME placeholder
-    public static double kTrackEffectiveDiameterInches = 25.0; // FIXME placeholder
-    public static double kWheelRadius = 2.0;                   // FIXME placeholder
+    public static double kTrackEffectiveDiameterInches = 24.0; // FIXME placeholder
+    public static double kWheelRadius = 2.0 ;                   // FIXME placeholder
     
 
     // CONTROL LOOP GAINS
@@ -51,13 +51,21 @@ public class Constants extends ConstantsBase {
     public static double kFlywheelTarget = 2800.0;
     public static double kFlywheelFeedRollerVoltage = 9.0;
     
-    public static double kAutoLookAhead = 100.0; //inches
+    public static double kAutoLookAhead = 30.0; //inches
     public static double kAutoSegmentThreshold = 0.95;
     
-    public static double kMaxAccel = 10.0; //inches per second^2
-    public static double kMaxDecel = 10.0; //should be positive
+    public static double kMaxAccel = 80.0; //inches per second^2
+    public static double kMaxDecel = 20.0; //should be positive
     public static double kPathFollowingMaxVel = 10000; //inches per second
 
+    public static double kRightDriveKf = 0.063245;
+    public static double kRightDriveKi = 10000; //inches per second
+    public static double kRightDriveKd = 10000; //inches per second
+    
+    public static double kDriveTicksPerRotation = 250.0;
+    
+    public static double kLeftDriveKf = 0.065826; //throttle per inches per second^2
+    
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid
      * 
