@@ -70,7 +70,7 @@ public class SynchronousPIDF {
         m_D = Kd;
         m_F = Kf;
         this.name=name;
-        logger = new CSVWriter("/home/lvuser/SHOOTER-LOGS-" + name + ".csv", 11);
+        logger = new CSVWriter("/home/lvuser/SHOOTER-LOGS-" + name + ".csv", new String[11]);
     }
 
     /**

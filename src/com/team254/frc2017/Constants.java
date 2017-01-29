@@ -72,7 +72,9 @@ public class Constants extends ConstantsBase {
     public static double kFlywheelAKi = 0.001;
     public static double kFlywheelAKd = 0.0;
     public static double kFlywheelAKf = 0.0023;
-    public static double kFlywheelATarget = 4000.0;
+    public static double kFlywheelATarget = 3150.0;
+    public static double kFlywheelAKj = 3.0;
+    public static double kFlywheelAKLoadRatio = 1.026;
     
     public static boolean kFlywheelBMotor1Inverted = false;
     public static boolean kFlywheelBMotor2Inverted = true;

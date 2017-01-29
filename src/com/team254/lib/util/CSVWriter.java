@@ -8,29 +8,38 @@ import java.util.ArrayList;
 
 public class CSVWriter {
     private int mColumns;
-    private ArrayList<Double> mList;
+    private ArrayList<String> mList;
     DecimalFormat mDf = new DecimalFormat("#.000");
     PrintWriter mOutput = null;
 
-    public CSVWriter(String fileName, int columns) {
-        mColumns = columns;
-        mList = new ArrayList<>(columns);
+    public CSVWriter(String fileName, String[] columnNames) {
+        mColumns = columnNames.length;
+        mList = new ArrayList<>(mColumns);
         try {
             mOutput = new PrintWriter(fileName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        for (int i = 0; i < columnNames.length; ++i) {
+            addValue(i, columnNames[i]);
+        }
+        write();
     }
 
     public void addValue(int columnIndex, double value) {
-        if (columnIndex > -1 && columnIndex < mColumns)
+        addValue(columnIndex, mDf.format(value));
+    }
+
+    public void addValue(int columnIndex, String value) {
+        if (columnIndex > -1 && columnIndex < mColumns) {
             mList.add(columnIndex, value);
+        }
     }
 
     public String toRowString() {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < mColumns; i++) {
-            String num = mDf.format(mList.get(i));
+            String num = mList.get(i);
             if (i > 0) {
                 sb.append(", ");
             }
@@ -42,7 +51,7 @@ public class CSVWriter {
     public void write() {
         String nextLine = toRowString();
         for (int i = 0; i < mColumns; i++) {
-            mList.add(i, 0.0);
+            mList.add(i, "0.000");
         }
         if (mOutput != null) {
             mOutput.println(nextLine);

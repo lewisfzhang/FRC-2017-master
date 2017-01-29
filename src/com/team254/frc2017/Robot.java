@@ -19,9 +19,21 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public class Robot extends IterativeRobot {
     //Drive mDrive = Drive.getInstance();
     //Proto_Intake mIntake = Proto_Intake.getInstance();
-    Proto_Shooter mShooterA = new Proto_Shooter(1, 2, Constants.kFlywheelAMotor1Inverted, Constants.kFlywheelAMotor2Inverted, 0, 1, Constants.kFlywheelAEncoderInverted, 0, 0, 0, 0, "A");
-    Proto_Shooter mShooterB = new Proto_Shooter(4, 5, Constants.kFlywheelBMotor1Inverted, Constants.kFlywheelBMotor2Inverted, 2, 3, Constants.kFlywheelBEncoderInverted, 0, 0, 0, 0, "B");
+    // Proto_Shooter mShooterA = new Proto_Shooter(1, 2, Constants.kFlywheelAMotor1Inverted, Constants.kFlywheelAMotor2Inverted, 0, 1, Constants.kFlywheelAEncoderInverted, 0, 0, 0, 0, "A");
+    // Proto_Shooter mShooterB = new Proto_Shooter(4, 5, Constants.kFlywheelBMotor1Inverted, Constants.kFlywheelBMotor2Inverted, 2, 3, Constants.kFlywheelBEncoderInverted, 0, 0, 0, 0, "B");
     //Proto_Feeder mFeeder = Proto_Feeder.getInstance();
+
+    Proto_Shooter mShooterA = new Proto_Shooter(
+            1,
+            2,
+            Constants.kFlywheelAMotor1Inverted,
+            Constants.kFlywheelAMotor2Inverted,
+            0,
+            1,
+            Constants.kFlywheelAEncoderInverted,
+            0,
+            0,
+            "A");
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
@@ -43,7 +55,7 @@ public class Robot extends IterativeRobot {
         // mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
         mShooterA.registerEnabledLoops(mEnabledLooper);
-        mShooterB.registerEnabledLoops(mEnabledLooper);
+        // mShooterB.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
     }
 
@@ -83,10 +95,10 @@ public class Robot extends IterativeRobot {
 
         if (mControlBoard.getSpinShooterButton()) {
             mShooterA.setRpmSetpoint(Constants.kFlywheelATarget);
-            mShooterB.setRpmSetpoint(Constants.kFlywheelBTarget);
+            // mShooterB.setRpmSetpoint(Constants.kFlywheelBTarget);
         } else {
             mShooterA.setManualVoltage(0.0);
-            mShooterB.setManualVoltage(0.0);
+            // mShooterB.setManualVoltage(0.0);
         }
 
         if (mControlBoard.getShootButton()) {
@@ -99,12 +111,14 @@ public class Robot extends IterativeRobot {
             feedb.set(0);
         }
         mShooterA.outputToSmartDashboard();
-        mShooterB.outputToSmartDashboard();
+        // mShooterB.outputToSmartDashboard();
         //mFeeder.outputToSmartDashboard();
         
         // Set gains for tuning
-        mShooterA.setPIDF(Constants.kFlywheelAKp, Constants.kFlywheelAKi, Constants.kFlywheelAKd, Constants.kFlywheelAKf);
-        mShooterB.setPIDF(Constants.kFlywheelBKp, Constants.kFlywheelBKi, Constants.kFlywheelBKd, Constants.kFlywheelBKf);
+        mShooterA.setPIDF(Constants.kFlywheelAKj, Constants.kFlywheelAKLoadRatio);
+        //
+        // mShooterA.setPIDF(Constants.kFlywheelAKp, Constants.kFlywheelAKi, Constants.kFlywheelAKd, Constants.kFlywheelAKf);
+        // mShooterB.setPIDF(Constants.kFlywheelBKp, Constants.kFlywheelBKi, Constants.kFlywheelBKd, Constants.kFlywheelBKf);
     }
 
     @Override

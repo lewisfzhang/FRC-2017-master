@@ -5,6 +5,7 @@ import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.JRadFlywheelController;
 import com.team254.lib.util.SynchronousPIDF;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -18,12 +19,14 @@ public class Proto_Shooter extends Subsystem {
     
     private String name;
 
-    private SynchronousPIDF mController;
+    private JRadFlywheelController mController;
     private boolean mClosedLoop = false;
 
     private double mVelocityRpm = 0;
-    
-    public Proto_Shooter(int FlywheelMasterID, int FlywheelSlaveID, boolean invertedMaster, boolean invertedSlave, int quadEncoderA, int quadEncoderB, boolean encoderInverted, double Kp, double Ki, double Kd, double Kf, String name) {
+
+    private double mLastOutput = 0;
+
+    public Proto_Shooter(int FlywheelMasterID, int FlywheelSlaveID, boolean invertedMaster, boolean invertedSlave, int quadEncoderA, int quadEncoderB, boolean encoderInverted, double kj, double kLoadRatio, String name) {
         this.name = name;
         
         mMaster = new CANTalon(FlywheelMasterID);
@@ -44,13 +47,14 @@ public class Proto_Shooter extends Subsystem {
         mRPMEncoder = new Encoder(quadEncoderA, quadEncoderB, encoderInverted, EncodingType.k4X);
         mRPMEncoder.setDistancePerPulse(1.0 / 1024.0);
 
-        mController = new SynchronousPIDF(Kp, Ki, Kd, Kf, name);
-        mController.enableLogging(true);
+        mController = new JRadFlywheelController(kj, kLoadRatio);
+        // mController.enableLogging(true);
         mController.setOutputRange(-12.0, 12.0);
     }
     
-    public void setPIDF(double p, double i, double d, double f) {
-        mController.setPID(p, i, d, f);
+    public void setPIDF(double j, double loadRatio) {
+        mController.setKj(j);
+        mController.setKLoadRatio(loadRatio);
     }
 
     public class Proto_Shooter_Loop implements Loop {
@@ -77,7 +81,7 @@ public class Proto_Shooter extends Subsystem {
                 }
                 mVelocityRpm = (distance_now - mPrevRotations) / delta_t * 60.0;
                 if (mClosedLoop) {
-                    double voltage = mController.calculate(mVelocityRpm, delta_t);
+                    double voltage = mController.calculate(mVelocityRpm, delta_t, now);
                     setVoltage(voltage);
                 }
 
@@ -100,6 +104,9 @@ public class Proto_Shooter extends Subsystem {
     }
 
     public synchronized void setRpmSetpoint(double rpm) {
+        if (mClosedLoop) {
+            mController.setInitialOutput(8);
+        }
         mClosedLoop = true;
         mController.setSetpoint(Constants.kFlywheelReduction * rpm);
     }
@@ -117,6 +124,7 @@ public class Proto_Shooter extends Subsystem {
     // synchronized method or the loop.
     protected void setVoltage(double voltage) {
         //SmartDashboard.putNumber("PIDF (v)", voltage);
+        mLastOutput = voltage;
         mMaster.set(voltage);
         mSlave.set(voltage);
     }
@@ -133,6 +141,10 @@ public class Proto_Shooter extends Subsystem {
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Flywheel RPM (" + name + ")", getRpm());
         SmartDashboard.putNumber("Encoder Count (" + name + ")", mRPMEncoder.get());
+        SmartDashboard.putNumber("Flywheel Voltage (" + name + ")", mLastOutput);
+
+        double errorLimited = Math.max(-200, Math.min(200, mVelocityRpm - getSetpoint()));
+        SmartDashboard.putNumber("Flywheel error limited (" + name + ")", errorLimited);
     }
 
     @Override
