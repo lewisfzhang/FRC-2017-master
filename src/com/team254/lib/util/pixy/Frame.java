@@ -1,4 +1,4 @@
-package pixy;
+package com.team254.lib.util.pixy;
 
 import java.util.List;
 

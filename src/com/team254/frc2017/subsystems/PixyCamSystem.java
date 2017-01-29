@@ -7,10 +7,10 @@ import java.util.Map;
 
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.pixy.Frame;
+import com.team254.lib.util.pixy.PixyCam;
 
 import edu.wpi.first.wpilibj.SPI;
-import pixy.Frame;
-import pixy.PixyCam;
 
 public class PixyCamSystem extends Subsystem {
 

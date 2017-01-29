@@ -3,13 +3,14 @@ package com.team254.frc2017.pixy;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import com.team254.lib.util.pixy.Frame;
+import com.team254.lib.util.pixy.PixyCam;
+import com.team254.lib.util.pixy.SpiLogger;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import pixy.Frame;
-import pixy.PixyCam;
-import pixy.SpiLogger;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as

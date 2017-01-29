@@ -1,4 +1,4 @@
-package pixy;
+package com.team254.lib.util.pixy;
 
 import edu.wpi.first.wpilibj.SPI;
 
