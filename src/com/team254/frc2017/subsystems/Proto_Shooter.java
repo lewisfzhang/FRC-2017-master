@@ -104,6 +104,7 @@ public class Proto_Shooter extends Subsystem {
     }
 
     public synchronized void setRpmSetpoint(double rpm) {
+        // Whoops: this actually turns the JRad controller into the Kp version
         if (mClosedLoop) {
             mController.setInitialOutput(8);
         }
