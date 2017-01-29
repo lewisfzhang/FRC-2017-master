@@ -15,16 +15,16 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * this project, you must also update the manifest file in the resource directory.
  */
 public class Robot extends IterativeRobot {
-    Drive mDrive = Drive.getInstance();
-    Proto_Intake mIntake = Proto_Intake.getInstance();
-    Proto_Shooter mShooter = Proto_Shooter.getInstance();
-    Proto_Feeder mFeeder = Proto_Feeder.getInstance();
+    private Drive mDrive = Drive.getInstance();
+    private Proto_Intake mIntake = Proto_Intake.getInstance();
+    private Proto_Shooter mShooter = Proto_Shooter.getInstance();
+    private Proto_Feeder mFeeder = Proto_Feeder.getInstance();
 
-    ControlBoard mControlBoard = ControlBoard.getInstance();
+    private ControlBoard mControlBoard = ControlBoard.getInstance();
 
-    Looper mEnabledLooper = new Looper();
+    private Looper mEnabledLooper = new Looper();
 
-    WebServer mHTTPServer = new WebServer();
+    private WebServer mHTTPServer = new WebServer();
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
@@ -59,9 +59,11 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopInit() {
+
+        //Start loopers
         mEnabledLooper.start();
         
-        //re-update feeder constants & apply to talons
+        //re-update feeder constants & apply to talons TODO: remove this later
         mFeeder.updateConstants();
     }
 

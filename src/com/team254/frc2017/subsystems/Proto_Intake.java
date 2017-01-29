@@ -47,7 +47,7 @@ public class Proto_Intake extends Subsystem {
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Flywheel Motor RPM", mIntake.getSpeed());
+        SmartDashboard.putNumber("Intake RPM", mIntake.getSpeed());
     }
 
     public void run() {

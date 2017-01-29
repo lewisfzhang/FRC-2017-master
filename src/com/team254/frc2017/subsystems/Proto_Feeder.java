@@ -3,11 +3,9 @@ package com.team254.frc2017.subsystems;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.Constants;
-import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Feeder extends Subsystem{
@@ -31,29 +29,14 @@ public class Proto_Feeder extends Subsystem{
         mFeed.enableBrakeMode(false);
 
         mFeedSlave = new CANTalon(4);
-        mFeedSlave.changeControlMode(TalonControlMode.Voltage);
+        mFeedSlave.changeControlMode(TalonControlMode.Follower);
         mFeedSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mFeedSlave.setVoltageCompensationRampRate(10000.0);
         mFeedSlave.enableBrakeMode(false);
+        mFeedSlave.set(3);
 
         updateConstants();
     }
-    
-    /*public class Proto_Feeder_Loop implements Loop {
-
-
-        public void onStart(double timestamp) {
-            
-        }
-
-        public void onLoop(double timestamp) {
-            
-        }
-
-        public void onStop(double timestamp) {
-            
-        }
-    }*/
     
     public synchronized void updateConstants() {
         mFeed.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -66,23 +49,23 @@ public class Proto_Feeder extends Subsystem{
         mFeed.changeControlMode(CANTalon.TalonControlMode.Speed);
         mFeed.setProfile(kVelocityControlSlot);
         mFeed.setAllowableClosedLoopErr(Constants.kFeedVelocityAllowableError);
-        mFeed.configPeakOutputVoltage(-12.0, 12.0);
+        mFeed.configPeakOutputVoltage(12.0, -12.0);
     }
     
     public synchronized void setSetpoint(double setpoint) {
-        mFeed.setSetpoint(setpoint);
+        mFeed.set(setpoint);
     }
 
     @Override
     public synchronized void outputToSmartDashboard() {
         // TODO Auto-generated method stub
-        SmartDashboard.putNumber("Feed Speed", mFeed.getSpeed());
+        SmartDashboard.putNumber("Feeder Speed", mFeed.getSpeed());
     }
 
     @Override
     public synchronized void stop() {
         // TODO Auto-generated method stub
-        mFeed.setSetpoint(0);
+        mFeed.set(0);
         
     }
 

@@ -15,6 +15,7 @@ public class Constants extends ConstantsBase {
     public static double kTrackEffectiveDiameterInches = 25.0; // FIXME
                                                                // placeholder
 
+    public static double kCollisionThreshold = 0.5;
     // CONTROL LOOP GAINS
     // TODO add some!
 
