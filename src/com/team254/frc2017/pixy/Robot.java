@@ -7,6 +7,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import pixy.Frame;
+import pixy.PixyCam;
+import pixy.SpiLogger;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as

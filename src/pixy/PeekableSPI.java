@@ -1,4 +1,4 @@
-package com.team254.frc2017.pixy;
+package pixy;
 
 import java.util.*;
 
