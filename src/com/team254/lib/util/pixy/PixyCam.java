@@ -23,7 +23,7 @@ public class PixyCam {
 
     public Frame.Block parseBlock() {
         Frame.Block block = new Frame.Block();
-
+        block = new AdjustedBlock(block);
         // Wait for sync
         int lastByte = 0x00;
         while (true) {
