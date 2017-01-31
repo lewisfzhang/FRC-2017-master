@@ -4,19 +4,19 @@ import java.awt.Point;
 
 import com.team254.lib.util.pixy.Frame.Block; 
 
-public class AdjustedBlock extends Block {
+public class AdjustedBlock extends Frame.Block {
     static double cx = 163.019;
     static double cy = 96.8935;
     static double k1 = -0.431415; // radial distortion coefficient 1
     static double k2 = 0.260901; // radial distortion coefficient 2
     static double k3 = -0.134147; // radial distortion coefficient 3
-    public AdjustedBlock(Block block){
+    public AdjustedBlock(Frame.Block block){
         Point center = transformCoordinates(block.centerX, block.centerY);
-        block.centerX = center.x;
-        block.centerY = center.y;
-        undistortFourCorners(block);
+        this.centerX = center.x;
+        this.centerY = center.y;
+        undistortFourCorners(this);
     }
-    private void undistortFourCorners(Block block) {
+    private void undistortFourCorners(AdjustedBlock block) {
         double leftSideX = block.centerX-(block.width/2);
         double rightSideX = block.centerX+(block.width/2);
         double topSideY = block.centerY-(block.height/2);
@@ -40,7 +40,7 @@ public class AdjustedBlock extends Block {
         block.height = bottomLeft.y - topLeft.y;
     }
     private static Point transformCoordinates(double xDistorted, double yDistorted) {
-        // put in terms of cx and cy being the orgin and normalize
+        // put in terms of cx and cy being the origin and normalize
         double xDistNormalized = (xDistorted - cx)/400;
         double yDistNormalized = (yDistorted - cy)/400;
         // apply undistortion
