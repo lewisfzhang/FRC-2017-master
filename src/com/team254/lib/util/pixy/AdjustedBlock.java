@@ -17,27 +17,19 @@ public class AdjustedBlock extends Frame.Block {
         undistortFourCorners(this);
     }
     private void undistortFourCorners(AdjustedBlock block) {
+        // based on the inverted plane of a camera, you can calculate the four side x and y values of the rectangular block
         double leftSideX = block.centerX-(block.width/2);
         double rightSideX = block.centerX+(block.width/2);
         double topSideY = block.centerY-(block.height/2);
         double bottomSideY = block.centerY+(block.height/2);
-        Point topLeft = transformCoordinates(leftSideX, topSideY);
+        
+        // Undistort the two opposite points of the rectangular block
         Point bottomLeft = transformCoordinates(leftSideX, bottomSideY);
         Point topRight = transformCoordinates(rightSideX, topSideY);
-        if (topLeft.x >= 320 || topLeft.x < 0)
-            topLeft.x = (int) leftSideX;
-        if (topLeft.y >= 200 || topLeft.y < 0)
-            topLeft.y = (int) topSideY;
-        if (bottomLeft.x >= 320 || bottomLeft.x < 0)
-            bottomLeft.x = (int) leftSideX;
-        if (bottomLeft.y >= 200 || bottomLeft.y < 0)
-            bottomLeft.y = (int) bottomSideY;
-        if (topRight.x >= 320 || topRight.x < 0)
-            topRight.x = (int) rightSideX;
-        if (topRight.y >= 200 || topRight.y < 0)
-            topRight.y = (int) rightSideX;
-        block.width = topRight.x - topLeft.x;
-        block.height = bottomLeft.y - topLeft.y;
+        
+        // Calculate the width and height based on opposite points of rectangular block
+        block.width = topRight.x - bottomLeft.x;
+        block.height = bottomLeft.y - topRight.y;
     }
     private static Point transformCoordinates(double xDistorted, double yDistorted) {
         // put in terms of cx and cy being the origin and normalize
@@ -52,7 +44,7 @@ public class AdjustedBlock extends Frame.Block {
         Point undistort = new Point((int) (Math.round(xUndistorted*400 + cx)), (int) (Math.round(yUndistorted*400 + cy)));
         return undistort;
     }
-    private static double radiusFuncInv(double rDistorted) {
+    private static double radiusFuncInv(double rDistorted) { // Function for Undistortion
         double rSquared = rDistorted*rDistorted;
         double rUndistorted = rDistorted;
         rDistorted *= rSquared;
