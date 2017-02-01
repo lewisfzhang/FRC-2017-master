@@ -5,7 +5,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException; 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner; 
 
 public class AdjustedBlock extends Frame.Block {
     static double cx, cy, k1, k2, k3;
@@ -13,39 +15,26 @@ public class AdjustedBlock extends Frame.Block {
 //    static double k2 = 0.260901; // radial distortion coefficient 2
 //    static double k3 = -0.134147; // radial distortion coefficient 3
     public AdjustedBlock(Frame.Block block){
-        String line = "";
-        BufferedReader br = null;
-        try {
-            File filePath = new File("output.txt");
-            br = new BufferedReader(new FileReader(filePath));
-            line = br.readLine(); // Camera Matrix:
-            line = br.readLine(); // fx:
-            line = br.readLine(); // fy: 
-            line = br.readLine(); // cx: 
-            cx = Double.parseDouble(line.substring(4));
-            line = br.readLine(); // cy: 
-            cy = Double.parseDouble(line.substring(4));
-            line = br.readLine(); // blank line
-            line = br.readLine(); // Distortion Coefficients:
-            line = br.readLine(); // k1: 
-            k1 = Double.parseDouble(line.substring(4));
-            line = br.readLine(); // k2: 
-            k2 = Double.parseDouble(line.substring(4));
-            line = br.readLine(); // k3: 
-            k3 = Double.parseDouble(line.substring(4));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        InputStream in = AdjustedBlock.class.getResourceAsStream("distortionConstants.txt");
+        Scanner scanner = new Scanner(in);
+        String line;
+        line = scanner.nextLine(); // Camera Matrix:
+        line = scanner.nextLine(); // fx:
+        line = scanner.nextLine(); // fy: 
+        line = scanner.nextLine(); // cx: 
+        cx = Double.parseDouble(line.substring(4));
+        line = scanner.nextLine(); // cy: 
+        cy = Double.parseDouble(line.substring(4));
+        line = scanner.nextLine(); // blank line
+        line = scanner.nextLine(); // Distortion Coefficients:
+        line = scanner.nextLine(); // k1: 
+        k1 = Double.parseDouble(line.substring(4));
+        line = scanner.nextLine(); // k2: 
+        k2 = Double.parseDouble(line.substring(4));
+        line = scanner.nextLine(); // k3: 
+        k3 = Double.parseDouble(line.substring(4));
+        scanner.close();
+        
         Point center = transformCoordinates(block.centerX, block.centerY);
         this.centerX = center.x;
         this.centerY = center.y;

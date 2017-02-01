@@ -1263,8 +1263,7 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
 
     fs << "Distortion_Coefficients" << distCoeffs;
 
-    ofstream myfile;
-    myfile.open ("output.txt");
+    ofstream myfile("../src/com/team254/lib/util/pixy/distortionConstants.txt");
     myfile << "Camera Matrix:\n";
     myfile << "Fx: " << cameraMatrix.at<double> (0, 0) << "\n";
     myfile << "Fy: " << cameraMatrix.at<double> (1, 1) << "\n";
