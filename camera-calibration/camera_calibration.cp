@@ -1266,7 +1266,7 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
 
     fs << "Distortion_Coefficients" << distCoeffs;
 
-    ofstream myfile("../res/PixyCam4.txt");
+    ofstream myfile("../resources/PixyCam4.txt");
     myfile << "Camera Matrix:\n";
     myfile << "Fx: " << cameraMatrix.at<double> (0, 0) << "\n";
     myfile << "Fy: " << cameraMatrix.at<double> (1, 1) << "\n";
