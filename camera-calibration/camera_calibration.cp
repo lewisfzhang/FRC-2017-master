@@ -702,6 +702,7 @@ int main(int argc, char* argv[])
       Mat view;
       bool blinkOutput = false;
       char getkey = (char)waitKey(s.inputCapture.isOpened() ? 50 : s.delay);
+      // char getkey = (char)waitKey(50);
       view = s.nextImage();
       imshow("Image View", view);
       bool isGetKeyPressed = false;
@@ -751,14 +752,15 @@ int main(int argc, char* argv[])
         if (getkey == ' ')
           isGetKeyPressed = true;
         getkey = (char)waitKey(s.inputCapture.isOpened() ? 50 : s.delay);
+        // getkey = (char)waitKey(50);
       }
       isGetKeyPressed = false;
       cout << "Took Pic" << endl;
       printf("Starting image\n");
       //-----  If no more image, or got enough, then stop calibration and show result -------------
 
-      if( mode == CAPTURING && imagePoints.size() >= (unsigned)s.nrFrames )
-
+      //if( mode == CAPTURING && imagePoints.size() >= (unsigned)s.nrFrames )
+      if (mode == CAPTURING && i >= (unsigned)s.nrFrames)
       {
 
           printf("Calib1\n");
@@ -905,11 +907,12 @@ int main(int argc, char* argv[])
 
             if(s.showUndistorsed)
 
-                msg = format( "%d/%d Undist", (int)imagePoints.size(), s.nrFrames );
+                msg = format( "%d/%d Undist", i, s.nrFrames );
+                // msg = format( "%d/%d Undist", (int)imagePoints.size(), s.nrFrames );
 
             else
-
-                msg = format( "%d/%d Dist", (int)imagePoints.size(), s.nrFrames );
+                msg = format( "%d/%d Undist", i, s.nrFrames );
+                // msg = format( "%d/%d Dist", (int)imagePoints.size(), s.nrFrames );
 
         }
 
@@ -1263,7 +1266,7 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
 
     fs << "Distortion_Coefficients" << distCoeffs;
 
-    ofstream myfile("../src/com/team254/lib/util/pixy/distortionConstants.txt");
+    ofstream myfile("../res/PixyCam4.txt");
     myfile << "Camera Matrix:\n";
     myfile << "Fx: " << cameraMatrix.at<double> (0, 0) << "\n";
     myfile << "Fy: " << cameraMatrix.at<double> (1, 1) << "\n";
