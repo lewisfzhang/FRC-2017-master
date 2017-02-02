@@ -1,21 +1,25 @@
 package com.team254.frc2017.subsystems;
 
+import com.ctre.CANTalon;
 import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 
-import edu.wpi.first.wpilibj.Talon;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Proto_Intake extends Subsystem {
-    private static Talon mIntake;
+    private static CANTalon mIntake, mIntakeSlave;
 
     private static Proto_Intake mInstance;
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Proto_Intake() {
-        mIntake = new Talon(7);
+        mIntake = new CANTalon(5);
+
+        mIntakeSlave = new CANTalon(6);
+        mIntakeSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+        mIntakeSlave.reverseOutput(false);
+        mIntakeSlave.set(5);
     }
 
     public static Proto_Intake getInstance() {

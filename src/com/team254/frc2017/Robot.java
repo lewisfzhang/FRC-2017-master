@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
     private Drive mDrive = Drive.getInstance();
-    private Proto_Intake mIntake = Proto_Intake.getInstance();
+    //private Proto_Intake mIntake = Proto_Intake.getInstance();
     private Proto_Shooter mShooter = Proto_Shooter.getInstance();
     private Proto_Feeder mFeeder = Proto_Feeder.getInstance();
 
@@ -32,7 +32,7 @@ public class Robot extends IterativeRobot {
     @Override
     public void robotInit() {
         // mDrive.registerEnabledLoops(mEnabledLooper);
-        // mIntake.registerEnabledLoops(mEnabledLooper);
+        //mIntake.registerEnabledLoops(mEnabledLooper);
         mShooter.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
     }
@@ -65,6 +65,8 @@ public class Robot extends IterativeRobot {
         
         //re-update feeder constants & apply to talons TODO: remove this later
         mFeeder.updateConstants();
+
+        mShooter.updateConstants();
     }
 
     /**
@@ -76,11 +78,11 @@ public class Robot extends IterativeRobot {
         if (mControlBoard.getSpinShooterButton()) {
             mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
-            mShooter.setManualVoltage(0.0);
+            mShooter.setRpmSetpoint(0.0);
         }
 
         if (mControlBoard.getShootButton()) {
-            mFeeder.setSetpoint(Constants.kFeedRPM);
+            mFeeder.setSetpoint(/*Constants.kFeedRPM*/5);
         } else {
             mFeeder.setSetpoint(0.0);
         }

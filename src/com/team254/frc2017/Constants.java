@@ -39,7 +39,7 @@ public class Constants extends ConstantsBase {
     public static double kFeedKp = 0.0;
     public static double kFeedKi = 0.0;
     public static double kFeedKd = 0.0;
-    public static double kFeedKf = 0.0;
+    public static double kFeedKf = 100;
     public static int kFeedIZone = 0;
     public static double kFeedRampRate = 10000; //hella ramp
     public static int kFeedVelocityAllowableError = 0;
@@ -65,7 +65,9 @@ public class Constants extends ConstantsBase {
     
     /* 4" single wheel shooter constants */
     public static boolean kFlywheelMotor1Inverted = true;
-    public static boolean kFlywheelMotor2Inverted = false;
+    public static boolean kFlywheelMotor2Inverted = true;
+    public static boolean kFlywheelMotor3Inverted = false;
+    public static boolean kFlywheelMotor4Inverted = false;
     public static boolean kFlywheelEncoderInverted = true;
     public static double kFlywheelReduction = 1.0;
     public static double kFlywheelKp = 0.003;

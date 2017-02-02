@@ -23,23 +23,25 @@ public class Proto_Feeder extends Subsystem{
     }
     
     public Proto_Feeder() {
-        mFeed = new CANTalon(3);
+        mFeed = new CANTalon(5);
         mFeed.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mFeed.setVoltageCompensationRampRate(10000.0);
+        mFeed.changeControlMode(TalonControlMode.Voltage);
         mFeed.enableBrakeMode(false);
 
-        mFeedSlave = new CANTalon(4);
+        mFeedSlave = new CANTalon(6);
         mFeedSlave.changeControlMode(TalonControlMode.Follower);
         mFeedSlave.changeMotionControlFramePeriod(5); // 5ms (200 Hz)
         mFeedSlave.setVoltageCompensationRampRate(10000.0);
         mFeedSlave.enableBrakeMode(false);
-        mFeedSlave.set(3);
+        mFeedSlave.reverseOutput(true);
+        mFeedSlave.set(5);
 
         updateConstants();
     }
     
     public synchronized void updateConstants() {
-        mFeed.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        /*mFeed.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         if (mFeed.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative) != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
             DriverStation.reportError("Could not detect feeder encoder!", false);
         }
@@ -49,7 +51,7 @@ public class Proto_Feeder extends Subsystem{
         mFeed.changeControlMode(CANTalon.TalonControlMode.Speed);
         mFeed.setProfile(kVelocityControlSlot);
         mFeed.setAllowableClosedLoopErr(Constants.kFeedVelocityAllowableError);
-        mFeed.configPeakOutputVoltage(12.0, -12.0);
+        mFeed.configPeakOutputVoltage(12.0, -12.0);*/
     }
     
     public synchronized void setSetpoint(double setpoint) {
