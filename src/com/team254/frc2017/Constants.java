@@ -35,6 +35,9 @@ public class Constants extends ConstantsBase {
     // Analog Inputs
     // TODO add some!
     
+    //Camera Number
+    public static int kPixyNumber = 1;
+    
     //Feeder
     public static double kFeedKp = 0.0;
     public static double kFeedKi = 0.0;

@@ -7,15 +7,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner; 
+import java.util.Scanner;
+
+import com.team254.frc2017.Constants; 
 
 public class AdjustedBlock extends Frame.Block {
     static double cx, cy, k1, k2, k3;
-//    static double k1 = -0.431415; // radial distortion coefficient 1
-//    static double k2 = 0.260901; // radial distortion coefficient 2
-//    static double k3 = -0.134147; // radial distortion coefficient 3
     public AdjustedBlock(Frame.Block block){
-        InputStream in = AdjustedBlock.class.getResourceAsStream("distortionConstants.txt");
+        InputStream in = AdjustedBlock.class.getResourceAsStream("PixyCam" + Constants.kPixyNumber +  ".txt");
         Scanner scanner = new Scanner(in);
         String line;
         line = scanner.nextLine(); // Camera Matrix:
