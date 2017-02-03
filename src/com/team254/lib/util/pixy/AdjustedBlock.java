@@ -9,31 +9,62 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
-import com.team254.frc2017.Constants; 
+import com.team254.frc2017.Constants;
+import com.team254.lib.util.pixy.constants.PixyNumber1Constants; 
 
 public class AdjustedBlock extends Frame.Block {
     static double cx, cy, k1, k2, k3;
     public AdjustedBlock(Frame.Block block){
-        InputStream in = AdjustedBlock.class.getResourceAsStream("PixyCam" + Constants.kPixyNumber +  ".txt");
-        Scanner scanner = new Scanner(in);
-        String line;
-        line = scanner.nextLine(); // Camera Matrix:
-        line = scanner.nextLine(); // fx:
-        line = scanner.nextLine(); // fy: 
-        line = scanner.nextLine(); // cx: 
-        cx = Double.parseDouble(line.substring(4));
-        line = scanner.nextLine(); // cy: 
-        cy = Double.parseDouble(line.substring(4));
-        line = scanner.nextLine(); // blank line
-        line = scanner.nextLine(); // Distortion Coefficients:
-        line = scanner.nextLine(); // k1: 
-        k1 = Double.parseDouble(line.substring(4));
-        line = scanner.nextLine(); // k2: 
-        k2 = Double.parseDouble(line.substring(4));
-        line = scanner.nextLine(); // k3: 
-        k3 = Double.parseDouble(line.substring(4));
-        scanner.close();
-        
+        switch(Constants.kPixyNumber) {
+        case 1:
+            PixyNumber1Constants one = new PixyNumber1Constants();
+            cx = one.cx;
+            cy = one.cy;
+            k1 = one.k1;
+            k2 = one.k2;
+            k3 = one.k3;
+            break;
+        case 2:
+            PixyNumber2Constants two = new PixyNumber2Constants();
+            cx = two.cx;
+            cy = two.cy;
+            k1 = two.k1;
+            k2 = two.k2;
+            k3 = two.k3;
+            break;
+        case 3:
+            PixyNumber3Constants three = new PixyNumber3Constants();
+            cx = three.cx;
+            cy = three.cy;
+            k1 = three.k1;
+            k2 = three.k2;
+            k3 = three.k3;
+            break;
+        case 4:
+            PixyNumber4Constants four = new PixyNumber4Constants();
+            cx = four.cx;
+            cy = four.cy;
+            k1 = four.k1;
+            k2 = four.k2;
+            k3 = four.k3;
+            break;
+        case 5:
+            PixyNumber5Constants five = new PixyNumber5Constants();
+            cx = five.cx;
+            cy = five.cy;
+            k1 = five.k1;
+            k2 = five.k2;
+            k3 = five.k3;
+            break;
+        case 6:
+            PixyNumber6Constants six = new PixyNumber6Constants();
+            cx = six.cx;
+            cy = six.cy;
+            k1 = six.k1;
+            k2 = six.k2;
+            k3 = six.k3;
+            break;
+        }
         Point center = transformCoordinates(block.centerX, block.centerY);
         this.centerX = center.x;
         this.centerY = center.y;

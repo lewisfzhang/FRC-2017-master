@@ -1265,19 +1265,17 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
     fs << "Camera_Matrix" << cameraMatrix;
 
     fs << "Distortion_Coefficients" << distCoeffs;
-
-    ofstream myfile("../resources/PixyCam4.txt");
-    myfile << "Camera Matrix:\n";
-    myfile << "Fx: " << cameraMatrix.at<double> (0, 0) << "\n";
-    myfile << "Fy: " << cameraMatrix.at<double> (1, 1) << "\n";
-    myfile << "Cx: " << cameraMatrix.at<double> (0, 2) << "\n";
-    myfile << "Cy: " << cameraMatrix.at<double> (1, 2) << "\n\n";
-    myfile << "Distortion Coefficients:\n";
-    myfile << "K1: " << distCoeffs.at<double> (0, 0) << "\n";
-    myfile << "K2: " << distCoeffs.at<double> (1, 0) << "\n";
-    myfile << "K3: " << distCoeffs.at<double> (4, 0) << "\n";
-    myfile << "P1: " << distCoeffs.at<double> (2, 0) << "\n";
-    myfile << "P2: " << distCoeffs.at<double> (3, 0);
+    String pixyNumber = "1";
+    String path << "../src/com/team254/lib/pixy/constants/PixyNumber" << pixyNumber << "Constants.java";
+    ofstream myfile(path);
+    myfile << "package com.team254.lib.util.pixy.constants;\n\n";
+    myfile << "public class PixyNumber" << pixyNumber << "Constants {\n";
+    myfile << "    public final double cx = " << cameraMatrix.at<double> (0, 2) << ";\n";
+    myfile << "    public final double cy = " << cameraMatrix.at<double> (1, 2) << ";\n";
+    myfile << "    public final double k1 = " << distCoeffs.at<double> (0, 0) << ";\n";
+    myfile << "    public final double k2 = " << distCoeffs.at<double> (1, 0) << ";\n";
+    myfile << "    public final double k3 = " << distCoeffs.at<double> (4, 0) << ";\n";
+    myfile << "}"
     myfile.close();
 
 
