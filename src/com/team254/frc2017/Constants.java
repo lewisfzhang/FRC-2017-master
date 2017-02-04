@@ -2,20 +2,34 @@ package com.team254.frc2017;
 
 import com.team254.lib.util.ConstantsBase;
 import edu.wpi.first.wpilibj.Solenoid;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.util.HashMap;
 
 /**
  * A list of constants used by the rest of the robot code. This include physics constants as well as constants
  * determined through calibrations.
+ * 
+ * @TODO Update the robot MAC addresses (comp, practice, programming)
  */
 public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
-
+    public enum RobotName {
+        COMP_BOT, PRAC_BOT, PROG_BOT
+    }
+    public static RobotName kRobotName;
+    public static HashMap<String, RobotName> kMACAddresses = new HashMap<String, RobotName>();   
+    private static NetworkInterface kNetworkInfo;
+    
     // ROBOT PHYSICAL CONSTANTS
     public static double kTrackScrubFactor = 1.0; // FIXME placeholder
     public static double kTrackEffectiveDiameterInches = 25.0; // FIXME
                                                                // placeholder
-
-    // CONTROL LOOP GAINS
+    
+    public static double kCollisionThreshold = 0.5;
+    
+ // CONTROL LOOP GAINS
     // TODO add some!
 
     // Do not change anything after this line unless you rewire the robot and
@@ -33,6 +47,9 @@ public class Constants extends ConstantsBase {
 
     // Analog Inputs
     // TODO add some!
+    
+    //Camera Number
+    public static int kPixyNumber = 1;
     
     //Feeder
     public static double kFeedKp = 0.0;
@@ -86,7 +103,7 @@ public class Constants extends ConstantsBase {
     public static double kFlywheelOnTargetTolerance = 20.0;
     public static double kFlywheelTarget = 2800.0;
      */
-
+    
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid
      * 
@@ -97,18 +114,54 @@ public class Constants extends ConstantsBase {
         return new Solenoid(solenoidId / 8, solenoidId % 8);
     }
 
-    // DIGITAL IO
-    // TODO add some!
-
-    // PWM
-    // TODO add some!
-
     @Override
     public String getFileLocation() {
         return "~/constants.txt";
     }
+    
+    /**
+     * @return the MAC address of the robot
+     */
+    public static String getMACAddress() {
+       try {
+           Enumeration<NetworkInterface> nwInterface = NetworkInterface.getNetworkInterfaces();
+           StringBuilder ret = new StringBuilder();
+           while (nwInterface.hasMoreElements()) {
+               NetworkInterface nis = nwInterface.nextElement();
+               if (nis != null) {
+                   byte[] mac = nis.getHardwareAddress();
+                   if (mac != null) {
+                       for (int i = 0; i < mac.length; i++) {
+                           ret.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                       }
+                       return ret.toString();
+                   } else {
+                       System.out.println("Address doesn't exist or is not accessible");
+                   }
+               } else {
+                   System.out.println("Network Interface for the specified address is not found.");
+               }
+           }
+       } catch (SocketException e) {
+           e.printStackTrace();
+       } catch (NullPointerException e) {
+           e.printStackTrace();
+       }
+       return "";
+    }
+    
+    /**
+     * @return the robot's name, either COMP_BOT, PRAC_BOT, or PROG_BOT 
+     */
+    public static RobotName getRobotName() {
+        return kMACAddresses.get(getMACAddress());
+    }
 
     static {
+        kMACAddresses.put("herp", RobotName.COMP_BOT);
+        kMACAddresses.put("derp", RobotName.PRAC_BOT);
+        kMACAddresses.put("terp", RobotName.PROG_BOT);
+        
         new Constants().loadFromFile();
     }
 }

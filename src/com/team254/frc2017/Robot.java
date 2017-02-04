@@ -1,5 +1,6 @@
 package com.team254.frc2017;
 
+import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.subsystems.Proto_Feeder;
@@ -8,6 +9,7 @@ import com.team254.frc2017.subsystems.Proto_Shooter;
 import com.team254.frc2017.web.WebServer;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -33,8 +35,17 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         // mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
-        mShooter.registerEnabledLoops(mEnabledLooper);
+        //mShooter.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
+        
+        // initialize robot constants
+        try {
+            RobotName name = Constants.getRobotName();
+            SmartDashboard.putString("MAC Address", Constants.getMACAddress());
+            ConstantsModifier.initConstants(name);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -62,7 +73,7 @@ public class Robot extends IterativeRobot {
         mEnabledLooper.start();
         
         //re-update feeder constants & apply to talons
-        mFeeder.updateConstants();
+        //mFeeder.updateConstants();
     }
 
     /**
@@ -70,7 +81,6 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-
         if (mControlBoard.getSpinShooterButton()) {
             mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
