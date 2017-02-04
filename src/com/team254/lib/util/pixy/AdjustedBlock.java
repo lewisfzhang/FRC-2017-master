@@ -1,16 +1,9 @@
 package com.team254.lib.util.pixy;
 
 import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
 
 import com.team254.frc2017.Constants;
-import com.team254.lib.util.pixy.constants.PixyNumber1Constants; 
+import com.team254.lib.util.pixy.constants.*; 
 
 public class AdjustedBlock extends Frame.Block {
     static double cx, cy, k1, k2, k3;
@@ -76,11 +69,11 @@ public class AdjustedBlock extends Frame.Block {
         double rightSideX = block.centerX+(block.width/2);
         double topSideY = block.centerY-(block.height/2);
         double bottomSideY = block.centerY+(block.height/2);
-        
+
         // Undistort the two opposite points of the rectangular block
         Point bottomLeft = transformCoordinates(leftSideX, bottomSideY);
         Point topRight = transformCoordinates(rightSideX, topSideY);
-        
+
         // Calculate the width and height based on opposite points of rectangular block
         block.width = topRight.x - bottomLeft.x;
         block.height = bottomLeft.y - topRight.y;
