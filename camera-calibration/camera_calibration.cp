@@ -1266,8 +1266,7 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
 
     fs << "Distortion_Coefficients" << distCoeffs;
     string pixyNumber = "1";
-    string path;
-    path << "../src/com/team254/lib/pixy/constants/PixyNumber" << pixyNumber << "Constants.java";
+    string path = "../src/com/team254/lib/pixy/constants/PixyNumber" + pixyNumber + "Constants.java";
     ofstream myfile(path);
     myfile << "package com.team254.lib.util.pixy.constants;\n\n";
     myfile << "public class PixyNumber" << pixyNumber << "Constants {\n";
@@ -1276,7 +1275,7 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
     myfile << "    public final double k1 = " << distCoeffs.at<double> (0, 0) << ";\n";
     myfile << "    public final double k2 = " << distCoeffs.at<double> (1, 0) << ";\n";
     myfile << "    public final double k3 = " << distCoeffs.at<double> (4, 0) << ";\n";
-    myfile << "}"
+    myfile << "}";
     myfile.close();
 
 
