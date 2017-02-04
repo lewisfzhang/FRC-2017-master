@@ -36,7 +36,7 @@ public class Drive extends Subsystem {
     private static CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
     private static Accelerometer mAccel;
     private static AHRS mNavXBoard;
-    private static Encoder mRightEncoder, mLeftEncoder;    
+    //private static Encoder mRightEncoder, mLeftEncoder;    
     
     private static AdaptivePurePursuitController mPathController;
     private static Drive mInstance;
@@ -50,43 +50,30 @@ public class Drive extends Subsystem {
     private Drive() {
         // What kind of encoder will we be using in the drivetrain? Regular quadrature encoders?
         
-        mLeftMaster = new CANTalon(11);
-        mLeftMaster.changeControlMode(TalonControlMode.Voltage);
-        //mLeftMaster.setInverted(true);
-        //mLeftMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-//        mLeftSlave = new CANTalon(12);
-//        mLeftSlave.changeControlMode(TalonControlMode.Follower);
-//        mLeftSlave.setInverted(true);
-//        mLeftSlave.set(11);
+        mLeftMaster = new CANTalon(11, 5);
+        mLeftMaster.changeControlMode(TalonControlMode.Speed);
+        mLeftMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 5);
+
+        mLeftSlave = new CANTalon(12);
+        mLeftSlave.changeControlMode(TalonControlMode.Follower);
+        mLeftSlave.set(11);
         
-        mRightMaster = new CANTalon(4);
-        mRightMaster.changeControlMode(TalonControlMode.Voltage);
-        mRightMaster.setInverted(true);
-        //mRightMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-//        mRightSlave = new CANTalon(3);
-//        mRightSlave.changeControlMode(TalonControlMode.Follower);
-//        mRightSlave.setInverted(true);
-//        mRightSlave.set(4);
+        mRightMaster = new CANTalon(4, 5);
+        mRightMaster.changeControlMode(TalonControlMode.Speed);
+        mRightMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 5);
+
+        mRightSlave = new CANTalon(3);
+        mRightSlave.changeControlMode(TalonControlMode.Follower);
+        mRightSlave.set(4);
         
         mAccel = new BuiltInAccelerometer(); 
     	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
     	
     	mNavXBoard = new AHRS(SPI.Port.kMXP);
-    	
-    	mRightEncoder = new Encoder(8, 9, false /* reverse */, EncodingType.k4X);
-        mRightEncoder.setDistancePerPulse(1.0 / Constants.kDriveTicksPerRotation);
-        
-        mLeftEncoder = new Encoder(6, 7, false /* reverse */, EncodingType.k4X);
-        mLeftEncoder.setDistancePerPulse(1.0 / 250.0);
         
     	mPathController = new AdaptivePurePursuitController("~/path.txt");
-    	
-    	mLeftController = new SynchronousPIDF(0, 0, 0, Constants.kLeftDriveKf);
-    	mLeftController.setOutputRange(-12.0, 12.0);
-
-    	mRightController = new SynchronousPIDF(0, 0, 0, Constants.kRightDriveKf);
-        mRightController.setOutputRange(-12.0, 12.0);
-
     }
 
     public static Drive getInstance() {
@@ -97,37 +84,19 @@ public class Drive extends Subsystem {
 
     protected class Drive_Loop implements Loop {
         private double mPrevTimestamp = 0;
-        private double mLPrevRotations = 0;
-        private double mRPrevRotations = 0;
         
         public void onStart(double timestamp) {
             mPathController.reset();
             mLeftMaster.set(0.0);
             mRightMaster.set(0.0);
-            //mLeftController.setSetpoint(50.0);
-            //mRightController.setSetpoint(50.0);
             zeroSensors();
         }
 
         public void onLoop(double timestamp) {
             checkForCollision();
             synchronized (Drive.this) {
-                double now = Timer.getFPGATimestamp();
-                double left_rotations_now = getLEncoderRotations();
-                double right_rotations_now = getREncoderRotations();
-                double delta_t = now - mPrevTimestamp;
-                if (delta_t < 1E-6) {
-                    delta_t = 1E-6; // Prevent divide-by-zero
-                }
-                mLeftRpm = (left_rotations_now - mLPrevRotations) / delta_t * 60.0;
-                mRightRpm = (right_rotations_now - mRPrevRotations) / delta_t * 60.0;
-                mPrevTimestamp = now;
-                
-                mLPrevRotations = left_rotations_now;
-                mRPrevRotations = right_rotations_now;
-                
-                mLeftMaster.set(mLeftController.calculate(RpmToInchesPerSecond(mLeftRpm), delta_t));
-                mRightMaster.set(mRightController.calculate(RpmToInchesPerSecond(mRightRpm), delta_t));
+                mLeftMaster.set(RpmToInchesPerSecond(getLSpeed()));
+                mRightMaster.set(RpmToInchesPerSecond(getRSpeed()));
             }
             if(!mPathController.isFinished()) {
                 updatePathFollower();
@@ -180,14 +149,13 @@ public class Drive extends Subsystem {
         return mRightMaster.getEncPosition();
     }
     
-    //Returns the number of rotations in the left encoder
-    public double getLEncoderRotations() {
-        return mLeftEncoder.getDistance();
+    //Returns the number speed in RPM of the left side
+    public double getLSpeed() {
+        return mLeftMaster.getSpeed();
     }
     
-  //Returns the number of rotations in the right 
-    public double getREncoderRotations() {
-        return mRightEncoder.getDistance();
+    public double getRSpeed() {
+        return mRightMaster.getSpeed();
     }
     
     //Collision Code
@@ -238,11 +206,11 @@ public class Drive extends Subsystem {
         return inchesToRotations(inches_per_second) * 60;
     }
     
-    private static double RpmToInchesPerSecond(double rpm) {
+    public static double RpmToInchesPerSecond(double rpm) {
         return rpm / 60 * Constants.kWheelRadius * Math.PI * 2;
     }
     
-    private static double inchesToRotations(double inches) {
+    public static double inchesToRotations(double inches) {
         return inches / (Constants.kWheelRadius * Math.PI);
     }
     

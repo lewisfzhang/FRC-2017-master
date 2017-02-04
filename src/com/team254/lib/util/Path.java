@@ -29,7 +29,7 @@ public class Path {
      public Path(String filepath) {
          segments = new ArrayList<PathSegment>();
          loadFile(filepath);
-         //Odometer.getInstance().setPose(new RigidTransform2d(new Translation2d(0, 100), new Rotation2d()));
+         Odometer.getInstance().setPose(getStartPose());
      }
      
      public Path() { segments = new ArrayList<PathSegment>(); }
@@ -65,6 +65,15 @@ public class Path {
      public double getSegmentLength() {
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
          return currentSegment.getLength();
+     }
+     
+     public RigidTransform2d getStartPose() {
+         if(segments.get(0) == null)
+             return new RigidTransform2d();
+         else {
+             PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
+             return new RigidTransform2d(currentSegment.getStart(), new Rotation2d());
+         }
      }
      
      public Translation2d getTargetPoint(Translation2d robotPos) {
