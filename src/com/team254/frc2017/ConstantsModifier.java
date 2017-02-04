@@ -6,7 +6,7 @@ public abstract class ConstantsModifier {
     
     /**
      * Initializes robot constants
-     * @param name the name of the robot, 
+     * @param name the name of the robot, PRAC_BOT, PROG_BOT, or COMP_BOT
      */
     public static void initConstants(RobotName name) {
         switch (name) {
@@ -16,7 +16,7 @@ public abstract class ConstantsModifier {
             default : break;
         }
     }
-
+   
     private static void setPracBotConstants() {
         // UPDATE VALUES HERE!
         // e.g. Constants.kFlywheelKi = 0;
