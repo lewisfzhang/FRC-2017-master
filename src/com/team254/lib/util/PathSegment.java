@@ -1,11 +1,21 @@
 package com.team254.lib.util;
 
+/**
+ * Class representing a segment of the robot's autonomous path.  There are
+ * two types of segments: Translation (line or arc), and Rotation (turn in place)
+ *   
+ * @author MarioRuiz
+ */
+
 public abstract class PathSegment {
     
     abstract boolean isTurn();
-    abstract double getSpeed();
+    abstract double getMaxSpeed();
     
-    static class Segment extends PathSegment {
+    /**
+     * Subclass representing a robot movement (line or arc) on the autonomous path
+     */
+    static class Translation extends PathSegment {
         private Translation2d start;
         private Translation2d end;
         private Translation2d center;
@@ -14,18 +24,15 @@ public abstract class PathSegment {
         private double startAngle;
         private double endAngle;
         
-        
-        public Segment(Translation2d start, Translation2d end, double maxSpeed) {
-            this.start = start;
-            this.end = end;
-            this.center = null;
-            this.curvature = 0;
-            this.maxSpeed = maxSpeed;
-            this.startAngle = 0;
-            this.endAngle = 0;
-        }
-        
-        public Segment(Double x1, Double y1, Double x2, Double y2, double maxSpeed) {
+        /**
+         * Constructor for a linear segment
+         * @param x1 start x
+         * @param y1 start y
+         * @param x2 end x
+         * @param y2 end y
+         * @param maxSpeed maximum speed allowed on the segment
+         */
+        public Translation(Double x1, Double y1, Double x2, Double y2, double maxSpeed) {
             this.start = new Translation2d(x1, y1);
             this.end = new Translation2d(x2, y2);
             this.center = null;
@@ -35,17 +42,20 @@ public abstract class PathSegment {
             this.endAngle = 0;
         }
         
-        public Segment(Translation2d start, Translation2d end, Translation2d center, double curvature, double startAngle, double endAngle, double maxSpeed) {
-            this.start = start;
-            this.end = end;
-            this.center = center;
-            this.curvature = curvature;
-            this.maxSpeed = maxSpeed;
-            this.startAngle = startAngle;
-            this.endAngle = endAngle;
-        }
-        
-        public Segment(double x1, double y1, double x2, double y2, double cx, double cy, double curvature, double startAngle, double endAngle, double maxSpeed) {
+        /**
+         * Constructor for an arc segment
+         * @param x1 start x
+         * @param y1 start y
+         * @param x2 end x
+         * @param y2 end y
+         * @param cx center x
+         * @param cy center
+         * @param curvature arc curvature (1 / radius)
+         * @param startAngle starting angle of the arc
+         * @param endAngle ending angle of the arc
+         * @param maxSpeed maximum speed allowed on the segment
+         */
+        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double curvature, double startAngle, double endAngle, double maxSpeed) {
             this.start = new Translation2d(x1, y1);
             this.end = new Translation2d(x2, y2);
             this.center = new Translation2d(cx, cy);
@@ -55,7 +65,17 @@ public abstract class PathSegment {
             this.endAngle = endAngle;
         }
         
-        public Segment(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed) {
+        /**
+         * Constructor for an arc segment
+         * @param x1 start x
+         * @param y1 start y
+         * @param x2 end x
+         * @param y2 end y
+         * @param cx center x
+         * @param cy center y
+         * @param maxSpeed maximum speed allowed on the segment 
+         */
+        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed) {
             this.start = new Translation2d(x1, y1);
             this.end = new Translation2d(x2, y2);
             this.center = new Translation2d(cx, cy);
@@ -63,44 +83,47 @@ public abstract class PathSegment {
             calcArc();
         }
         
-        public Segment(Translation2d start, Translation2d end, Translation2d center, double maxSpeed) {
-            this.start = start;
-            this.end = end;
-            this.center = center;
-            this.maxSpeed = maxSpeed;
-            calcArc();
-        }
-        
+        /**
+         * @return is this segment a rotation
+         */
         public boolean isTurn() {
             return false;
         }
         
-        public double getSpeed() {
+        /**
+         * @return max speed of the segment
+         */
+        public double getMaxSpeed() {
             return maxSpeed;
         }
         
         private void calcArc() {
             Translation2d deltaS = new Translation2d(center, start);
             Translation2d deltaE = new Translation2d(center, end);
-            this.startAngle = Math.atan2(-deltaS.getY(), deltaS.getX());
+            this.startAngle = Math.atan2(deltaS.getY(), deltaS.getX());
             startAngle = (startAngle < 0) ? startAngle + Math.PI*2 : startAngle;
-            this.endAngle = Math.atan2(-deltaE.getY(), deltaE.getX());
+            this.endAngle = Math.atan2(deltaE.getY(), deltaE.getX());
             endAngle = (endAngle < 0) ? endAngle + Math.PI*2 : endAngle;
             this.curvature = 1/deltaS.norm();
         }
         
-        public double getMaxSpeed() {
-            return maxSpeed;
-        }
-        
+        /**
+         * @return starting point of the segment
+         */
         public Translation2d getStart() {
             return start;
         }
         
+        /**
+         * @return end point of the segment
+         */
         public Translation2d getEnd() {
             return end;
         }
         
+        /**
+         * @return the total length of the segment
+         */
         public double getLength() {
             if(curvature == 0) {
                 return new Translation2d(start, end).norm();
@@ -111,10 +134,15 @@ public abstract class PathSegment {
             }
         }
         
-        public Translation2d getClosestPoint(Translation2d from) {
+        /**
+         * Gets the point on the segment closest to the robot
+         * @param position the current position of the robot
+         * @return the point on the segment closest to the robot
+         */
+        public Translation2d getClosestPoint(Translation2d position) {
             if(curvature == 0) {
                 Translation2d delta = new Translation2d(start, end);
-                double u = ((from.getX() - start.getX()) * delta.getX() + (from.getY() - start.getY()) * delta.getY()) / (delta.getX() * delta.getX() + delta.getY() * delta.getY());
+                double u = ((position.getX() - start.getX()) * delta.getX() + (position.getY() - start.getY()) * delta.getY()) / (delta.getX() * delta.getX() + delta.getY() * delta.getY());
                 if (u < 0)
                     return start;
                 else if (u > 1)
@@ -122,14 +150,14 @@ public abstract class PathSegment {
                 else
                     return new Translation2d(start.getX() + u * delta.getX(), start.getY() + u * delta.getY());
             } else {
-                Translation2d delta = new Translation2d(center, from);
+                Translation2d delta = new Translation2d(center, position);
                 double s = (1/curvature) / delta.norm();
                 delta = delta.scale(s);
-                double a = Math.atan2(-delta.getY(), delta.getX());
+                double a = Math.atan2(delta.getY(), delta.getX());
                 a = (a < 0) ? a + Math.PI*2 : a;
                 if(((endAngle - startAngle) <= Math.PI && a < startAngle && a > endAngle) || ((endAngle - startAngle) > Math.PI && a > startAngle && a < endAngle)) {
-                    Translation2d startDist = new Translation2d(from, start);
-                    Translation2d endDist = new Translation2d(from, start);
+                    Translation2d startDist = new Translation2d(position, start);
+                    Translation2d endDist = new Translation2d(position, start);
                     if(endDist.norm() < startDist.norm()) {
                         return end;
                     } else {
@@ -137,11 +165,15 @@ public abstract class PathSegment {
                     }
                 }
                 return center.translateBy(delta);
-            }
-            
+            } 
         }
         
-        public Translation2d getLookAheadPoint(double dist) throws Error {
+        /**
+         * Calculates the point on the segment <code>dist</code> distance from the starting point
+         * @param dist distance from the starting point (lookahead distance)
+         * @return point on the segment <code>dist</code> distance from the starting point
+         */
+        public Translation2d getLookAheadPoint(double dist) {
             double length = getLength();
             if(dist > length)
                 dist = length;
@@ -155,16 +187,21 @@ public abstract class PathSegment {
                 } else {
                     deltaAngle = (dist / length) * (Math.PI * 2 - endAngle + startAngle);
                 }
-                Translation2d t = new Translation2d(Math.cos(deltaAngle + startAngle), -Math.sin(deltaAngle + startAngle)).scale(1/curvature);
+                Translation2d t = new Translation2d(Math.cos(deltaAngle + startAngle), Math.sin(deltaAngle + startAngle)).scale(1/curvature);
                 return center.translateBy(t);
             }
         }
         
+        /**
+         * Gets the remaining distance left on the segment from point <code>point</code>
+         * @param point result of <code>getClosestPoint()</code>
+         * @return distance remaining
+         */
         public double getRemainingDistance(Translation2d point) {
             if(curvature == 0) {
                 return new Translation2d(end, point).norm();
             } else {
-                Double angle = Math.atan2(center.getY()-point.getY(), point.getX()-center.getX());
+                Double angle = Math.atan2(point.getY() - center.getY(), point.getX() - center.getX());
                 angle = (angle < 0) ? angle + Math.PI*2 : angle;
                 double totalAngle;
                 if(endAngle - startAngle <= Math.PI) {
@@ -176,9 +213,7 @@ public abstract class PathSegment {
                 deltaAngle = (deltaAngle > Math.PI) ? Math.PI*2 - deltaAngle : deltaAngle;
                 return deltaAngle/totalAngle * getLength();
             }
-        }
-        
-        
+        }    
     }
     
     static class Turn extends PathSegment {
@@ -214,7 +249,7 @@ public abstract class PathSegment {
             return true;
         }
         
-        public double getSpeed() {
+        public double getMaxSpeed() {
             return 0.0;
         }
     }
