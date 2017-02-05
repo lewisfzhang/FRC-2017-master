@@ -126,8 +126,10 @@ public class Robot extends IterativeRobot {
     }
     
     private double getPhysicalDistance(Block target) {
-        double ratio = Constants.kTargetPhysicalHeight / target.height;
-        double cameraDistance = Math.sqrt( Math.pow(Constants.kFocalX, 2) + Math.pow(target.centerY, 2));
-        return ratio * cameraDistance * Math.cos(Constants.kCameraAngle);
+//        double ratio = Constants.kTargetPhysicalHeight / target.height;
+//        double cameraDistance = Math.sqrt( Math.pow(Constants.kFocalX, 2) + Math.pow(target.centerY, 2));
+//        return ratio * cameraDistance * Math.cos(Constants.kCameraAngle);
+        double dist = (Constants.kTargetPhysicalHeight*Constants.kFocalX)/target.height;
+        return dist*Math.cos(Math.toRadians(Constants.kCameraAngle));
     }
 }
