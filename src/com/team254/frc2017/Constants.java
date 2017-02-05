@@ -14,6 +14,12 @@ public class Constants extends ConstantsBase {
     public static double kTrackScrubFactor = 1.0; // FIXME placeholder
     public static double kTrackEffectiveDiameterInches = 25.0; // FIXME
                                                                // placeholder
+    
+    //pixycam distance stuff
+    public static double kCameraAngle = 1; // degrees, originally 26.5
+    public static double kFocalX = 316.736; //default for PixyCam 1
+    public static double kTargetPhysicalHeight = 5.0; //inches
+    
 
     public static double kCollisionThreshold = 0.5;
     // CONTROL LOOP GAINS
@@ -36,7 +42,7 @@ public class Constants extends ConstantsBase {
     // TODO add some!
     
     //Camera Number
-    public static int kPixyNumber = 1;
+    public static int kPixyNumber = 2;
     
     //Feeder
     public static double kFeedKp = 0.0;

@@ -1,6 +1,5 @@
 package com.team254.lib.util.pixy;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +13,21 @@ import com.team254.lib.util.pixy.constants.PixyNumber5Constants;
 import com.team254.lib.util.pixy.constants.PixyNumber6Constants;
 
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PixyCam {
     static double cx, cy, k1, k2, k3;
     public PixyCam() {
         this(500000, SPI.Port.kOnboardCS0);
+    }
+    
+    class Point {
+        int x;
+        int y;
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     public PixyCam(int clockRate, SPI.Port port) {
@@ -99,30 +108,43 @@ public class PixyCam {
             return null;
         }
 
-        // read the block data
-        block.checksum = pspi.readWord();
-        block.signature = pspi.readWord();
-        block.centerX = pspi.readWord();
-        block.centerY = pspi.readWord();
-        block.width = pspi.readWord();
-        block.height = pspi.readWord();
-        Point center = transformCoordinates(block.centerX, block.centerY);
-        block.centerX = center.x;
-        block.centerY = center.y;
-        undistortFourCorners(block);
-        int chk = block.signature + block.centerX + block.centerY + block.width + block.height;
-        if (block.checksum != chk) {
-            System.out.println("BLOCK HAD AN INVALID CHECKSUM (" + Integer.toHexString(block.checksum) + ", should be "
-                    + Integer.toHexString(chk) + ")");
-            return null;
-        }
+        
+        try {
+         // read the block data
+            block.checksum = pspi.readWord();
+            block.signature = pspi.readWord();
+            block.centerX = pspi.readWord();
+            block.centerY = pspi.readWord();
+            block.width = pspi.readWord();
+            block.height = pspi.readWord();
+            SmartDashboard.putDouble("Original X", block.centerX);
+            SmartDashboard.putDouble("Original Y", block.centerY);
+            Point center = transformCoordinates(block.centerX, block.centerY);
+            block.centerX = center.x;
+            block.centerY = center.y;
+            undistortFourCorners(block);
+            SmartDashboard.putDouble("New X", block.centerX);
+            SmartDashboard.putDouble("New Y", block.centerY);
+            int chk = block.signature + block.centerX + block.centerY + block.width + block.height;
+            /*if (block.checksum != chk) {
+                System.out.println("BLOCK HAD AN INVALID CHECKSUM (" + Integer.toHexString(block.checksum) + ", should be "
+                        + Integer.toHexString(chk) + ")");
+                return null;
+            }*/
 
-        return block;
+            return block;
+        } catch(NoClassDefFoundError e) {
+            e.printStackTrace();
+        } catch(NullPointerException e) {
+            e.printStackTrace();
+        }
+        return null;
+        
     }
 
     public Frame getFrame() {
         List<Frame.Block> blocks = new ArrayList<>();
-        while (true) {
+        for (int i = 0; i < 10; i++){
             Frame.Block b = parseBlock();
             if (b == null)
                 break;
@@ -171,18 +193,24 @@ public class PixyCam {
         block.height = bottomLeft.y - topRight.y;
     }
 
-    private static Point transformCoordinates(double xDistorted, double yDistorted) {
-        // put in terms of cx and cy being the origin and normalize
-        double xDistNormalized = (xDistorted - cx)/400;
-        double yDistNormalized = (yDistorted - cy)/400;
-        // apply undistortion
-        double rDistorted = Math.hypot(xDistNormalized, yDistNormalized);
-        double rUndistorted = radiusFuncInv(rDistorted);
-        double xUndistorted = xDistNormalized*rUndistorted/rDistorted;
-        double yUndistorted = yDistNormalized*rUndistorted/rDistorted;
-        // convert back to pixel space and return
-        Point undistort = new Point((int) (Math.round(xUndistorted*400)), (int) (Math.round(yUndistorted*400)));
-        return undistort;
+    private Point transformCoordinates(double xDistorted, double yDistorted) {
+//        try {
+            // put in terms of cx and cy being the origin and normalize
+            double xDistNormalized = (xDistorted - cx)/400;
+            double yDistNormalized = (yDistorted - cy)/400;
+            // apply undistortion
+            double rDistorted = Math.hypot(xDistNormalized, yDistNormalized);
+            double rUndistorted = radiusFuncInv(rDistorted);
+            double xUndistorted = xDistNormalized*rUndistorted/rDistorted;
+            double yUndistorted = yDistNormalized*rUndistorted/rDistorted;
+            // convert back to pixel space and return
+            Point undistort = new Point((int) (Math.round(xUndistorted*400)), (int) (Math.round(yUndistorted*400)));
+            return undistort;
+//        } catch(NoClassDefFoundError e) {
+//            System.out.println("You done goofed");
+//            e.printStackTrace();
+//            return new Point((int) xDistorted, (int) yDistorted);
+//        }        
     }
 
     private static double radiusFuncInv(double rDistorted) { // Function for Undistortion

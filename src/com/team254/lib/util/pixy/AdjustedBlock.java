@@ -6,7 +6,11 @@ import com.team254.frc2017.Constants;
 import com.team254.lib.util.pixy.constants.*; 
 
 public class AdjustedBlock extends Frame.Block {
-    static double cx, cy, k1, k2, k3;
+    public static double cx;
+    public static double cy;
+    public static double k1;
+    public static double k2;
+    public static double k3;
     public AdjustedBlock(Frame.Block block){
         switch(Constants.kPixyNumber) {
         case 1:
