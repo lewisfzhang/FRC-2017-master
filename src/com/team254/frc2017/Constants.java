@@ -11,9 +11,9 @@ public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
 
     // ROBOT PHYSICAL CONSTANTS
-    public static double kRobotWidth = 24;                     // FIXME placeholder
+    public static double kRobotWidth = 29;                     // inches
     public static double kTrackScrubFactor = 1.0;              // FIXME placeholder
-    public static double kTrackEffectiveDiameterInches = 24.0; // FIXME placeholder
+    public static double kTrackEffectiveDiameterInches = 26.654; // inches
     public static double kWheelRadius = 1.75 ;                   // inches
     
 

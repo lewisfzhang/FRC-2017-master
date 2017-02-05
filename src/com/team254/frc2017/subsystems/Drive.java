@@ -55,7 +55,7 @@ public class Drive extends Subsystem {
         mLeftMaster.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
         mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 5);
 
-        mLeftSlave = new CANTalon(12);
+        mLeftSlave = new CANTalon(10);
         mLeftSlave.changeControlMode(TalonControlMode.Follower);
         mLeftSlave.set(11);
         
