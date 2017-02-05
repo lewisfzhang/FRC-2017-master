@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PixyCam {
 
     public PixyCam() {
         this(500000, SPI.Port.kOnboardCS0);
+        SmartDashboard.getString("Got Pixy Mon");
     }
 
     public PixyCam(int clockRate, SPI.Port port) {
@@ -44,13 +46,14 @@ public class PixyCam {
         block.centerY = pspi.readWord();
         block.width = pspi.readWord();
         block.height = pspi.readWord();
+        block = new AdjustedBlock(block);
         int chk = block.signature + block.centerX + block.centerY + block.width + block.height;
         if (block.checksum != chk) {
             System.out.println("BLOCK HAD AN INVALID CHECKSUM (" + Integer.toHexString(block.checksum) + ", should be "
                     + Integer.toHexString(chk) + ")");
             return null;
         }
-        block = new AdjustedBlock(block);
+        
         return block;
     }
 
