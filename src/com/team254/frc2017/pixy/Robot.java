@@ -55,16 +55,10 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void autonomousInit() {
-        // autoSelected = chooser.getSelected();
-        // // autoSelected = SmartDashboard.getString("Auto Selector",
-        // // defaultAuto);
-        // System.out.println("Auto selected: " + autoSelected);
     }
 
     @Override
     public void disabledPeriodic() {
-        // Frame f = _p.getFrame();
-        // SmartDashboard.putString("frame", f.toString());
     }
 
     /**
@@ -74,11 +68,9 @@ public class Robot extends IterativeRobot {
     public void autonomousPeriodic() {
         switch (autoSelected) {
         case customAuto:
-            // Put custom auto code here
             break;
         case defaultAuto:
         default:
-            // Put default auto code here
             break;
         }
 

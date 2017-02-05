@@ -23,6 +23,7 @@ public class AutoModeExecuter {
                     }
                 }
             });
+            
             m_thread.start();
         }
 
@@ -32,6 +33,7 @@ public class AutoModeExecuter {
         if (m_auto_mode != null) {
             m_auto_mode.stop();
         }
+        
         m_thread = null;
     }
 

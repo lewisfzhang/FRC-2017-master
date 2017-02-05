@@ -35,39 +35,15 @@ public class WebServer {
         context.setContextPath("/");
         server.setHandler(context);
 
-        // Add websocket servlet
-        // ServletHolder wsHolder = new ServletHolder("echo", new StateStreamServlet());
-        // context.addServlet(wsHolder, "/state");
-
-        // ServletHolder statesHolder = new ServletHolder("states", new GetAllStatesServlet());
-        // context.addServlet(statesHolder, "/all_states");
-
-        // ServletHolder keysHolder = new ServletHolder("keys", new GetKeysServlet());
-        // context.addServlet(keysHolder, "/keys");
-
         ServletHolder constantsHolder = new ServletHolder("constants", new ConstantsServlet());
         context.addServlet(constantsHolder, "/constants");
         
         ServletHolder resetConstantsHolder = new ServletHolder("resetConstants", new ResetConstantsServlet());
         context.addServlet(resetConstantsHolder, "/resetconstants");
 
-        // ServletHolder getAutoModesHolder = new ServletHolder("autoModes", new GetAutoModesServlet());
-        // context.addServlet(getAutoModesHolder, "/autoModes");
-
-        // ServletHolder getCurrentAutoModeHolder = new ServletHolder("currentAutoModes", new
-        // GetCurrentAutoModeServlet());
-        // context.addServlet(getCurrentAutoModeHolder, "/currentAutoMode");
-
-        // ServletHolder setAutoModeHolder = new ServletHolder("setAutoMode", new SetAutoModeServlet());
-        // context.addServlet(setAutoModeHolder, "/setAutoMode");
-
-        // ServletHolder pingHolder = new ServletHolder("ping", new PingServlet());
-        // context.addServlet(pingHolder, "/ping");
-
-        // noinspection ConstantConditions
-        // String appDir = WebServer.class.getClassLoader().getResource("app/").toExternalForm();
+       
         ServletHolder holderPwd = new ServletHolder("default", new DefaultServlet());
-        // holderPwd.setInitParameter("resourceBase", appDir);
+
         holderPwd.setInitParameter("dirAllowed", "true");
         context.addServlet(holderPwd, "/");
 
@@ -82,6 +58,7 @@ public class WebServer {
                 }
             }
         });
+        
         serverThread.setPriority(Thread.MIN_PRIORITY);
         serverThread.start();
         streamUpdate.start();

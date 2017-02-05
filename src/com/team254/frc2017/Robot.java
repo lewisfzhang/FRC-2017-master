@@ -33,9 +33,6 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        // mDrive.registerEnabledLoops(mEnabledLooper);
-        // mIntake.registerEnabledLoops(mEnabledLooper);
-        //mShooter.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
         
         // initialize robot constants

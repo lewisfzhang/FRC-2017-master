@@ -24,7 +24,7 @@ public class AdaptivePurePursuitController {
     double mPathCompletionTolerance;
 
     public AdaptivePurePursuitController(double fixed_lookahead, double max_accel, double nominal_dt, Path path,
-            boolean reversed, double path_completion_tolerance) {
+    		boolean reversed, double path_completion_tolerance) {
         mFixedLookahead = fixed_lookahead;
         mMaxAccel = max_accel;
         mPath = path;
@@ -41,12 +41,14 @@ public class AdaptivePurePursuitController {
 
     public RigidTransform2d.Delta update(RigidTransform2d robot_pose, double now) {
         RigidTransform2d pose = robot_pose;
+        
         if (mReversed) {
             pose = new RigidTransform2d(robot_pose.getTranslation(),
-                    robot_pose.getRotation().rotateBy(Rotation2d.fromRadians(Math.PI)));
+            		robot_pose.getRotation().rotateBy(Rotation2d.fromRadians(Math.PI)));
         }
 
         double distance_from_path = mPath.update(robot_pose.getTranslation());
+        
         if (this.isDone()) {
             return new RigidTransform2d.Delta(0, 0, 0);
         }
@@ -56,16 +58,21 @@ public class AdaptivePurePursuitController {
         Optional<Circle> circle = joinPath(pose, lookahead_point.translation);
 
         double speed = lookahead_point.speed;
+        
         if (mReversed) {
             speed *= -1;
         }
+        
         // Ensure we don't accelerate too fast from the previous command
         double dt = now - mLastTime;
+        
         if (mLastCommand == null) {
             mLastCommand = new RigidTransform2d.Delta(0, 0, 0);
             dt = mDt;
         }
+        
         double accel = (speed - mLastCommand.dx) / dt;
+        
         if (accel < -mMaxAccel) {
             speed = mLastCommand.dx - mMaxAccel * dt;
         } else if (accel > mMaxAccel) {
@@ -73,8 +80,7 @@ public class AdaptivePurePursuitController {
         }
 
         // Ensure we slow down in time to stop
-        // vf^2 = v^2 + 2*a*d
-        // 0 = v^2 + 2*a*d
+        
         double remaining_distance = mPath.getRemainingLength();
         double max_allowed_speed = Math.sqrt(2 * mMaxAccel * remaining_distance);
         if (Math.abs(speed) > max_allowed_speed) {
@@ -94,6 +100,7 @@ public class AdaptivePurePursuitController {
         } else {
             rv = new RigidTransform2d.Delta(speed, 0, 0);
         }
+        
         mLastTime = now;
         mLastCommand = rv;
         return rv;
@@ -134,11 +141,9 @@ public class AdaptivePurePursuitController {
         double mx = (cross_product > 0 ? 1 : -1) * robot_pose.getRotation().sin();
 
         double cross_term = mx * dx + my * dy;
-
-        if (Math.abs(cross_term) < kEpsilon) {
-            // Points are colinear
-            return Optional.empty();
-        }
+        
+        // Points are colinear
+        if (Math.abs(cross_term) < kEpsilon) return Optional.empty();
 
         return Optional.of(new Circle(
                 new Translation2d((mx * (x1 * x1 - x2 * x2 - dy * dy) + 2 * my * x1 * dy) / (2 * cross_term),

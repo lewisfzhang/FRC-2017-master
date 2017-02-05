@@ -24,15 +24,18 @@ public class Looper {
     private final Object taskRunningLock_ = new Object();
     private double timestamp_ = 0;
     private double dt_ = 0;
+    
     private final CrashTrackingRunnable runnable_ = new CrashTrackingRunnable() {
         @Override
         public void runCrashTracked() {
             synchronized (taskRunningLock_) {
                 if (running_) {
                     double now = Timer.getFPGATimestamp();
+                    
                     for (Loop loop : loops_) {
                         loop.onLoop(now);
                     }
+                    
                     dt_ = now - timestamp_;
                     timestamp_ = now;
                 }

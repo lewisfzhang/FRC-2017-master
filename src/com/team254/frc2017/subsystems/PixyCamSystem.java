@@ -44,7 +44,6 @@ public class PixyCamSystem extends Subsystem {
 
     @Override
     public void zeroSensors() {
-        // Nothing to do here
     }
 
     @Override
