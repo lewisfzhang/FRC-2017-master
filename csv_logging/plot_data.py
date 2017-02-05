@@ -13,13 +13,16 @@ data = np.genfromtxt('SHOOTER-LOGS-JRAD.csv', delimiter=',', names=True)
 
 fig = plt.figure()
 
-ax1 = fig.add_subplot(2, 1, 2)
+outputPlot = fig.add_subplot(3, 1, 1)
+outputPlot.plot(data['time'], data['newOutput'], label='output')
+outputPlot.set_ylim([7, 9])
 
-ax1.plot(data['time'], data['error'], label='bounded_error')
+errorPlot = fig.add_subplot(3, 1, 2)
+errorPlot.plot(data['time'], data['error'], label='error')
+errorPlot.set_ylim([-200, 200])
 
-ax2 = fig.add_subplot(2, 1, 1)
-
-ax2.plot(data['time'], data['newOutput'], label='output')
-ax2.set_ylim([0, 12])
+meanSquareErrorPlot = fig.add_subplot(3, 1, 3)
+meanSquareErrorPlot.plot(data['time'], data['meanSquareError'], label='mean square error')
+meanSquareErrorPlot.set_ylim([0, 600])
 
 plt.show()

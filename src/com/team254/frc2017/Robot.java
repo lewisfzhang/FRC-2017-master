@@ -35,7 +35,7 @@ public class Robot extends IterativeRobot {
 
     WebServer mHTTPServer = new WebServer();
     
-    CANTalon feeda, feedb;
+    CANTalon feeda;
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
@@ -45,10 +45,6 @@ public class Robot extends IterativeRobot {
         feeda = new CANTalon(7);
         feeda.changeControlMode(TalonControlMode.Voltage);
         feeda.setInverted(true);
-
-        feedb = new CANTalon(8);
-        feedb.changeControlMode(TalonControlMode.Voltage);
-        feedb.setInverted(false);
 
         // mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
@@ -102,13 +98,11 @@ public class Robot extends IterativeRobot {
 
         if (mControlBoard.getShootButton()) {
             //mFeeder.setSetpoint(Constants.kFeedRPM);
-            feeda.set(-9);
-            feedb.set(-9);
-            SmartDashboard.putNumber("feed", -9);
+            feeda.set(-6);
+            SmartDashboard.putNumber("feed", -6);
         } else {
             //mFeeder.setSetpoint(0.0);
             feeda.set(0);
-            feedb.set(0);
             SmartDashboard.putNumber("feed", 0);
         }
         mShooterA.outputToSmartDashboard();

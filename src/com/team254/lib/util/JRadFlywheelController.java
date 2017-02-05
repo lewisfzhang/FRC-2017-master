@@ -21,7 +21,7 @@ public class JRadFlywheelController {
     private double mSetpoint = 0.0;
 
     private CSVWriter mLogger;
-    private double[] mErrorHistory = new double[20];
+    private double[] mErrorHistory = new double[50];
     private int mErrorHistoryIdx = 0;
 
     public JRadFlywheelController(double kj, double kLoadRatio) {
@@ -29,29 +29,30 @@ public class JRadFlywheelController {
         mKLoadRatio = kLoadRatio;
         mLogger = new CSVWriter(
                 "/home/lvuser/SHOOTER-LOGS-JRAD.csv",
-                new String[]{"time", "dt", "error", "newOutput"});
+                new String[]{"time", "dt", "error", "newOutput", "meanSquareError"});
     }
 
     public double calculate(double input, double dt, double now) {
         double newOutput = mPrevOutput + mKj * dt * (mKLoadRatio * mSetpoint - input);
         mPrevOutput = newOutput;
 
-        /* double boundedError = Math.min(300, Math.max(-300, input - mSetpoint));
-        mErrorHistory[mErrorHistoryIdx] = boundedError;
+        double error = input - mSetpoint;
+        mErrorHistory[mErrorHistoryIdx] = error;
         mErrorHistoryIdx++;
         if (mErrorHistoryIdx >= mErrorHistory.length) {
             mErrorHistoryIdx = 0;
         }
 
-        double avgErorr = 0;
+        double meanSquareError = 0;
         for (double e : mErrorHistory) {
-            avgErorr += e / mErrorHistory.length;
-        } */
+            meanSquareError += e * e / mErrorHistory.length;
+        }
 
         mLogger.addValue(0, now);
         mLogger.addValue(1, dt);
-        mLogger.addValue(2, input - mSetpoint);
+        mLogger.addValue(2, error);
         mLogger.addValue(3, newOutput);
+        mLogger.addValue(4, meanSquareError);
         mLogger.write();
 
         return newOutput;
