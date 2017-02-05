@@ -51,7 +51,7 @@ public class ControlBoard {
 
     public boolean getSpinShooterButton() {
         //return mButtonBoard.getRawButton(1);
-        return mThrottleStick.getRawButton(3);
+        return mThrottleStick.getRawButton(2);
     }
 
     public boolean getShootButton() {

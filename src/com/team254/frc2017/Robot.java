@@ -10,6 +10,7 @@ import com.team254.frc2017.subsystems.Proto_Shooter;
 import com.team254.frc2017.web.WebServer;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -24,16 +25,9 @@ public class Robot extends IterativeRobot {
     //Proto_Feeder mFeeder = Proto_Feeder.getInstance();
 
     Proto_Shooter mShooterA = new Proto_Shooter(
-            1,
-            2,
-            Constants.kFlywheelAMotor1Inverted,
-            Constants.kFlywheelAMotor2Inverted,
-            0,
-            1,
-            Constants.kFlywheelAEncoderInverted,
-            0,
-            0,
-            "A");
+            Constants.kFlywheelAKj,
+            Constants.kFlywheelAKLoadRatio,
+            "Shooter");
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
@@ -48,10 +42,14 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        feeda = new CANTalon(3);
+        feeda = new CANTalon(7);
         feeda.changeControlMode(TalonControlMode.Voltage);
-        feedb = new CANTalon(6);
+        feeda.setInverted(true);
+
+        feedb = new CANTalon(8);
         feedb.changeControlMode(TalonControlMode.Voltage);
+        feedb.setInverted(false);
+
         // mDrive.registerEnabledLoops(mEnabledLooper);
         // mIntake.registerEnabledLoops(mEnabledLooper);
         mShooterA.registerEnabledLoops(mEnabledLooper);
@@ -95,6 +93,7 @@ public class Robot extends IterativeRobot {
 
         if (mControlBoard.getSpinShooterButton()) {
             mShooterA.setRpmSetpoint(Constants.kFlywheelATarget);
+
             // mShooterB.setRpmSetpoint(Constants.kFlywheelBTarget);
         } else {
             mShooterA.setManualVoltage(0.0);
@@ -105,10 +104,12 @@ public class Robot extends IterativeRobot {
             //mFeeder.setSetpoint(Constants.kFeedRPM);
             feeda.set(-9);
             feedb.set(-9);
+            SmartDashboard.putNumber("feed", -9);
         } else {
             //mFeeder.setSetpoint(0.0);
             feeda.set(0);
             feedb.set(0);
+            SmartDashboard.putNumber("feed", 0);
         }
         mShooterA.outputToSmartDashboard();
         // mShooterB.outputToSmartDashboard();
