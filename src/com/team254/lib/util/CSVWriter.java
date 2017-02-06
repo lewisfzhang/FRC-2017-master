@@ -1,6 +1,5 @@
 package com.team254.lib.util;
 
-
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;

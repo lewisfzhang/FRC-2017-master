@@ -16,16 +16,17 @@ public class WebServer {
     private static TaskQueue streamUpdate = new TaskQueue(200);
 
     public static void main(String args[]) {
-        
+
         startServer();
-        while(true) {
+        while (true) {
             try {
                 Thread.sleep(1000000);
-            } catch(Exception e) {}
+            } catch (Exception e) {
+            }
         }
-        
+
     }
-    
+
     public static void startServer() {
         if (server != null) {
             return;
@@ -37,11 +38,10 @@ public class WebServer {
 
         ServletHolder constantsHolder = new ServletHolder("constants", new ConstantsServlet());
         context.addServlet(constantsHolder, "/constants");
-        
+
         ServletHolder resetConstantsHolder = new ServletHolder("resetConstants", new ResetConstantsServlet());
         context.addServlet(resetConstantsHolder, "/resetconstants");
 
-       
         ServletHolder holderPwd = new ServletHolder("default", new DefaultServlet());
 
         holderPwd.setInitParameter("dirAllowed", "true");
@@ -58,7 +58,7 @@ public class WebServer {
                 }
             }
         });
-        
+
         serverThread.setPriority(Thread.MIN_PRIORITY);
         serverThread.start();
         streamUpdate.start();

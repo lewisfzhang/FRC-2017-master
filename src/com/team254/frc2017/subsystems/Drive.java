@@ -20,11 +20,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Drive extends Subsystem {
     private static CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
     private static Accelerometer mAccel;
-    
+
     private static Drive mInstance;
     CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
     ControlBoard mControlBoard = ControlBoard.getInstance();
-    
+
     private Collection<CollisionDetectionListener> mCollisionListeners = new LinkedList<CollisionDetectionListener>();
 
     private Drive() {
@@ -32,9 +32,9 @@ public class Drive extends Subsystem {
         mLeftSlave = new CANTalon(12);
         mRightMaster = new CANTalon(3);
         mRightSlave = new CANTalon(4);
-        
-        mAccel = new BuiltInAccelerometer(); 
-    	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
+
+        mAccel = new BuiltInAccelerometer();
+        mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G);
     }
 
     public static Drive getInstance() {
@@ -73,8 +73,6 @@ public class Drive extends Subsystem {
         mRightMaster.stopMotor();
         mRightSlave.stopMotor();
     }
-    
-    
 
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Left Drive Motor RPM", mLeftMaster.getSpeed());
@@ -84,10 +82,10 @@ public class Drive extends Subsystem {
     public void zeroSensors() {
 
     }
-    
-    //Collision Code
+
+    // Collision Code
     public void registerCollisionListener(CollisionDetectionListener listen) {
-    	mCollisionListeners.add(listen);
+        mCollisionListeners.add(listen);
     }
 
     private Double getAccelerometerMagnitude() {
@@ -95,8 +93,8 @@ public class Drive extends Subsystem {
     }
 
     private void checkForCollision() {
-        if (true/*TODO: Check if base locked*/ && getAccelerometerMagnitude() > Constants.kCollisionThreshold) {
-            for(CollisionDetectionListener listen : mCollisionListeners) {
+        if (true/* TODO: Check if base locked */ && getAccelerometerMagnitude() > Constants.kCollisionThreshold) {
+            for (CollisionDetectionListener listen : mCollisionListeners) {
                 listen.didCollide();
             }
         }

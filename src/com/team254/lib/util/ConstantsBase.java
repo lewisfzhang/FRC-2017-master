@@ -51,7 +51,7 @@ public abstract class ConstantsBase {
         filePath = filePath.replaceFirst("^~", System.getProperty("user.home"));
         return new File(filePath);
     }
-    
+
     public boolean truncateUserConstants() {
         try {
             Files.write(getFile().toPath(), new byte[0], StandardOpenOption.TRUNCATE_EXISTING);

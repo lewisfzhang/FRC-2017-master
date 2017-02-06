@@ -20,7 +20,7 @@ public abstract class AutoModeBase {
             System.out.println("Auto mode done, ended early");
             return;
         }
-        
+
         done();
         System.out.println("Auto mode done");
     }
@@ -40,25 +40,25 @@ public abstract class AutoModeBase {
         if (!isActive()) {
             throw new AutoModeEndedException();
         }
-        
+
         return isActive();
     }
 
     public void runAction(Action action) throws AutoModeEndedException {
         isActiveWithThrow();
         action.start();
-        
+
         while (isActiveWithThrow() && !action.isFinished()) {
             action.update();
             long waitTime = (long) (m_update_rate * 1000.0);
-            
+
             try {
                 Thread.sleep(waitTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        
+
         action.done();
     }
 

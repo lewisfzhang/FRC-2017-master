@@ -22,7 +22,8 @@ public class ResetConstantsServlet extends HttpServlet {
 
         out.println("<html>");
         out.println("<body>");
-        out.println("<h1>Constants file truncated</h1><p>Constants have been reset to the defaults as defined in the code</p><a href='/constants'>Back</a>");
+        out.println(
+                "<h1>Constants file truncated</h1><p>Constants have been reset to the defaults as defined in the code</p><a href='/constants'>Back</a>");
         out.println("</body>");
         out.println("</html>");
     }
@@ -32,7 +33,7 @@ public class ResetConstantsServlet extends HttpServlet {
             throws ServletException, IOException {
         Constants constants = new Constants();
         constants.truncateUserConstants();
-        
+
         buildPage(response);
     }
 }
