@@ -952,18 +952,22 @@ int main(int argc, char* argv[])
 
 
 
-        if(key == 'u' && mode == CALIBRATED) {
+        if( key == 'u' && mode == CALIBRATED ) {
            s.showUndistorsed = !s.showUndistorsed;
            if (s.showUndistorsed == 1) cout << "Showing: Undistorted" << endl;
            else cout << "Showing: Distorted" << endl;
          }
 
-        if(key == 'g') {
+        if(key == 'g' )
+
+        {
+
             mode = CAPTURING;
+
             imagePoints.clear();
-        } else if (mode != CAPTURING && mode != CALIBRATED) {
-          i = 0;
+
         }
+
     }
 
 
@@ -1261,19 +1265,18 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
     fs << "Camera_Matrix" << cameraMatrix;
 
     fs << "Distortion_Coefficients" << distCoeffs;
-    string pixyNumber = "6";
-    string path = "../src/com/team254/lib/util/pixy/constants/PixyNumber" + pixyNumber + "Constants.java";
+    string pixyNumber = "1";
+    string path;
+    path << "../src/com/team254/lib/pixy/constants/PixyNumber" << pixyNumber << "Constants.java";
     ofstream myfile(path);
     myfile << "package com.team254.lib.util.pixy.constants;\n\n";
     myfile << "public class PixyNumber" << pixyNumber << "Constants {\n";
-    myfile << "    public final double fx = " << cameraMatrix.at<double> (0, 0) << ";\n";
-    myfile << "    public final double fy = " << cameraMatrix.at<double> (1, 1) << ";\n";
     myfile << "    public final double cx = " << cameraMatrix.at<double> (0, 2) << ";\n";
     myfile << "    public final double cy = " << cameraMatrix.at<double> (1, 2) << ";\n";
     myfile << "    public final double k1 = " << distCoeffs.at<double> (0, 0) << ";\n";
     myfile << "    public final double k2 = " << distCoeffs.at<double> (1, 0) << ";\n";
     myfile << "    public final double k3 = " << distCoeffs.at<double> (4, 0) << ";\n";
-    myfile << "}";
+    myfile << "}"
     myfile.close();
 
 

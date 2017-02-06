@@ -3,14 +3,8 @@ package com.team254.lib.util.pixy;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.team254.frc2017.Constants;
 import com.team254.lib.util.pixy.Frame.Block;
-import com.team254.lib.util.pixy.constants.PixyNumber1Constants;
-import com.team254.lib.util.pixy.constants.PixyNumber2Constants;
-import com.team254.lib.util.pixy.constants.PixyNumber3Constants;
-import com.team254.lib.util.pixy.constants.PixyNumber4Constants;
-import com.team254.lib.util.pixy.constants.PixyNumber5Constants;
-import com.team254.lib.util.pixy.constants.PixyNumber6Constants;
+import com.team254.lib.util.pixy.constants.PixyNumberConstants;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,58 +35,11 @@ public class PixyCam {
     }
 
     public Frame.Block parseBlock() {
-        //Get Constants
-        switch(Constants.kPixyNumber) {
-        case 1:
-            PixyNumber1Constants one = new PixyNumber1Constants();
-            cx = one.cx;
-            cy = one.cy;
-            k1 = one.k1;
-            k2 = one.k2;
-            k3 = one.k3;
-            break;
-        case 2:
-            PixyNumber2Constants two = new PixyNumber2Constants();
-            cx = two.cx;
-            cy = two.cy;
-            k1 = two.k1;
-            k2 = two.k2;
-            k3 = two.k3;
-            break;
-        case 3:
-            PixyNumber3Constants three = new PixyNumber3Constants();
-            cx = three.cx;
-            cy = three.cy;
-            k1 = three.k1;
-            k2 = three.k2;
-            k3 = three.k3;
-            break;
-        case 4:
-            PixyNumber4Constants four = new PixyNumber4Constants();
-            cx = four.cx;
-            cy = four.cy;
-            k1 = four.k1;
-            k2 = four.k2;
-            k3 = four.k3;
-            break;
-        case 5:
-            PixyNumber5Constants five = new PixyNumber5Constants();
-            cx = five.cx;
-            cy = five.cy;
-            k1 = five.k1;
-            k2 = five.k2;
-            k3 = five.k3;
-            break;
-        case 6:
-            PixyNumber6Constants six = new PixyNumber6Constants();
-            cx = six.cx;
-            cy = six.cy;
-            k1 = six.k1;
-            k2 = six.k2;
-            k3 = six.k3;
-            break;
-        }
-
+        cx = PixyNumberConstants.cx;
+        cy = PixyNumberConstants.cy;
+        k1 = PixyNumberConstants.k1;
+        k2 = PixyNumberConstants.k2;
+        k3 = PixyNumberConstants.k3;
         Frame.Block block = new Frame.Block();
         // Wait for sync
         int lastByte = 0x00;
