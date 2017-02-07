@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
-    Proto_Intake mIntake = Proto_Intake.getInstance();
-    Proto_Shooter mShooter = Proto_Shooter.getInstance();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
 
@@ -29,9 +27,7 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        // mDrive.registerEnabledLoops(mEnabledLooper);
-        // mIntake.registerEnabledLoops(mEnabledLooper);
-        mShooter.registerEnabledLoops(mEnabledLooper);
+        mDrive.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
     }
 
@@ -65,19 +61,6 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-
-        if (mControlBoard.getSpinShooterButton()) {
-            mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
-        } else {
-            mShooter.setManualVoltage(0.0);
-        }
-
-        if (mControlBoard.getShootButton()) {
-            mShooter.setFeedRoller(Constants.kFlywheelFeedRollerVoltage);
-        } else {
-            mShooter.setFeedRoller(0.0);
-        }
-        mShooter.outputToSmartDashboard();
     }
 
     @Override

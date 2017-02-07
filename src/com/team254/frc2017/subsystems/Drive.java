@@ -19,8 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends Subsystem {
     private static CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave; // Master and slave motor
-    private static Accelerometer mAccel;
-    
+
     private static Drive mInstance;
     CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
     ControlBoard mControlBoard = ControlBoard.getInstance();
@@ -29,12 +28,21 @@ public class Drive extends Subsystem {
 
     private Drive() {
         mLeftMaster = new CANTalon(11);
+        mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mLeftSlave = new CANTalon(12);
+        mLeftSlave.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+
+
         mRightMaster = new CANTalon(3);
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mRightMaster.setInverted(true);
+        mRightMaster.enableBrakeMode(false);
+
         mRightSlave = new CANTalon(4);
-        
-        mAccel = new BuiltInAccelerometer(); 
-    	mAccel = new BuiltInAccelerometer(Accelerometer.Range.k4G); 
+        mRightSlave.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mRightSlave.setInverted(true);
+        mRightSlave.enableBrakeMode(false);
+
     }
 
     public static Drive getInstance() {
@@ -55,8 +63,6 @@ public class Drive extends Subsystem {
             mLeftSlave.set(driveSignal.getLeft());
             mRightMaster.set(driveSignal.getRight());
             mRightSlave.set(driveSignal.getRight());
-            checkForCollision();
-            outputToSmartDashboard();
         }
 
         public void onStop(double timestamp) {
@@ -78,31 +84,11 @@ public class Drive extends Subsystem {
     
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Left Drive Motor RPM", mLeftMaster.getSpeed());
-        SmartDashboard.putNumber("Right Drive Motor RPM", mRightMaster.getSpeed());
     }
 
     public void zeroSensors() {
 
     }
-    
-    //Collision Code
-    public void registerCollisionListener(CollisionDetectionListener listen) {
-    	mCollisionListeners.add(listen);
-    }
-    
-    private Double getAccelerometerMagnitude() {
-    	return Math.hypot(mAccel.getX(), mAccel.getY());
-    }
-    
-    private void checkForCollision() {
-    	if (true/*TODO: Check if base locked*/ && getAccelerometerMagnitude() > Constants.kCollisionThreshold) {
-    		for(CollisionDetectionListener listen : mCollisionListeners) {
-    			listen.didCollide();
-    		}
-    	}
-    }
-    
-    
+
 
 }
