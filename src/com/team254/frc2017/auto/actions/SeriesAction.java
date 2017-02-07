@@ -13,9 +13,11 @@ public class SeriesAction implements Action {
 
     public SeriesAction(List<Action> actions) {
         mRemainingActions = new ArrayList<>(actions.size());
+
         for (Action action : actions) {
             mRemainingActions.add(action);
         }
+
         mCurAction = null;
     }
 
@@ -34,10 +36,13 @@ public class SeriesAction implements Action {
             if (mRemainingActions.isEmpty()) {
                 return;
             }
+
             mCurAction = mRemainingActions.remove(0);
             mCurAction.start();
         }
+
         mCurAction.update();
+
         if (mCurAction.isFinished()) {
             mCurAction.done();
             mCurAction = null;

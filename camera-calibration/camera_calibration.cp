@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <time.h>
+#include <string>
 #include <stdio.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -12,7 +14,6 @@
 #include <signal.h>
 #include <string.h>
 #include <math.h>
-
 extern "C" {
 #include "pixy.h"
 }
@@ -701,6 +702,7 @@ int main(int argc, char* argv[])
       Mat view;
       bool blinkOutput = false;
       char getkey = (char)waitKey(s.inputCapture.isOpened() ? 50 : s.delay);
+      // char getkey = (char)waitKey(50);
       view = s.nextImage();
       imshow("Image View", view);
       bool isGetKeyPressed = false;
@@ -750,14 +752,15 @@ int main(int argc, char* argv[])
         if (getkey == ' ')
           isGetKeyPressed = true;
         getkey = (char)waitKey(s.inputCapture.isOpened() ? 50 : s.delay);
+        // getkey = (char)waitKey(50);
       }
       isGetKeyPressed = false;
       cout << "Took Pic" << endl;
       printf("Starting image\n");
       //-----  If no more image, or got enough, then stop calibration and show result -------------
 
-      if( mode == CAPTURING && imagePoints.size() >= (unsigned)s.nrFrames )
-
+      //if( mode == CAPTURING && imagePoints.size() >= (unsigned)s.nrFrames )
+      if (mode == CAPTURING && i >= (unsigned)s.nrFrames)
       {
 
           printf("Calib1\n");
@@ -904,11 +907,12 @@ int main(int argc, char* argv[])
 
             if(s.showUndistorsed)
 
-                msg = format( "%d/%d Undist", (int)imagePoints.size(), s.nrFrames );
+                msg = format( "%d/%d Undist", i, s.nrFrames );
+                // msg = format( "%d/%d Undist", (int)imagePoints.size(), s.nrFrames );
 
             else
-
-                msg = format( "%d/%d Dist", (int)imagePoints.size(), s.nrFrames );
+                msg = format( "%d/%d Undist", i, s.nrFrames );
+                // msg = format( "%d/%d Dist", (int)imagePoints.size(), s.nrFrames );
 
         }
 
@@ -1262,6 +1266,19 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
 
     fs << "Distortion_Coefficients" << distCoeffs;
 
+    ofstream myfile("../resources/PixyCam4.txt");
+    myfile << "Camera Matrix:\n";
+    myfile << "Fx: " << cameraMatrix.at<double> (0, 0) << "\n";
+    myfile << "Fy: " << cameraMatrix.at<double> (1, 1) << "\n";
+    myfile << "Cx: " << cameraMatrix.at<double> (0, 2) << "\n";
+    myfile << "Cy: " << cameraMatrix.at<double> (1, 2) << "\n\n";
+    myfile << "Distortion Coefficients:\n";
+    myfile << "K1: " << distCoeffs.at<double> (0, 0) << "\n";
+    myfile << "K2: " << distCoeffs.at<double> (1, 0) << "\n";
+    myfile << "K3: " << distCoeffs.at<double> (4, 0) << "\n";
+    myfile << "P1: " << distCoeffs.at<double> (2, 0) << "\n";
+    myfile << "P2: " << distCoeffs.at<double> (3, 0);
+    myfile.close();
 
 
     fs << "Avg_Reprojection_Error" << totalAvgErr;

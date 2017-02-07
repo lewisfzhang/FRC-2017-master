@@ -23,7 +23,7 @@ public class Drive extends Subsystem {
     private static Drive mInstance;
     CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
     ControlBoard mControlBoard = ControlBoard.getInstance();
-    
+
     private Collection<CollisionDetectionListener> mCollisionListeners = new LinkedList<CollisionDetectionListener>();
 
     private Drive() {
@@ -42,7 +42,6 @@ public class Drive extends Subsystem {
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mRightSlave.setInverted(true);
         mRightSlave.enableBrakeMode(false);
-
     }
 
     public static Drive getInstance() {
@@ -80,8 +79,6 @@ public class Drive extends Subsystem {
         mRightMaster.stopMotor();
         mRightSlave.stopMotor();
     }
-    
-    
 
     public void outputToSmartDashboard() {
     }
@@ -89,6 +86,4 @@ public class Drive extends Subsystem {
     public void zeroSensors() {
 
     }
-
-
 }

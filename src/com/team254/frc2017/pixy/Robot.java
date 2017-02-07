@@ -1,11 +1,15 @@
-package com.team254.frc2017;
+package com.team254.frc2017.pixy;
 
-import com.team254.frc2017.Constants.RobotName;
-import com.team254.frc2017.loops.Looper;
-import com.team254.frc2017.subsystems.Drive;
-import com.team254.frc2017.web.WebServer;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
+import com.team254.lib.util.pixy.Frame;
+import com.team254.lib.util.pixy.PixyCam;
+import com.team254.lib.util.pixy.SpiLogger;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -14,29 +18,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * this project, you must also update the manifest file in the resource directory.
  */
 public class Robot extends IterativeRobot {
-    private Drive mDrive = Drive.getInstance();
-
-    private ControlBoard mControlBoard = ControlBoard.getInstance();
-
-    private Looper mEnabledLooper = new Looper();
-
-    private WebServer mHTTPServer = new WebServer();
+    final String defaultAuto = "Default";
+    final String customAuto = "My Auto";
+    private PixyCam _p = new PixyCam();
+    private SpiLogger _spiLogger = new SpiLogger();
+    String autoSelected;
+    SendableChooser<String> chooser = new SendableChooser<>();
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
      */
     @Override
     public void robotInit() {
-        mDrive.registerEnabledLoops(mEnabledLooper);
-        mHTTPServer.startServer();
-
-        // initialize robot constants
         try {
-            RobotName name = Constants.getRobotName();
-            SmartDashboard.putString("MAC Address", Constants.getMACAddress());
-            ConstantsModifier.initConstants(name);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            while (true) {
+                Frame f = _p.getFrame();
+                System.out.println("frame:: - " + f.toString());
+                SmartDashboard.putString("frame", f.toString());
+            }
+        } catch (Exception e) {
+            SmartDashboard.putString("ex caught", "rrrrr");
+            StringWriter writer = new StringWriter();
+            e.printStackTrace(new PrintWriter(writer));
+            SmartDashboard.putString("err", writer.toString());
         }
     }
 
@@ -53,21 +57,23 @@ public class Robot extends IterativeRobot {
     public void autonomousInit() {
     }
 
+    @Override
+    public void disabledPeriodic() {
+    }
+
     /**
      * This function is called periodically during autonomous
      */
     @Override
     public void autonomousPeriodic() {
-    }
+        switch (autoSelected) {
+        case customAuto:
+            break;
+        case defaultAuto:
+        default:
+            break;
+        }
 
-    @Override
-    public void teleopInit() {
-
-        // Start loopers
-        mEnabledLooper.start();
-
-        // re-update feeder constants & apply to talons
-        // mFeeder.updateConstants();
     }
 
     /**
@@ -75,11 +81,6 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-    }
-
-    @Override
-    public void disabledInit() {
-        mEnabledLooper.stop();
     }
 
     /**

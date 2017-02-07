@@ -74,21 +74,23 @@ public class StateStreamSocket extends WebSocketAdapter {
     }
 
     public boolean update() {
-        if (!isConnected()) {
+        if (!isConnected())
             return false;
-        }
-        if (!running || subscribedKeys.keySet().size() == 0) {
+
+        if (!running || subscribedKeys.keySet().size() == 0)
             return true;
-        }
+
         String[] keys = subscribedKeys.keySet().toArray(new String[subscribedKeys.size()]);
         JSONObject states = SystemManager.getInstance().get(keys);
         String out = states.toJSONString();
+
         try {
             getRemote().sendStringByFuture(out);
         } catch (WebSocketException e) {
             System.err.println("Caught WebSocketException in StateStreamSocket");
             return false;
         }
+
         return true;
     }
 
