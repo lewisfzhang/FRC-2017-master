@@ -58,13 +58,11 @@ public class Constants extends ConstantsBase {
     public static double kMaxDecel = 20.0; //should be positive
     public static double kPathFollowingMaxVel = 10000; //inches per second
 
-    public static double kRightDriveKf = 0.063245;
-    public static double kRightDriveKi = 10000; //inches per second
-    public static double kRightDriveKd = 10000; //inches per second
+    public static double kRightDriveKf = 1.75288085938;
+    public static double kLeftDriveKf = 2.00316894531;
     
     public static double kDriveTicksPerRotation = 250.0;
     
-    public static double kLeftDriveKf = 0.065826; //throttle per inches per second^2
     
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid

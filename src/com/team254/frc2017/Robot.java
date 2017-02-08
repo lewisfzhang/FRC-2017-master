@@ -2,11 +2,8 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
-import com.team254.frc2017.subsystems.Proto_Intake;
-import com.team254.frc2017.subsystems.Proto_Shooter;
 import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
-import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.Odometer;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -18,8 +15,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
     Drive mDrive = Drive.getInstance();
-    Proto_Intake mIntake =  Proto_Intake.getInstance();
-    //Proto_Shooter mShooter = Proto_Shooter.getInstance();
     Odometer mOdometer = Odometer.getInstance();
 
     ControlBoard mControlBoard = ControlBoard.getInstance();
@@ -35,8 +30,6 @@ public class Robot extends IterativeRobot {
     @Override
     public void robotInit() {
         mDrive.registerEnabledLoops(mEnabledLooper);
-        // mIntake.registerEnabledLoops(mEnabledLooper);
-        //mShooter.registerEnabledLoops(mEnabledLooper);
         mOdometer.registerEnabledLoops(mEnabledLooper);
         mHTTPServer.startServer();
     }
@@ -88,7 +81,7 @@ public class Robot extends IterativeRobot {
 //            mShooter.setFeedRoller(0.0);
 //        }
 //        mShooter.outputToSmartDashboard();
-        mDrive.outputToSmartDashboard();
+       mDrive.outputToSmartDashboard();
     }
 
     @Override

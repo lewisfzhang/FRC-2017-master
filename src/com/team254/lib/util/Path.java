@@ -29,7 +29,7 @@ public class Path {
      public Path(String filepath) {
          segments = new ArrayList<PathSegment>();
          loadFile(filepath);
-         Odometer.getInstance().setPose(getStartPose());
+         //Odometer.getInstance().setPose(getStartPose());
      }
      
      public Path() { segments = new ArrayList<PathSegment>(); }
