@@ -126,7 +126,7 @@ public abstract class ConstantsBase {
 
     public Collection<Constant> getConstants() {
         List<Constant> constants = (List<Constant>) getAllConstants();
-        int stop = constants.size() - 1;
+        int stop = constants.size();
         for (int i = 0; i < constants.size(); ++i) {
             Constant c = constants.get(i);
             if ("kEndEditableArea".equals(c.name)) {
