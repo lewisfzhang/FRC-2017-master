@@ -91,9 +91,9 @@ public class Robot extends IterativeRobot {
                 }
             }
             
-            SmartDashboard.putDouble("Height", target.height);
-            SmartDashboard.putDouble("Width", target.width);
-            SmartDashboard.putDouble("Distance", getPhysicalDistance(target));
+            SmartDashboard.putNumber("Height", target.height);
+            SmartDashboard.putNumber("Width", target.width);
+            SmartDashboard.putNumber("Distance", getPhysicalDistance(target));
             System.out.println(getPhysicalDistance(target));
         } else {
             System.out.println("No targets detected.");
@@ -128,12 +128,8 @@ public class Robot extends IterativeRobot {
     }
     
     private double getPhysicalDistance(Block target) {
-//      double ratio = Constants.kTargetPhysicalHeight / target.height;
-//      double cameraDistance = Math.sqrt( Math.pow(Constants.kFocalX, 2) + Math.pow(target.centerY, 2));
-//      return ratio * cameraDistance * Math.cos(Constants.kCameraAngle);
-//      double dist = (Constants.kTargetPhysicalHeight*Constants.kFocalX)/target.height;
-        double sinAngle = (8.8*target.height)/Math.sqrt(Math.pow(Constants.kFocalX, 2) + Math.pow(8.8*target.height, 2));
-        double dist = Math.sqrt(Math.pow(target.height/sinAngle, 2)-Math.pow(target.height, 2));
-        return dist*Math.cos(Math.toRadians(Constants.kCameraAngle));
+//        System.out.println("Target Center: " + target.centerY);
+//        System.out.println("Y Angle Pos: " + Math.atan(-target.centerY/Constants.kFocalX));
+        return Constants.kBoilerHeight * 1/(Math.tan(Math.atan(-target.centerY/Constants.kFocalX)+ Math.toRadians(Constants.kCameraAngle)));
     }
 }

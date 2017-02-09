@@ -18,8 +18,9 @@ public class Constants extends ConstantsBase {
     //pixycam distance stuff
     public static double kCameraAngle = 26.5; // degrees, originally 26.5
     public static double kFocalX = 316.736; //default for PixyCam 1
-    public static double kTargetPhysicalHeight = 10.0; //inches
     public static int kPixySPIRefreshRate = 500000;
+    public static double kBoilerHeight = 54; // distance from camera to center of top boiler tape strip
+
     
 
     public static double kCollisionThreshold = 0.5;
@@ -85,7 +86,7 @@ public class Constants extends ConstantsBase {
     public static double kFlywheelOnTargetTolerance = 20.0;
     public static double kFlywheelTarget = 4000.0;
     public static double kFlywheelFeedRollerVoltage = 9.0;
-    
+        
     /* Triple roller shooter constants
     public static boolean kFlywheelMotor1Inverted = true;
     public static boolean kFlywheelMotor2Inverted = false;
