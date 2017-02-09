@@ -32,7 +32,9 @@ public class Drive extends Subsystem {
     private final CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
     private final Solenoid mShifter;
     private DriveControlState mDriveControlstate;
+
     private boolean mIsHighGear;
+    private boolean mIsBreakMode;
 
     private final Loop mLoop = new Loop() {
         @Override
@@ -83,6 +85,10 @@ public class Drive extends Subsystem {
 
         setHighGear(true);
         setOpenLoop(DriveSignal.NEUTRAL);
+
+        // Force a CAN message across.
+        mIsBreakMode = true;
+        setBreakMode(false);
     }
 
     @Override
@@ -107,6 +113,16 @@ public class Drive extends Subsystem {
     public synchronized void setHighGear(boolean highGear) {
         mIsHighGear = highGear;
         mShifter.set(!highGear);
+    }
+
+    public synchronized void setBreakMode(boolean on) {
+        if (mIsBreakMode != on) {
+            mIsBreakMode = on;
+            mRightMaster.enableBrakeMode(on);
+            mRightSlave.enableBrakeMode(on);
+            mLeftMaster.enableBrakeMode(on);
+            mLeftSlave.enableBrakeMode(on);
+        }
     }
 
     @Override
