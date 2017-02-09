@@ -10,6 +10,7 @@ import com.team254.frc2017.subsystems.Proto_Shooter;
 import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.pixy.*;
 import com.team254.lib.util.pixy.Frame.*;
+import com.team254.lib.util.pixy.constants.PixyNumberConstants;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -69,6 +70,7 @@ public class Robot extends IterativeRobot {
 
         //Start loopers
         mEnabledLooper.start();
+        System.out.println("CX: " + PixyNumberConstants.cx + "\nCY: " + PixyNumberConstants.cy);
         
         //re-update feeder constants & apply to talons TODO: remove this later
         //mFeeder.updateConstants();
@@ -86,7 +88,6 @@ public class Robot extends IterativeRobot {
             for (Block b : kBlocks) {
                 if (b.centerY < target.centerY) {
                     target = b;
-                    System.out.println("4");
                 }
             }
             
@@ -97,7 +98,7 @@ public class Robot extends IterativeRobot {
         } else {
             System.out.println("No targets detected.");
         }
-/*
+        /*
         if (mControlBoard.getSpinShooterButton()) {
             mShooter.setRpmSetpoint(Constants.kFlywheelTarget);
         } else {
@@ -110,7 +111,8 @@ public class Robot extends IterativeRobot {
             mFeeder.setSetpoint(0.0);
         }
         mShooter.outputToSmartDashboard();
-        mFeeder.outputToSmartDashboard();*/
+        mFeeder.outputToSmartDashboard();
+        */
     }
 
     @Override
@@ -126,10 +128,12 @@ public class Robot extends IterativeRobot {
     }
     
     private double getPhysicalDistance(Block target) {
-//        double ratio = Constants.kTargetPhysicalHeight / target.height;
-//        double cameraDistance = Math.sqrt( Math.pow(Constants.kFocalX, 2) + Math.pow(target.centerY, 2));
-//        return ratio * cameraDistance * Math.cos(Constants.kCameraAngle);
-        double dist = (Constants.kTargetPhysicalHeight*Constants.kFocalX)/target.height;
+//      double ratio = Constants.kTargetPhysicalHeight / target.height;
+//      double cameraDistance = Math.sqrt( Math.pow(Constants.kFocalX, 2) + Math.pow(target.centerY, 2));
+//      return ratio * cameraDistance * Math.cos(Constants.kCameraAngle);
+//      double dist = (Constants.kTargetPhysicalHeight*Constants.kFocalX)/target.height;
+        double sinAngle = (8.8*target.height)/Math.sqrt(Math.pow(Constants.kFocalX, 2) + Math.pow(8.8*target.height, 2));
+        double dist = Math.sqrt(Math.pow(target.height/sinAngle, 2)-Math.pow(target.height, 2));
         return dist*Math.cos(Math.toRadians(Constants.kCameraAngle));
     }
 }

@@ -3,6 +3,7 @@ package com.team254.lib.util.pixy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.team254.frc2017.Constants;
 import com.team254.lib.util.pixy.Frame.Block;
 import com.team254.lib.util.pixy.constants.PixyNumberConstants;
 
@@ -11,8 +12,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PixyCam {
     static double cx, cy, k1, k2, k3;
+    private PixyNumberConstants kPixyConstants;
     public PixyCam() {
-        this(500000, SPI.Port.kOnboardCS0);
+        this(Constants.kPixySPIRefreshRate, SPI.Port.kOnboardCS0);
+        kPixyConstants = new PixyNumberConstants();
+        cx = kPixyConstants.cx;
+        cy = kPixyConstants.cy;
+        k1 = kPixyConstants.k1;
+        k2 = kPixyConstants.k2;
+        k3 = kPixyConstants.k3;
     }
     
     class Point {
@@ -32,14 +40,15 @@ public class PixyCam {
         spi.setChipSelectActiveLow();
         spi.setClockRate(clockRate);
         pspi = new PeekableSPI(spi);
+        kPixyConstants = new PixyNumberConstants();
+        cx = kPixyConstants.cx;
+        cy = kPixyConstants.cy;
+        k1 = kPixyConstants.k1;
+        k2 = kPixyConstants.k2;
+        k3 = kPixyConstants.k3;
     }
 
     public Frame.Block parseBlock() {
-        cx = PixyNumberConstants.cx;
-        cy = PixyNumberConstants.cy;
-        k1 = PixyNumberConstants.k1;
-        k2 = PixyNumberConstants.k2;
-        k3 = PixyNumberConstants.k3;
         Frame.Block block = new Frame.Block();
         // Wait for sync
         int lastByte = 0x00;
@@ -64,14 +73,14 @@ public class PixyCam {
             block.centerY = pspi.readWord();
             block.width = pspi.readWord();
             block.height = pspi.readWord();
-            SmartDashboard.putDouble("Original X", block.centerX);
-            SmartDashboard.putDouble("Original Y", block.centerY);
+            SmartDashboard.putNumber("Distorted (Orig.) X", block.centerX);
+            SmartDashboard.putNumber("Distorted (Orig.) Y", block.centerY);
             Point center = transformCoordinates(block.centerX, block.centerY);
             block.centerX = center.x;
             block.centerY = center.y;
             undistortFourCorners(block);
-            SmartDashboard.putDouble("New X", block.centerX);
-            SmartDashboard.putDouble("New Y", block.centerY);
+            SmartDashboard.putDouble("Undistorted (New) X", block.centerX);
+            SmartDashboard.putDouble("Undistorted (New) Y", block.centerY);
             int chk = block.signature + block.centerX + block.centerY + block.width + block.height;
             /*if (block.checksum != chk) {
                 System.out.println("BLOCK HAD AN INVALID CHECKSUM (" + Integer.toHexString(block.checksum) + ", should be "
@@ -152,11 +161,12 @@ public class PixyCam {
             double yUndistorted = yDistNormalized*rUndistorted/rDistorted;
             // convert back to pixel space and return
             Point undistort = new Point((int) (Math.round(xUndistorted*400)), (int) (Math.round(yUndistorted*400)));
+            SmartDashboard.putNumber("Transform R value", rUndistorted);
+            SmartDashboard.putNumber("Transform X value", xUndistorted*400);
+            SmartDashboard.putNumber("Transform Y value", yUndistorted*400);
+            SmartDashboard.putNumber("Camera cx value", cx);
+            SmartDashboard.putNumber("Camera cy value", cy);
             return undistort;
-//        } catch(NoClassDefFoundError e) {
-//            System.out.println("You done goofed");
-//            e.printStackTrace();
-//            return new Point((int) xDistorted, (int) yDistorted);
 //        }        
     }
 

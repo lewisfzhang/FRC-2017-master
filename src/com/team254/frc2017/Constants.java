@@ -16,9 +16,10 @@ public class Constants extends ConstantsBase {
                                                                // placeholder
     
     //pixycam distance stuff
-    public static double kCameraAngle = 1; // degrees, originally 26.5
+    public static double kCameraAngle = 26.5; // degrees, originally 26.5
     public static double kFocalX = 316.736; //default for PixyCam 1
-    public static double kTargetPhysicalHeight = 5.0; //inches
+    public static double kTargetPhysicalHeight = 10.0; //inches
+    public static int kPixySPIRefreshRate = 500000;
     
 
     public static double kCollisionThreshold = 0.5;
@@ -42,7 +43,7 @@ public class Constants extends ConstantsBase {
     // TODO add some!
     
     //Camera Number
-    public static int kPixyNumber = 2;
+    public static int kPixyNumber = 1;
     
     //Feeder
     public static double kFeedKp = 0.0;
