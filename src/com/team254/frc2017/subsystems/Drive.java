@@ -73,12 +73,10 @@ public class Drive extends Subsystem {
         mRightMaster = new CANTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mRightMaster.setInverted(true);
-        mRightMaster.enableBrakeMode(false);
 
         mRightSlave = new CANTalon(Constants.kRightDriverSlaveId);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mRightSlave.setInverted(true);
-        mRightSlave.enableBrakeMode(false);
         mRightSlave.set(Constants.kRightDriveMasterId);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
