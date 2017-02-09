@@ -2,6 +2,7 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.loops.Looper;
+import com.team254.frc2017.pixy.VisionServer;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.web.WebServer;
 
@@ -21,6 +22,8 @@ public class Robot extends IterativeRobot {
     private Looper mEnabledLooper = new Looper();
 
     private WebServer mHTTPServer = new WebServer();
+    
+    private VisionServer mVisionServer = VisionServer.getInstance();
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
