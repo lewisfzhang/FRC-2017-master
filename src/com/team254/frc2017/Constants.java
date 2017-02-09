@@ -42,10 +42,13 @@ public class Constants extends ConstantsBase {
     // TALONS
     // (Note that if multiple talons are dedicated to a mechanism, any sensors
     // are attached to the master)
-    // TODO add some!
+    public static final int kLeftDriveMasterId = 11;
+    public static final int kLeftDriveSlaveId = 12;
+    public static final int kRightDriveMasterId = 4;
+    public static final int kRightDriverSlaveId = 3;
 
     // SOLENOIDS
-    // TODO add some!
+    public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0
 
     // Analog Inputs
     // TODO add some!
@@ -53,32 +56,8 @@ public class Constants extends ConstantsBase {
     // Camera Number
     public static int kPixyNumber = 1;
 
-    // Feeder
-    public static double kFeedKp = 0.0;
-    public static double kFeedKi = 0.0;
-    public static double kFeedKd = 0.0;
-    public static double kFeedKf = 0.0;
-    public static int kFeedIZone = 0;
-    public static double kFeedRampRate = 10000; // hella ramp
-    public static int kFeedVelocityAllowableError = 0;
-
-    public static double kFeedRPM = 1000;
-
     // Flywheel PID
     // TODO give these actual values
-
-    /* 4" single wheel shooter constants */
-    public static boolean kFlywheelMotor1Inverted = true;
-    public static boolean kFlywheelMotor2Inverted = false;
-    public static boolean kFlywheelEncoderInverted = true;
-    public static double kFlywheelReduction = 1.0;
-    public static double kFlywheelKp = 0.003;
-    public static double kFlywheelKi = 0.001;
-    public static double kFlywheelKd = 0.0;
-    public static double kFlywheelKf = 0.0007;
-    public static double kFlywheelOnTargetTolerance = 20.0;
-    public static double kFlywheelTarget = 4000.0;
-    public static double kFlywheelFeedRollerVoltage = 9.0;
 
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid

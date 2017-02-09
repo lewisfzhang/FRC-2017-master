@@ -5,7 +5,10 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.web.WebServer;
 
+import com.team254.lib.util.CheesyDriveHelper;
+import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -14,8 +17,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * this project, you must also update the manifest file in the resource directory.
  */
 public class Robot extends IterativeRobot {
+    // Subsystems
     private Drive mDrive = Drive.getInstance();
 
+    // Other parts of the robot
+    private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
     private ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Looper mEnabledLooper = new Looper();
@@ -62,24 +68,34 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopInit() {
-
         // Start loopers
         mEnabledLooper.start();
 
-        // re-update feeder constants & apply to talons
-        // mFeeder.updateConstants();
+        mDrive.setOpenLoop(DriveSignal.NEUTRAL);
     }
+
 
     /**
      * This function is called periodically during operator control
      */
     @Override
     public void teleopPeriodic() {
+        try {
+            double throttle = mControlBoard.getThrottle();
+            double turn = mControlBoard.getTurn();
+
+            mDrive.setHighGear(!mControlBoard.getLowGear());
+            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
+        } catch (Throwable t) {
+
+        }
     }
 
     @Override
     public void disabledInit() {
         mEnabledLooper.stop();
+
+        mDrive.setOpenLoop(DriveSignal.NEUTRAL);
     }
 
     /**

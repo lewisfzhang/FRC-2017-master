@@ -37,7 +37,7 @@ public class ControlBoard {
     }
 
     public boolean getLowGear() {
-        return mThrottleStick.getRawButton(2);
+        return mThrottleStick.getRawButton(1);
     }
 
     // OPERATOR CONTROLS
