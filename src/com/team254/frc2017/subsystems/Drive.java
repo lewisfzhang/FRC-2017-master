@@ -118,7 +118,7 @@ public class Drive extends Subsystem {
         mRightMaster.set(right);
     } 
     
-    public void zeroSensors() {
+    public synchronized void zeroSensors() {
         mNavXBoard.reset();
         mOdometer.resetPosition();
     }
