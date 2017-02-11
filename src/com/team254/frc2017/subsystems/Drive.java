@@ -6,6 +6,7 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.*;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -69,13 +70,20 @@ public class Drive extends Subsystem {
         mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mLeftSlave.set(Constants.kLeftDriveMasterId);
         mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
-
+        if (mLeftMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
+                != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
+            DriverStation.reportError("Could not detect left encoder.", false);
+        }
 
         mRightMaster = new CANTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mRightMaster.setInverted(true);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mRightMaster.reverseSensor(true);
+        if (mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
+                != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
+            DriverStation.reportError("Could not detect right encoder.", false);
+        }
 
         mRightSlave = new CANTalon(Constants.kRightDriverSlaveId);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
