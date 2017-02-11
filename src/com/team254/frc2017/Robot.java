@@ -7,6 +7,7 @@ import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.web.WebServer;
 
 import com.team254.lib.util.CheesyDriveHelper;
+import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -31,21 +32,29 @@ public class Robot extends IterativeRobot {
     
     //private VisionServer mVisionServer = VisionServer.getInstance();
 
+    public Robot() {
+        CrashTracker.logRobotConstruction();
+    }
+
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
      */
     @Override
     public void robotInit() {
-        mDrive.registerEnabledLoops(mEnabledLooper);
-        mHTTPServer.startServer();
-
-        // initialize robot constants
         try {
+            CrashTracker.logRobotInit();
+
+            mDrive.registerEnabledLoops(mEnabledLooper);
+
+            mHTTPServer.startServer();
+
+            // initialize robot constants
             RobotName name = Constants.getRobotName();
             SmartDashboard.putString("MAC Address", Constants.getMACAddress());
             ConstantsModifier.initConstants(name);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
         }
     }
 
@@ -60,6 +69,13 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void autonomousInit() {
+        try {
+            CrashTracker.logAutoInit();
+
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
     }
 
     /**
@@ -67,14 +83,26 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void autonomousPeriodic() {
+        try {
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
     }
 
     @Override
     public void teleopInit() {
-        // Start loopers
-        mEnabledLooper.start();
+        try {
+            CrashTracker.logTeleopInit();
 
-        mDrive.setVelocitySetpoint(0.0,0.0);
+            // Start loopers
+            mEnabledLooper.start();
+
+            mDrive.setVelocitySetpoint(0.0, 0.0);
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
     }
 
 
@@ -90,15 +118,33 @@ public class Robot extends IterativeRobot {
             mDrive.setHighGear(!mControlBoard.getLowGear());
             mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
         } catch (Throwable t) {
-
+            CrashTracker.logThrowableCrash(t);
+            throw t;
         }
     }
 
     @Override
     public void disabledInit() {
-        mEnabledLooper.stop();
+        try {
+            CrashTracker.logDisabledInit();
 
-        mDrive.setOpenLoop(DriveSignal.NEUTRAL);
+            mEnabledLooper.stop();
+
+            mDrive.setOpenLoop(DriveSignal.NEUTRAL);
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        try {
+
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
     }
 
     /**
