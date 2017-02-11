@@ -11,6 +11,8 @@ public class VisionServer {
     public static final long VISION_THREAD_DELAY = 2;
     
     private static VisionServer _instance;
+    boolean mRunning = false;
+    Thread mThread = null;
     
     /**
      * Gets the singleton <code>VisionServer</code> instance.
@@ -22,8 +24,8 @@ public class VisionServer {
         }
         return _instance;
     }
-    
-    
+
+
     private PixyCam pixy;
     private ArrayList<VisionUpdateListener> listeners = new ArrayList<>();
     
@@ -32,10 +34,18 @@ public class VisionServer {
      */
     private VisionServer() {
         pixy = new PixyCam();
-        new Thread(new CrashTrackingRunnable() {
+    }
+
+    public void start() {
+        mRunning = true;
+        if (mThread != null) {
+            return;
+        }
+
+        mThread = new Thread(new CrashTrackingRunnable() {
             @Override
             public void runCrashTracked() {
-                while (true) {
+                while (mRunning) {
                     // get a Frame from the pixy (if available)
                     Frame frame = pixy.getFrame();
                     if (frame != null) {
@@ -43,7 +53,7 @@ public class VisionServer {
                             l.onUpdate(frame); // TODO: pass the update
                         }
                     }
-                    
+
                     // sleep briefly to not hog the CPU
                     try {
                         Thread.sleep(VISION_THREAD_DELAY);
@@ -52,7 +62,13 @@ public class VisionServer {
                     }
                 }
             }
-        }, "Vision server thread").start();
+        }, "Vision server thread");
+        mThread.start();
+    }
+
+    public void stop() {
+        mRunning = false;
+        mThread = null;
     }
     
     /**
