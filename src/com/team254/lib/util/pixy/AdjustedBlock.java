@@ -6,58 +6,18 @@ import com.team254.frc2017.Constants;
 import com.team254.lib.util.pixy.constants.*; 
 
 public class AdjustedBlock extends Frame.Block {
-    static double cx, cy, k1, k2, k3;
+    public static double cx;
+    public static double cy;
+    public static double k1;
+    public static double k2;
+    public static double k3;
     public AdjustedBlock(Frame.Block block){
-        switch(Constants.kPixyNumber) {
-        case 1:
-            PixyNumber1Constants one = new PixyNumber1Constants();
-            cx = one.cx;
-            cy = one.cy;
-            k1 = one.k1;
-            k2 = one.k2;
-            k3 = one.k3;
-            break;
-        case 2:
-            PixyNumber2Constants two = new PixyNumber2Constants();
-            cx = two.cx;
-            cy = two.cy;
-            k1 = two.k1;
-            k2 = two.k2;
-            k3 = two.k3;
-            break;
-        case 3:
-            PixyNumber3Constants three = new PixyNumber3Constants();
-            cx = three.cx;
-            cy = three.cy;
-            k1 = three.k1;
-            k2 = three.k2;
-            k3 = three.k3;
-            break;
-        case 4:
-            PixyNumber4Constants four = new PixyNumber4Constants();
-            cx = four.cx;
-            cy = four.cy;
-            k1 = four.k1;
-            k2 = four.k2;
-            k3 = four.k3;
-            break;
-        case 5:
-            PixyNumber5Constants five = new PixyNumber5Constants();
-            cx = five.cx;
-            cy = five.cy;
-            k1 = five.k1;
-            k2 = five.k2;
-            k3 = five.k3;
-            break;
-        case 6:
-            PixyNumber6Constants six = new PixyNumber6Constants();
-            cx = six.cx;
-            cy = six.cy;
-            k1 = six.k1;
-            k2 = six.k2;
-            k3 = six.k3;
-            break;
-        }
+        PixyNumberConstants constant = new PixyNumberConstants();
+        cx = constant.cx;
+        cy = constant.cy;
+        k1 = constant.k1;
+        k2 = constant.k2;
+        k3 = constant.k3;
         Point center = transformCoordinates(block.centerX, block.centerY);
         this.centerX = center.x;
         this.centerY = center.y;

@@ -956,18 +956,22 @@ int main(int argc, char* argv[])
 
 
 
-        if(key == 'u' && mode == CALIBRATED) {
+        if( key == 'u' && mode == CALIBRATED ) {
            s.showUndistorsed = !s.showUndistorsed;
            if (s.showUndistorsed == 1) cout << "Showing: Undistorted" << endl;
            else cout << "Showing: Distorted" << endl;
          }
 
-        if(key == 'g') {
+        if(key == 'g' )
+
+        {
+
             mode = CAPTURING;
+
             imagePoints.clear();
-        } else if (mode != CAPTURING && mode != CALIBRATED) {
-          i = 0;
+
         }
+
     }
 
 
