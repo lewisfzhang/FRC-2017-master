@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.team254.lib.util.CrashTrackingRunnable;
 import com.team254.lib.util.pixy.Frame;
+import com.team254.lib.util.pixy.FrameAdjuster;
 import com.team254.lib.util.pixy.PixyCam;
 
 public class VisionServer {
@@ -49,6 +50,7 @@ public class VisionServer {
                     // get a Frame from the pixy (if available)
                     Frame frame = pixy.getFrame();
                     if (frame != null) {
+                    	FrameAdjuster.adjustFrame(frame);
                         for (VisionUpdateListener l : listeners) {
                             l.onUpdate(frame); // TODO: pass the update
                         }

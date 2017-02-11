@@ -2,17 +2,16 @@ package com.team254.lib.util.pixy;
 
 import java.awt.Point;
 
-import com.team254.frc2017.Constants;
-import com.team254.lib.util.pixy.constants.*;
+import com.team254.lib.util.pixy.constants.PixyNumberConstants;
 
-public class AdjustedBlock extends Frame.Block {
+public class BlockAdjuster {
     public static double cx;
     public static double cy;
     public static double k1;
     public static double k2;
     public static double k3;
 
-    public AdjustedBlock(Frame.Block block) {
+    public static void adjustBlock(Frame.Block block) {
         PixyNumberConstants constant = new PixyNumberConstants();
         cx = constant.cx;
         cy = constant.cy;
@@ -20,26 +19,26 @@ public class AdjustedBlock extends Frame.Block {
         k2 = constant.k2;
         k3 = constant.k3;
         Point center = transformCoordinates(block.centerX, block.centerY);
-        this.centerX = center.x;
-        this.centerY = center.y;
-        undistortFourCorners();
+        block.centerX = center.x;
+        block.centerY = center.y;
+        undistortFourCorners(block);
     }
 
-    private void undistortFourCorners() {
+    private static void undistortFourCorners(Frame.Block block) {
         // based on the inverted plane of a camera, you can calculate the four side x and y values of the rectangular
         // block
-        double leftSideX = centerX - (width / 2);
-        double rightSideX = centerX + (width / 2);
-        double topSideY = centerY - (height / 2);
-        double bottomSideY = centerY + (height / 2);
+        double leftSideX = block.centerX - (block.width / 2);
+        double rightSideX = block.centerX + (block.width / 2);
+        double topSideY = block.centerY - (block.height / 2);
+        double bottomSideY = block.centerY + (block.height / 2);
 
         // Undistort the two opposite points of the rectangular block
         Point bottomLeft = transformCoordinates(leftSideX, bottomSideY);
         Point topRight = transformCoordinates(rightSideX, topSideY);
 
         // Calculate the width and height based on opposite points of rectangular block
-        width = topRight.x - bottomLeft.x;
-        height = bottomLeft.y - topRight.y;
+        block.width = topRight.x - bottomLeft.x;
+        block.height = bottomLeft.y - topRight.y;
     }
 
     private static Point transformCoordinates(double xDistorted, double yDistorted) {

@@ -5,3 +5,5 @@
 /PixyCam.class
 /SpiLogger.class
 /AdjustedBlock.class
+/BlockAdjuster.class
+/FrameAdjuster.class
