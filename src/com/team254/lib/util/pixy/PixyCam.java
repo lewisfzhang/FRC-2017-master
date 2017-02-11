@@ -69,7 +69,6 @@ public class PixyCam {
                     + Integer.toHexString(chk) + ")");
             return null; // skip this block
         }
-        block = new AdjustedBlock(block);
         return block;
     }
 
