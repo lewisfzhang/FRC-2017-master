@@ -27,17 +27,25 @@ public class Constants extends ConstantsBase {
     // ROBOT PHYSICAL CONSTANTS
     public static double kTrackScrubFactor = 1.0; // FIXME placeholder
     public static double kTrackEffectiveDiameterInches = 25.0; // FIXME
-                                                               // placeholder
+    public static double kDriveWheelDiameterInches = 3.5;
 
     public static double kCollisionThreshold = 0.5;
 
     // CONTROL LOOP GAINS
     // TODO add some!
+    public static double kDriveVelocityKp = 0.0;
+    public static double kDriveVelocityKi = 0.0;
+    public static double kDriveVelocityKd = 0.0;
+    public static double kDriveVelocityKf = 0.13;
+    public static int kDriveVelocityIZone = 0;
+    public static double kDriveVelocityRampRate = 0.0;
+    public static int kDriveVelocityAllowableError = 0;
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
     // https://docs.google.com/spreadsheets/d/12_Mrd6xKmxCjKtsWNpWZDqT7ukrB9-1KKFCuRrO4aPM/edit#gid=0
+
 
     // TALONS
     // (Note that if multiple talons are dedicated to a mechanism, any sensors

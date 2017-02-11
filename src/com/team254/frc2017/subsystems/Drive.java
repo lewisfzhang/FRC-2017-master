@@ -1,24 +1,19 @@
 package com.team254.frc2017.subsystems;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
 import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
-import com.team254.frc2017.ControlBoard;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.*;
 
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends Subsystem {
 
     private static Drive mInstance = new Drive();
+
+    private static final int kVelocityControlSlot = 0;
 
     public static Drive getInstance() {
         return mInstance;
@@ -26,15 +21,16 @@ public class Drive extends Subsystem {
 
     // The robot drivetrain's various states.
     public enum DriveControlState {
-        OPEN_LOOP
+        OPEN_LOOP,
+        VELOCITY_SETPOINT
     }
 
     private final CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
     private final Solenoid mShifter;
-    private DriveControlState mDriveControlstate;
+    private DriveControlState mDriveControlState;
 
     private boolean mIsHighGear;
-    private boolean mIsBreakMode;
+    private boolean mIsBrakeMode;
 
     private final Loop mLoop = new Loop() {
         @Override
@@ -45,11 +41,14 @@ public class Drive extends Subsystem {
         @Override
         public void onLoop(double timestamp) {
             synchronized (Drive.this) {
-                switch (mDriveControlstate) {
+                switch (mDriveControlState) {
                     case OPEN_LOOP:
                         return;
+                    case VELOCITY_SETPOINT:
+                        //Talons handle this
+                        return;
                     default:
-                        System.out.println("Unexpected drive control state: " + mDriveControlstate);
+                        System.out.println("Unexpected drive control state: " + mDriveControlState);
                         break;
                 }
             }
@@ -69,10 +68,14 @@ public class Drive extends Subsystem {
         mLeftSlave = new CANTalon(Constants.kLeftDriveSlaveId);
         mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mLeftSlave.set(Constants.kLeftDriveMasterId);
+        mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+
 
         mRightMaster = new CANTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mRightMaster.setInverted(true);
+        mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        mRightMaster.reverseSensor(true);
 
         mRightSlave = new CANTalon(Constants.kRightDriverSlaveId);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
@@ -81,12 +84,19 @@ public class Drive extends Subsystem {
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
+        mLeftMaster.setPID(Constants.kDriveVelocityKp, Constants.kDriveVelocityKi, Constants.kDriveVelocityKd,
+                Constants.kDriveVelocityKf, Constants.kDriveVelocityIZone, Constants.kDriveVelocityRampRate,
+                kVelocityControlSlot);
+        mRightMaster.setPID(Constants.kDriveVelocityKp, Constants.kDriveVelocityKi, Constants.kDriveVelocityKd,
+                Constants.kDriveVelocityKf, Constants.kDriveVelocityIZone, Constants.kDriveVelocityRampRate,
+                kVelocityControlSlot);
+
         setHighGear(true);
         setOpenLoop(DriveSignal.NEUTRAL);
 
         // Force a CAN message across.
-        mIsBreakMode = true;
-        setBreakMode(false);
+        mIsBrakeMode = true;
+        setBrakeMode(false);
     }
 
     @Override
@@ -95,10 +105,10 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void setOpenLoop(DriveSignal signal) {
-        if (mDriveControlstate != DriveControlState.OPEN_LOOP) {
+        if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-            mDriveControlstate = DriveControlState.OPEN_LOOP;
+            mDriveControlState = DriveControlState.OPEN_LOOP;
         }
         mRightMaster.set(signal.getRight());
         mLeftMaster.set(signal.getLeft());
@@ -113,9 +123,9 @@ public class Drive extends Subsystem {
         mShifter.set(!highGear);
     }
 
-    public synchronized void setBreakMode(boolean on) {
-        if (mIsBreakMode != on) {
-            mIsBreakMode = on;
+    public synchronized void setBrakeMode(boolean on) {
+        if (mIsBrakeMode != on) {
+            mIsBrakeMode = on;
             mRightMaster.enableBrakeMode(on);
             mRightSlave.enableBrakeMode(on);
             mLeftMaster.enableBrakeMode(on);
@@ -135,5 +145,61 @@ public class Drive extends Subsystem {
     @Override
     public void zeroSensors() {
 
+    }
+
+    /**
+     * Start up velocity mode
+     * @param left_inches_per_sec
+     * @param right_inches_per_sec
+     */
+    public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+        configureTalonsForSpeedControl();
+        mDriveControlState = DriveControlState.VELOCITY_SETPOINT;
+        updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
+    }
+
+    private void configureTalonsForSpeedControl() {
+        if (mDriveControlState != DriveControlState.VELOCITY_SETPOINT) {
+            mLeftMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+            mLeftMaster.setProfile(kVelocityControlSlot);
+            mLeftMaster.setAllowableClosedLoopErr(Constants.kDriveVelocityAllowableError);
+            mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+            mRightMaster.setProfile(kVelocityControlSlot);
+            mRightMaster.setAllowableClosedLoopErr(Constants.kDriveVelocityAllowableError);
+            setHighGear(true);
+            setBrakeMode(true);
+        }
+    }
+
+    /**
+     * Adjust Velocity setpoint (if already in velocity mode)
+     * @param left_inches_per_sec
+     * @param right_inches_per_sec
+     */
+    private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+        if (mDriveControlState == DriveControlState.VELOCITY_SETPOINT) {
+            mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec));
+            mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec));
+        } else {
+            System.out.println("Hit a bad velocity control state");
+            mLeftMaster.set(0);
+            mRightMaster.set(0);
+        }
+    }
+
+    private static double rotationsToInches(double rotations) {
+        return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
+    }
+
+    private static double rpmToInchesPerSecond(double rpm) {
+        return rotationsToInches(rpm) / 60;
+    }
+
+    private static double inchesToRotations(double inches) {
+        return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
+    }
+
+    private static double inchesPerSecondToRpm(double inches_per_second) {
+        return inchesToRotations(inches_per_second) * 60;
     }
 }

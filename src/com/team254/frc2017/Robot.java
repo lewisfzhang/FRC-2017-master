@@ -29,7 +29,7 @@ public class Robot extends IterativeRobot {
 
     private WebServer mHTTPServer = new WebServer();
     
-    private VisionServer mVisionServer = VisionServer.getInstance();
+    //private VisionServer mVisionServer = VisionServer.getInstance();
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
@@ -74,7 +74,7 @@ public class Robot extends IterativeRobot {
         // Start loopers
         mEnabledLooper.start();
 
-        mDrive.setOpenLoop(DriveSignal.NEUTRAL);
+        mDrive.setVelocitySetpoint(0.0,0.0);
     }
 
 
