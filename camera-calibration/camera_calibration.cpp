@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
+#include <opeEncv2/calib3d/calib3d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
 #include <stdlib.h>
@@ -63,7 +63,6 @@ class Settings
 public:
 
     Settings() : goodInput(false) {}
-
     enum Pattern { NOT_EXISTING, CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
 
     enum InputType {INVALID, CAMERA, VIDEO_FILE, IMAGE_LIST};
