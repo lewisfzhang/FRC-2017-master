@@ -131,6 +131,10 @@ public class Drive extends Subsystem {
         mShifter.set(!highGear);
     }
 
+    public boolean isBreakMode() {
+        return mIsBrakeMode;
+    }
+
     public synchronized void setBrakeMode(boolean on) {
         if (mIsBrakeMode != on) {
             mIsBrakeMode = on;
