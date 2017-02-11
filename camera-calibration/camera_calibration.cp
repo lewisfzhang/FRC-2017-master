@@ -627,7 +627,7 @@ enum { DETECTION = 0, CAPTURING = 1, CALIBRATED = 2 };
 
 bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat& distCoeffs,
 
-                           vector<vector<Point2f> > imagePoints );
+                           vector<vector<Point2f> > imagePoints, string pixyNumber);
 
 
 
@@ -646,6 +646,10 @@ int main(int argc, char* argv[])
     if(!cap.isOpened())  // check if we succeeded
         return -1;
     */
+    string pixyNumber = "3";
+    cout << "Please enter the Pixy Number\n>";
+    getline(cin, pixyNumber);
+    cout << "Calibration Pixy Number " << pixyNumber << endl;
     FileStorage fs(inputSettingsFile, FileStorage::READ); // Read the settings
 
     if (!fs.isOpened())
@@ -765,7 +769,7 @@ int main(int argc, char* argv[])
 
           printf("Calib1\n");
 
-          if( runCalibrationAndSave(s, imageSize,  cameraMatrix, distCoeffs, imagePoints))
+          if( runCalibrationAndSave(s, imageSize,  cameraMatrix, distCoeffs, imagePoints, pixyNumber))
 
               mode = CALIBRATED;
 
@@ -785,7 +789,7 @@ int main(int argc, char* argv[])
 
             if( imagePoints.size() > 0 )
 
-                runCalibrationAndSave(s, imageSize,  cameraMatrix, distCoeffs, imagePoints);
+                runCalibrationAndSave(s, imageSize,  cameraMatrix, distCoeffs, imagePoints, pixyNumber);
 
             break;
 
@@ -1190,7 +1194,7 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
 
                               const vector<float>& reprojErrs, const vector<vector<Point2f> >& imagePoints,
 
-                              double totalAvgErr )
+                              double totalAvgErr, string pixyNumber )
 
 {
 
@@ -1265,19 +1269,19 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
     fs << "Camera_Matrix" << cameraMatrix;
 
     fs << "Distortion_Coefficients" << distCoeffs;
-
-    ofstream myfile("../resources/PixyCam4.txt");
-    myfile << "Camera Matrix:\n";
-    myfile << "Fx: " << cameraMatrix.at<double> (0, 0) << "\n";
-    myfile << "Fy: " << cameraMatrix.at<double> (1, 1) << "\n";
-    myfile << "Cx: " << cameraMatrix.at<double> (0, 2) << "\n";
-    myfile << "Cy: " << cameraMatrix.at<double> (1, 2) << "\n\n";
-    myfile << "Distortion Coefficients:\n";
-    myfile << "K1: " << distCoeffs.at<double> (0, 0) << "\n";
-    myfile << "K2: " << distCoeffs.at<double> (1, 0) << "\n";
-    myfile << "K3: " << distCoeffs.at<double> (4, 0) << "\n";
-    myfile << "P1: " << distCoeffs.at<double> (2, 0) << "\n";
-    myfile << "P2: " << distCoeffs.at<double> (3, 0);
+    string path = "../src/com/team254/lib/util/pixy/constants/PixyNumber" + pixyNumber + "Constants.java";
+    ofstream myfile(path);
+    myfile << "package com.team254.lib.util.pixy.constants;\n\n";
+    myfile << "public class PixyNumber"  << pixyNumber << "Constants extends PixyNumberConstants {\n";
+    myfile << "    public PixyNumber" << pixyNumber << "Constants() {\n";
+    myfile << "        fx = " << cameraMatrix.at<double> (0, 0) << ";\n";
+    myfile << "        fy = " << cameraMatrix.at<double> (1, 1) << ";\n";
+    myfile << "        cx = " << cameraMatrix.at<double> (0, 2) << ";\n";
+    myfile << "        cy = " << cameraMatrix.at<double> (1, 2) << ";\n";
+    myfile << "        k1 = " << distCoeffs.at<double> (0, 0) << ";\n";
+    myfile << "        k2 = " << distCoeffs.at<double> (1, 0) << ";\n";
+    myfile << "        k3 = " << distCoeffs.at<double> (4, 0) << ";\n";
+    myfile << "}";
     myfile.close();
 
 
@@ -1353,7 +1357,7 @@ static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, M
 
 
 
-bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat& distCoeffs,vector<vector<Point2f> > imagePoints )
+bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat& distCoeffs,vector<vector<Point2f> > imagePoints, string pixyNumber)
 
 {
 
@@ -1379,7 +1383,7 @@ bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat&
 
         saveCameraParams( s, imageSize, cameraMatrix, distCoeffs, rvecs ,tvecs, reprojErrs,
 
-                            imagePoints, totalAvgErr);
+                            imagePoints, totalAvgErr, pixyNumber);
 
     return ok;
 
