@@ -5,6 +5,9 @@ import java.util.*;
 import edu.wpi.first.wpilibj.SPI;
 
 public class PeekableSPI {
+	
+	private byte[] sendBuf = new byte[1];
+	private byte[] recvBuf = new byte[1];
 
     public PeekableSPI(SPI spi) {
         this.spi = spi;
@@ -24,10 +27,9 @@ public class PeekableSPI {
     }
 
     private byte transferByte(byte data) {
-        byte[] send = new byte[] { data };
-        byte[] recv = new byte[send.length];
-        spi.transaction(send, recv, recv.length);
-        return recv[0];
+    	sendBuf[0] = data;
+        spi.transaction(sendBuf, recvBuf, recvBuf.length);
+        return recvBuf[0];
     }
 
     public int readByte() {
@@ -79,28 +81,28 @@ public class PeekableSPI {
         return hex;
     }
 
-    public static void visualizeBytes(List<Integer> byteStream) {
-        System.out.println(byteStream.size() + " bytes:");
-        int numZeros = 0;
-        for (int i : byteStream) {
-            if (i == 0) {
-                numZeros++;
-            } else {
-                if (numZeros > 5)
-                    System.out.println("\n---- " + numZeros + " ZEROS ----");
-                else
-                    for (; numZeros > 0; numZeros--)
-                        System.out.print("00 ");
-                numZeros = 0;
-                System.out.print(hexByte(i) + " ");
-            }
-        }
-        if (numZeros > 5)
-            System.out.println("\n---- " + numZeros + " ZEROS ----");
-        else
-            for (; numZeros > 0; numZeros--)
-                System.out.print("00 ");
-        System.out.println();
-    }
+//    public static void visualizeBytes(List<Integer> byteStream) {
+//        System.out.println(byteStream.size() + " bytes:");
+//        int numZeros = 0;
+//        for (int i : byteStream) {
+//            if (i == 0) {
+//                numZeros++;
+//            } else {
+//                if (numZeros > 5)
+//                    System.out.println("\n---- " + numZeros + " ZEROS ----");
+//                else
+//                    for (; numZeros > 0; numZeros--)
+//                        System.out.print("00 ");
+//                numZeros = 0;
+//                System.out.print(hexByte(i) + " ");
+//            }
+//        }
+//        if (numZeros > 5)
+//            System.out.println("\n---- " + numZeros + " ZEROS ----");
+//        else
+//            for (; numZeros > 0; numZeros--)
+//                System.out.print("00 ");
+//        System.out.println();
+//    }
 
 }
