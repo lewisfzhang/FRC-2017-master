@@ -26,7 +26,7 @@ public class Constants extends ConstantsBase {
 
     // ROBOT PHYSICAL CONSTANTS
     public static double kTrackScrubFactor = 1.0; // FIXME placeholder
-    public static double kTrackEffectiveDiameterInches = 25.0; // FIXME
+    public static double kTrackEffectiveDiameterInches = 26.654;
     public static double kDriveWheelDiameterInches = 3.5;
 
     public static double kCollisionThreshold = 0.5;
@@ -54,6 +54,15 @@ public class Constants extends ConstantsBase {
     public static final int kLeftDriveSlaveId = 12;
     public static final int kRightDriveMasterId = 4;
     public static final int kRightDriverSlaveId = 3;
+    
+    //PATH FOLLOWING
+    public static double kAutoLookAhead = 30.0; //inches
+    public static double kAutoSegmentThreshold = 0.95;
+    public static double kMaxAccel = 80.0; //inches per second^2
+    public static double kMaxDecel = 20.0; //should be positive
+    public static double kPathFollowingMaxVel = 10000; //inches per second
+    public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file 
+
 
     // SOLENOIDS
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0

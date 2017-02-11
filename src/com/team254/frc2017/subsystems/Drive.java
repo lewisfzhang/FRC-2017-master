@@ -5,7 +5,9 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.*;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +30,9 @@ public class Drive extends Subsystem {
 
     private final CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
     private final Solenoid mShifter;
+    private final Odometer mOdometer;
+    private final AHRS mNavXBoard;
+    private final AdaptivePurePursuitController mPathController;
     private DriveControlState mDriveControlState;
 
     private boolean mIsHighGear;
@@ -101,7 +106,12 @@ public class Drive extends Subsystem {
 
         setHighGear(true);
         setOpenLoop(DriveSignal.NEUTRAL);
-
+        
+        //Path Following stuff
+        mNavXBoard = new AHRS(SPI.Port.kMXP);
+        mPathController = new AdaptivePurePursuitController(Constants.kAutoFilePath);
+        mOdometer = Odometer.getInstance(mInstance);
+        
         // Force a CAN message across.
         mIsBrakeMode = true;
         setBrakeMode(false);
@@ -213,5 +223,38 @@ public class Drive extends Subsystem {
 
     private static double inchesPerSecondToRpm(double inches_per_second) {
         return inchesToRotations(inches_per_second) * 60;
+    }
+    
+    //call this function to make the robot path follow
+    private void updatePathFollower() {
+        RigidTransform2d robot_pose = mOdometer.getPose();
+        RigidTransform2d.Delta command = mPathController.update(robot_pose);
+        if(!mPathController.isFinished()) {
+            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+    
+            // Scale the command to respect the max velocity limits
+            double max_vel = 0.0;
+            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
+            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
+            if (max_vel > Constants.kPathFollowingMaxVel) {
+                double scaling = Constants.kPathFollowingMaxVel / max_vel;
+                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
+            }
+            updateVelocitySetpoint(setpoint.left, setpoint.right);
+        } else {
+            stop();
+        }
+    }
+    
+    public double getLSpeed() {
+        return rpmToInchesPerSecond(mLeftMaster.getSpeed());
+    }
+    
+    public double getRSpeed() {
+        return rpmToInchesPerSecond(mRightMaster.getSpeed());
+    }
+    
+    public Rotation2d getAngle() {
+        return Rotation2d.fromDegrees(-mNavXBoard.getFusedHeading());
     }
 }

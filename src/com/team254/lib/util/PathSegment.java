@@ -1,88 +1,256 @@
 package com.team254.lib.util;
 
 /**
- * A PathSegment consists of two Translation2d objects (the start and end points) as well as the speed of the robot.
- *
+ * Class representing a segment of the robot's autonomous path.  There are
+ * two types of segments: Translation (line or arc), and Rotation (turn in place)
+ *   
+ * @author MarioRuiz
  */
-public class PathSegment {
-    protected static final double kEpsilon = 1E-9;
 
-    public static class Sample {
-        public final Translation2d translation;
-        public final double speed;
-
-        public Sample(Translation2d translation, double speed) {
-            this.translation = translation;
-            this.speed = speed;
+public abstract class PathSegment {
+    
+    abstract boolean isTurn();
+    abstract double getMaxSpeed();
+    
+    /**
+     * Subclass representing a robot movement (line or arc) on the autonomous path
+     */
+    static class Translation extends PathSegment {
+        private Translation2d start;
+        private Translation2d end;
+        private Translation2d center;
+        private double curvature;
+        private double maxSpeed;
+        private double startAngle;
+        private double endAngle;
+        
+        /**
+         * Constructor for a linear segment
+         * @param x1 start x
+         * @param y1 start y
+         * @param x2 end x
+         * @param y2 end y
+         * @param maxSpeed maximum speed allowed on the segment
+         */
+        public Translation(Double x1, Double y1, Double x2, Double y2, double maxSpeed) {
+            this.start = new Translation2d(x1, y1);
+            this.end = new Translation2d(x2, y2);
+            this.center = null;
+            this.curvature = 0;
+            this.maxSpeed = maxSpeed;
+            this.startAngle = 0;
+            this.endAngle = 0;
         }
-    }
-
-    protected double mSpeed;
-    protected Translation2d mStart;
-    protected Translation2d mEnd;
-    protected Translation2d mStartToEnd; // pre-computed for efficiency
-    protected double mLength; // pre-computed for efficiency
-
-    public static class ClosestPointReport {
-        public double index; // Index of the point on the path segment (not
-                             // clamped to [0, 1])
-        public double clamped_index; // As above, but clamped to [0, 1]
-        public Translation2d closest_point; // The result of
-                                            // interpolate(clamped_index)
-        public double distance; // The distance from closest_point to the query
-                                // point
-    }
-
-    public PathSegment(Translation2d start, Translation2d end, double speed) {
-        mEnd = end;
-        mSpeed = speed;
-        updateStart(start);
-    }
-
-    public void updateStart(Translation2d new_start) {
-        mStart = new_start;
-        mStartToEnd = mStart.inverse().translateBy(mEnd);
-        mLength = mStartToEnd.norm();
-    }
-
-    public double getSpeed() {
-        return mSpeed;
-    }
-
-    public Translation2d getStart() {
-        return mStart;
-    }
-
-    public Translation2d getEnd() {
-        return mEnd;
-    }
-
-    public double getLength() {
-        return mLength;
-    }
-
-    // Index is on [0, 1]
-    public Translation2d interpolate(double index) {
-        return mStart.interpolate(mEnd, index);
-    }
-
-    public double dotProduct(Translation2d other) {
-        Translation2d start_to_other = mStart.inverse().translateBy(other);
-        return mStartToEnd.getX() * start_to_other.getX() + mStartToEnd.getY() * start_to_other.getY();
-    }
-
-    public ClosestPointReport getClosestPoint(Translation2d query_point) {
-        ClosestPointReport rv = new ClosestPointReport();
-        if (mLength > kEpsilon) {
-            double dot_product = dotProduct(query_point);
-            rv.index = dot_product / (mLength * mLength);
-            rv.clamped_index = Math.min(1.0, Math.max(0.0, rv.index));
-            rv.closest_point = interpolate(rv.index);
-        } else {
-            rv.index = rv.clamped_index = 0.0;
-            rv.closest_point = new Translation2d(mStart);
+        
+        /**
+         * Constructor for an arc segment
+         * @param x1 start x
+         * @param y1 start y
+         * @param x2 end x
+         * @param y2 end y
+         * @param cx center x
+         * @param cy center
+         * @param curvature arc curvature (1 / radius)
+         * @param startAngle starting angle of the arc
+         * @param endAngle ending angle of the arc
+         * @param maxSpeed maximum speed allowed on the segment
+         */
+        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double curvature, double startAngle, double endAngle, double maxSpeed) {
+            this.start = new Translation2d(x1, y1);
+            this.end = new Translation2d(x2, y2);
+            this.center = new Translation2d(cx, cy);
+            this.curvature = curvature;
+            this.maxSpeed = maxSpeed;
+            this.startAngle = startAngle;
+            this.endAngle = endAngle;
         }
-        rv.distance = rv.closest_point.inverse().translateBy(query_point).norm();
-        return rv;
+        
+        /**
+         * Constructor for an arc segment
+         * @param x1 start x
+         * @param y1 start y
+         * @param x2 end x
+         * @param y2 end y
+         * @param cx center x
+         * @param cy center y
+         * @param maxSpeed maximum speed allowed on the segment 
+         */
+        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed) {
+            this.start = new Translation2d(x1, y1);
+            this.end = new Translation2d(x2, y2);
+            this.center = new Translation2d(cx, cy);
+            this.maxSpeed = maxSpeed;
+            calcArc();
+        }
+        
+        /**
+         * @return is this segment a rotation
+         */
+        public boolean isTurn() {
+            return false;
+        }
+        
+        /**
+         * @return max speed of the segment
+         */
+        public double getMaxSpeed() {
+            return maxSpeed;
+        }
+        
+        private void calcArc() {
+            Translation2d deltaS = new Translation2d(center, start);
+            Translation2d deltaE = new Translation2d(center, end);
+            this.startAngle = Math.atan2(deltaS.getY(), deltaS.getX());
+            startAngle = (startAngle < 0) ? startAngle + Math.PI*2 : startAngle;
+            this.endAngle = Math.atan2(deltaE.getY(), deltaE.getX());
+            endAngle = (endAngle < 0) ? endAngle + Math.PI*2 : endAngle;
+            this.curvature = 1/deltaS.norm();
+        }
+        
+        /**
+         * @return starting point of the segment
+         */
+        public Translation2d getStart() {
+            return start;
+        }
+        
+        /**
+         * @return end point of the segment
+         */
+        public Translation2d getEnd() {
+            return end;
+        }
+        
+        /**
+         * @return the total length of the segment
+         */
+        public double getLength() {
+            if(curvature == 0) {
+                return new Translation2d(start, end).norm();
+            } else {
+                Double a = endAngle - startAngle;
+                a = (a > Math.PI) ? Math.PI *2 - a : a;
+                return Math.PI * (1/curvature) * a / Math.PI;
+            }
+        }
+        
+        /**
+         * Gets the point on the segment closest to the robot
+         * @param position the current position of the robot
+         * @return the point on the segment closest to the robot
+         */
+        public Translation2d getClosestPoint(Translation2d position) {
+            if(curvature == 0) {
+                Translation2d delta = new Translation2d(start, end);
+                double u = ((position.getX() - start.getX()) * delta.getX() + (position.getY() - start.getY()) * delta.getY()) / (delta.getX() * delta.getX() + delta.getY() * delta.getY());
+                if (u < 0)
+                    return start;
+                else if (u > 1)
+                    return end;
+                else
+                    return new Translation2d(start.getX() + u * delta.getX(), start.getY() + u * delta.getY());
+            } else {
+                Translation2d delta = new Translation2d(center, position);
+                double s = (1/curvature) / delta.norm();
+                delta = delta.scale(s);
+                double a = Math.atan2(delta.getY(), delta.getX());
+                a = (a < 0) ? a + Math.PI*2 : a;
+                if(((endAngle - startAngle) <= Math.PI && a < startAngle && a > endAngle) || ((endAngle - startAngle) > Math.PI && a > startAngle && a < endAngle)) {
+                    Translation2d startDist = new Translation2d(position, start);
+                    Translation2d endDist = new Translation2d(position, start);
+                    if(endDist.norm() < startDist.norm()) {
+                        return end;
+                    } else {
+                        return start;
+                    }
+                }
+                return center.translateBy(delta);
+            } 
+        }
+        
+        /**
+         * Calculates the point on the segment <code>dist</code> distance from the starting point
+         * @param dist distance from the starting point (lookahead distance)
+         * @return point on the segment <code>dist</code> distance from the starting point
+         */
+        public Translation2d getLookAheadPoint(double dist) {
+            double length = getLength();
+            if(dist > length)
+                dist = length;
+            if(curvature == 0) {
+                Translation2d delta = new Translation2d(start, end);
+                return start.translateBy( delta.scale(dist / length));
+            } else {
+                Double deltaAngle;
+                if(endAngle - startAngle <= Math.PI) {
+                    deltaAngle = (dist / length) * (endAngle - startAngle);
+                } else {
+                    deltaAngle = (dist / length) * (Math.PI * 2 - endAngle + startAngle);
+                }
+                Translation2d t = new Translation2d(Math.cos(deltaAngle + startAngle), Math.sin(deltaAngle + startAngle)).scale(1/curvature);
+                return center.translateBy(t);
+            }
+        }
+        
+        /**
+         * Gets the remaining distance left on the segment from point <code>point</code>
+         * @param point result of <code>getClosestPoint()</code>
+         * @return distance remaining
+         */
+        public double getRemainingDistance(Translation2d point) {
+            if(curvature == 0) {
+                return new Translation2d(end, point).norm();
+            } else {
+                Double angle = Math.atan2(point.getY() - center.getY(), point.getX() - center.getX());
+                angle = (angle < 0) ? angle + Math.PI*2 : angle;
+                double totalAngle;
+                if(endAngle - startAngle <= Math.PI) {
+                    totalAngle = (endAngle - startAngle);
+                } else {
+                    totalAngle = (Math.PI * 2 - endAngle + startAngle);
+                }
+                double deltaAngle = Math.abs(endAngle - angle);
+                deltaAngle = (deltaAngle > Math.PI) ? Math.PI*2 - deltaAngle : deltaAngle;
+                return deltaAngle/totalAngle * getLength();
+            }
+        }    
+    }
+    
+    static class Turn extends PathSegment {
+        Translation2d center;
+        double turnAmount;
+        double turnSpeed;
+        
+        public Turn(Translation2d center, Double turnAmount, Double turnSpeed) {
+            this.center = center;
+            this.turnAmount = turnAmount;
+            this.turnSpeed = turnSpeed;
+        }
+        
+        public Turn(double x, double y, double turnAmount, double turnSpeed) {
+            this.center = new Translation2d(x, y);
+            this.turnAmount = turnAmount;
+            this.turnSpeed = turnSpeed;
+        }
+        
+        public Translation2d getCenter() {
+            return center;
+        }
+        
+        public double getTurnAmount() {
+            return turnAmount;
+        }
+        
+        public double getTurnSpeed() {
+            return turnSpeed;
+        }
+        
+        public boolean isTurn() {
+            return true;
+        }
+        
+        public double getMaxSpeed() {
+            return 0.0;
+        }
     }
 }
