@@ -18,10 +18,11 @@ public class Frame {
                     + "x" + height + " }";
         }
     }
-
-    Frame(List<Frame.Block> blocks, int id) {
-        this.blocks = blocks;
-        this.id = id;
+    
+    void setBlocks(List<Frame.Block> blocks) {
+    	this.blocks = blocks;
+    	++id;
+    	
     }
 
     public List<Frame.Block> getBlocks() {
@@ -34,7 +35,7 @@ public class Frame {
 
     @Override
     public String toString() {
-        String str = "Frame{ blockCount: " + blocks.size() + ", id: " + id;
+        String str = "Frame { blockCount: " + blocks.size() + ", id: " + id;
         for (Frame.Block b : blocks) {
             str += "\n    " + b;
         }
@@ -42,7 +43,6 @@ public class Frame {
         return str;
     }
 
-    protected List<Frame.Block> blocks;
-    protected int id;
-
+    List<Frame.Block> blocks;
+    int id;
 }

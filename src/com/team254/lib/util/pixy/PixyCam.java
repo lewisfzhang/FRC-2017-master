@@ -6,9 +6,12 @@ import java.util.List;
 import edu.wpi.first.wpilibj.SPI;
 
 public class PixyCam {
+	
+	private Frame mCurrentFrame;
 
     public PixyCam() {
         this(500000, SPI.Port.kOnboardCS0);
+        mCurrentFrame = new Frame();
     }
 
     public PixyCam(int clockRate, SPI.Port port) {
@@ -71,20 +74,21 @@ public class PixyCam {
     }
 
     public Frame getFrame() {
+    	if (wasFrameBoundary) {
+    		wasFrameBoundary = false;
+    		blocksRead.clear();
+    	}
         // get the next Block (if available)
         Frame.Block block = parseBlock();
         
         if (block != null) {
             // add the Block to the current frame's list
             blocksRead.add(block);
-        } else if (wasFrameBoundary) {
-            wasFrameBoundary = false;
-            
+        } else if (wasFrameBoundary) {            
             if (!blocksRead.isEmpty()) {
                 // return a new Frame containing blocksRead
-                List<Frame.Block> list = blocksRead;
-                blocksRead = new ArrayList<>();
-                return new Frame(list, frameCount++);
+            	mCurrentFrame.setBlocks(blocksRead);
+            	return mCurrentFrame;
             }
         }
         
