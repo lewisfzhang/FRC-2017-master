@@ -5,9 +5,9 @@ import java.util.*;
 import edu.wpi.first.wpilibj.SPI;
 
 public class PeekableSPI {
-	
-	private byte[] sendBuf = new byte[1];
-	private byte[] recvBuf = new byte[1];
+
+    private byte[] sendBuf = new byte[1];
+    private byte[] recvBuf = new byte[1];
 
     public PeekableSPI(SPI spi) {
         this.spi = spi;
@@ -27,7 +27,7 @@ public class PeekableSPI {
     }
 
     private byte transferByte(byte data) {
-    	sendBuf[0] = data;
+        sendBuf[0] = data;
         spi.transaction(sendBuf, recvBuf, recvBuf.length);
         return recvBuf[0];
     }

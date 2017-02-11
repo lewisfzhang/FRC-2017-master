@@ -11,6 +11,7 @@ public class FrameAdjuster {
     public FrameAdjuster(PixyNumberConstants c) {
         mBlockAdjuster = new BlockAdjuster(c);
     }
+
     public void adjustFrame(Frame frame) {
         List<Frame.Block> list = frame.getBlocks();
         for (Frame.Block block : list) {

@@ -18,7 +18,7 @@ public class BlockAdjuster {
         undistortFourCorners(block);
     }
 
-    private  void undistortFourCorners(Frame.Block block) {
+    private void undistortFourCorners(Frame.Block block) {
         // based on the inverted plane of a camera, you can calculate the four side x and y values of the rectangular
         // block
         double leftSideX = block.centerX - (block.width / 2);
@@ -50,7 +50,7 @@ public class BlockAdjuster {
         return undistort;
     }
 
-    private  double radiusFuncInv(double rDistorted) { // Function for Undistortion
+    private double radiusFuncInv(double rDistorted) { // Function for Undistortion
         double rSquared = rDistorted * rDistorted;
         double rUndistorted = rDistorted;
         rDistorted *= rSquared;

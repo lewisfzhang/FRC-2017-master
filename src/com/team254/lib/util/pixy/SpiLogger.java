@@ -16,7 +16,7 @@ public class SpiLogger {
     }
 
     public byte getByte(byte data) {
-        byte[] send = new byte[] { data };
+        byte[] send = new byte[]{data};
         byte[] recv = new byte[send.length];
         spi.transaction(send, recv, recv.length);
         return recv[0];

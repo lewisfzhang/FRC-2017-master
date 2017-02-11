@@ -6,8 +6,8 @@ import java.util.List;
 import edu.wpi.first.wpilibj.SPI;
 
 public class PixyCam {
-	
-	private Frame mCurrentFrame;
+
+    private Frame mCurrentFrame;
 
     public PixyCam() {
         this(500000, SPI.Port.kOnboardCS0);
@@ -23,11 +23,12 @@ public class PixyCam {
         spi.setClockRate(clockRate);
         pspi = new PeekableSPI(spi);
     }
-    
+
     /**
      * Reads up to 10 bytes, looking for the sync word (<code>0xaa55</code>).
+     *
      * @return <code>true</code> if the sync word was encountered,
-     *         <code>false</code> if not (no block available)
+     * <code>false</code> if not (no block available)
      */
     private boolean waitForSync() {
         for (int n = 0; n < 10; n++) {
@@ -38,11 +39,12 @@ public class PixyCam {
         }
         return false;
     }
+
     private int lastByte = 0x00;
-    
+
     protected Frame.Block parseBlock() {
         Frame.Block block = new Frame.Block();
-        
+
         // wait for the sync word
         if (!waitForSync()) {
             // no block is available yet; return nothing
@@ -73,24 +75,24 @@ public class PixyCam {
     }
 
     public Frame getFrame() {
-    	if (wasFrameBoundary) {
-    		wasFrameBoundary = false;
-    		blocksRead.clear();
-    	}
+        if (wasFrameBoundary) {
+            wasFrameBoundary = false;
+            blocksRead.clear();
+        }
         // get the next Block (if available)
         Frame.Block block = parseBlock();
-        
+
         if (block != null) {
             // add the Block to the current frame's list
             blocksRead.add(block);
-        } else if (wasFrameBoundary) {            
+        } else if (wasFrameBoundary) {
             if (!blocksRead.isEmpty()) {
                 // return a new Frame containing blocksRead
-            	mCurrentFrame.setBlocks(blocksRead);
-            	return mCurrentFrame;
+                mCurrentFrame.setBlocks(blocksRead);
+                return mCurrentFrame;
             }
         }
-        
+
         // the next Frame isn't complete/ready yet
         return null;
     }
