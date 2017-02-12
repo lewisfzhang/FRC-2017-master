@@ -2,7 +2,6 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.loops.Looper;
-import com.team254.frc2017.pixy.VisionServer;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.web.WebServer;
 
@@ -10,7 +9,6 @@ import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
