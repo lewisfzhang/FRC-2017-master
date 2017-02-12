@@ -3,6 +3,8 @@ package com.team254.lib.util;
 import java.util.Optional;
 import java.util.Set;
 
+import com.team254.frc2017.Constants;
+
 /**
  * Implements an adaptive pure pursuit controller. See:
  * https://www.ri.cmu.edu/pub_files/pub1/kelly_alonzo_1994_4/kelly_alonzo_1994_4 .pdf
@@ -14,6 +16,7 @@ import java.util.Set;
 
 public class AdaptivePurePursuitController {
     private static final double kEpsilon = 1E-9;
+    private static final double kReallyBigNumber = 1E9;
 
     Path mPath;
     SpeedController mSpeedController;
@@ -22,8 +25,9 @@ public class AdaptivePurePursuitController {
     int counter = 0;
     
     public static void main(String[] args) {
-        RigidTransform2d pose = new RigidTransform2d(new Translation2d(0,0), Rotation2d.fromDegrees(135));
+        RigidTransform2d pose = new RigidTransform2d(new Translation2d(0,0), Rotation2d.fromDegrees(0));
         Translation2d point = new Translation2d(0, 100);
+        System.out.println(getLength(pose,point));
         //System.out.println(getCenter(pose, point));
     }
     
@@ -37,6 +41,12 @@ public class AdaptivePurePursuitController {
         mSpeedController = new SpeedController(mPath);
         this.filepath = filepath;
     }
+    
+    public AdaptivePurePursuitController(Path path) {       
+        mPath = path;     
+        mReversed = false;        
+        mSpeedController = new SpeedController(mPath);        
+    }     
 
     public RigidTransform2d.Delta update(RigidTransform2d pose) {
         if (mReversed) {
@@ -53,28 +63,49 @@ public class AdaptivePurePursuitController {
         if(isFinished())
             return new RigidTransform2d.Delta(0, 0, 0);
         
-        double speed = mSpeedController.getSpeed(pose.getTranslation());
+        double speed = mSpeedController.getSpeed(pose.getTranslation(), getLength(pose, lookaheadPoint));
+        System.out.println(speed);
+        if(speed < Constants.kMinSpeed)     
+            speed = Constants.kMinSpeed;
         
         RigidTransform2d.Delta rv;
         rv = new RigidTransform2d.Delta(speed, 0, getDirection(pose, lookaheadPoint) * Math.abs(speed) / getRadius(pose, lookaheadPoint));
         return rv;
     }
     
-    public static double getRadius(RigidTransform2d pose, Translation2d point) {
+    public static Translation2d getCenter(RigidTransform2d pose, Translation2d point) {
         Translation2d poseToPoint = new Translation2d(pose.getTranslation(), point);
         Line perpendicularBisector = new Line(pose.getTranslation().translateBy(poseToPoint.scale(0.5)),
                 new Translation2d(-poseToPoint.getY(), poseToPoint.getX()));
         Line radiusLine = new Line(pose.getTranslation(), 
                 new Translation2d(-pose.getRotation().sin(), pose.getRotation().cos()));
-        Translation2d center = Line.intersection(perpendicularBisector, radiusLine);
+        return Line.intersection(perpendicularBisector, radiusLine);
+    }
+    
+    public static double getRadius(RigidTransform2d pose, Translation2d point) {
+        Translation2d center = getCenter(pose, point);
         return new Translation2d(center, point).norm();
     }
     
+    public static double getLength(RigidTransform2d pose, Translation2d point) {
+        double radius = getRadius(pose, point);
+        if(radius < kReallyBigNumber) {
+            Translation2d center = getCenter(pose, point);
+            Translation2d centerToPoint = new Translation2d(center, point);
+            Translation2d centerToPose = new Translation2d(center, pose.getTranslation());
+            double dotProduct = centerToPoint.getX() * centerToPose.getX() + centerToPoint.getY() * centerToPose.getY();
+            double angle = Math.acos(dotProduct / (centerToPoint.norm() * centerToPose.norm()));
+            return radius * angle;
+        } else {
+            return new Translation2d(pose.getTranslation(), point).norm();
+        }
+    }
+    
     public static int getDirection(RigidTransform2d pose, Translation2d point) {
-        Translation2d poseToPoint = new Translation2d(pose.getTranslation(), point);
-        double poseToPointAngle = Math.toDegrees(Math.atan2(poseToPoint.getY(), poseToPoint.getX()));
-        double robotAngle = pose.getRotation().getDegrees();
-        return (robotAngle < poseToPointAngle) ? 1 : -1; //if robot < pose turn left
+        Translation2d poseToPoint = new Translation2d(pose.getTranslation(), point);        
+        Translation2d robot = pose.getRotation().toTranslation();  
+        double cross = robot.getX() * poseToPoint.getY() - robot.getY() * poseToPoint.getX();
+        return (cross < 0) ? -1 : 1; //if robot < pose turn left
     }
     
     public boolean isFinished() {

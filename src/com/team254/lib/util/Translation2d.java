@@ -108,4 +108,16 @@ public class Translation2d implements Interpolable<Translation2d> {
         final DecimalFormat fmt = new DecimalFormat("#0.000");
         return "(" + fmt.format(x_) + "," + fmt.format(y_) + ")";
     }
+    
+    public static double Cross(Translation2d a, Translation2d b) {
+        return a.x_ * b.x_ + a.y_ * b.y_;
+    }
+    
+    public static double GetAngle(Translation2d a, Translation2d b) {
+        return Math.acos(Dot(a, b) / (a.norm() * b.norm()));
+    }
+    
+    public static double Dot(Translation2d a, Translation2d b) {
+        return a.x_ * b.y_ - a.y_ * b.x_;
+    }
 }

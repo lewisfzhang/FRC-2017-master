@@ -8,11 +8,11 @@ import com.team254.lib.util.pixy.FrameAdjuster;
 import com.team254.lib.util.pixy.PixyCam;
 import com.team254.lib.util.pixy.constants.PixyNumberConstants;
 
-public class VisionServer {
+public class PixyVisionServer {
 
     public static final long VISION_THREAD_DELAY = 2;
 
-    private static VisionServer _instance;
+    private static PixyVisionServer _instance;
     boolean mRunning = false;
     Thread mThread = null;
     FrameAdjuster mAdjuster = null;
@@ -22,9 +22,9 @@ public class VisionServer {
      *
      * @return the instance
      */
-    public static VisionServer getInstance() {
+    public static PixyVisionServer getInstance() {
         if (_instance == null) {
-            _instance = new VisionServer();
+            _instance = new PixyVisionServer();
         }
         return _instance;
     }
@@ -36,7 +36,7 @@ public class VisionServer {
     /**
      * Initializes the PixyCam and starts a new thread to poll it for data.
      */
-    private VisionServer() {
+    private PixyVisionServer() {
         pixy = new PixyCam();
         mAdjuster = new FrameAdjuster(PixyNumberConstants.getThisRobotConstants());
     }
