@@ -52,8 +52,8 @@ public class Constants extends ConstantsBase {
     // are attached to the master)
     public static final int kLeftDriveMasterId = 12;
     public static final int kLeftDriveSlaveId = 11;
-    public static final int kRightDriveMasterId = 4;
-    public static final int kRightDriverSlaveId = 3;
+    public static final int kRightDriveMasterId = 3;
+    public static final int kRightDriverSlaveId = 4;
     
     //PATH FOLLOWING
     public static double kAutoLookAhead = 30.0; //inches
