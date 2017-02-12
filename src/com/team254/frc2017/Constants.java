@@ -73,6 +73,9 @@ public class Constants extends ConstantsBase {
     // Camera Number
     public static int kPixyNumber = 1;
 
+    // Phone
+    public static int kAndroidAppTcpPort = 8254;
+
     // Flywheel PID
     // TODO give these actual values
 

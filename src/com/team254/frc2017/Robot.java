@@ -3,6 +3,10 @@ package com.team254.frc2017;
 import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.subsystems.Drive;
+import com.team254.frc2017.vision.TargetInfo;
+import com.team254.frc2017.vision.VisionServer;
+import com.team254.frc2017.vision.VisionUpdate;
+import com.team254.frc2017.vision.VisionUpdateReceiver;
 import com.team254.frc2017.web.WebServer;
 
 import com.team254.lib.util.CheesyDriveHelper;
@@ -27,8 +31,8 @@ public class Robot extends IterativeRobot {
     private Looper mEnabledLooper = new Looper();
 
     private WebServer mHTTPServer = new WebServer();
-    
-    //private VisionServer mVisionServer = VisionServer.getInstance();
+
+    private VisionServer mVisionServer = VisionServer.getInstance();
 
     public Robot() {
         CrashTracker.logRobotConstruction();
@@ -50,6 +54,18 @@ public class Robot extends IterativeRobot {
             RobotName name = Constants.getRobotName();
             SmartDashboard.putString("MAC Address", Constants.getMACAddress());
             ConstantsModifier.initConstants(name);
+
+            mVisionServer.addVisionUpdateReceiver(new VisionUpdateReceiver() {
+                @Override
+                public void gotUpdate(VisionUpdate update) {
+                    System.out.println("-----------------");
+                    System.out.println("Num targets: " + update.getTargets().size());
+                    if (update.getTargets().size() > 0) {
+                        TargetInfo target = update.getTargets().get(0);
+                        System.out.println("Target: " + target.getY() + ", " + target.getZ());
+                    }
+                }
+            });
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
