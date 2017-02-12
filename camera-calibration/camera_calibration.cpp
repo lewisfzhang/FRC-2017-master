@@ -354,6 +354,7 @@ int main(int argc, char* argv[]) {
     int pixy_init_status;
     pixy_init_status = pixy_init();
     cout << "initialized Pixy - " << pixy_init_status << endl;
+
     if(pixy_init_status != 0) {
       // Error initializing Pixy
       pixy_error(pixy_init_status);
@@ -456,10 +457,11 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-        imageSize = view.size();  // Format input image.
-        if(s.flipVertical) {
-          flip(view, view, 0);
-        }
+      imageSize = view.size();  // Format input image.
+
+      if(s.flipVertical) {
+        flip(view, view, 0);
+      }
 
         //vector<Point2f> pointBuf;
 
@@ -512,6 +514,7 @@ int main(int argc, char* argv[]) {
         int baseLine = 0;
         Size textSize = getTextSize(msg, 1, 1, 1, &baseLine);
         Point textOrigin(view.cols - 2*textSize.width - 10, view.rows - 2*baseLine - 10);
+
         if(mode == CAPTURING) {
             if(s.showUndistorted) {
               msg = format("%d/%d Undist", i, s.nrFrames);
@@ -538,6 +541,7 @@ int main(int argc, char* argv[]) {
 
         imshow("Image View", view);
         char key = (char)waitKey(s.inputCapture.isOpened() ? 50 : s.delay);
+
         if(key == ESC_KEY) {
           break;
         }
@@ -594,7 +598,6 @@ static double computeReprojectionErrors(const vector<vector<Point3f> >& objectPo
         projectPoints(Mat(objectPoints[i]), rvecs[i], tvecs[i], cameraMatrix,
                        distCoeffs, imagePoints2);
         err = norm(Mat(imagePoints[i]), Mat(imagePoints2), CV_L2);
-
         int n = (int)objectPoints[i].size();
         perViewErrors[i] = (float) std::sqrt(err*err/n);
         totalErr += err*err;
@@ -624,10 +627,11 @@ static void calcBoardCornerPositions(Size boardSize, float squareSize, vector<Po
     }
 }
 
-static bool runCalibration(\Settings& s, Size& imageSize, Mat& cameraMatrix, Mat& distCoeffs,
-                            vector<vector<Point2f> > imagePoints, vector<Mat>& rvecs, vector<Mat>& tvecs,
-                            vector<float>& reprojErrs, double& totalAvgErr) {
+static bool runCalibration(Settings& s, Size& imageSize, Mat& cameraMatrix, Mat& distCoeffs,
+                           vector<vector<Point2f> > imagePoints, vector<Mat>& rvecs, vector<Mat>& tvecs,
+                           vector<float>& reprojErrs, double& totalAvgErr) {
     cameraMatrix = Mat::eye(3, 3, CV_64F);
+
     if(s.flag & CV_CALIB_FIX_ASPECT_RATIO) {
         cameraMatrix.at<double>(0,0) = 1.0;
     }
