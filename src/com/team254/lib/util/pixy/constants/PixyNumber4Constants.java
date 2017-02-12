@@ -1,11 +1,13 @@
 package com.team254.lib.util.pixy.constants;
 
-public class PixyNumber4Constants {
-    public static final double fx = 245.061;
-    public static final double fy = 244.379;
-    public static final double cx = 164.47;
-    public static final double cy = 94.2263;
-    public static final double k1 = -0.441266;
-    public static final double k2 = 0.294545;
-    public static final double k3 = -0.167752;
+public class PixyNumber4Constants extends PixyNumberConstants {
+    public PixyNumber4Constants() {
+        fx = 245.885;
+        fy = 245.809;
+        cx = 165.009;
+        cy = 105.134;
+        k1 = -0.455587;
+        k2 = 0.326993;
+        k3 = -0.179308;
+    }
 }
