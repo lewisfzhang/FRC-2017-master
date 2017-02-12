@@ -62,7 +62,7 @@ public class Constants extends ConstantsBase {
     public static double kMaxDecel = 20.0; //should be positive
     public static double kPathFollowingMaxVel = 10000; //inches per second
     public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file 
-    public static double kMinSpeed = 30.0;
+    public static double kMinSpeed = 30.0; //inches per second 
 
     // SOLENOIDS
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0
