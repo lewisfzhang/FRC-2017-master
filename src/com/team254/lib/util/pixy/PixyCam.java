@@ -80,12 +80,12 @@ public class PixyCam {
             blocksRead.clear();
         }
         // get the next Block (if available)
-        Frame.Block block = parseBlock();
-
-        if (block != null) {
-            // add the Block to the current frame's list
+        Frame.Block block;
+        while((block = parseBlock()) != null) {
             blocksRead.add(block);
-        } else if (wasFrameBoundary) {
+        }
+
+        if (wasFrameBoundary) {
             if (!blocksRead.isEmpty()) {
                 // return a new Frame containing blocksRead
                 mCurrentFrame.setBlocks(blocksRead);
