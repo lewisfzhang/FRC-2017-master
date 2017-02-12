@@ -15,7 +15,7 @@ public abstract class PathSegment {
     /**
      * Subclass representing a robot movement (line or arc) on the autonomous path
      */
-    public static class Translation extends PathSegment {
+    static class Translation extends PathSegment {
         private Translation2d start;
         private Translation2d end;
         private Translation2d center;
@@ -32,7 +32,7 @@ public abstract class PathSegment {
          * @param y2 end y
          * @param maxSpeed maximum speed allowed on the segment
          */
-        public Translation(double x1, double y1, double x2, double y2, double maxSpeed) {
+        public Translation(Double x1, Double y1, Double x2, Double y2, double maxSpeed) {
             this.start = new Translation2d(x1, y1);
             this.end = new Translation2d(x2, y2);
             this.center = null;
@@ -216,7 +216,7 @@ public abstract class PathSegment {
         }    
     }
     
-    public static class Turn extends PathSegment {
+    static class Turn extends PathSegment {
         Translation2d center;
         double turnAmount;
         double turnSpeed;

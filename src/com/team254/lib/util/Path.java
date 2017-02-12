@@ -57,10 +57,6 @@ public class Path {
          }
      }
      
-     public void addSegment(PathSegment segment) {
-         segments.add(segment);
-     }
-     
      public double getSegmentRemainingDist(Translation2d robotPos) {
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
          return currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
@@ -104,8 +100,9 @@ public class Path {
      
      public void checkSegmentDone(Translation2d robotPos) {
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
+         double length = currentSegment.getLength();
          double remainingDist = currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
-         if(remainingDist < Constants.kSegmentCompletionTolerance) {
+         if((length - remainingDist) / length > Constants.kAutoSegmentThreshold) {
              prevSegment = segments.remove(0);
          }
      }
