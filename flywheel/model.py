@@ -9,13 +9,13 @@ import matplotlib.cbook as cbook
 MAX_VOLTAGE = 12.0 # volts
 FREE_SPIN_SPEED = 6000.0 # RPM
 
-STALL_FORCE = 6.28 # in-lbs
-WHEEL_INERTIA = 0.05 # in-lb
+STALL_FORCE = 8.520 # N-m
+WHEEL_INERTIA = 1040e-6 # Kg-m
 
 BACK_EMF = MAX_VOLTAGE / FREE_SPIN_SPEED
 
-BALL_INERTIA = 0.01 # in-lb
-BALL_CONTACT_DISTANCE = 0.125 # fraction of a rotation
+BALL_INERTIA = 479e-6 # Kg-m
+BALL_CONTACT_DISTANCE = 0.2 # fraction of a rotation
 
 def simulationLoop(controller_func,
                    ordered_ball_times,
@@ -37,6 +37,7 @@ def simulationLoop(controller_func,
         "output": [0.0] * num_sim_steps,
         "system_inertia":  [0.0] * num_sim_steps,
         "ball_fire_speed": [0.0] * num_sim_steps,
+        "energy": [0.0] * num_sim_steps,
 
         "controller_time": np.arange(0, total_time, controller_step_time),
         "integrator": [0.0] * num_controller_steps,
@@ -77,11 +78,13 @@ def simulationLoop(controller_func,
             effective_voltage = output_voltage - (wheel_velocity * BACK_EMF)
             force = effective_voltage / MAX_VOLTAGE * STALL_FORCE
             wheel_velocity += force / systemInertia() * simulation_step_time * 60.0 / (2.0 * np.pi)
+            velocity_rad_per_sec = wheel_velocity * 2.0 * np.pi / 60.0
             log_values["velocity"][step_num(i, j)] = wheel_velocity
             log_values["eff_v"][step_num(i, j)] = effective_voltage
             log_values["output"][step_num(i, j)] = output_voltage
             log_values["system_inertia"][step_num(i, j)] = systemInertia()
             log_values["ball_fire_speed"][step_num(i, j)] = ball_fire_speed
+            log_values["energy"][step_num(i, j)] = velocity_rad_per_sec * velocity_rad_per_sec * WHEEL_INERTIA
     return log_values
 
 def makeKifController():
@@ -114,8 +117,34 @@ def makeBangBangController():
             return low_bang_output
     return controllerFunc
 
+def makeLaggingBangBangController():
+    # controller consts
+    setpoint = 3000.0
+    high_bang_output = MAX_VOLTAGE
+    low_bang_output = MAX_VOLTAGE * setpoint / FREE_SPIN_SPEED
+    under_speed_time_threshold = 0.1
+
+    # controller state
+    under_speed_time = 0.0
+
+    def controllerFunc(speed, delta_time, log_values, log_idx):
+        log_values["setpoint"][log_idx] = setpoint
+        nonlocal under_speed_time
+        if speed >= setpoint:
+            under_speed_time = 0.0
+            return low_bang_output
+        under_speed_time += delta_time
+        if under_speed_time > under_speed_time_threshold:
+            return high_bang_output
+        else:
+            return low_bang_output
+    return controllerFunc
+
 if __name__ == '__main__':
-    data = simulationLoop(makeBangBangController(), [10.0, 10.5, 15.0, 15.0], 0.0001, 50, 30)
+    data = simulationLoop(makeLaggingBangBangController(),
+                          [10.0, 11.001, 12.002, 13.003, 14.004, 15.005],
+                          0.0001, 50, 30)
+    # data = simulationLoop(makeBangBangController(), [], 0.0001, 50, 30)
     fig = plt.figure(figsize=(8, 8))
 
     num_plots = 6
@@ -126,8 +155,8 @@ if __name__ == '__main__':
     plot = fig.add_subplot(num_plots, 1, 2, ylabel="output")
     plot.plot(data['time'], data['output'])
 
-    plot = fig.add_subplot(num_plots, 1, 3, ylabel="eff V")
-    plot.plot(data['time'], data['eff_v'])
+    plot = fig.add_subplot(num_plots, 1, 3, ylabel="energy")
+    plot.plot(data['time'], data['energy'])
 
     plot = fig.add_subplot(num_plots, 1, 4, ylabel="error integrator")
     plot.plot(data['controller_time'], data['integrator'])
