@@ -83,8 +83,9 @@ public class Drive extends Subsystem {
         mRightMaster = new CANTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mRightMaster.setInverted(true);
-        mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mRightMaster.reverseSensor(true);
+        mRightMaster.reverseOutput(true);
+        mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         if (mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
                 != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
             DriverStation.reportError("Could not detect right encoder.", false);
@@ -93,6 +94,7 @@ public class Drive extends Subsystem {
         mRightSlave = new CANTalon(Constants.kRightDriverSlaveId);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mRightSlave.setInverted(true);
+        mRightSlave.reverseOutput(true);
         mRightSlave.set(Constants.kRightDriveMasterId);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
