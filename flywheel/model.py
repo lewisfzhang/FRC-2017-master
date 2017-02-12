@@ -6,7 +6,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.cbook as cbook
 
-
 MAX_VOLTAGE = 12.0 # volts
 FREE_SPIN_SPEED = 6000.0 # RPM
 
@@ -85,7 +84,7 @@ def simulationLoop(controller_func,
             log_values["ball_fire_speed"][step_num(i, j)] = ball_fire_speed
     return log_values
 
-def makeController():
+def makeKifController():
     setpoint = 3000.0
 
     kFv = MAX_VOLTAGE / FREE_SPIN_SPEED
@@ -102,8 +101,21 @@ def makeController():
         return kP * error + kI * integrator + kFv * setpoint
     return controllerFunc
 
+def makeBangBangController():
+    setpoint = 3000.0
+    high_bang_output = MAX_VOLTAGE
+    low_bang_output = MAX_VOLTAGE * setpoint / FREE_SPIN_SPEED
+
+    def controllerFunc(speed, delta_time, log_values, log_idx):
+        log_values["setpoint"][log_idx] = setpoint
+        if speed < setpoint:
+            return high_bang_output
+        else:
+            return low_bang_output
+    return controllerFunc
+
 if __name__ == '__main__':
-    data = simulationLoop(makeController(), [10.0, 10.5, 15.0, 15.0], 0.0001, 50, 30)
+    data = simulationLoop(makeBangBangController(), [10.0, 10.5, 15.0, 15.0], 0.0001, 50, 30)
     fig = plt.figure(figsize=(8, 8))
 
     num_plots = 6
