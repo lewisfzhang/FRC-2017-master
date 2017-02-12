@@ -130,6 +130,7 @@ public class Drive extends Subsystem {
         }
         mRightMaster.set(signal.getRight());
         mLeftMaster.set(signal.getLeft());
+        setBrakeMode(false);
     }
 
     public boolean isHighGear() {

@@ -18,11 +18,11 @@ public class Frame {
                     + "x" + height + " }";
         }
     }
-    
+
     void setBlocks(List<Frame.Block> blocks) {
-    	this.blocks = blocks;
-    	++id;
-    	
+        this.blocks = blocks;
+        ++id;
+
     }
 
     public List<Frame.Block> getBlocks() {

@@ -127,13 +127,17 @@ public class Constants extends ConstantsBase {
      * @return the robot's name, either COMP_BOT, PRAC_BOT, or PROG_BOT
      */
     public static RobotName getRobotName() {
-        return kMACAddresses.get(getMACAddress());
+        RobotName name = kMACAddresses.get(getMACAddress());
+        if (name == null) {
+            name = RobotName.COMP_BOT;
+        }
+        return name;
     }
 
     static {
         kMACAddresses.put("herp", RobotName.COMP_BOT);
         kMACAddresses.put("derp", RobotName.PRAC_BOT);
-        kMACAddresses.put("terp", RobotName.PROG_BOT);
+        kMACAddresses.put("00-80-2F-17-C8-2D", RobotName.PROG_BOT);
 
         new Constants().loadFromFile();
     }

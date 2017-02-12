@@ -1,12 +1,21 @@
 package com.team254.lib.util.pixy;
 
+import com.team254.lib.util.pixy.constants.PixyNumberConstants;
+
 import java.util.List;
 
 public class FrameAdjuster {
-    public static void adjustFrame(Frame frame) {
+
+    private BlockAdjuster mBlockAdjuster;
+
+    public FrameAdjuster(PixyNumberConstants c) {
+        mBlockAdjuster = new BlockAdjuster(c);
+    }
+
+    public void adjustFrame(Frame frame) {
         List<Frame.Block> list = frame.getBlocks();
         for (Frame.Block block : list) {
-            BlockAdjuster.adjustBlock(block);
+            mBlockAdjuster.adjustBlock(block);
         }
     }
 }
