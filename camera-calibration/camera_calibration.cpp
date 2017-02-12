@@ -699,6 +699,8 @@ static void saveCameraParams(Settings& s, Size& imageSize, Mat& cameraMatrix, Ma
     myfile << "        k1 = " << distCoeffs.at<double> (0, 0) << ";\n";
     myfile << "        k2 = " << distCoeffs.at<double> (1, 0) << ";\n";
     myfile << "        k3 = " << distCoeffs.at<double> (4, 0) << ";\n";
+    myfile << "        p1 = " << distCoeffs.at<double> (2, 0) << ";\n";
+    myfile << "        p2 = " << distCoeffs.at<double> (3, 0) << ";\n";
     myfile << "    }\n";
     myfile << "}";
     myfile.close();
