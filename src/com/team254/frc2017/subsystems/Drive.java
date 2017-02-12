@@ -226,25 +226,25 @@ public class Drive extends Subsystem {
     }
     
     //call this function to make the robot path follow
-    private void updatePathFollower() {
-        RigidTransform2d robot_pose = mOdometer.getPose();
-        RigidTransform2d.Delta command = mPathController.update(robot_pose);
-        if(!mPathController.isFinished()) {
-            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
-    
-            // Scale the command to respect the max velocity limits
-            double max_vel = 0.0;
-            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
-            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
-            if (max_vel > Constants.kPathFollowingMaxVel) {
-                double scaling = Constants.kPathFollowingMaxVel / max_vel;
-                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
-            }
-            updateVelocitySetpoint(setpoint.left, setpoint.right);
-        } else {
-            stop();
-        }
-    }
+//    private void updatePathFollower() {
+//        RigidTransform2d robot_pose = mOdometer.getPose();
+//        RigidTransform2d.Delta command = mPathController.update(robot_pose);
+//        if(!mPathController.isFinished()) {
+//            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+//    
+//            // Scale the command to respect the max velocity limits
+//            double max_vel = 0.0;
+//            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
+//            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
+//            if (max_vel > Constants.kPathFollowingMaxVel) {
+//                double scaling = Constants.kPathFollowingMaxVel / max_vel;
+//                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
+//            }
+//            updateVelocitySetpoint(setpoint.left, setpoint.right);
+//        } else {
+//            stop();
+//        }
+//    }
     
     public double getLSpeed() {
         return rpmToInchesPerSecond(mLeftMaster.getSpeed());

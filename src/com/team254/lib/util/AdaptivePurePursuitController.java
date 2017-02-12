@@ -3,6 +3,8 @@ package com.team254.lib.util;
 import java.util.Optional;
 import java.util.Set;
 
+import com.team254.frc2017.Constants;
+
 /**
  * Implements an adaptive pure pursuit controller. See:
  * https://www.ri.cmu.edu/pub_files/pub1/kelly_alonzo_1994_4/kelly_alonzo_1994_4 .pdf
@@ -37,6 +39,12 @@ public class AdaptivePurePursuitController {
         mSpeedController = new SpeedController(mPath);
         this.filepath = filepath;
     }
+    
+    public AdaptivePurePursuitController(Path path) {
+        mPath = path;
+        mReversed = false;
+        mSpeedController = new SpeedController(mPath);
+    }
 
     public RigidTransform2d.Delta update(RigidTransform2d pose) {
         if (mReversed) {
@@ -54,6 +62,8 @@ public class AdaptivePurePursuitController {
             return new RigidTransform2d.Delta(0, 0, 0);
         
         double speed = mSpeedController.getSpeed(pose.getTranslation());
+        if(speed < Constants.kMinSpeed)
+            speed = Constants.kMinSpeed;
         
         RigidTransform2d.Delta rv;
         rv = new RigidTransform2d.Delta(speed, 0, getDirection(pose, lookaheadPoint) * Math.abs(speed) / getRadius(pose, lookaheadPoint));
@@ -72,9 +82,9 @@ public class AdaptivePurePursuitController {
     
     public static int getDirection(RigidTransform2d pose, Translation2d point) {
         Translation2d poseToPoint = new Translation2d(pose.getTranslation(), point);
-        double poseToPointAngle = Math.toDegrees(Math.atan2(poseToPoint.getY(), poseToPoint.getX()));
-        double robotAngle = pose.getRotation().getDegrees();
-        return (robotAngle < poseToPointAngle) ? 1 : -1; //if robot < pose turn left
+        Translation2d robot = pose.getRotation().toTranslation();
+        double cross = robot.getX() * poseToPoint.getY() - robot.getY() * poseToPoint.getX();
+        return (cross < 0) ? -1 : 1; //if robot < pose turn left
     }
     
     public boolean isFinished() {
