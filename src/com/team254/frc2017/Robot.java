@@ -2,19 +2,15 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.loops.Looper;
-import com.team254.frc2017.loops.RobotStateEstimator;
-import com.team254.frc2017.loops.VisionProcessor;
+import com.team254.frc2017.pixy.VisionServer;
 import com.team254.frc2017.subsystems.Drive;
-import com.team254.frc2017.vision.TargetInfo;
-import com.team254.frc2017.vision.VisionServer;
-import com.team254.frc2017.vision.VisionUpdate;
-import com.team254.frc2017.vision.VisionUpdateReceiver;
 import com.team254.frc2017.web.WebServer;
 
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -33,8 +29,8 @@ public class Robot extends IterativeRobot {
     private Looper mEnabledLooper = new Looper();
 
     private WebServer mHTTPServer = new WebServer();
-
-    private VisionServer mVisionServer = VisionServer.getInstance();
+    
+    //private VisionServer mVisionServer = VisionServer.getInstance();
 
     public Robot() {
         CrashTracker.logRobotConstruction();
@@ -49,8 +45,6 @@ public class Robot extends IterativeRobot {
             CrashTracker.logRobotInit();
 
             mDrive.registerEnabledLoops(mEnabledLooper);
-            mEnabledLooper.register(VisionProcessor.getInstance());
-            mEnabledLooper.register(RobotStateEstimator.getInstance());
 
             mHTTPServer.startServer();
 
@@ -58,8 +52,6 @@ public class Robot extends IterativeRobot {
             RobotName name = Constants.getRobotName();
             SmartDashboard.putString("MAC Address", Constants.getMACAddress());
             ConstantsModifier.initConstants(name);
-
-            mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;

@@ -9,31 +9,27 @@ public class SpeedController {
         mPath = path;
     }
     
-    public double getSpeed(Translation2d robotPos, double length) {
+    public double getSpeed(Translation2d robotPos) {
         double startSpd = mPath.getStartSpeed();
         double endSpd = mPath.getEndSpeed();
         double maxSpd = mPath.getMaxSpeed();
-        length = mPath.getSegmentLength();
+        double length = mPath.getSegmentLength();
         double dist = length - mPath.getSegmentRemainingDist(robotPos);
-        System.out.println(length);
-        System.out.println(dist);
-        if(Double.isNaN(length))
-            System.exit(1);
         
         if(maxSpd < endSpd && maxSpd < startSpd) {
             return maxSpd;
         }
         if(maxSpd > startSpd && maxSpd < endSpd) {
-            return Math.min(Math.sqrt(2 * Constants.kMaxAccel * dist + startSpd * startSpd), maxSpd);
+            return Math.min(Constants.kMaxAccel * dist + startSpd, maxSpd);
         }
         if(maxSpd > endSpd && maxSpd < startSpd) {
-            return Math.min(Math.sqrt(2 * Constants.kMaxDecel * (length - dist) + endSpd * endSpd), maxSpd);
+            return Math.min(Constants.kMaxDecel * (length - dist) + endSpd, maxSpd);
         }
-        double intersection = ( endSpd * endSpd - startSpd * startSpd - 2 * Constants.kMaxDecel * length ) / (2 * Constants.kMaxAccel - 2 * Constants.kMaxDecel);
+        double intersection = ( Constants.kMaxDecel*length + endSpd - startSpd ) / (Constants.kMaxAccel + Constants.kMaxDecel);
         if(dist <= intersection)
-            return Math.min(Math.sqrt(2 * Constants.kMaxAccel * dist + startSpd * startSpd), maxSpd);
+            return Math.min(Constants.kMaxAccel * dist + startSpd, maxSpd);
         else
-            return Math.min(Math.sqrt(2 * Constants.kMaxDecel * (length - dist) + endSpd * endSpd), maxSpd);
+            return Math.min(Constants.kMaxDecel * (length - dist) + endSpd, maxSpd);
     }
     
 }

@@ -101,10 +101,6 @@ public class Rotation2d implements Interpolable<Rotation2d> {
         return new Rotation2d(cos_angle_, -sin_angle_, false);
     }
 
-    public Translation2d toTranslation() {      
-        return new Translation2d(cos_angle_, sin_angle_);     
-    }
-    
     @Override
     public Rotation2d interpolate(Rotation2d other, double x) {
         if (x <= 0) {

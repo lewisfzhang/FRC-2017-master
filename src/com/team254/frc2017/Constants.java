@@ -16,8 +16,6 @@ import java.util.HashMap;
 public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
 
-    public static double kCenterOfTargetHeight = 100; // TODO: Fix
-
     public enum RobotName {
         COMP_BOT, PRAC_BOT, PROG_BOT
     }
@@ -27,13 +25,10 @@ public class Constants extends ConstantsBase {
     private static NetworkInterface kNetworkInfo;
 
     // ROBOT PHYSICAL CONSTANTS
-    // Wheels
+    public static double kTrackScrubFactor = 1.0; // FIXME placeholder
+    public static double kTrackEffectiveDiameterInches = 26.654;
     public static double kDriveWheelDiameterInches = 3.5;
-    public static double kTrackLengthInches = 8.265;
-    public static double kTrackWidthInches = 23.8;
-    public static double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches
-            + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
-    public static double kTrackScrubFactor = 0.5;
+
     public static double kCollisionThreshold = 0.5;
 
     // CONTROL LOOP GAINS
@@ -55,19 +50,19 @@ public class Constants extends ConstantsBase {
     // TALONS
     // (Note that if multiple talons are dedicated to a mechanism, any sensors
     // are attached to the master)
-    public static final int kLeftDriveMasterId = 12;
-    public static final int kLeftDriveSlaveId = 11;
-    public static final int kRightDriveMasterId = 3;
-    public static final int kRightDriverSlaveId = 4;
+    public static final int kLeftDriveMasterId = 11;
+    public static final int kLeftDriveSlaveId = 12;
+    public static final int kRightDriveMasterId = 4;
+    public static final int kRightDriverSlaveId = 3;
     
     //PATH FOLLOWING
     public static double kAutoLookAhead = 30.0; //inches
-    public static double kSegmentCompletionTolerance = 2.0; //inches
+    public static double kAutoSegmentThreshold = 0.95;
     public static double kMaxAccel = 80.0; //inches per second^2
     public static double kMaxDecel = 20.0; //should be positive
     public static double kPathFollowingMaxVel = 10000; //inches per second
     public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file 
-    public static double kMinSpeed = 30.0; //inches per second 
+
 
     // SOLENOIDS
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0
@@ -77,25 +72,6 @@ public class Constants extends ConstantsBase {
 
     // Camera Number
     public static int kPixyNumber = 1;
-
-    // Phone
-    public static int kAndroidAppTcpPort = 8254;
-
-    // Goal tracker constants
-    public static double kMaxGoalTrackAge = 0.3;
-    public static double kMaxTrackerDistance = 18.0;
-    public static double kCameraFrameRate = 30.0;
-    public static double kTrackReportComparatorStablityWeight = 1.0;
-    public static double kTrackReportComparatorAgeWeight = 1.0;
-
-    // Robot state
-    // Pose of the camera frame w.r.t. the robot frame
-    public static double kCameraXOffset = -6.454;
-    public static double kCameraYOffset = 0.0;
-    public static double kCameraZOffset = 19.75;
-    public static double kCameraPitchAngleDegrees = 35.75;
-    public static double kCameraYawAngleDegrees = -1.0;
-    public static double kCameraDeadband = 0.0;
 
     // Flywheel PID
     // TODO give these actual values
@@ -150,17 +126,13 @@ public class Constants extends ConstantsBase {
      * @return the robot's name, either COMP_BOT, PRAC_BOT, or PROG_BOT
      */
     public static RobotName getRobotName() {
-        RobotName name = kMACAddresses.get(getMACAddress());
-        if (name == null) {
-            name = RobotName.COMP_BOT;
-        }
-        return name;
+        return kMACAddresses.get(getMACAddress());
     }
 
     static {
         kMACAddresses.put("herp", RobotName.COMP_BOT);
         kMACAddresses.put("derp", RobotName.PRAC_BOT);
-        kMACAddresses.put("00-80-2F-17-C8-2D", RobotName.PROG_BOT);
+        kMACAddresses.put("terp", RobotName.PROG_BOT);
 
         new Constants().loadFromFile();
     }

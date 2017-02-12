@@ -11,9 +11,6 @@ public abstract class ConstantsModifier {
      *            the name of the robot, PRAC_BOT, PROG_BOT, or COMP_BOT
      */
     public static void initConstants(RobotName name) {
-        if (name == null) {
-            return;
-        }
         switch (name) {
         case PRAC_BOT:
             ConstantsModifier.setPracBotConstants();

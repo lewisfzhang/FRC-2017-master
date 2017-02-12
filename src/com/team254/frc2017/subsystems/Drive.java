@@ -83,9 +83,8 @@ public class Drive extends Subsystem {
         mRightMaster = new CANTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mRightMaster.setInverted(true);
-        mRightMaster.reverseSensor(true);
-        mRightMaster.reverseOutput(true);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        mRightMaster.reverseSensor(true);
         if (mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
                 != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
             DriverStation.reportError("Could not detect right encoder.", false);
@@ -94,7 +93,6 @@ public class Drive extends Subsystem {
         mRightSlave = new CANTalon(Constants.kRightDriverSlaveId);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mRightSlave.setInverted(true);
-        mRightSlave.reverseOutput(true);
         mRightSlave.set(Constants.kRightDriveMasterId);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
@@ -132,7 +130,6 @@ public class Drive extends Subsystem {
         }
         mRightMaster.set(signal.getRight());
         mLeftMaster.set(signal.getLeft());
-        setBrakeMode(false);
     }
 
     public boolean isHighGear() {
@@ -229,46 +226,26 @@ public class Drive extends Subsystem {
     }
     
     //call this function to make the robot path follow
-//    private void updatePathFollower() {
-//        RigidTransform2d robot_pose = mOdometer.getPose();
-//        RigidTransform2d.Delta command = mPathController.update(robot_pose);
-//        if(!mPathController.isFinished()) {
-//            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
-//    
-//            // Scale the command to respect the max velocity limits
-//            double max_vel = 0.0;
-//            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
-//            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
-//            if (max_vel > Constants.kPathFollowingMaxVel) {
-//                double scaling = Constants.kPathFollowingMaxVel / max_vel;
-//                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
-//            }
-//            updateVelocitySetpoint(setpoint.left, setpoint.right);
-//        } else {
-//            stop();
-//        }
-//    }
-
-    public double getLeftDistanceInches() {
-        return rotationsToInches(mLeftMaster.getPosition());
+    private void updatePathFollower() {
+        RigidTransform2d robot_pose = mOdometer.getPose();
+        RigidTransform2d.Delta command = mPathController.update(robot_pose);
+        if(!mPathController.isFinished()) {
+            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+    
+            // Scale the command to respect the max velocity limits
+            double max_vel = 0.0;
+            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
+            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
+            if (max_vel > Constants.kPathFollowingMaxVel) {
+                double scaling = Constants.kPathFollowingMaxVel / max_vel;
+                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
+            }
+            updateVelocitySetpoint(setpoint.left, setpoint.right);
+        } else {
+            stop();
+        }
     }
-
-    public double getRightDistanceInches() {
-        return rotationsToInches(mRightMaster.getPosition());
-    }
-
-    public double getLeftVelocityInchesPerSec() {
-        return rpmToInchesPerSecond(mLeftMaster.getSpeed());
-    }
-
-    public double getRightVelocityInchesPerSec() {
-        return rpmToInchesPerSecond(mRightMaster.getSpeed());
-    }
-
-    public synchronized Rotation2d getGyroAngle() {
-        return Rotation2d.fromDegrees(mNavXBoard.getAngle());
-    }
-
+    
     public double getLSpeed() {
         return rpmToInchesPerSecond(mLeftMaster.getSpeed());
     }

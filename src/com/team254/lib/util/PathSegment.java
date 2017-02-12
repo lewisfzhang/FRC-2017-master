@@ -15,7 +15,7 @@ public abstract class PathSegment {
     /**
      * Subclass representing a robot movement (line or arc) on the autonomous path
      */
-    public static class Translation extends PathSegment {
+    static class Translation extends PathSegment {
         private Translation2d start;
         private Translation2d end;
         private Translation2d center;
@@ -32,7 +32,7 @@ public abstract class PathSegment {
          * @param y2 end y
          * @param maxSpeed maximum speed allowed on the segment
          */
-        public Translation(double x1, double y1, double x2, double y2, double maxSpeed) {
+        public Translation(Double x1, Double y1, Double x2, Double y2, double maxSpeed) {
             this.start = new Translation2d(x1, y1);
             this.end = new Translation2d(x2, y2);
             this.center = null;
@@ -128,7 +128,8 @@ public abstract class PathSegment {
             if(curvature == 0) {
                 return new Translation2d(start, end).norm();
             } else {
-                Double a = Math.acos(Math.cos(endAngle) * Math.cos(startAngle) + Math.sin(endAngle) * Math.sin(startAngle));
+                Double a = endAngle - startAngle;
+                a = (a > Math.PI) ? Math.PI *2 - a : a;
                 return Math.PI * (1/curvature) * a / Math.PI;
             }
         }
@@ -150,21 +151,20 @@ public abstract class PathSegment {
                     return new Translation2d(start.getX() + u * delta.getX(), start.getY() + u * delta.getY());
             } else {
                 Translation2d delta = new Translation2d(center, position);
-                double scale = (1/curvature) / delta.norm();
-                delta = delta.scale(scale);
-                Translation2d s = new Translation2d(center, start);
-                Translation2d e = new Translation2d(center, end);
-                if(Translation2d.Cross(delta, s) * Translation2d.Cross(delta, e) < 0) {
-                    return center.translateBy(delta);
-                } else {
+                double s = (1/curvature) / delta.norm();
+                delta = delta.scale(s);
+                double a = Math.atan2(delta.getY(), delta.getX());
+                a = (a < 0) ? a + Math.PI*2 : a;
+                if(((endAngle - startAngle) <= Math.PI && a < startAngle && a > endAngle) || ((endAngle - startAngle) > Math.PI && a > startAngle && a < endAngle)) {
                     Translation2d startDist = new Translation2d(position, start);
-                    Translation2d endDist = new Translation2d(position, end);
+                    Translation2d endDist = new Translation2d(position, start);
                     if(endDist.norm() < startDist.norm()) {
                         return end;
                     } else {
                         return start;
                     }
                 }
+                return center.translateBy(delta);
             } 
         }
         
@@ -181,10 +181,13 @@ public abstract class PathSegment {
                 Translation2d delta = new Translation2d(start, end);
                 return start.translateBy( delta.scale(dist / length));
             } else {
-                Translation2d s = new Translation2d(center, start);
-                Translation2d e = new Translation2d(center, end);
-                double deltaAngle = Translation2d.GetAngle(s, e) * ((Translation2d.Cross(s, e) >= 0) ? 1 : -1);
-                Translation2d t = new Translation2d(Math.cos(startAngle + deltaAngle), Math.sin(startAngle + deltaAngle)).scale(1/curvature);
+                Double deltaAngle;
+                if(endAngle - startAngle <= Math.PI) {
+                    deltaAngle = (dist / length) * (endAngle - startAngle);
+                } else {
+                    deltaAngle = (dist / length) * (Math.PI * 2 - endAngle + startAngle);
+                }
+                Translation2d t = new Translation2d(Math.cos(deltaAngle + startAngle), Math.sin(deltaAngle + startAngle)).scale(1/curvature);
                 return center.translateBy(t);
             }
         }
@@ -213,7 +216,7 @@ public abstract class PathSegment {
         }    
     }
     
-    public static class Turn extends PathSegment {
+    static class Turn extends PathSegment {
         Translation2d center;
         double turnAmount;
         double turnSpeed;

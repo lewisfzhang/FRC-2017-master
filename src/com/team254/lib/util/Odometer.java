@@ -34,14 +34,14 @@ public class Odometer {
     public static Odometer getInstance(Drive d) {
         if (mOdometer == null)
             mOdometer = new Odometer();
+        mOdometer.mDrive = d;
         return mOdometer;
     }
 
     
     protected class Odometer_Loop implements Loop {
         public void onStart(double timestamp) {
-            //mDrive.zeroSensors();
-            mDrive = Drive.getInstance();
+            mDrive.zeroSensors();
             // ZERO THE NAVX SENSOR!!!
         }
 
