@@ -2,6 +2,7 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.loops.Looper;
+import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.vision.TargetInfo;
@@ -48,6 +49,8 @@ public class Robot extends IterativeRobot {
             CrashTracker.logRobotInit();
 
             mDrive.registerEnabledLoops(mEnabledLooper);
+            mEnabledLooper.register(VisionProcessor.getInstance());
+            mEnabledLooper.register(RobotStateEstimator.getInstance());
 
             mHTTPServer.startServer();
 

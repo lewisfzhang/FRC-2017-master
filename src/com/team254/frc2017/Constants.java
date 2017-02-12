@@ -16,6 +16,8 @@ import java.util.HashMap;
 public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
 
+    public static double kCenterOfTargetHeight = 100; // TODO: Fix
+
     public enum RobotName {
         COMP_BOT, PRAC_BOT, PROG_BOT
     }
@@ -25,10 +27,13 @@ public class Constants extends ConstantsBase {
     private static NetworkInterface kNetworkInfo;
 
     // ROBOT PHYSICAL CONSTANTS
-    public static double kTrackScrubFactor = 1.0; // FIXME placeholder
-    public static double kTrackEffectiveDiameterInches = 26.654;
+    // Wheels
     public static double kDriveWheelDiameterInches = 3.5;
-
+    public static double kTrackLengthInches = 8.265;
+    public static double kTrackWidthInches = 23.8;
+    public static double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches
+            + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
+    public static double kTrackScrubFactor = 0.5;
     public static double kCollisionThreshold = 0.5;
 
     // CONTROL LOOP GAINS
@@ -75,6 +80,22 @@ public class Constants extends ConstantsBase {
 
     // Phone
     public static int kAndroidAppTcpPort = 8254;
+
+    // Goal tracker constants
+    public static double kMaxGoalTrackAge = 0.3;
+    public static double kMaxTrackerDistance = 18.0;
+    public static double kCameraFrameRate = 30.0;
+    public static double kTrackReportComparatorStablityWeight = 1.0;
+    public static double kTrackReportComparatorAgeWeight = 1.0;
+
+    // Robot state
+    // Pose of the camera frame w.r.t. the robot frame
+    public static double kCameraXOffset = -6.454;
+    public static double kCameraYOffset = 0.0;
+    public static double kCameraZOffset = 19.75;
+    public static double kCameraPitchAngleDegrees = 35.75;
+    public static double kCameraYawAngleDegrees = -1.0;
+    public static double kCameraDeadband = 0.0;
 
     // Flywheel PID
     // TODO give these actual values

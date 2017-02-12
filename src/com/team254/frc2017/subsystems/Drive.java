@@ -248,7 +248,27 @@ public class Drive extends Subsystem {
 //            stop();
 //        }
 //    }
-    
+
+    public double getLeftDistanceInches() {
+        return rotationsToInches(mLeftMaster.getPosition());
+    }
+
+    public double getRightDistanceInches() {
+        return rotationsToInches(mRightMaster.getPosition());
+    }
+
+    public double getLeftVelocityInchesPerSec() {
+        return rpmToInchesPerSecond(mLeftMaster.getSpeed());
+    }
+
+    public double getRightVelocityInchesPerSec() {
+        return rpmToInchesPerSecond(mRightMaster.getSpeed());
+    }
+
+    public synchronized Rotation2d getGyroAngle() {
+        return Rotation2d.fromDegrees(mNavXBoard.getAngle());
+    }
+
     public double getLSpeed() {
         return rpmToInchesPerSecond(mLeftMaster.getSpeed());
     }
