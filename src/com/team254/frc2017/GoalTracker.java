@@ -103,9 +103,9 @@ public class GoalTracker {
     }
 
     public void update(double timestamp, List<Translation2d> field_to_goals) {
-        boolean hasUpdatedTrack = false;
         // Try to update existing tracks
         for (Translation2d target : field_to_goals) {
+            boolean hasUpdatedTrack = false;
             for (GoalTrack track : mCurrentTracks) {
                 if (!hasUpdatedTrack) {
                     if (track.tryUpdate(timestamp, target)) {
