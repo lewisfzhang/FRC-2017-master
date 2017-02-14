@@ -70,20 +70,22 @@ public class Drive extends Subsystem {
         // Start all Talons in open loop mode.
         mLeftMaster = new CANTalon(Constants.kLeftDriveMasterId);
         mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-
-        mLeftSlave = new CANTalon(Constants.kLeftDriveSlaveId);
-        mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
-        mLeftSlave.set(Constants.kLeftDriveMasterId);
+        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1);
         mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        mLeftMaster.reverseSensor(true);
         if (mLeftMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
                 != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
             DriverStation.reportError("Could not detect left encoder.", false);
         }
 
+        mLeftSlave = new CANTalon(Constants.kLeftDriveSlaveId);
+        mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+        mLeftSlave.set(Constants.kLeftDriveMasterId);
+
         mRightMaster = new CANTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1);
         mRightMaster.setInverted(true);
-        mRightMaster.reverseSensor(true);
         mRightMaster.reverseOutput(true);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         if (mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
@@ -94,7 +96,6 @@ public class Drive extends Subsystem {
         mRightSlave = new CANTalon(Constants.kRightDriverSlaveId);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mRightSlave.setInverted(true);
-        mRightSlave.reverseOutput(true);
         mRightSlave.set(Constants.kRightDriveMasterId);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
@@ -165,6 +166,8 @@ public class Drive extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
+        SmartDashboard.putNumber("left speed (rpm)", mLeftMaster.getSpeed());
+        SmartDashboard.putNumber("right speed (rpm)", mRightMaster.getSpeed());
     }
 
     @Override
