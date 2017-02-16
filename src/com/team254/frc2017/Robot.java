@@ -106,7 +106,8 @@ public class Robot extends IterativeRobot {
             // Start loopers
             mEnabledLooper.start();
 
-            mDrive.setVelocitySetpoint(0.0, 0.0);
+            mDrive.setOpenLoop(DriveSignal.NEUTRAL);
+            mDrive.setBrakeMode(false);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;

@@ -42,6 +42,7 @@ public class Drive extends Subsystem {
         @Override
         public void onStart(double timestamp) {
             setOpenLoop(DriveSignal.NEUTRAL);
+            setBrakeMode(false);
         }
 
         @Override
@@ -133,7 +134,6 @@ public class Drive extends Subsystem {
         }
         mRightMaster.set(signal.getRight());
         mLeftMaster.set(signal.getLeft());
-        setBrakeMode(false);
     }
 
     public boolean isHighGear() {
