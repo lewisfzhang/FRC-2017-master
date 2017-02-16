@@ -73,9 +73,10 @@ public class Drive extends Subsystem {
         mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1);
         mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mLeftMaster.reverseSensor(true);
-        if (mLeftMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
-                != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
-            DriverStation.reportError("Could not detect left encoder.", false);
+        CANTalon.FeedbackDeviceStatus leftSensorPresent =
+                mLeftMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        if (leftSensorPresent != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
+            DriverStation.reportError("Could not detect left encoder: " + leftSensorPresent, false);
         }
 
         mLeftSlave = new CANTalon(Constants.kLeftDriveSlaveId);
@@ -88,9 +89,10 @@ public class Drive extends Subsystem {
         mRightMaster.setInverted(true);
         mRightMaster.reverseOutput(true);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
-        if (mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
-                != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
-            DriverStation.reportError("Could not detect right encoder.", false);
+        CANTalon.FeedbackDeviceStatus rightSensorPresent =
+                mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        if (rightSensorPresent != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
+            DriverStation.reportError("Could not detect right encoder: " + rightSensorPresent, false);
         }
 
         mRightSlave = new CANTalon(Constants.kRightDriverSlaveId);
