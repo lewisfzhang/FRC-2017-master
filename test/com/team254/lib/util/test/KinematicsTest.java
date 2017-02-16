@@ -1,10 +1,10 @@
 package com.team254.lib.util.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.team254.lib.util.Kinematics;
+import com.team254.frc2017.Kinematics;
 import com.team254.lib.util.RigidTransform2d;
 
 public class KinematicsTest {
