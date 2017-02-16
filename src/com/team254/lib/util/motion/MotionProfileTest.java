@@ -46,7 +46,7 @@ public class MotionProfileTest {
         MotionProfile a = new MotionProfile();
         assertTrue(a.isEmpty());
         assertTrue(a.isValid());
-        assertThat(a.length(), is(equalTo(Double.NaN)));
+        assertThat(a.length(), is(equalTo(0.0)));
         assertThat(a.duration(), is(equalTo(Double.NaN)));
 
         a = new MotionProfile(segments);
