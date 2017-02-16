@@ -19,6 +19,7 @@ public abstract class PathSegment {
         private Translation2d start;
         private Translation2d end;
         private Translation2d center;
+        private boolean extrapolateLookahead;
         private double curvature;
         private double maxSpeed;
         private double startAngle;
@@ -40,6 +41,7 @@ public abstract class PathSegment {
             this.maxSpeed = maxSpeed;
             this.startAngle = 0;
             this.endAngle = 0;
+            extrapolateLookahead = false;
         }
         
         /**
@@ -63,6 +65,7 @@ public abstract class PathSegment {
             this.maxSpeed = maxSpeed;
             this.startAngle = startAngle;
             this.endAngle = endAngle;
+            extrapolateLookahead = false;
         }
         
         /**
@@ -80,6 +83,7 @@ public abstract class PathSegment {
             this.end = new Translation2d(x2, y2);
             this.center = new Translation2d(cx, cy);
             this.maxSpeed = maxSpeed;
+            extrapolateLookahead = false;
             calcArc();
         }
         
@@ -134,6 +138,15 @@ public abstract class PathSegment {
         }
         
         /**
+         * Set whether or not to extrapolate the lookahead point.  Should only be true
+         * for the last segment in the path
+         * @param val 
+         */
+        public void extrapolateLookahead(boolean val) {
+            extrapolateLookahead = val;
+        }
+        
+        /**
          * Gets the point on the segment closest to the robot
          * @param position the current position of the robot
          * @return the point on the segment closest to the robot
@@ -175,17 +188,32 @@ public abstract class PathSegment {
          */
         public Translation2d getLookAheadPoint(double dist) {
             double length = getLength();
-            if(dist > length)
-                dist = length;
-            if(curvature == 0) {
-                Translation2d delta = new Translation2d(start, end);
-                return start.translateBy( delta.scale(dist / length));
+            if(extrapolateLookahead) {
+                if(curvature == 0) {
+                    Translation2d delta = new Translation2d(start, end);
+                    return start.translateBy( delta.scale(dist / length));
+                } else {
+                    Translation2d s = new Translation2d(center, start);
+                    Translation2d e = new Translation2d(center, end);
+                    double deltaAngle = Translation2d.GetAngle(s, e) * ((Translation2d.Cross(s, e) >= 0) ? 1 : -1);
+                    deltaAngle *= dist / length;
+                    Translation2d t = new Translation2d(Math.cos(startAngle + deltaAngle), Math.sin(startAngle + deltaAngle)).scale(1/curvature);
+                    return center.translateBy(t);
+                }
             } else {
-                Translation2d s = new Translation2d(center, start);
-                Translation2d e = new Translation2d(center, end);
-                double deltaAngle = Translation2d.GetAngle(s, e) * ((Translation2d.Cross(s, e) >= 0) ? 1 : -1);
-                Translation2d t = new Translation2d(Math.cos(startAngle + deltaAngle), Math.sin(startAngle + deltaAngle)).scale(1/curvature);
-                return center.translateBy(t);
+                if(dist > length)
+                    dist = length;
+                if(curvature == 0) {
+                    Translation2d delta = new Translation2d(start, end);
+                    return start.translateBy( delta.scale(dist / length));
+                } else {
+                    Translation2d s = new Translation2d(center, start);
+                    Translation2d e = new Translation2d(center, end);
+                    double deltaAngle = Translation2d.GetAngle(s, e) * ((Translation2d.Cross(s, e) >= 0) ? 1 : -1);
+                    deltaAngle *= dist / length;
+                    Translation2d t = new Translation2d(Math.cos(startAngle + deltaAngle), Math.sin(startAngle + deltaAngle)).scale(1/curvature);
+                    return center.translateBy(t);
+                }
             }
         }
         

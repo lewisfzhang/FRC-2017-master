@@ -63,11 +63,11 @@ public class Odometer {
         double now = Timer.getFPGATimestamp();
         double delta_t = now - timestamp;
         timestamp = now;
-        double rSpeed = mDrive.getRSpeed();
-        double lSpeed = mDrive.getLSpeed();
+        double rSpeed = mDrive.getRightVelocityInchesPerSec();
+        double lSpeed = mDrive.getLeftVelocityInchesPerSec();
         double dist = delta_t * (lSpeed + rSpeed) / 2;
         
-        mHeading = mDrive.getAngle();
+        mHeading = mDrive.getGyroAngle();
         mX += mHeading.cos() * dist;
         mY += mHeading.sin() * dist;
     }

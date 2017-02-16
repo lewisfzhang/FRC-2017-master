@@ -144,6 +144,41 @@ public class AdaptivePurePursuitControllerTest {
         assertEquals(50, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
     }
     
+//    @Test
+//    public void testPath4() {
+//        //Test a path with some sharper turns
+//
+//        Path path = new Path();
+//        path.addSegment(new PathSegment.Translation(0,0,90,0,60));
+//        path.addSegment(new PathSegment.Translation(90,0,100,10,90,10,60));
+//        path.addSegment(new PathSegment.Translation(100,10,100,90,60));
+//        path.addSegment(new PathSegment.Translation(100,90,90,100,90,90,60));
+//        path.addSegment(new PathSegment.Translation(90,100,10,100,60));
+//        path.addSegment(new PathSegment.Translation(10,100,0,90,10,90,60));
+//        path.addSegment(new PathSegment.Translation(0,90,0,0,60));
+//        
+//        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(path);
+//
+//        double dt = .01;
+//
+//        RigidTransform2d robot_pose = new RigidTransform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0));
+//        double t = 0;
+//        while (!controller.isFinished() && t < 100) {
+//            // Follow the path
+//            RigidTransform2d.Delta command = controller.update(robot_pose);
+//            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
+//                    Rotation2d.fromRadians(command.dtheta * dt)));
+//
+//            System.out.println(
+//                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
+//            t += dt;
+//        }
+//        System.out.println(robot_pose);
+//        assertTrue(controller.isFinished());
+//        assertEquals(0, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
+//        assertEquals(0, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
+//    }
+    
 //
 //    @Test
 //    public void testControllerReversed() {

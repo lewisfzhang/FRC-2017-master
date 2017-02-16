@@ -28,7 +28,7 @@ public class Constants extends ConstantsBase {
 
     // ROBOT PHYSICAL CONSTANTS
     // Wheels
-    public static double kDriveWheelDiameterInches = 3.5;
+    public static double kDriveWheelDiameterInches = 3.419; //calibrated on 2/15
     public static double kTrackLengthInches = 8.265;
     public static double kTrackWidthInches = 23.8;
     public static double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches
@@ -38,10 +38,10 @@ public class Constants extends ConstantsBase {
 
     // CONTROL LOOP GAINS
     // TODO add some!
-    public static double kDriveVelocityKp = 0.0;
+    public static double kDriveVelocityKp = 0.02;
     public static double kDriveVelocityKi = 0.0;
     public static double kDriveVelocityKd = 0.0;
-    public static double kDriveVelocityKf = 0.13;
+    public static double kDriveVelocityKf = 0.145;
     public static int kDriveVelocityIZone = 0;
     public static double kDriveVelocityRampRate = 0.0;
     public static int kDriveVelocityAllowableError = 0;
@@ -82,8 +82,8 @@ public class Constants extends ConstantsBase {
     //PATH FOLLOWING
     public static double kAutoLookAhead = 30.0; //inches
     public static double kSegmentCompletionTolerance = 2.0; //inches
-    public static double kMaxAccel = 80.0; //inches per second^2
-    public static double kMaxDecel = 20.0; //should be positive
+    public static double kMaxAccel = 25.0; //inches per second^2
+    public static double kMaxDecel = 25.0; //should be positive
     public static double kPathFollowingMaxVel = 10000; //inches per second
     public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file 
     public static double kMinSpeed = 30.0; //inches per second 

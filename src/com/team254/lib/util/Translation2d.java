@@ -84,6 +84,7 @@ public class Translation2d implements Interpolable<Translation2d> {
     public Translation2d inverse() {
         return new Translation2d(-x_, -y_);
     }
+    
 
     @Override
     public Translation2d interpolate(Translation2d other, double x) {

@@ -61,11 +61,10 @@ public class RobotState {
   private double differential_height_;
 
   private RobotState() {
-    reset(0, new RigidTransform2d(), new Rotation2d());
+    reset(0, new RigidTransform2d());
   }
 
-  public synchronized void reset(double start_time, RigidTransform2d initial_field_to_vehicle,
-                                 Rotation2d initial_turret_rotation) {
+  public synchronized void reset(double start_time, RigidTransform2d initial_field_to_vehicle) {
     field_to_vehicle_ = new InterpolatingTreeMap<>(kObservationBufferSize);
     field_to_vehicle_.put(new InterpolatingDouble(start_time), initial_field_to_vehicle);
     vehicle_velocity_ = new RigidTransform2d.Delta(0, 0, 0);

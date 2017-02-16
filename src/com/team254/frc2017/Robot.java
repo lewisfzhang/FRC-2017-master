@@ -11,7 +11,11 @@ import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
+import com.team254.lib.util.Odometer;
+import com.team254.lib.util.RigidTransform2d;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -23,6 +27,7 @@ public class Robot extends IterativeRobot {
     // Subsystems
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
+    private RobotState mRobotState = RobotState.getInstance();
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -36,6 +41,11 @@ public class Robot extends IterativeRobot {
 
     public Robot() {
         CrashTracker.logRobotConstruction();
+    }
+    
+    public void zeroAllSensors() {
+        mDrive.zeroSensors();
+        mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
     }
 
     /**
@@ -52,7 +62,6 @@ public class Robot extends IterativeRobot {
 
             mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
-
             mHTTPServer.startServer();
 
             // initialize robot constants
@@ -65,6 +74,7 @@ public class Robot extends IterativeRobot {
             CrashTracker.logThrowableCrash(t);
             throw t;
         }
+        zeroAllSensors();
     }
 
     /**
@@ -85,6 +95,8 @@ public class Robot extends IterativeRobot {
             CrashTracker.logThrowableCrash(t);
             throw t;
         }
+        zeroAllSensors();
+        mDrive.setVelocitySetpoint(100, 100);
     }
 
     /**
@@ -92,11 +104,7 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        try {
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
+        mDrive.outputToSmartDashboard(); 
     }
 
     @Override
@@ -106,7 +114,6 @@ public class Robot extends IterativeRobot {
 
             // Start loopers
             mEnabledLooper.start();
-
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
             mDrive.setBrakeMode(false);
         } catch (Throwable t) {
@@ -121,16 +128,13 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-        try {
-            double throttle = mControlBoard.getThrottle();
-            double turn = mControlBoard.getTurn();
-
-            mDrive.setHighGear(!mControlBoard.getLowGear());
-            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
+//            double throttle = mControlBoard.getThrottle();
+//            double turn = mControlBoard.getTurn();
+//
+//            mDrive.setHighGear(!mControlBoard.getLowGear());
+        mDrive.outputToSmartDashboard(); 
+        RobotState.getInstance().outputToSmartDashboard();
+        //mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
     }
 
     @Override
@@ -149,12 +153,8 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void disabledPeriodic() {
-        try {
-
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
+        mRobotState.outputToSmartDashboard();
+        mDrive.outputToSmartDashboard();
     }
 
     /**

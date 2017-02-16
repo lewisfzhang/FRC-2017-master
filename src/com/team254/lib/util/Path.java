@@ -29,6 +29,8 @@ public class Path {
      public Path(String filepath) {
          segments = new ArrayList<PathSegment>();
          loadFile(filepath);
+         ((PathSegment.Translation) segments.get(segments.size() - 1)).extrapolateLookahead(true);
+         
          //Odometer.getInstance().setPose(getStartPose());
      }
      

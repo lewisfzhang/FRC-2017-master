@@ -2,6 +2,8 @@ package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
+import com.team254.frc2017.Kinematics;
+import com.team254.frc2017.RobotState;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.*;
@@ -25,12 +27,12 @@ public class Drive extends Subsystem {
     // The robot drivetrain's various states.
     public enum DriveControlState {
         OPEN_LOOP,
-        VELOCITY_SETPOINT
+        VELOCITY_SETPOINT,
+        PATH_FOLLOWING
     }
 
     private final CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
     private final Solenoid mShifter;
-    private final Odometer mOdometer;
     private final AHRS mNavXBoard;
     private final AdaptivePurePursuitController mPathController;
     private DriveControlState mDriveControlState;
@@ -43,6 +45,9 @@ public class Drive extends Subsystem {
         public void onStart(double timestamp) {
             setOpenLoop(DriveSignal.NEUTRAL);
             setBrakeMode(false);
+            setVelocitySetpoint(0, 0);
+            mNavXBoard.reset();
+            //mDriveControlState = DriveControlState.PATH_FOLLOWING; //testing
         }
 
         @Override
@@ -52,7 +57,13 @@ public class Drive extends Subsystem {
                     case OPEN_LOOP:
                         return;
                     case VELOCITY_SETPOINT:
-                        //Talons handle this
+                        return;
+                    case PATH_FOLLOWING:
+                        if(!mPathController.isFinished()) {
+                            updatePathFollower();
+                        } else {
+                            setVelocitySetpoint(0.0, 0.0);
+                        }
                         return;
                     default:
                         System.out.println("Unexpected drive control state: " + mDriveControlState);
@@ -71,7 +82,7 @@ public class Drive extends Subsystem {
         // Start all Talons in open loop mode.
         mLeftMaster = new CANTalon(Constants.kLeftDriveMasterId);
         mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1);
+        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
         mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mLeftMaster.reverseSensor(true);
         CANTalon.FeedbackDeviceStatus leftSensorPresent =
@@ -86,9 +97,8 @@ public class Drive extends Subsystem {
 
         mRightMaster = new CANTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1);
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
         mRightMaster.setInverted(true);
-        mRightMaster.reverseOutput(true);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         CANTalon.FeedbackDeviceStatus rightSensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -116,7 +126,6 @@ public class Drive extends Subsystem {
         //Path Following stuff
         mNavXBoard = new AHRS(SPI.Port.kMXP);
         mPathController = new AdaptivePurePursuitController(Constants.kAutoFilePath);
-        mOdometer = Odometer.getInstance(mInstance);
         
         // Force a CAN message across.
         mIsBrakeMode = true;
@@ -168,13 +177,23 @@ public class Drive extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("left speed (rpm)", mLeftMaster.getSpeed());
-        SmartDashboard.putNumber("right speed (rpm)", mRightMaster.getSpeed());
+        SmartDashboard.putNumber("left speed (ips)", getLeftVelocityInchesPerSec());
+        SmartDashboard.putNumber("right speed (ips)", getRightVelocityInchesPerSec());
+//        SmartDashboard.putNumber("left position (rotations)", mLeftMaster.getPosition());
+//        SmartDashboard.putNumber("right position (rotations)", mRightMaster.getPosition());
+    }
+    
+    public synchronized void resetEncoders() {
+        mLeftMaster.setPosition(0);
+        mRightMaster.setPosition(0);
+        mLeftSlave.setPosition(0);
+        mRightSlave.setPosition(0);
     }
 
     @Override
     public void zeroSensors() {
-
+        resetEncoders();
+        mNavXBoard.reset();
     }
 
     /**
@@ -193,9 +212,11 @@ public class Drive extends Subsystem {
             mLeftMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
             mLeftMaster.setProfile(kVelocityControlSlot);
             mLeftMaster.setAllowableClosedLoopErr(Constants.kDriveVelocityAllowableError);
+            mLeftMaster.setNominalClosedLoopVoltage(12.0);
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
             mRightMaster.setProfile(kVelocityControlSlot);
             mRightMaster.setAllowableClosedLoopErr(Constants.kDriveVelocityAllowableError);
+            mRightMaster.setNominalClosedLoopVoltage(12.0);
             setHighGear(true);
             setBrakeMode(true);
         }
@@ -207,7 +228,8 @@ public class Drive extends Subsystem {
      * @param right_inches_per_sec
      */
     private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
-        if (mDriveControlState == DriveControlState.VELOCITY_SETPOINT) {
+        if (mDriveControlState == DriveControlState.VELOCITY_SETPOINT ||
+                mDriveControlState == DriveControlState.PATH_FOLLOWING) {
             mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec));
             mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec));
         } else {
@@ -232,27 +254,6 @@ public class Drive extends Subsystem {
     private static double inchesPerSecondToRpm(double inches_per_second) {
         return inchesToRotations(inches_per_second) * 60;
     }
-    
-    //call this function to make the robot path follow
-//    private void updatePathFollower() {
-//        RigidTransform2d robot_pose = mOdometer.getPose();
-//        RigidTransform2d.Delta command = mPathController.update(robot_pose);
-//        if(!mPathController.isFinished()) {
-//            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
-//    
-//            // Scale the command to respect the max velocity limits
-//            double max_vel = 0.0;
-//            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
-//            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
-//            if (max_vel > Constants.kPathFollowingMaxVel) {
-//                double scaling = Constants.kPathFollowingMaxVel / max_vel;
-//                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
-//            }
-//            updateVelocitySetpoint(setpoint.left, setpoint.right);
-//        } else {
-//            stop();
-//        }
-//    }
 
     public double getLeftDistanceInches() {
         return rotationsToInches(mLeftMaster.getPosition());
@@ -271,18 +272,26 @@ public class Drive extends Subsystem {
     }
 
     public synchronized Rotation2d getGyroAngle() {
-        return Rotation2d.fromDegrees(mNavXBoard.getAngle());
+        return Rotation2d.fromDegrees(-mNavXBoard.getAngle());
     }
 
-    public double getLSpeed() {
-        return rpmToInchesPerSecond(mLeftMaster.getSpeed());
-    }
+    private void updatePathFollower() {
+        RigidTransform2d robot_pose = RobotState.getInstance().getLatestFieldToVehicle().getValue();
+        RigidTransform2d.Delta command = mPathController.update(robot_pose);
+        if(!mPathController.isFinished()) {
+            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
     
-    public double getRSpeed() {
-        return rpmToInchesPerSecond(mRightMaster.getSpeed());
-    }
-    
-    public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(-mNavXBoard.getFusedHeading());
+            // Scale the command to respect the max velocity limits
+            double max_vel = 0.0;
+            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
+            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
+            if (max_vel > Constants.kPathFollowingMaxVel) {
+                double scaling = Constants.kPathFollowingMaxVel / max_vel;
+                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
+            }
+            updateVelocitySetpoint(setpoint.left, setpoint.right);
+        } else {
+            stop();
+        }
     }
 }

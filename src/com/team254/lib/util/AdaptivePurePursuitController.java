@@ -1,8 +1,5 @@
 package com.team254.lib.util;
 
-import java.util.Optional;
-import java.util.Set;
-
 import com.team254.frc2017.Constants;
 
 /**
@@ -22,7 +19,6 @@ public class AdaptivePurePursuitController {
     SpeedController mSpeedController;
     boolean mReversed;
     String filepath;
-    int counter = 0;
     
     public static void main(String[] args) {
         RigidTransform2d pose = new RigidTransform2d(new Translation2d(0,0), Rotation2d.fromDegrees(0));
@@ -55,16 +51,10 @@ public class AdaptivePurePursuitController {
         }
 
         Translation2d lookaheadPoint = mPath.getTargetPoint(pose.getTranslation());
-        if(counter == 60) {
-            System.out.println(lookaheadPoint);
-            counter = 0; 
-        }
-        counter++;
         if(isFinished())
             return new RigidTransform2d.Delta(0, 0, 0);
         
         double speed = mSpeedController.getSpeed(pose.getTranslation(), getLength(pose, lookaheadPoint));
-        System.out.println(speed);
         if(speed < Constants.kMinSpeed)     
             speed = Constants.kMinSpeed;
         
