@@ -5,12 +5,9 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
 import com.team254.frc2017.subsystems.Drive;
-import com.team254.frc2017.vision.TargetInfo;
+import com.team254.frc2017.subsystems.Superstructure;
 import com.team254.frc2017.vision.VisionServer;
-import com.team254.frc2017.vision.VisionUpdate;
-import com.team254.frc2017.vision.VisionUpdateReceiver;
 import com.team254.frc2017.web.WebServer;
-
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
@@ -25,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
     // Subsystems
     private Drive mDrive = Drive.getInstance();
+    private Superstructure mSuperstructure = Superstructure.getInstance();
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -49,6 +47,8 @@ public class Robot extends IterativeRobot {
             CrashTracker.logRobotInit();
 
             mDrive.registerEnabledLoops(mEnabledLooper);
+
+
             mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
 

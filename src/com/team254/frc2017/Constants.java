@@ -55,11 +55,30 @@ public class Constants extends ConstantsBase {
     // TALONS
     // (Note that if multiple talons are dedicated to a mechanism, any sensors
     // are attached to the master)
+    // Drive
     public static final int kLeftDriveMasterId = 12;
     public static final int kLeftDriveSlaveId = 11;
     public static final int kRightDriveMasterId = 3;
     public static final int kRightDriverSlaveId = 4;
-    
+
+    //Feeder
+    public static final int kFeederMasterId = 7;
+    public static final int kFeederSlaveId = 8;
+
+    // Intake
+    public static final int kIntakeMasterId = 5;
+    public static final int kIntakeSlaveId = 10;
+
+    // Hopper / Floor
+    public static final int kHopperMasterId = 6;
+    public static final int kHopperSlaveId = 9;
+
+    // Shooter
+    public static final int kLeftShooterMasterId = 13;
+    public static final int kLeftShooterSlaveId = 14;
+    public static final int kRightShooterMasterId = 1;
+    public static final int kRightShooterSlaveId = 2;
+
     //PATH FOLLOWING
     public static double kAutoLookAhead = 30.0; //inches
     public static double kSegmentCompletionTolerance = 2.0; //inches
