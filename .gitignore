@@ -7,6 +7,6 @@ bin/
 dist/
 sysProps.xml
 .DS_Store
+.classpath
 *.out
 *.dSYM/
-.classpath
