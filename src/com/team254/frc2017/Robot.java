@@ -150,6 +150,14 @@ public class Robot extends IterativeRobot {
                 //mSuperstructure.setWantFeedIdle();
             }
 
+            if (mControlBoard.getSpinShooterButton()) {
+                mSuperstructure.setShooterOpenLoop(7.0);
+            } else if (mControlBoard.getShootButton()) {
+                mSuperstructure.setClosedLoopRpm(3000.0);
+            } else {
+                mSuperstructure.setShooterOpenLoop(0);
+            }
+
             allPeriodic();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);

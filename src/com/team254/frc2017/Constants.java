@@ -37,6 +37,7 @@ public class Constants extends ConstantsBase {
     public static double kCollisionThreshold = 0.5;
 
     // CONTROL LOOP GAINS
+    // DRIVE GAINS
     // TODO add some!
     public static double kDriveVelocityKp = 0.225;
     public static double kDriveVelocityKi = 0.0;
@@ -46,11 +47,21 @@ public class Constants extends ConstantsBase {
     public static double kDriveVelocityRampRate = 0.0;
     public static int kDriveVelocityAllowableError = 0;
 
+
+    // SHOOTER GAINS
+    // TODO: set some gains
+    public static double kShooterKI = 0.0;
+    public static double kShooterKF = 0.0;
+    public static double kShooterBangLowThresholdFraction = 0.5;
+    public static double kShooterSaturationDelay = 0.1;
+    public static double kShooterMaxOutput = 10.0;
+    public static double kShooterMinOutput = -10.0;
+    public static double kShooterSaturationOutput = 10.0;
+
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
     // https://docs.google.com/spreadsheets/d/12_Mrd6xKmxCjKtsWNpWZDqT7ukrB9-1KKFCuRrO4aPM/edit#gid=0
-
 
     // TALONS
     // (Note that if multiple talons are dedicated to a mechanism, any sensors

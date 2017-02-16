@@ -18,6 +18,13 @@ public class Superstructure extends Subsystem {
     private final Hopper mHopper = Hopper.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
 
+    public synchronized void setShooterOpenLoop(double voltage) {
+        mShooter.setOpenLoop(voltage);
+    }
+
+    public synchronized void setClosedLoopRpm(double setpointRpm) {
+        mShooter.setClosedLoopRpm(setpointRpm);
+    }
 
     @Override
     public void outputToSmartDashboard() {
