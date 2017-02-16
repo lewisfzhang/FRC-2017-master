@@ -3,6 +3,9 @@ package com.team254.lib.util.motion;
 import static com.team254.lib.util.Util.epsilonEquals;
 import static com.team254.lib.util.motion.MotionUtil.*;
 
+/**
+ * A MotionSegment is a movement from a start MotionState to an end MotionState with a constant acceleration.
+ */
 public class MotionSegment {
     protected MotionState mStart;
     protected MotionState mEnd;

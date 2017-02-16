@@ -116,16 +116,69 @@ public class MotionProfileGeneratorTest {
 
     @Test
     public void testStationaryToMoving() {
-        // TODO
+        // Accelerate and cruise.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(100.0, 10.0),
+                new MotionState(0.0, 0.0, 0.0, 0.0), 10.5, 100.0);
+
+        // Trapezoidal move.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(100.0, 5.0),
+                new MotionState(0.0, 0.0, 0.0, 0.0), 10.625, 100.0);
+
+        // Pure acceleration.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(1.0, 10.0),
+                new MotionState(0.0, 0.0, 0.0, 0.0), Math.sqrt(1.0 / 5.0), 1.0);
+
+        // Triangle move.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(8.75, 5.0),
+                new MotionState(0.0, 0.0, 0.0, 0.0), 1.5, 8.75);
     }
 
     @Test
     public void testMovingTowardsToMoving() {
-        // TODO
+        // Moving towards goal, pure acceleration.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(3.75, 10.0),
+                new MotionState(0.0, 0.0, 5.0, 0.0), 0.5, 3.75);
+        // Moving towards goal, pure deceleration.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(10.0, 5.0),
+                new MotionState(0.0, 0.0, 10.0, 0.0), 1.125, 10.0);
+        // Moving towards goal, cruise.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(100.0, 10.0),
+                new MotionState(0.0, 0.0, 10.0, 0.0), 10.0, 100.0);
+        // Moving towards goal, accelerate and cruise.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(100.0, 10.0),
+                new MotionState(0.0, 0.0, 5.0, 0.0), 10.125, 100.0);
+        // Moving towards goal, trapezoidal move.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(100.0, 5.0),
+                new MotionState(0.0, 0.0, 5.0, 0.0), 10.25, 100.0);
+        // Moving towards goal, triangle move.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(1.0, 10.0),
+                new MotionState(0.0, 0.0, 4.0, 0.0), 0.2, 1.0);
+        // Moving towards goal, cruise and decelerate.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(10.0, 5.0),
+                new MotionState(0.0, 0.0, 10.0, 0.0), 1.125, 10.0);
+        // Moving towards goal, violate max vel.
+        testProfile(new MotionProfileConstraints(10.0, 10.0),
+                new MotionProfileGoal(1.0, 1.0, CompletionBehavior.VIOLATE_MAX_ABS_VEL),
+                new MotionState(0.0, 0.0, 10.0, 0.0), (10.0 - Math.sqrt(80.0)) / 10.0, 1.0);
+        // Moving towards goal, violate max accel.
+        testProfile(new MotionProfileConstraints(10.0, 10.0),
+                new MotionProfileGoal(1.0, 2.0, CompletionBehavior.VIOLATE_MAX_ACCEL),
+                new MotionState(0.0, 0.0, 10.0, 0.0), 1.0 / 6.0, 1.0);
     }
 
     @Test
     public void testMovingAwayToMoving() {
-        // TODO
+        // Moving away from goal, stop and accelerate.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(1.0, 10.0),
+                new MotionState(0.0, 0.0, -4.0, 0.0), 1.0, 2.6);
+        // Moving away from goal, stop, accelerate, and cruise.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(100.0, 10.0),
+                new MotionState(0.0, 0.0, -10.0, 0.0), 12.0, 110.0);
+        // Moving away from goal, stop and trapezoid move.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(100.0, 5.0),
+                new MotionState(0.0, 0.0, -10.0, 0.0), 12.125, 110.0);
+        // Moving away from goal, stop and triangle move.
+        testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(8.75, 5.0),
+                new MotionState(0.0, 5.0, -10.0, 0.0), 2.5, 13.75);
     }
 }

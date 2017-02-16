@@ -2,6 +2,12 @@ package com.team254.lib.util.motion;
 
 import static com.team254.lib.util.Util.epsilonEquals;
 
+/**
+ * A MotionProfileGoal defines a desired position and maximum velocity (at this position), along with the behavior that
+ * should be used to determine if we are at the goal and what to do if it is infeasible to reach the goal within the
+ * desired velocity bounds.
+ *
+ */
 public class MotionProfileGoal {
     /**
      * A goal consists of a desired position and specified maximum velocity magnitude. But what should we do if we would
@@ -73,6 +79,9 @@ public class MotionProfileGoal {
         this(other.pos, other.max_abs_vel, other.completion_behavior, other.pos_tolerance, other.vel_tolerance);
     }
 
+    /**
+     * @return A flipped MotionProfileGoal (where the position is negated, but all other attributes remain the same).
+     */
     public MotionProfileGoal flipped() {
         return new MotionProfileGoal(-pos, max_abs_vel, completion_behavior, pos_tolerance, vel_tolerance);
     }
@@ -105,6 +114,9 @@ public class MotionProfileGoal {
         return epsilonEquals(pos, this.pos, pos_tolerance);
     }
 
+    /**
+     * This method makes sure that the completion behavior is compatible with the max goal velocity.
+     */
     protected void sanityCheck() {
         if (max_abs_vel > vel_tolerance && completion_behavior == CompletionBehavior.OVERSHOOT) {
             completion_behavior = CompletionBehavior.VIOLATE_MAX_ACCEL;

@@ -2,6 +2,10 @@ package com.team254.lib.util.motion;
 
 import com.team254.lib.util.motion.MotionProfileGoal.CompletionBehavior;
 
+/**
+ * A MotionProfileGenerator generates minimum-time MotionProfiles to travel from a given MotionState to a given
+ * MotionProfileGoal while obeying a set of MotionProfileConstraints.
+ */
 public class MotionProfileGenerator {
     // Static class.
     private MotionProfileGenerator() {
@@ -17,6 +21,17 @@ public class MotionProfileGenerator {
         return profile;
     }
 
+    /**
+     * Generate a motion profile.
+     * 
+     * @param constraints
+     *            The constraints to use.
+     * @param goal_state
+     *            The goal to use.
+     * @param prev_state
+     *            The initial state to use.
+     * @return A motion profile from prev_state to goal_state that satisfies constraints.
+     */
     public static MotionProfile generateProfile(MotionProfileConstraints constraints, MotionProfileGoal goal_state,
             MotionState prev_state) {
         double delta_pos = goal_state.pos() - prev_state.pos();
