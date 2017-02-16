@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.team254.lib.util.motion.MotionProfileGoal.CompletionBehavior;
 import static com.team254.lib.util.motion.MotionUtil.*;
-import static com.team254.lib.util.Util.*;
+import static com.team254.lib.util.test.TestUtil.*;
 
 public class MotionProfileGeneratorTest {
 
