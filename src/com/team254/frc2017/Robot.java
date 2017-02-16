@@ -104,7 +104,7 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        mDrive.outputToSmartDashboard(); 
+        allPeriodic();
     }
 
     @Override
@@ -147,6 +147,8 @@ public class Robot extends IterativeRobot {
             } else {
                 mSuperstructure.setWantFeedIdle();
             }
+
+            allPeriodic();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -169,8 +171,7 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void disabledPeriodic() {
-        mRobotState.outputToSmartDashboard();
-        mDrive.outputToSmartDashboard();
+        allPeriodic();
     }
 
     /**
@@ -178,5 +179,10 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void testPeriodic() {
+    }
+
+    public void allPeriodic() {
+        mRobotState.outputToSmartDashboard();
+        mDrive.outputToSmartDashboard();
     }
 }
