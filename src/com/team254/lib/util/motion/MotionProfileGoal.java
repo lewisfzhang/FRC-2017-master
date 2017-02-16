@@ -128,4 +128,15 @@ public class MotionProfileGoal {
         return "pos: " + pos + " (+/- " + pos_tolerance + "), max_abs_vel: " + max_abs_vel + " (+/- " + vel_tolerance
                 + "), completion behavior: " + completion_behavior.name();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MotionProfileGoal)) {
+            return false;
+        }
+        final MotionProfileGoal other = (MotionProfileGoal) obj;
+        return (other.completion_behavior() == completion_behavior()) && (other.pos() == pos())
+                && (other.max_abs_vel() == max_abs_vel()) && (other.pos_tolerance() == pos_tolerance())
+                && (other.vel_tolerance() == vel_tolerance());
+    }
 }

@@ -31,7 +31,8 @@ public class MotionSegment {
                     "Segment acceleration not constant! Start acc: " + start().acc() + ", End acc: " + end().acc());
             return false;
         }
-        if (Math.signum(start().vel()) * Math.signum(end().vel()) < 0.0) {
+        if (Math.signum(start().vel()) * Math.signum(end().vel()) < 0.0 && !epsilonEquals(start().vel(), 0.0, kEpsilon)
+                && !epsilonEquals(end().vel(), 0.0, kEpsilon)) {
             // Velocity direction reverses within the segment.
             System.err.println("Segment velocity reverses! Start vel: " + start().vel() + ", End vel: " + end().vel());
             return false;

@@ -25,4 +25,13 @@ public class MotionProfileConstraints {
     public double max_abs_acc() {
         return max_abs_acc;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MotionProfileConstraints)) {
+            return false;
+        }
+        final MotionProfileConstraints other = (MotionProfileConstraints) obj;
+        return (other.max_abs_acc() == max_abs_acc()) && (other.max_abs_vel() == max_abs_vel());
+    }
 }

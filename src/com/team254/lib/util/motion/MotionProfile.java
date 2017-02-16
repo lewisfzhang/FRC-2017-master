@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.team254.lib.util.motion.MotionState;
+import static com.team254.lib.util.motion.MotionUtil.*;
 
 /**
  * A motion profile specifies a 1D time-parameterized trajectory. The trajectory is composed of successively coincident
@@ -73,6 +74,12 @@ public class MotionProfile {
      * @return Empty if the time is outside the time bounds of the profile, or the resulting MotionState otherwise.
      */
     public Optional<MotionState> stateByTime(double t) {
+        if (t < startTime() && t + kEpsilon >= startTime()) {
+            return Optional.of(startState());
+        }
+        if (t > endTime() && t - kEpsilon <= endTime()) {
+            return Optional.of(endState());
+        }
         for (MotionSegment s : mSegments) {
             if (s.start().t() <= t && s.end().t() >= t) {
                 return Optional.of(s.start().extrapolate(t));
