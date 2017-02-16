@@ -17,3 +17,5 @@ FILES_TO_COPY="\
 scp $FILES_TO_COPY admin@$1:~/
 
 ssh admin@$1 "./RIOdroid.roborio.sh"
+
+echo "*** adb installed. Please reboot roborio before connecting phone. ***"
