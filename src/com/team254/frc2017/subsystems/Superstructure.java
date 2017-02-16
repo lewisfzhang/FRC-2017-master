@@ -4,9 +4,12 @@ import com.team254.frc2017.loops.Looper;
 
 public class Superstructure extends Subsystem {
 
-    static Superstructure mInstance = new Superstructure();
+    static Superstructure mInstance = null;
 
     public static Superstructure getInstance() {
+        if (mInstance == null) {
+            mInstance = new Superstructure();
+        }
         return mInstance;
     }
 

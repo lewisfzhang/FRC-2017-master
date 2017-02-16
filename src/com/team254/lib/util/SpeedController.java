@@ -8,32 +8,20 @@ public class SpeedController {
     public SpeedController(Path path) {
         mPath = path;
     }
-    
+
     public double getSpeed(Translation2d robotPos, double length) {
-        double startSpd = mPath.getStartSpeed();
-        double endSpd = mPath.getEndSpeed();
-        double maxSpd = mPath.getMaxSpeed();
-        length = mPath.getSegmentLength();
-        double dist = length - mPath.getSegmentRemainingDist(robotPos);
-        System.out.println(length);
-        System.out.println(dist);
-        if(Double.isNaN(length))
-            System.exit(1);
-        
-        if(maxSpd < endSpd && maxSpd < startSpd) {
-            return maxSpd;
-        }
-        if(maxSpd > startSpd && maxSpd < endSpd) {
-            return Math.min(Math.sqrt(2 * Constants.kMaxAccel * dist + startSpd * startSpd), maxSpd);
-        }
-        if(maxSpd > endSpd && maxSpd < startSpd) {
-            return Math.min(Math.sqrt(2 * Constants.kMaxDecel * (length - dist) + endSpd * endSpd), maxSpd);
-        }
-        double intersection = ( endSpd * endSpd - startSpd * startSpd - 2 * Constants.kMaxDecel * length ) / (2 * Constants.kMaxAccel - 2 * Constants.kMaxDecel);
-        if(dist <= intersection)
-            return Math.min(Math.sqrt(2 * Constants.kMaxAccel * dist + startSpd * startSpd), maxSpd);
-        else
-            return Math.min(Math.sqrt(2 * Constants.kMaxDecel * (length - dist) + endSpd * endSpd), maxSpd);
+        double startSpd = mPath.getStartSpeed(); // 0
+        double endSpd = mPath.getEndSpeed(); // 0
+        double maxSpd = mPath.getMaxSpeed(); // 50
+
+        length = mPath.getSegmentLength(); // 100
+        double remainingDist = mPath.getSegmentRemainingDist(robotPos);
+        double travelledDist = length - remainingDist;
+
+        double accelSegmentSpeed = 0.5 * (startSpd + Math.sqrt(startSpd * startSpd + 2 * Constants.kMaxAccel * travelledDist));
+        double deccelSegmentSpeed = 0.5 * (endSpd + Math.sqrt(endSpd * endSpd + 2 * Constants.kMaxDecel * remainingDist));
+
+        return Math.min(accelSegmentSpeed, Math.min(deccelSegmentSpeed, maxSpd));
     }
     
 }

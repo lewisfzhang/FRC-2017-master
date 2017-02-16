@@ -7,10 +7,14 @@ import com.team254.frc2017.loops.Looper;
 
 public class Feeder extends Subsystem {
 
-    private static Feeder sInstance = new Feeder();
+    private static Feeder sInstance = null;
     public static Feeder getInstance() {
+        if (sInstance == null) {
+            sInstance = new Feeder();
+        }
         return sInstance;
     }
+
 
     private final CANTalon mMasterTalon, mSlaveTalon;
 

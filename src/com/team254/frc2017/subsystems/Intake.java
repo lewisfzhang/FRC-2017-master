@@ -5,14 +5,23 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Looper;
 
 public class Intake extends Subsystem {
-    private static Intake sInstance = new Intake();
-    public static Intake getInstance() { return sInstance; };
+    private static Intake sInstance = null;
+
+    public static Intake getInstance() {
+        if (sInstance == null) {
+            sInstance = new Intake();
+        }
+        return sInstance;
+    }
+
 
     private CANTalon mMasterTalon, mSlaveTalon;
 
     private Intake() {
         mMasterTalon = new CANTalon(Constants.kIntakeMasterId);
+        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10);
         mSlaveTalon = new CANTalon(Constants.kIntakeSlaveId);
+        mSlaveTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kIntakeMasterId);

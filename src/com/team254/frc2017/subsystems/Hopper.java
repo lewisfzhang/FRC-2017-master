@@ -5,8 +5,13 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Looper;
 
 public class Hopper extends Subsystem {
-    private static Hopper sInstance = new Hopper();
-    public static Hopper getInstance() { return sInstance; };
+    private static Hopper sInstance = null;
+    public static Hopper getInstance() {
+        if (sInstance == null) {
+            sInstance = new Hopper();
+        }
+        return sInstance;
+    }
 
     private CANTalon mMasterTalon, mSlaveTalon;
 

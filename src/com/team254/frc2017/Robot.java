@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
     // Subsystems
     private Drive mDrive = Drive.getInstance();
-    private Superstructure mSuperstructure = Superstructure.getInstance();
+    private Superstructure mSuperstructure = null; //Superstructure.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
 
     // Other parts of the robot
@@ -57,7 +57,7 @@ public class Robot extends IterativeRobot {
             CrashTracker.logRobotInit();
 
             mDrive.registerEnabledLoops(mEnabledLooper);
-            mSuperstructure.registerEnabledLoops(mEnabledLooper);
+            //mSuperstructure.registerEnabledLoops(mEnabledLooper);
 
 
             mEnabledLooper.register(VisionProcessor.getInstance());
@@ -95,8 +95,9 @@ public class Robot extends IterativeRobot {
             CrashTracker.logThrowableCrash(t);
             throw t;
         }
+        mEnabledLooper.start();
         zeroAllSensors();
-        mDrive.setVelocitySetpoint(100, 100);
+        mDrive.setStartPathTest();
     }
 
     /**
@@ -116,6 +117,7 @@ public class Robot extends IterativeRobot {
             mEnabledLooper.start();
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
             mDrive.setBrakeMode(false);
+            zeroAllSensors();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -137,15 +139,15 @@ public class Robot extends IterativeRobot {
 
             // Super structure
             if (mControlBoard.getIntakeButton()) {
-                mSuperstructure.setWantIntakeOn();
+                //mSuperstructure.setWantIntakeOn();
             } else {
-                mSuperstructure.setWantIntakeStopped();
+                //mSuperstructure.setWantIntakeStopped();
             }
 
             if (mControlBoard.getFeedButton()) {
-                mSuperstructure.setWantFeedOn();
+                //mSuperstructure.setWantFeedOn();
             } else {
-                mSuperstructure.setWantFeedIdle();
+                //mSuperstructure.setWantFeedIdle();
             }
 
             allPeriodic();

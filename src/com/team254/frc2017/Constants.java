@@ -38,9 +38,9 @@ public class Constants extends ConstantsBase {
 
     // CONTROL LOOP GAINS
     // TODO add some!
-    public static double kDriveVelocityKp = 0.02;
+    public static double kDriveVelocityKp = 0.225;
     public static double kDriveVelocityKi = 0.0;
-    public static double kDriveVelocityKd = 0.0;
+    public static double kDriveVelocityKd = 0.2;
     public static double kDriveVelocityKf = 0.145;
     public static int kDriveVelocityIZone = 0;
     public static double kDriveVelocityRampRate = 0.0;
@@ -80,13 +80,13 @@ public class Constants extends ConstantsBase {
     public static final int kRightShooterSlave2Id = 2;
 
     //PATH FOLLOWING
-    public static double kAutoLookAhead = 30.0; //inches
+    public static double kAutoLookAhead = 25.0; //inches
     public static double kSegmentCompletionTolerance = 2.0; //inches
-    public static double kMaxAccel = 25.0; //inches per second^2
-    public static double kMaxDecel = 25.0; //should be positive
+    public static double kMaxAccel = 20; //inches per second^2
+    public static double kMaxDecel = 20; //should be positive
     public static double kPathFollowingMaxVel = 10000; //inches per second
     public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file 
-    public static double kMinSpeed = 30.0; //inches per second 
+    public static double kMinSpeed = 0.0; //inches per second
 
     // SOLENOIDS
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0

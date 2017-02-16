@@ -1,6 +1,7 @@
 package com.team254.lib.util;
 
 import com.team254.frc2017.Constants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Implements an adaptive pure pursuit controller. See:
@@ -24,7 +25,6 @@ public class AdaptivePurePursuitController {
         RigidTransform2d pose = new RigidTransform2d(new Translation2d(0,0), Rotation2d.fromDegrees(0));
         Translation2d point = new Translation2d(0, 100);
         System.out.println(getLength(pose,point));
-        //System.out.println(getCenter(pose, point));
     }
     
     /**
@@ -55,8 +55,7 @@ public class AdaptivePurePursuitController {
             return new RigidTransform2d.Delta(0, 0, 0);
         
         double speed = mSpeedController.getSpeed(pose.getTranslation(), getLength(pose, lookaheadPoint));
-        if(speed < Constants.kMinSpeed)     
-            speed = Constants.kMinSpeed;
+        SmartDashboard.putNumber("Desired Speed", speed);
         
         RigidTransform2d.Delta rv;
         rv = new RigidTransform2d.Delta(speed, 0, getDirection(pose, lookaheadPoint) * Math.abs(speed) / getRadius(pose, lookaheadPoint));

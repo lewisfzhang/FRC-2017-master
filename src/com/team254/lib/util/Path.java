@@ -118,7 +118,7 @@ public class Path {
      
      public double getStartSpeed() {
          if(prevSegment == null)
-             return Constants.kMaxAccel;
+             return 0;
          return (segments.size() == 0) ? 0.0 : prevSegment.getMaxSpeed();
      }
      

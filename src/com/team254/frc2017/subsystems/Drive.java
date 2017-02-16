@@ -34,7 +34,7 @@ public class Drive extends Subsystem {
     private final CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
     private final Solenoid mShifter;
     private final AHRS mNavXBoard;
-    private final AdaptivePurePursuitController mPathController;
+    private AdaptivePurePursuitController mPathController;
     private DriveControlState mDriveControlState;
 
     private boolean mIsHighGear;
@@ -59,7 +59,7 @@ public class Drive extends Subsystem {
                     case VELOCITY_SETPOINT:
                         return;
                     case PATH_FOLLOWING:
-                        if(!mPathController.isFinished()) {
+                        if(mPathController != null && !mPathController.isFinished()) {
                             updatePathFollower();
                         } else {
                             setVelocitySetpoint(0.0, 0.0);
@@ -82,9 +82,10 @@ public class Drive extends Subsystem {
         // Start all Talons in open loop mode.
         mLeftMaster = new CANTalon(Constants.kLeftDriveMasterId);
         mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
+        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10);
         mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mLeftMaster.reverseSensor(true);
+        mLeftMaster.reverseOutput(false);
         CANTalon.FeedbackDeviceStatus leftSensorPresent =
                 mLeftMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         if (leftSensorPresent != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
@@ -94,11 +95,13 @@ public class Drive extends Subsystem {
         mLeftSlave = new CANTalon(Constants.kLeftDriveSlaveId);
         mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mLeftSlave.set(Constants.kLeftDriveMasterId);
+        mLeftSlave.reverseOutput(false);
 
         mRightMaster = new CANTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
-        mRightMaster.setInverted(true);
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10);
+        mRightMaster.reverseSensor(false);
+        mRightMaster.reverseOutput(true);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         CANTalon.FeedbackDeviceStatus rightSensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -108,8 +111,8 @@ public class Drive extends Subsystem {
 
         mRightSlave = new CANTalon(Constants.kRightDriverSlaveId);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
-        mRightSlave.setInverted(true);
         mRightSlave.set(Constants.kRightDriveMasterId);
+        mRightSlave.reverseOutput(false);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
@@ -125,7 +128,6 @@ public class Drive extends Subsystem {
         
         //Path Following stuff
         mNavXBoard = new AHRS(SPI.Port.kMXP);
-        mPathController = new AdaptivePurePursuitController(Constants.kAutoFilePath);
         
         // Force a CAN message across.
         mIsBrakeMode = true;
@@ -142,6 +144,7 @@ public class Drive extends Subsystem {
             mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
             mDriveControlState = DriveControlState.OPEN_LOOP;
+            setBrakeMode(false);
         }
         mRightMaster.set(signal.getRight());
         mLeftMaster.set(signal.getLeft());
@@ -179,13 +182,15 @@ public class Drive extends Subsystem {
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("left speed (ips)", getLeftVelocityInchesPerSec());
         SmartDashboard.putNumber("right speed (ips)", getRightVelocityInchesPerSec());
-//        SmartDashboard.putNumber("left position (rotations)", mLeftMaster.getPosition());
-//        SmartDashboard.putNumber("right position (rotations)", mRightMaster.getPosition());
+        SmartDashboard.putNumber("left position (rotations)", mLeftMaster.getPosition());
+        SmartDashboard.putNumber("right position (rotations)", mRightMaster.getPosition());
     }
     
     public synchronized void resetEncoders() {
+        mLeftMaster.setEncPosition(0);
         mLeftMaster.setPosition(0);
         mRightMaster.setPosition(0);
+        mRightMaster.setEncPosition(0);
         mLeftSlave.setPosition(0);
         mRightSlave.setPosition(0);
     }
@@ -291,7 +296,12 @@ public class Drive extends Subsystem {
             }
             updateVelocitySetpoint(setpoint.left, setpoint.right);
         } else {
-            stop();
+            updateVelocitySetpoint(0,0);
         }
+    }
+
+    public void setStartPathTest() {
+        mPathController = new AdaptivePurePursuitController(Constants.kAutoFilePath);
+        mDriveControlState = DriveControlState.PATH_FOLLOWING;
     }
 }

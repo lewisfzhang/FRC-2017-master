@@ -7,9 +7,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class Shooter extends Subsystem {
 
-    private static Shooter mInstance = new Shooter();
+    private static Shooter mInstance = null;
 
     public static Shooter getInstance() {
+        if (mInstance == null) {
+            mInstance = new Shooter();
+        }
         return mInstance;
     }
 
