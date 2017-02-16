@@ -19,5 +19,5 @@ public abstract class Subsystem {
 
     public abstract void zeroSensors();
 
-    public abstract void registerEnabledLoops(Looper in);
+    public abstract void registerEnabledLoops(Looper enabledLooper);
 }
