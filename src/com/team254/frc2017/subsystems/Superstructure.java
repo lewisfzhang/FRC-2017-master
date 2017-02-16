@@ -37,4 +37,20 @@ public class Superstructure extends Subsystem {
         mHopper.registerEnabledLoops(enabledLooper);
         mShooter.registerEnabledLoops(enabledLooper);
     }
+
+    public void setWantIntakeStopped() {
+        mIntake.setOff();
+    }
+
+    public void setWantIntakeOn() {
+        mIntake.setOn();
+    }
+
+    public void setWantFeedOn() {
+        mFeeder.setOn();
+    }
+
+    public void setWantFeedIdle() {
+        mFeeder.setOff();
+    }
 }

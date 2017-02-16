@@ -16,6 +16,7 @@ public class Feeder extends Subsystem {
 
     public enum States {
         NOOP,
+        STOPPED,
         FEEDING,
         REVERSING,
     };
@@ -41,6 +42,9 @@ public class Feeder extends Subsystem {
             synchronized (Feeder.this) {
                 switch (mControlState) {
                     case NOOP:
+                        stop();
+                        return;
+                    case STOPPED:
                         stop();
                         return;
                     case FEEDING:
@@ -84,5 +88,18 @@ public class Feeder extends Subsystem {
     @Override
     public void registerEnabledLoops(Looper in) {
         in.register(mLoop);
+    }
+
+
+    public void setOn() {
+        mControlState = States.FEEDING;
+    }
+
+    public void setOff() {
+        mControlState = States.STOPPED;
+    }
+
+    public void setReverse() {
+        mControlState = States.REVERSING;
     }
 }

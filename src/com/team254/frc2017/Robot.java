@@ -128,13 +128,29 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopPeriodic() {
-//            double throttle = mControlBoard.getThrottle();
-//            double turn = mControlBoard.getTurn();
-//
-//            mDrive.setHighGear(!mControlBoard.getLowGear());
-        mDrive.outputToSmartDashboard(); 
-        RobotState.getInstance().outputToSmartDashboard();
-        //mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
+        try {
+            // Drive base
+            double throttle = mControlBoard.getThrottle();
+            double turn = mControlBoard.getTurn();
+            mDrive.setHighGear(!mControlBoard.getLowGear());
+            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
+
+            // Super structure
+            if (mControlBoard.getIntakeButton()) {
+                mSuperstructure.setWantIntakeOn();
+            } else {
+                mSuperstructure.setWantIntakeStopped();
+            }
+
+            if (mControlBoard.getFeedButton()) {
+                mSuperstructure.setWantFeedOn();
+            } else {
+                mSuperstructure.setWantFeedIdle();
+            }
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
     }
 
     @Override

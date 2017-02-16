@@ -38,4 +38,21 @@ public class Intake extends Subsystem {
 
     }
 
+
+    public void setOn() {
+        setOpenLoop(1.0);
+    }
+
+    public void setOff() {
+        setOpenLoop(0.0);
+    }
+
+    public void setReverse() {
+        setOpenLoop(-1.0);
+    }
+
+    private void setOpenLoop(double value) {
+
+    }
+
 }
