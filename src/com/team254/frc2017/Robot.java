@@ -47,6 +47,7 @@ public class Robot extends IterativeRobot {
             CrashTracker.logRobotInit();
 
             mDrive.registerEnabledLoops(mEnabledLooper);
+            mSuperstructure.registerEnabledLoops(mEnabledLooper);
 
 
             mEnabledLooper.register(VisionProcessor.getInstance());

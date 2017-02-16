@@ -10,9 +10,10 @@ public class Superstructure extends Subsystem {
         return mInstance;
     }
 
-    private Feeder mFeeder = Feeder.getInstance();
-    private Intake mIntake = Intake.getInstance();
-    private Hopper mHopper = Hopper.getInstance();
+    private final Feeder mFeeder = Feeder.getInstance();
+    private final Intake mIntake = Intake.getInstance();
+    private final Hopper mHopper = Hopper.getInstance();
+    private final Shooter mShooter = Shooter.getInstance();
 
 
     @Override
@@ -30,7 +31,10 @@ public class Superstructure extends Subsystem {
     }
 
     @Override
-    public void registerEnabledLoops(Looper in) {
-
+    public void registerEnabledLoops(Looper enabledLooper) {
+        mFeeder.registerEnabledLoops(enabledLooper);
+        mIntake.registerEnabledLoops(enabledLooper);
+        mHopper.registerEnabledLoops(enabledLooper);
+        mShooter.registerEnabledLoops(enabledLooper);
     }
 }
