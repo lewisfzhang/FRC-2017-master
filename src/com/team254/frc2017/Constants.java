@@ -76,8 +76,8 @@ public class Constants extends ConstantsBase {
     // Shooter
     public static final int kLeftShooterMasterId = 13;
     public static final int kLeftShooterSlaveId = 14;
-    public static final int kRightShooterMasterId = 1;
-    public static final int kRightShooterSlaveId = 2;
+    public static final int kRightShooterSlave1Id = 1;
+    public static final int kRightShooterSlave2Id = 2;
 
     //PATH FOLLOWING
     public static double kAutoLookAhead = 30.0; //inches
