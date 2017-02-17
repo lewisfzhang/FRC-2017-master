@@ -137,25 +137,28 @@ public class Robot extends IterativeRobot {
             mDrive.setHighGear(!mControlBoard.getLowGear());
             mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
 
-            // Super structure
-            if (mControlBoard.getIntakeButton()) {
-                //mSuperstructure.setWantIntakeOn();
-            } else {
-                //mSuperstructure.setWantIntakeStopped();
-            }
+            // Super structure.  For testing check if null.
+            // TODO: Remove for comp.
+            if (mSuperstructure != null) {
+                if (mControlBoard.getIntakeButton()) {
+                    mSuperstructure.setWantIntakeOn();
+                } else {
+                    mSuperstructure.setWantIntakeStopped();
+                }
 
-            if (mControlBoard.getFeedButton()) {
-                //mSuperstructure.setWantFeedOn();
-            } else {
-                //mSuperstructure.setWantFeedIdle();
-            }
+                if (mControlBoard.getFeedButton()) {
+                    mSuperstructure.setWantFeedOn();
+                } else {
+                    mSuperstructure.setWantFeedIdle();
+                }
 
-            if (mControlBoard.getSpinShooterButton()) {
-                mSuperstructure.setShooterOpenLoop(7.0);
-            } else if (mControlBoard.getShootButton()) {
-                mSuperstructure.setClosedLoopRpm(3000.0);
-            } else {
-                mSuperstructure.setShooterOpenLoop(0);
+                if (mControlBoard.getSpinShooterButton()) {
+                    mSuperstructure.setShooterOpenLoop(7.0);
+                } else if (mControlBoard.getShootButton()) {
+                    mSuperstructure.setClosedLoopRpm(3000.0);
+                } else {
+                    mSuperstructure.setShooterOpenLoop(0);
+                }
             }
 
             allPeriodic();
