@@ -70,7 +70,6 @@ public class SetpointGenerator {
             regenerate = !expected_state.isPresent() || !expected_state.get().equals(prev_state);
         }
         if (regenerate) {
-            System.out.println("Regenerating profile");
             // Regenerate the profile, as our current profile does not satisfy the inputs.
             mConstraints = constraints;
             mGoal = goal;
