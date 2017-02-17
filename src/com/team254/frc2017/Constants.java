@@ -24,13 +24,18 @@ public class Constants extends ConstantsBase {
 
     public static RobotName kRobotName;
     public static HashMap<String, RobotName> kMACAddresses = new HashMap<String, RobotName>();
-    private static NetworkInterface kNetworkInfo;
 
     // ROBOT PHYSICAL CONSTANTS
     // Wheels
     public static double kDriveWheelDiameterInches = 3.419; //calibrated on 2/15/17
     public static double kTrackWidthInches = 26.655;
     public static double kTrackScrubFactor = 1.0;
+    
+    // Geometry
+    public static double kCenterToFrontBumperDistance = 16.33;
+    public static double kCenterToIntakeDistance = 23.11;
+    public static double kCenterToRearBumperDistance = 16.99;
+    public static double kCenterToSideBumperDistance = 17.225;
 
     // CONTROL LOOP GAINS
     // DRIVE GAINS
