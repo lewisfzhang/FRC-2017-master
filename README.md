@@ -1,6 +1,7 @@
 # FRC-2017
 Team 254's code for the 2017 FRC Season.
 
+CTRE Libs: http://www.ctr-electronics.com/hro.html#product_tabs_technical_resources
 
 ## Suggested Style Guide:
 <table>
