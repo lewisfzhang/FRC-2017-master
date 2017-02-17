@@ -146,7 +146,9 @@ public class Drive extends Subsystem {
             mDriveControlState = DriveControlState.OPEN_LOOP;
             setBrakeMode(false);
         }
-        mRightMaster.set(signal.getRight());
+        // Right side is reversed, but reverseOutput doesn't invert PercentVBus.
+        // So set negative on the right master.
+        mRightMaster.set(-signal.getRight());
         mLeftMaster.set(signal.getLeft());
     }
 
