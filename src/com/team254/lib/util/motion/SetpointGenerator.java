@@ -58,14 +58,9 @@ public class SetpointGenerator {
     public Setpoint getSetpoint(MotionProfileConstraints constraints, MotionProfileGoal goal, MotionState prev_state,
             double dt) {
         final double t = prev_state.t() + dt;
-        if (goal.atGoalState(prev_state)) {
-            // Already at goal - just output the same state again.
-            return new Setpoint(prev_state, true);
-        }
-
         boolean regenerate = mConstraints == null || !mConstraints.equals(constraints) || mGoal == null
                 || !mGoal.equals(goal) || mProfile == null;
-        if (!regenerate) {
+        if (!regenerate && !mProfile.isEmpty()) {
             Optional<MotionState> expected_state = mProfile.stateByTime(prev_state.t());
             regenerate = !expected_state.isPresent() || !expected_state.get().equals(prev_state);
         }
@@ -88,7 +83,7 @@ public class SetpointGenerator {
             }
             // Shorten the profile and return the new setpoint.
             mProfile.trimBeforeTime(t);
-            return new Setpoint(setpoint, mProfile.isEmpty() || mGoal.atGoalState(setpoint));
+            return new Setpoint(setpoint, mProfile.isEmpty());
         }
 
         // Invalid or empty profile - just output the same state again.

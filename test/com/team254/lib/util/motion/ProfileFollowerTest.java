@@ -34,10 +34,10 @@ public class ProfileFollowerTest {
         }
     }
 
-    protected class SluggishDynamics extends Dynamics {
+    protected class ScaledDynamics extends Dynamics {
         protected double mVelRatio;
 
-        public SluggishDynamics(MotionState state, double vel_ratio) {
+        public ScaledDynamics(MotionState state, double vel_ratio) {
             super(state);
             mVelRatio = vel_ratio;
         }
@@ -58,6 +58,9 @@ public class ProfileFollowerTest {
             dynamics.update(command_vel, dt);
             System.out.println("State: " + state + ", Pos error: " + follower.getPosError() + ", Vel error: "
                     + follower.getVelError() + ", Command: " + command_vel);
+            if (follower.isFinishedProfile()) {
+                System.out.println("Follower has finished profile");
+            }
         }
         if (i == max_iterations) {
             System.out.println("Iteration limit reached");
@@ -138,13 +141,26 @@ public class ProfileFollowerTest {
     @Test
     public void testStationaryToStationaryFeedback() {
         MotionProfileConstraints constraints = new MotionProfileConstraints(10.0, 10.0);
-        MotionProfileGoal goal = new MotionProfileGoal(100.0, 0.0, CompletionBehavior.OVERSHOOT, 1.0, 0.1);
+        MotionProfileGoal goal = new MotionProfileGoal(100.0, 0.0, CompletionBehavior.OVERSHOOT, 1.0, 1.0);
         MotionState start_state = new MotionState(0.0, 0.0, 0.0, 0.0);
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.5, 0.001, 0.5, 1.0, 0.1);
         follower.setGoal(goal, constraints);
-        MotionState final_state = followProfile(follower, new SluggishDynamics(start_state, .8), dt, 2000);
+        MotionState final_state = followProfile(follower, new ScaledDynamics(start_state, .8), dt, 2000);
         assertTrue(goal.atGoalState(final_state));
+    }
+
+    @Test
+    public void testStationaryToMovingOvershoot() {
+        MotionProfileConstraints constraints = new MotionProfileConstraints(10.0, 10.0);
+        MotionProfileGoal goal = new MotionProfileGoal(-100.0, 10.0, CompletionBehavior.VIOLATE_MAX_ACCEL, 1.0, 0.1);
+        MotionState start_state = new MotionState(0.0, 0.0, 0.0, 0.0);
+        final double dt = 0.01;
+
+        ProfileFollower follower = new ProfileFollower(0.0, 0.0, 0.0, 1.0, 0.0);
+        follower.setGoal(goal, constraints);
+        MotionState final_state = followProfile(follower, new ScaledDynamics(start_state, 1.2), dt, 2000);
+        assertTrue(goal.atGoalPos(final_state.pos()));
     }
 }

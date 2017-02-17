@@ -1,6 +1,6 @@
 package com.team254.lib.util.motion;
 
-import static com.team254.lib.util.Util.*;
+import com.team254.lib.util.motion.MotionProfileGoal.CompletionBehavior;
 
 /**
  * A controller for tracking a profile generated to attain a MotionProfileGoal. The controller uses feedforward on
@@ -16,6 +16,8 @@ public class ProfileFollower {
 
     protected double mMinOutput = Double.NEGATIVE_INFINITY;
     protected double mMaxOutput = Double.POSITIVE_INFINITY;
+    protected MotionState mLatestActualState;
+    protected MotionState mInitialState;
     protected double mLatestPosError;
     protected double mLatestVelError;
     protected double mTotalError;
@@ -58,8 +60,10 @@ public class ProfileFollower {
      */
     public void resetProfile() {
         mTotalError = 0.0;
-        mLatestPosError = 0.0;
-        mLatestVelError = 0.0;
+        mInitialState = MotionState.kInvalidState;
+        mLatestActualState = MotionState.kInvalidState;
+        mLatestPosError = Double.NaN;
+        mLatestVelError = Double.NaN;
         mSetpointGenerator.reset();
         mGoal = null;
         mConstraints = null;
@@ -101,9 +105,12 @@ public class ProfileFollower {
      * @return An output that reflects the control output to apply to achieve the new setpoint.
      */
     public double update(MotionState latest_state, double t) {
+        mLatestActualState = latest_state;
         MotionState prev_state = latest_state;
         if (mLatestSetpoint != null) {
             prev_state = mLatestSetpoint.motion_state;
+        } else {
+            mInitialState = prev_state;
         }
         final double dt = Math.max(0.0, t - prev_state.t());
         mLatestSetpoint = mSetpointGenerator.getSetpoint(mConstraints, mGoal, prev_state, dt);
@@ -155,26 +162,21 @@ public class ProfileFollower {
     }
 
     /**
-     * We are on target if the final setpoint has been generated and we have achieved the goal (where the definition of
-     * achievement depends on the goal's completion behavior).
+     * We are on target if our actual state achieves the goal (where the definition of achievement depends on the goal's
+     * completion behavior).
      * 
      * @return True if we have actually achieved the current goal.
      */
     public boolean onTarget() {
-        if (!isFinishedProfile()) {
+        if (mGoal == null || mLatestSetpoint == null) {
             return false;
         }
-        switch (mGoal.completion_behavior()) {
-        case VIOLATE_MAX_ABS_VEL:
-        case VIOLATE_MAX_ACCEL:
-            // Check that pos is at or has passed the goal.
-            return epsilonEquals(getPosError(), 0.0, mGoal.pos_tolerance())
-                    || Math.signum(getPosError()) * Math.signum(mLatestSetpoint.motion_state.vel()) >= 0.0;
-        case OVERSHOOT:
-        default:
-            // Check that we are at both the desired position and velocity.
-            return epsilonEquals(getPosError(), 0.0, mGoal.pos_tolerance())
-                    && epsilonEquals(getVelError(), 0.0, mGoal.vel_tolerance());
-        }
+        // For the options that don't achieve the goal velocity exactly, also count any instance where we have passed
+        // the finish line.
+        final double goal_to_start = mGoal.pos() - mInitialState.pos();
+        final double goal_to_actual = mGoal.pos() - mLatestActualState.pos();
+        final boolean passed_goal_state = Math.signum(goal_to_start) * Math.signum(goal_to_actual) < 0.0;
+        return mGoal.atGoalState(mLatestActualState)
+                || (mGoal.completion_behavior() != CompletionBehavior.OVERSHOOT && passed_goal_state);
     }
 }
