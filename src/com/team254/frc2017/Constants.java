@@ -28,13 +28,9 @@ public class Constants extends ConstantsBase {
 
     // ROBOT PHYSICAL CONSTANTS
     // Wheels
-    public static double kDriveWheelDiameterInches = 3.419; //calibrated on 2/15
-    public static double kTrackLengthInches = 8.265;
-    public static double kTrackWidthInches = 23.8;
-    public static double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches
-            + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
-    public static double kTrackScrubFactor = 0.5;
-    public static double kCollisionThreshold = 0.5;
+    public static double kDriveWheelDiameterInches = 3.419; //calibrated on 2/15/17
+    public static double kTrackWidthInches = 26.655;
+    public static double kTrackScrubFactor = 1.0;
 
     // CONTROL LOOP GAINS
     // DRIVE GAINS
