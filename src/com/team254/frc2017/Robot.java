@@ -134,7 +134,12 @@ public class Robot extends IterativeRobot {
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
             mDrive.setHighGear(!mControlBoard.getLowGear());
-            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
+
+            if (mControlBoard.getAimButton()) {
+                mDrive.setWantAimToGoal();
+            } else {
+                mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
+            }
 
             // Super structure.  For testing check if null.
             // TODO: Remove for comp.

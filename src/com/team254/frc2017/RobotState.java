@@ -52,6 +52,9 @@ public class RobotState {
   private static final RigidTransform2d kVehicleToCamera = new RigidTransform2d(
           new Translation2d(Constants.kCameraXOffset, Constants.kCameraYOffset), new Rotation2d());
 
+  private static final RigidTransform2d kTestFieldToGoal = new RigidTransform2d(
+          new Translation2d(155, -124), new Rotation2d());
+
   // FPGATimestamp -> RigidTransform2d or Rotation2d
   private InterpolatingTreeMap<InterpolatingDouble, RigidTransform2d> field_to_vehicle_;
   private RigidTransform2d.Delta vehicle_velocity_;
@@ -147,7 +150,17 @@ public class RobotState {
   }
 
   public ShooterAimingParameters getAimingParameters(double currentTimestamp) {
-    return new ShooterAimingParameters(0, Rotation2d.fromDegrees(45));
+
+    RigidTransform2d test;
+    RigidTransform2d robot_to_goal = getLatestFieldToVehicle().getValue().inverse()
+            .transformBy(kTestFieldToGoal);
+    Rotation2d angle_to_goal = new Rotation2d(robot_to_goal.getTranslation().getX(),
+            robot_to_goal.getTranslation().getY(), true);
+
+
+    SmartDashboard.putNumber("angle_to_goal", angle_to_goal.getDegrees());
+
+    return new ShooterAimingParameters(robot_to_goal.getTranslation().norm(), angle_to_goal);
   }
 
   public synchronized void resetVision() {

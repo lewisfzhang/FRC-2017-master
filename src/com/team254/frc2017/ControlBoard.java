@@ -41,6 +41,10 @@ public class ControlBoard {
         return mThrottleStick.getRawButton(1);
     }
 
+    public boolean getAimButton() {
+        return Math.abs(mThrottleStick.getRawAxis(2)) > 0.5;
+    }
+
     // OPERATOR CONTROLS
     public boolean getFeedButton() {
         return mButtonBoard.getRawAxis(1) < -0.1;

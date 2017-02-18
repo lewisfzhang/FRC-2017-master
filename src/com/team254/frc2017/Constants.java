@@ -58,6 +58,8 @@ public class Constants extends ConstantsBase {
     public static double kDriveTurnMaxVel = 600;
     public static double kDriveTurnMaxAcc = 300;
 
+    public static double kDriveTurnSimpleKp = 2.0;
+
 
     // SHOOTER GAINS
     // TODO: set some gains

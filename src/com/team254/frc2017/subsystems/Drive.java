@@ -83,7 +83,7 @@ public class Drive extends Subsystem {
                         }
                         return;
                     case AIM_TO_GOAL:
-                        updateTurnToHeading(timestamp);
+                        updateTurnToHeadingSimplePid(timestamp);
                         return;
                     default:
                         System.out.println("Unexpected drive control state: " + mDriveControlState);
@@ -332,6 +332,26 @@ public class Drive extends Subsystem {
                 Rotation2d.fromDegrees(velocitySignal).getRadians()));
 
         updateVelocitySetpoint(wheelVel.left, wheelVel.right);
+    }
+
+    private void updateTurnToHeadingSimplePid(double timestamp) {
+        Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState.getLatestFieldToVehicle();
+        RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
+        ShooterAimingParameters aim = mRobotState.getAimingParameters(timestamp);
+
+        double error = aim.getFieldToGoal().getDegrees() - field_to_robot.getRotation().getDegrees();
+        SmartDashboard.putNumber("drive_turn_goal", aim.getFieldToGoal().getDegrees());
+        SmartDashboard.putNumber("drive_turn_error", error);
+        SmartDashboard.putNumber("drive_turn_cur", field_to_robot.getRotation().getDegrees() );
+        double velocitySignal = error * Constants.kDriveTurnSimpleKp;
+        SmartDashboard.putNumber("drive_turn_vel", velocitySignal );
+        SmartDashboard.putNumber("goal_dist", aim.getRange());
+
+        Kinematics.DriveVelocity wheelVel = Kinematics.inverseKinematics(
+                new RigidTransform2d.Delta(0,0, Rotation2d.fromDegrees(velocitySignal).getRadians()));
+
+        SmartDashboard.putNumber("drive_turn_wheel_vel", wheelVel.left );
+        updateVelocitySetpoint(-velocitySignal, velocitySignal);
     }
 
     private void updatePathFollower(double timestamp) {
