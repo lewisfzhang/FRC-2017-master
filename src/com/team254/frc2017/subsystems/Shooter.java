@@ -4,7 +4,9 @@ import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.CSVWriter;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends Subsystem {
@@ -26,6 +28,8 @@ public class Shooter extends Subsystem {
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
 
     private ControlMethod mControlMethod;
+
+    private final CSVWriter mCSVWriter;
 
     private Shooter() {
         mRightMaster = new CANTalon(Constants.kRightShooterMasterId);
@@ -50,6 +54,8 @@ public class Shooter extends Subsystem {
         refreshControllerConsts();
 
         mControlMethod = ControlMethod.OPEN_LOOP;
+
+        mCSVWriter = new CSVWriter("SHOOTER-LOGS.csv", new String[]{"time", "flywheel_rpm"});
     }
 
     public void refreshControllerConsts() {
@@ -78,6 +84,24 @@ public class Shooter extends Subsystem {
 
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
+        enabledLooper.register(new Loop() {
+            @Override
+            public void onStart(double timestamp) {
+
+            }
+
+            @Override
+            public void onLoop(double timestamp) {
+                mCSVWriter.addValue(0, Timer.getFPGATimestamp());
+                mCSVWriter.addValue(1, getSpeedRpm());
+                mCSVWriter.write();
+            }
+
+            @Override
+            public void onStop(double timestamp) {
+                mCSVWriter.flush();
+            }
+        });
     }
 
     public synchronized void setOpenLoop(double voltage) {
