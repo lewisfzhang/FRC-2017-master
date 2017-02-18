@@ -34,12 +34,14 @@ public class Shooter extends Subsystem {
     private Shooter() {
         mRightMaster = new CANTalon(Constants.kRightShooterMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mRightMaster.changeMotionControlFramePeriod(1);
         mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mRightMaster.reverseSensor(true);
         mRightMaster.reverseOutput(false);
         mRightMaster.enableBrakeMode(false);
+        mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_2Ms);
+        mRightMaster.SetVelocityMeasurementWindow(1);
+        mRightMaster.setNominalClosedLoopVoltage(12);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
