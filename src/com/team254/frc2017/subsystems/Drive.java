@@ -8,6 +8,7 @@ import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.frc2017.paths.TestArcPath;
 import com.team254.lib.util.*;
 import com.team254.lib.util.motion.MotionProfileConstraints;
 import com.team254.lib.util.motion.MotionProfileGoal;
@@ -16,6 +17,7 @@ import com.team254.lib.util.motion.ProfileFollower;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
@@ -65,7 +67,6 @@ public class Drive extends Subsystem {
             setBrakeMode(false);
             setVelocitySetpoint(0, 0);
             mNavXBoard.reset();
-            //mDriveControlState = DriveControlState.PATH_FOLLOWING; //testing
         }
 
         @Override
@@ -401,9 +402,14 @@ public class Drive extends Subsystem {
             mDriveControlState = DriveControlState.AIM_TO_GOAL;
         }
     }
-
-    public void setStartPathTest() {
-        mPathController = new AdaptivePurePursuitController(Constants.kAutoFilePath);
-        mDriveControlState = DriveControlState.PATH_FOLLOWING;
+    
+    
+    private Path mCurrentPath = null;
+    public void setWantDrivePath(Path path) {
+        if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
+            mPathController = new AdaptivePurePursuitController(path);
+            mDriveControlState = DriveControlState.PATH_FOLLOWING;
+            mCurrentPath = path;
+        }    
     }
 }

@@ -75,6 +75,18 @@ public abstract class PathSegment {
             createMotionProfiler(startState);
         }
         
+        public Translation(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState, double endSpeed) {
+            this.start = new Translation2d(x1, y1);
+            this.end = new Translation2d(x2, y2);
+            this.center = null;
+            this.curvature = 0;
+            this.maxSpeed = maxSpeed;
+            this.startAngle = 0;
+            this.endAngle = 0;
+            extrapolateLookahead = false;
+            createMotionProfiler(startState, endSpeed);
+        }
+        
         /**
          * Constructor for an arc segment
          * @param x1 start x
@@ -85,14 +97,14 @@ public abstract class PathSegment {
          * @param cy center y
          * @param maxSpeed maximum speed allowed on the segment 
          */
-        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed) {
+        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed, MotionState startState, double endSpeed) {
             this.start = new Translation2d(x1, y1);
             this.end = new Translation2d(x2, y2);
             this.center = new Translation2d(cx, cy);
             this.maxSpeed = maxSpeed;
             extrapolateLookahead = false;
             calcArc();
-            createMotionProfiler(new MotionState(0.0, 0.0, 0.0, 0.0));
+            createMotionProfiler(startState, endSpeed);
         }
         
         /**
@@ -131,7 +143,14 @@ public abstract class PathSegment {
         
         private void createMotionProfiler(MotionState start_state) {
             MotionProfileConstraints motionConstraints = new MotionProfileConstraints(maxSpeed, Constants.kMaxAccel);
-            MotionProfileGoal goal_state = new MotionProfileGoal(getLength());
+            MotionProfileGoal goal_state = new MotionProfileGoal(getLength(), maxSpeed);
+            speedController = MotionProfileGenerator.generateProfile(motionConstraints, goal_state, start_state);
+            System.out.println(speedController);
+        }
+        
+        public void createMotionProfiler(MotionState start_state, double end_speed) {
+            MotionProfileConstraints motionConstraints = new MotionProfileConstraints(maxSpeed, Constants.kMaxAccel);
+            MotionProfileGoal goal_state = new MotionProfileGoal(getLength(), end_speed);
             speedController = MotionProfileGenerator.generateProfile(motionConstraints, goal_state, start_state);
             System.out.println(speedController);
         }

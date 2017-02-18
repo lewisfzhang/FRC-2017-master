@@ -4,6 +4,7 @@ import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
+import com.team254.frc2017.paths.TestArcPath;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.subsystems.Superstructure;
 import com.team254.frc2017.vision.VisionServer;
@@ -98,7 +99,9 @@ public class Robot extends IterativeRobot {
         mEnabledLooper.start();
         zeroAllSensors();
         //mDrive.setVelocitySetpoint(-15,15);
-        mDrive.setWantAimToGoal();
+        //mDrive.setWantAimToGoal();
+        mRobotState.reset(Timer.getFPGATimestamp(), TestArcPath.getStartPose());
+        mDrive.setWantDrivePath(TestArcPath.buildPath());
     }
 
     /**

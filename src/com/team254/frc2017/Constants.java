@@ -110,7 +110,7 @@ public class Constants extends ConstantsBase {
     public static double kAutoLookAhead = 25.0; //inches
     public static double kSegmentCompletionTolerance = 2.0; //inches
     public static double kMaxAccel = 25.0; //inches per second^2
-    public static double kMaxDecel = 25.0; //should be positive
+    public static double kMaxDecel = 50.0; //should be positive
     public static double kPathFollowingMaxVel = 10000; //inches per second
     public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file 
     public static double kMinSpeed = 10.0; //inches per second

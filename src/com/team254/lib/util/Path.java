@@ -30,7 +30,13 @@ public class Path {
      public Path(String filepath) {
          segments = new ArrayList<PathSegment>();
          loadFile(filepath);
-         ((PathSegment.Translation) segments.get(segments.size() - 1)).extrapolateLookahead(true); //extrapolate last lookahead point
+         if(segments.size() > 0)
+             ((PathSegment.Translation) segments.get(segments.size() - 1)).extrapolateLookahead(true); //extrapolate last lookahead point
+     }
+     
+     public void extrapolateLast() {
+         PathSegment.Translation last = ((PathSegment.Translation) segments.get(segments.size() - 1));
+         last.extrapolateLookahead(true);
      }
      
      public Path() { segments = new ArrayList<PathSegment>(); }
@@ -70,7 +76,9 @@ public class Path {
      */
      public MotionState getLastMotionState() {
          if(segments.size() > 0) {
-             return ((PathSegment.Translation) segments.get(segments.size() - 1)).getEndState();
+             MotionState endState = ((PathSegment.Translation) segments.get(segments.size() - 1)).getEndState();
+             //return endState;
+             return new MotionState(0.0, 0.0, endState.vel(), endState.acc());
          } else {
              return new MotionState(0, 0, 0, 0);
          }
@@ -117,7 +125,6 @@ public class Path {
      public Translation2d getTargetPoint(Translation2d robotPos) {
          Translation2d target;
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
-         double segmentLength = currentSegment.getLength();
          double lookAheadDist = Constants.kAutoLookAhead;
          Translation2d closest = currentSegment.getClosestPoint(robotPos);
          double remainingDist = currentSegment.getRemainingDistance(closest);

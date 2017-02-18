@@ -66,7 +66,7 @@ public class AdaptivePurePursuitController {
         if(speed < Constants.kMinSpeed)
             speed = Constants.kMinSpeed;
         
-        SmartDashboard.putNumber("Desired Speed", speed);
+         SmartDashboard.putNumber("Desired Speed", speed);
         
         RigidTransform2d.Delta rv;
         rv = new RigidTransform2d.Delta(speed, 0, getDirection(pose, lookaheadPoint) * Math.abs(speed) / getRadius(pose, lookaheadPoint));
