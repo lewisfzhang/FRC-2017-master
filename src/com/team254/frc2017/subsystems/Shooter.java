@@ -125,12 +125,11 @@ public class Shooter extends Subsystem {
             mControlMethod = ControlMethod.CLOSED_LOOP;
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
         }
-        // Talon speed is in ??? units
+        // Talon speed is rpm
         if (Math.abs(mCachedVelocitySetpoint - setpointRpm) > kCacheSetpointDeadband) {
             mRightMaster.set(setpointRpm);
             mCachedVelocitySetpoint = setpointRpm;
         }
-
     }
 
     private double getSpeedRpm() {
