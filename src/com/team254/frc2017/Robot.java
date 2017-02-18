@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
 
     private WebServer mHTTPServer = new WebServer();
 
-    private VisionServer mVisionServer = VisionServer.getInstance();
+    // private VisionServer mVisionServer = VisionServer.getInstance();
 
     public Robot() {
         CrashTracker.logRobotConstruction();
@@ -70,7 +70,7 @@ public class Robot extends IterativeRobot {
             SmartDashboard.putString("MAC Address", Constants.getMACAddress());
             ConstantsModifier.initConstants(name);
 
-            mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
+            // mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -122,6 +122,7 @@ public class Robot extends IterativeRobot {
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
             mDrive.setBrakeMode(false);
             zeroAllSensors();
+            mSuperstructure.reloadConstants();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -162,7 +163,7 @@ public class Robot extends IterativeRobot {
                 }
 
                 if (mControlBoard.getSpinShooterButton()) {
-                    mSuperstructure.setShooterOpenLoop(7.0);
+                    mSuperstructure.setShooterOpenLoop(8.0);
                 } else if (mControlBoard.getShootButton()) {
                     mSuperstructure.setClosedLoopRpm(3000.0);
                 } else {
@@ -201,10 +202,14 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void testPeriodic() {
+
     }
 
     public void allPeriodic() {
         mRobotState.outputToSmartDashboard();
         mDrive.outputToSmartDashboard();
+        if (mSuperstructure != null) {
+            mSuperstructure.outputToSmartDashboard();
+        }
     }
 }

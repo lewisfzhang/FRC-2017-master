@@ -46,10 +46,11 @@ public class Drive extends Subsystem {
     // Hardware
     private final CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
     private final Solenoid mShifter;
-    private final AHRS mNavXBoard;
+    // private final AHRS mNavXBoard;
 
     // Controllers
     private RobotState mRobotState = RobotState.getInstance();
+
     private AdaptivePurePursuitController mPathController;
 
     // These gains get reset below!!
@@ -149,7 +150,7 @@ public class Drive extends Subsystem {
         setOpenLoop(DriveSignal.NEUTRAL);
         
         //Path Following stuff
-        mNavXBoard = new AHRS(SPI.Port.kMXP);
+        // mNavXBoard = new AHRS(SPI.Port.kMXP);
         
         // Force a CAN message across.
         mIsBrakeMode = true;
@@ -227,7 +228,7 @@ public class Drive extends Subsystem {
     @Override
     public void zeroSensors() {
         resetEncoders();
-        mNavXBoard.zeroYaw();
+        // mNavXBoard.zeroYaw();
     }
 
     /**
@@ -307,7 +308,8 @@ public class Drive extends Subsystem {
     }
 
     public synchronized Rotation2d getGyroAngle() {
-        return Rotation2d.fromDegrees(-mNavXBoard.getAngle());
+        // return Rotation2d.fromDegrees(-mNavXBoard.getAngle());
+        return Rotation2d.fromDegrees(0);
     }
 
     public synchronized double getGyroVelocity() {

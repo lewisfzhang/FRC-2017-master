@@ -28,6 +28,7 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
+        mShooter.outputToSmartDashboard();
     }
 
     @Override
@@ -62,5 +63,9 @@ public class Superstructure extends Subsystem {
 
     public void setWantFeedIdle() {
         mFeeder.setOff();
+    }
+
+    public void reloadConstants() {
+        mShooter.refreshControllerConsts();
     }
 }

@@ -4,7 +4,6 @@ import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import com.team254.lib.util.ShooterController;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,51 +23,47 @@ public class Shooter extends Subsystem {
         CLOSED_LOOP,
     }
 
-    private final CANTalon mLeftMaster, mLeftSlave, mRightSlave1, mRightSlave2;
-    private final ShooterController mController;
+    private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
 
     private ControlMethod mControlMethod;
-    private double mFlywheelRpm;
 
     private Shooter() {
-        mLeftMaster = new CANTalon(Constants.kLeftShooterMasterId);
-        mLeftMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
-        mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
-        mLeftMaster.reverseSensor(false);
-        mLeftMaster.reverseOutput(false);
-        mLeftMaster.enableBrakeMode(false);
+        mRightMaster = new CANTalon(Constants.kRightShooterMasterId);
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mRightMaster.changeMotionControlFramePeriod(1);
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
+        mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        mRightMaster.reverseSensor(true);
+        mRightMaster.reverseOutput(false);
+        mRightMaster.enableBrakeMode(false);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =
-                mLeftMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+                mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         if (sensorPresent != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
             DriverStation.reportError("Could not detect shooter encoder: " + sensorPresent, false);
         }
 
-        mLeftSlave = makeSlave(Constants.kLeftShooterSlaveId, false);
-        mRightSlave1 = makeSlave(Constants.kRightShooterSlave1Id, true);
-        mRightSlave2 = makeSlave(Constants.kRightShooterSlave2Id, true);
+        mRightSlave = makeSlave(Constants.kRightShooterSlaveId, false);
+        mLeftSlave1 = makeSlave(Constants.kLeftShooterSlave1Id, true);
+        mLeftSlave2 = makeSlave(Constants.kLeftShooterSlave2Id, true);
 
-        mController = new ShooterController();
         refreshControllerConsts();
 
         mControlMethod = ControlMethod.OPEN_LOOP;
     }
 
     public void refreshControllerConsts() {
-        mController.setConstants(
-                Constants.kShooterKI,
-                Constants.kShooterKF,
-                Constants.kShooterBangLowThresholdFraction,
-                Constants.kShooterSaturationDelay,
-                Constants.kShooterMaxOutput,
-                Constants.kShooterMinOutput,
-                Constants.kShooterSaturationOutput);
+        mRightMaster.setP(Constants.kShooterTalonKP);
+        mRightMaster.setI(Constants.kShooterTalonKI);
+        mRightMaster.setD(Constants.kShooterTalonKD);
+        mRightMaster.setF(Constants.kShooterTalonKF);
     }
 
     @Override
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("shooter_rpm", mFlywheelRpm);
+        SmartDashboard.putNumber("shooter_speed_talon", getSpeedRpm());
+        // SmartDashboard.putNumber("shooter_talon_position", mRightMaster.getPosition());
+        // SmartDashboard.putNumber("shooter_talon_enc_position", mRightMaster.getEncPosition());
     }
 
     @Override
@@ -83,61 +78,35 @@ public class Shooter extends Subsystem {
 
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
-        enabledLooper.register(new Loop() {
-            double mLastTimestamp;
-            double mLastEncoderPositionTicks;
-
-            @Override
-            public void onStart(double timestamp) {
-                mLastTimestamp = timestamp;
-                mLastEncoderPositionTicks = mLeftMaster.getPosition();
-                setOpenLoop(0);
-            }
-
-            @Override
-            public void onLoop(double timestamp) {
-                double dTime = timestamp - mLastTimestamp;
-                mLastTimestamp = timestamp;
-
-                double encoderPositionTicks = mLeftMaster.getPosition();
-                mFlywheelRpm = (encoderPositionTicks - mLastEncoderPositionTicks) * 60.0 / 1024.0;
-                mLastEncoderPositionTicks = encoderPositionTicks;
-
-                synchronized (Shooter.this) {
-                    if (mControlMethod == ControlMethod.OPEN_LOOP) {
-                        // talon output is sticky
-                        return;
-                    }
-                    mLeftMaster.set(mController.calculate(mFlywheelRpm, dTime));
-                }
-            }
-
-            @Override
-            public void onStop(double timestamp) {
-                setOpenLoop(0);
-                mFlywheelRpm = 0;
-            }
-        });
     }
 
     public synchronized void setOpenLoop(double voltage) {
-        mControlMethod = ControlMethod.OPEN_LOOP;
-        mLeftMaster.set(voltage);
+        if (mControlMethod == ControlMethod.CLOSED_LOOP) {
+            mControlMethod = ControlMethod.OPEN_LOOP;
+            mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        }
+        mRightMaster.set(voltage);
     }
+
 
     public synchronized void setClosedLoopRpm(double setpointRpm) {
         if (mControlMethod == ControlMethod.OPEN_LOOP) {
-            mController.resetState();
             mControlMethod = ControlMethod.CLOSED_LOOP;
+            mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
         }
-        mController.setSetpoint(setpointRpm);
+        // Talon speed is in ??? units
+        mRightMaster.set(setpointRpm);
+    }
+
+    private double getSpeedRpm() {
+        return mRightMaster.getSpeed();
     }
 
     private static CANTalon makeSlave(int talonId, boolean flipOutput) {
         CANTalon slave = new CANTalon(talonId);
         slave.changeControlMode(CANTalon.TalonControlMode.Follower);
         slave.reverseOutput(flipOutput);
-        slave.set(Constants.kLeftShooterMasterId);
+        slave.set(Constants.kRightShooterMasterId);
         slave.enableBrakeMode(false);
         slave.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
         return slave;

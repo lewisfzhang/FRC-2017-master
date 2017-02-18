@@ -74,6 +74,12 @@ public class Constants extends ConstantsBase {
     public static double kShooterMinOutput = -10.0;
     public static double kShooterSaturationOutput = 10.0;
 
+    public static double kShooterTalonKP = 0.015;
+    public static double kShooterTalonKI = 5.0e-6;
+    public static double kShooterTalonKD = 0;
+    public static double kShooterTalonKF = 0.0228;
+
+
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
@@ -101,10 +107,10 @@ public class Constants extends ConstantsBase {
     public static final int kHopperSlaveId = 9;
 
     // Shooter
-    public static final int kLeftShooterMasterId = 13;
-    public static final int kLeftShooterSlaveId = 14;
-    public static final int kRightShooterSlave1Id = 1;
-    public static final int kRightShooterSlave2Id = 2;
+    public static final int kRightShooterMasterId = 1;
+    public static final int kRightShooterSlaveId = 2;
+    public static final int kLeftShooterSlave1Id = 13;
+    public static final int kLeftShooterSlave2Id = 14;
 
     //PATH FOLLOWING
     public static double kAutoLookAhead = 25.0; //inches
