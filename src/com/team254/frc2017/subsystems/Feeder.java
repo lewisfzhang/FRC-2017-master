@@ -33,6 +33,7 @@ public class Feeder extends Subsystem {
         mSlaveTalon = new CANTalon(Constants.kFeederSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kFeederMasterId);
+        mSlaveTalon.reverseOutput(true);
     }
 
     private final Loop mLoop = new Loop() {
@@ -52,10 +53,10 @@ public class Feeder extends Subsystem {
                         stop();
                         return;
                     case FEEDING:
-                        setOpenLoop(.5);
+                        setOpenLoop(-1);
                         return;
                     case REVERSING:
-                        setOpenLoop(-.5);
+                        setOpenLoop(1);
                         return;
                     default:
                         System.err.println("Unexpected feeder drive control state: " + mControlState);

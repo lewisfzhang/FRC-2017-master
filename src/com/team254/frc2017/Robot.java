@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
     // Subsystems
     private Drive mDrive = Drive.getInstance();
-    private Superstructure mSuperstructure = null; //Superstructure.getInstance();
+    private Superstructure mSuperstructure = Superstructure.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
 
     // Other parts of the robot
@@ -56,7 +56,9 @@ public class Robot extends IterativeRobot {
             CrashTracker.logRobotInit();
 
             mDrive.registerEnabledLoops(mEnabledLooper);
-            //mSuperstructure.registerEnabledLoops(mEnabledLooper);
+            if (mSuperstructure != null) {
+                mSuperstructure.registerEnabledLoops(mEnabledLooper);
+            }
 
 
             mEnabledLooper.register(VisionProcessor.getInstance());

@@ -33,7 +33,7 @@ public class Shooter extends Subsystem {
     private Shooter() {
         mLeftMaster = new CANTalon(Constants.kLeftShooterMasterId);
         mLeftMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1);
+        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
         mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mLeftMaster.reverseSensor(false);
         mLeftMaster.reverseOutput(false);
@@ -139,7 +139,7 @@ public class Shooter extends Subsystem {
         slave.reverseOutput(flipOutput);
         slave.set(Constants.kLeftShooterMasterId);
         slave.enableBrakeMode(false);
-        slave.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1);
+        slave.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
         return slave;
     }
 }
