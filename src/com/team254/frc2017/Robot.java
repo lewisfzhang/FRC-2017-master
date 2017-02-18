@@ -62,7 +62,6 @@ public class Robot extends IterativeRobot {
 
             mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
-            mHTTPServer.startServer();
 
             // initialize robot constants
             RobotName name = Constants.getRobotName();
@@ -97,7 +96,8 @@ public class Robot extends IterativeRobot {
         }
         mEnabledLooper.start();
         zeroAllSensors();
-        mDrive.setStartPathTest();
+        //mDrive.setVelocitySetpoint(-15,15);
+        mDrive.setWantAimToGoal();
     }
 
     /**

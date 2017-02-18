@@ -41,22 +41,22 @@ public class Constants extends ConstantsBase {
     // DRIVE GAINS
 
     // Wheel velocity - onboard talon
-    public static double kDriveVelocityKp = 0.225;
+    public static double kDriveVelocityKp = 0.4;
     public static double kDriveVelocityKi = 0.0;
-    public static double kDriveVelocityKd = 0.2;
-    public static double kDriveVelocityKf = 0.145;
+    public static double kDriveVelocityKd = 5.0;
+    public static double kDriveVelocityKf = .15; //0.145;
     public static int kDriveVelocityIZone = 0;
     public static double kDriveVelocityRampRate = 0.0;
     public static int kDriveVelocityAllowableError = 0;
 
     // Turn to heading
-    public static double kDriveTurnKp = 0.0;
+    public static double kDriveTurnKp = 8;
     public static double kDriveTurnKi = 0.0;
     public static double kDriveTurnKv = 0.0;
-    public static double kDriveTurnKffv = 1.0;
+    public static double kDriveTurnKffv = 1.075;
     public static double kDriveTurnKffa = 0.0;
-    public static double kDriveTurnMaxVel = 90;
-    public static double kDriveTurnMaxAcc = 90;
+    public static double kDriveTurnMaxVel = 600;
+    public static double kDriveTurnMaxAcc = 300;
 
 
     // SHOOTER GAINS

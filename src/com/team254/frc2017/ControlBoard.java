@@ -23,17 +23,18 @@ public class ControlBoard {
         mButtonBoard = new Joystick(2);
     }
 
+
     // DRIVER CONTROLS
     public double getThrottle() {
-        return -mThrottleStick.getY();
+        return -mThrottleStick.getRawAxis(1);
     }
 
     public double getTurn() {
-        return mTurnStick.getX();
+        return mThrottleStick.getRawAxis(4);
     }
 
     public boolean getQuickTurn() {
-        return mTurnStick.getRawButton(1);
+        return mThrottleStick.getRawButton(4);
     }
 
     public boolean getLowGear() {

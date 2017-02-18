@@ -49,6 +49,8 @@ public class Drive extends Subsystem {
     // Controllers
     private RobotState mRobotState = RobotState.getInstance();
     private AdaptivePurePursuitController mPathController;
+
+    // These gains get reset below!!
     private ProfileFollower mProfileFollower = new ProfileFollower(0, 0, 0,0,0);
 
     // Hardware states
@@ -157,10 +159,13 @@ public class Drive extends Subsystem {
         in.register(mLoop);
     }
 
+
     public synchronized void setOpenLoop(DriveSignal signal) {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+            mLeftMaster.configNominalOutputVoltage(0,0);
+            mRightMaster.configNominalOutputVoltage(0,0);
             mDriveControlState = DriveControlState.OPEN_LOOP;
             setBrakeMode(false);
         }
@@ -204,6 +209,8 @@ public class Drive extends Subsystem {
         SmartDashboard.putNumber("right speed (ips)", getRightVelocityInchesPerSec());
         SmartDashboard.putNumber("left position (rotations)", mLeftMaster.getPosition());
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getPosition());
+        SmartDashboard.putNumber("gyro vel", getGyroVelocity());
+        SmartDashboard.putNumber("gyro pos", getGyroAngle().getDegrees());
     }
     
     public synchronized void resetEncoders() {
@@ -218,7 +225,7 @@ public class Drive extends Subsystem {
     @Override
     public void zeroSensors() {
         resetEncoders();
-        mNavXBoard.reset();
+        mNavXBoard.zeroYaw();
     }
 
     /**
@@ -302,7 +309,7 @@ public class Drive extends Subsystem {
     }
 
     public synchronized double getGyroVelocity() {
-        return -mNavXBoard.getRate();
+        return -mNavXBoard.getRawGyroZ();
     }
 
     private final MotionProfileConstraints mMotionConstraints=  new MotionProfileConstraints(
@@ -320,8 +327,10 @@ public class Drive extends Subsystem {
                 mMotionConstraints);
 
         double velocitySignal = mProfileFollower.update(motionState, timestamp + Constants.kLooperDt);
-        Kinematics.DriveVelocity wheelVel = Kinematics.inverseKinematics(
-                new RigidTransform2d.Delta(0, 0, velocitySignal));
+
+        Kinematics.DriveVelocity wheelVel = Kinematics.inverseKinematics(new RigidTransform2d.Delta(0,0,
+                Rotation2d.fromDegrees(velocitySignal).getRadians()));
+
         updateVelocitySetpoint(wheelVel.left, wheelVel.right);
     }
 
@@ -357,6 +366,7 @@ public class Drive extends Subsystem {
 
     public void setWantAimToGoal() {
         if (mDriveControlState != DriveControlState.AIM_TO_GOAL) {
+            configureTalonsForSpeedControl();
             resetProfileGains();
             mProfileFollower.resetProfile();
             mProfileFollower.resetSetpoint();

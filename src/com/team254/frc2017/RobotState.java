@@ -147,7 +147,7 @@ public class RobotState {
   }
 
   public ShooterAimingParameters getAimingParameters(double currentTimestamp) {
-    return new ShooterAimingParameters(0, new Rotation2d());
+    return new ShooterAimingParameters(0, Rotation2d.fromDegrees(45));
   }
 
   public synchronized void resetVision() {
