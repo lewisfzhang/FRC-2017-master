@@ -1,6 +1,5 @@
 package com.team254.lib.util;
 
-import com.team254.frc2017.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**

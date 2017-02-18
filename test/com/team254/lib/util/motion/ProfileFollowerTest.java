@@ -49,6 +49,26 @@ public class ProfileFollowerTest {
         }
     }
 
+    protected class DeadbandDynamics extends Dynamics {
+        protected double mDeadband;
+
+        public DeadbandDynamics(MotionState state, double deadband) {
+            super(state);
+            mDeadband = deadband;
+        }
+
+        @Override
+        public void update(double command_vel, double dt) {
+            if (command_vel > -mDeadband && command_vel < mDeadband) {
+                command_vel = 0.0;
+            } else {
+                command_vel = Math.signum(command_vel) * (Math.abs(command_vel) - mDeadband);
+            }
+            final double acc = (command_vel - mState.vel()) / dt;
+            mState = mState.extrapolate(mState.t() + dt, acc);
+        }
+    }
+
     protected MotionState followProfile(ProfileFollower follower, Dynamics dynamics, double dt, int max_iterations) {
         int i = 0;
         for (; i < max_iterations && !follower.onTarget(); ++i) {
@@ -148,6 +168,32 @@ public class ProfileFollowerTest {
         ProfileFollower follower = new ProfileFollower(0.5, 0.001, 0.5, 1.0, 0.1);
         follower.setGoal(goal, constraints);
         MotionState final_state = followProfile(follower, new ScaledDynamics(start_state, .8), dt, 2000);
+        assertTrue(goal.atGoalState(final_state));
+    }
+    
+    @Test
+    public void testStationaryToStationaryFeedbackFast() {
+        MotionProfileConstraints constraints = new MotionProfileConstraints(10.0, 10.0);
+        MotionProfileGoal goal = new MotionProfileGoal(100.0, 0.0, CompletionBehavior.OVERSHOOT, 1.0, 1.0);
+        MotionState start_state = new MotionState(0.0, 0.0, 0.0, 0.0);
+        final double dt = 0.01;
+
+        ProfileFollower follower = new ProfileFollower(0.5, 0.001, 0.5, 1.0, 0.1);
+        follower.setGoal(goal, constraints);
+        MotionState final_state = followProfile(follower, new ScaledDynamics(start_state, 1.2), dt, 2000);
+        assertTrue(goal.atGoalState(final_state));
+    }
+
+    @Test
+    public void testStationaryToStationaryFeedbackDeadband() {
+        MotionProfileConstraints constraints = new MotionProfileConstraints(10.0, 10.0);
+        MotionProfileGoal goal = new MotionProfileGoal(100.0, 0.0, CompletionBehavior.OVERSHOOT, 1.0, 1.0);
+        MotionState start_state = new MotionState(0.0, 0.0, 0.0, 0.0);
+        final double dt = 0.01;
+
+        ProfileFollower follower = new ProfileFollower(0.5, 0.001, 0.5, 1.0, 0.1);
+        follower.setGoal(goal, constraints);
+        MotionState final_state = followProfile(follower, new DeadbandDynamics(start_state, 2.0), dt, 2000);
         assertTrue(goal.atGoalState(final_state));
     }
 
