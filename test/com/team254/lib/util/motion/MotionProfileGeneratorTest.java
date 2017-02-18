@@ -181,10 +181,11 @@ public class MotionProfileGeneratorTest {
         testProfile(new MotionProfileConstraints(10.0, 10.0), new MotionProfileGoal(8.75, 5.0),
                 new MotionState(0.0, 5.0, -10.0, 0.0), 2.5, 13.75);
     }
-    
+
     @Test
     public void problematicCase1() {
-        MotionProfile profile = MotionProfileGenerator.generateProfile(new MotionProfileConstraints(50.0, 25.0), new MotionProfileGoal(200.0), new MotionState(0.0, 0.0, 0.0, 0.0));
+        MotionProfile profile = MotionProfileGenerator.generateProfile(new MotionProfileConstraints(50.0, 25.0),
+                new MotionProfileGoal(200.0), new MotionState(0.0, 0.0, 0.0, 0.0));
         System.out.println(profile);
         assertTrue(profile.firstStateByPos(160.0).get().vel() > 0.0);
     }

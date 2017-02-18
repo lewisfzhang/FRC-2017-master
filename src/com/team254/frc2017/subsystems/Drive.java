@@ -10,10 +10,10 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.paths.TestArcPath;
 import com.team254.lib.util.*;
+import com.team254.lib.util.motion.HeadingProfileFollower;
 import com.team254.lib.util.motion.MotionProfileConstraints;
 import com.team254.lib.util.motion.MotionProfileGoal;
 import com.team254.lib.util.motion.MotionState;
-import com.team254.lib.util.motion.ProfileFollower;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -53,7 +53,7 @@ public class Drive extends Subsystem {
     private AdaptivePurePursuitController mPathController;
 
     // These gains get reset below!!
-    private ProfileFollower mProfileFollower = new ProfileFollower(0,0,0,0,0);
+    private HeadingProfileFollower mProfileFollower = new HeadingProfileFollower(0,0,0,0,0);
 
     // Hardware states
     private boolean mIsHighGear;
@@ -320,36 +320,8 @@ public class Drive extends Subsystem {
         final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
         final double t_observation = latest_field_to_robot.getKey().value;
         final ShooterAimingParameters aim = mRobotState.getAimingParameters(t_observation);
-
-        // To deal with angle rollover - but still get the desired behavior whenever the goal or actual state changes -
-        // we need to make sure our angles don't wrap. This requires using a custom version of a transform operator that
-        // does NOT bound the resulting angle (e.g. new_angle = prev_angle + shortest_distance_from_prev_to_new).
-        final Rotation2d field_to_new_goal = aim.getFieldToGoal();
-        final Rotation2d new_goal_to_field = field_to_new_goal.inverse();
-        MotionProfileGoal prev_profile_goal = mProfileFollower.getGoal();
-        final Rotation2d prev_goal_to_field = (prev_profile_goal == null ? Rotation2d.identity()
-                : Rotation2d.fromDegrees(prev_profile_goal.pos()).inverse());
-        if (prev_profile_goal == null) {
-            prev_profile_goal = new MotionProfileGoal();
-        }
-
-        // Update the goal.
-        final MotionProfileGoal new_goal = new MotionProfileGoal(
-                prev_profile_goal.pos() + prev_goal_to_field.rotateBy(field_to_new_goal).getDegrees());
-        mProfileFollower.setGoal(new_goal);
-
-        // Update the prior setpoint (so we don't see a sudden jump in error).
-        final MotionState prev_setpoint = mProfileFollower.getSetpoint();
-        if (prev_setpoint != MotionState.kInvalidState) {
-            mProfileFollower.resetSetpoint(new MotionState(prev_setpoint.t(),
-                    new_goal.pos()
-                            + new_goal_to_field.rotateBy(Rotation2d.fromDegrees(prev_setpoint.pos())).getDegrees(),
-                    prev_setpoint.vel(), prev_setpoint.acc()));
-        }
-
-        // Update the actual state (which should also be in the previous goal frame).
-        final MotionState motion_state = new MotionState(t_observation,
-                new_goal.pos() + new_goal_to_field.rotateBy(field_to_robot.getRotation()).getDegrees(),
+        mProfileFollower.setGoal(new MotionProfileGoal(aim.getFieldToGoal().getDegrees()));
+        final MotionState motion_state = new MotionState(t_observation, field_to_robot.getRotation().getDegrees(),
                 getGyroVelocity(), 0.0);
         final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
 
