@@ -71,18 +71,34 @@ public class ProfileFollower {
     }
 
     /**
-     * Specify a goal (and constraints for achieving the goal).
-     * 
-     * @param goal
-     * @param constraints
+     * Specify a goal and constraints for achieving the goal.
      */
-    public void setGoal(MotionProfileGoal goal, MotionProfileConstraints constraints) {
+    public void setGoalAndConstraints(MotionProfileGoal goal, MotionProfileConstraints constraints) {
         if (mGoal != null && !mGoal.equals(goal) && mLatestSetpoint != null) {
             // Clear the final state bit since the goal has changed.
             mLatestSetpoint.final_setpoint = false;
         }
         mGoal = goal;
         mConstraints = constraints;
+    }
+
+    public void setGoal(MotionProfileGoal goal) {
+        setGoalAndConstraints(goal, mConstraints);
+    }
+    
+    /**
+     * @return The current goal (null if no goal has been set since the latest call to reset()).
+     */
+    public MotionProfileGoal getGoal() {
+        return mGoal;
+    }
+
+    public void setConstraints(MotionProfileConstraints constraints) {
+        setGoalAndConstraints(mGoal, constraints);
+    }
+    
+    public MotionState getSetpoint() {
+        return (mLatestSetpoint == null ? MotionState.kInvalidState : mLatestSetpoint.motion_state);
     }
 
     /**
@@ -92,6 +108,13 @@ public class ProfileFollower {
      */
     public void resetSetpoint() {
         mLatestSetpoint = null;
+    }
+
+    /**
+     * Reset the setpoint to a specified value (for example, if this ProfileFollower should smoothly depart from a specified setpoint).
+     */
+    public void resetSetpoint(MotionState setpoint) {
+        mLatestSetpoint = new SetpointGenerator.Setpoint(setpoint, false);
     }
 
     /**

@@ -8,6 +8,9 @@ import java.text.DecimalFormat;
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */
 public class Rotation2d implements Interpolable<Rotation2d> {
+    protected static final Rotation2d kIdentity = new Rotation2d();
+    public static final Rotation2d identity() { return kIdentity; }
+    
     protected static final double kEpsilon = 1E-9;
 
     protected double cos_angle_;

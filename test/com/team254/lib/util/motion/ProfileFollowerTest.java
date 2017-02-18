@@ -97,7 +97,7 @@ public class ProfileFollowerTest {
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.0, 0.0, 0.0, 1.0, 0.0);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         MotionState final_state = followProfile(follower, new IdealDynamics(start_state), dt, 1500);
         assertTrue(goal.atGoalState(final_state));
     }
@@ -110,13 +110,13 @@ public class ProfileFollowerTest {
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.0, 0.0, 0.0, 1.0, 0.0);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         Dynamics dynamics = new IdealDynamics(start_state);
         MotionState final_state = followProfile(follower, dynamics, dt, 500);
         assertFalse(goal.atGoalState(final_state));
 
         goal = new MotionProfileGoal(0.0);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         final_state = followProfile(follower, dynamics, dt, 1500);
         assertTrue(goal.atGoalState(final_state));
     }
@@ -129,7 +129,7 @@ public class ProfileFollowerTest {
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.0, 0.0, 0.0, 1.0, 0.0);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         Dynamics dynamics = new IdealDynamics(start_state);
         MotionState final_state = followProfile(follower, dynamics, dt, 500);
         assertFalse(goal.atGoalState(final_state));
@@ -147,13 +147,13 @@ public class ProfileFollowerTest {
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.0, 0.0, 0.0, 1.0, 0.0);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         Dynamics dynamics = new IdealDynamics(start_state);
         MotionState final_state = followProfile(follower, dynamics, dt, 500);
         assertFalse(goal.atGoalState(final_state));
 
         follower.resetProfile();
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         final_state = followProfile(follower, dynamics, dt, 1500);
         assertTrue(goal.atGoalState(final_state));
     }
@@ -166,7 +166,7 @@ public class ProfileFollowerTest {
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.5, 0.001, 0.5, 1.0, 0.1);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         MotionState final_state = followProfile(follower, new ScaledDynamics(start_state, .8), dt, 2000);
         assertTrue(goal.atGoalState(final_state));
     }
@@ -179,7 +179,7 @@ public class ProfileFollowerTest {
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.5, 0.001, 0.5, 1.0, 0.1);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         MotionState final_state = followProfile(follower, new ScaledDynamics(start_state, 1.2), dt, 2000);
         assertTrue(goal.atGoalState(final_state));
     }
@@ -192,7 +192,7 @@ public class ProfileFollowerTest {
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.5, 0.001, 0.5, 1.0, 0.1);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         MotionState final_state = followProfile(follower, new DeadbandDynamics(start_state, 2.0), dt, 2000);
         assertTrue(goal.atGoalState(final_state));
     }
@@ -205,7 +205,7 @@ public class ProfileFollowerTest {
         final double dt = 0.01;
 
         ProfileFollower follower = new ProfileFollower(0.0, 0.0, 0.0, 1.0, 0.0);
-        follower.setGoal(goal, constraints);
+        follower.setGoalAndConstraints(goal, constraints);
         MotionState final_state = followProfile(follower, new ScaledDynamics(start_state, 1.2), dt, 2000);
         assertTrue(goal.atGoalPos(final_state.pos()));
     }

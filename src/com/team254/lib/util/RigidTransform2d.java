@@ -6,6 +6,9 @@ package com.team254.lib.util;
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */
 public class RigidTransform2d implements Interpolable<RigidTransform2d> {
+    protected static final RigidTransform2d kIdentity = new RigidTransform2d();
+    public static final RigidTransform2d identity() { return kIdentity; }
+    
     private final static double kEps = 1E-9;
 
     // Movement along an arc at constant curvature and velocity. We can use
@@ -14,7 +17,7 @@ public class RigidTransform2d implements Interpolable<RigidTransform2d> {
     public static class Delta {
         public final double dx;
         public final double dy;
-        public final double dtheta;
+        public final double dtheta;  // Radians!
 
         public Delta(double dx, double dy, double dtheta) {
             this.dx = dx;

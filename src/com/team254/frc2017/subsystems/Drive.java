@@ -315,17 +315,42 @@ public class Drive extends Subsystem {
     }
 
     private void updateTurnToHeading(double timestamp) {
-        final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState.getLatestFieldToVehicle();
+        final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
+                .getLatestFieldToVehicle();
         final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
         final double t_observation = latest_field_to_robot.getKey().value;
         final ShooterAimingParameters aim = mRobotState.getAimingParameters(t_observation);
 
+        // To deal with angle rollover - but still get the desired behavior whenever the goal or actual state changes -
+        // we need to "unwrap" our angles around the previous goal. This requires using a custom version of a transform
+        // operator that does NOT bound the resulting angle (e.g. new_angle = prev_angle +
+        // shortest_distance_from_prev_to_new).
+        final MotionProfileGoal prev_goal = mProfileFollower.getGoal();
+        final Rotation2d prev_goal_to_field = (prev_goal == null ? Rotation2d.identity()
+                : Rotation2d.fromDegrees(prev_goal.pos()).inverse());
+        final Rotation2d field_to_new_goal = aim.getFieldToGoal();
+
+        // Update the goal.
+        mProfileFollower.setGoal(
+                new MotionProfileGoal(prev_goal.pos() + prev_goal_to_field.rotateBy(field_to_new_goal).getDegrees()));
+
+        // Update the prior setpoint (so we don't see a sudden jump in error).
+        final MotionState prev_setpoint = mProfileFollower.getSetpoint();
+        if (prev_setpoint != MotionState.kInvalidState) {
+            mProfileFollower.resetSetpoint(new MotionState(prev_setpoint.t(),
+                    prev_goal.pos()
+                            + prev_goal_to_field.rotateBy(Rotation2d.fromDegrees(prev_setpoint.pos())).getDegrees(),
+                    prev_setpoint.vel(), prev_setpoint.acc()));
+        }
+
+        // Update the actual state (which should also be in the previous goal frame).
         final MotionState motion_state = new MotionState(t_observation,
-                (aim.getFieldToGoal().inverse().rotateBy(field_to_robot.getRotation())).getDegrees(), getGyroVelocity(), 0.0);
+                prev_goal.pos() + prev_goal_to_field.rotateBy(field_to_robot.getRotation()).getDegrees(),
+                getGyroVelocity(), 0.0);
         final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
 
-        Kinematics.DriveVelocity wheel_vel = Kinematics.inverseKinematics(new RigidTransform2d.Delta(0,0,
-                Rotation2d.fromDegrees(angular_velocity_command).getRadians()));
+        Kinematics.DriveVelocity wheel_vel = Kinematics.inverseKinematics(
+                new RigidTransform2d.Delta(0, 0, Rotation2d.fromDegrees(angular_velocity_command).getRadians()));
 
         updateVelocitySetpoint(wheel_vel.left, wheel_vel.right);
     }
@@ -393,8 +418,7 @@ public class Drive extends Subsystem {
             resetProfileGains();
             mProfileFollower.resetProfile();
             mProfileFollower.resetSetpoint();
-            mProfileFollower.setGoal(new MotionProfileGoal(0.0), new MotionProfileConstraints(
-                    Constants.kDriveTurnMaxVel, Constants.kDriveTurnMaxAcc));
+            mProfileFollower.setConstraints(new MotionProfileConstraints(Constants.kDriveTurnMaxVel, Constants.kDriveTurnMaxAcc));
             mDriveControlState = DriveControlState.AIM_TO_GOAL;
         }
     }
