@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
 
     private WebServer mHTTPServer = new WebServer();
 
-    // private VisionServer mVisionServer = VisionServer.getInstance();
+    private VisionServer mVisionServer = VisionServer.getInstance();
 
     public Robot() {
         CrashTracker.logRobotConstruction();
@@ -70,7 +70,7 @@ public class Robot extends IterativeRobot {
             SmartDashboard.putString("MAC Address", Constants.getMACAddress());
             ConstantsModifier.initConstants(name);
 
-            // mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
+            mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
