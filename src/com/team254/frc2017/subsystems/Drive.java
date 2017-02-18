@@ -53,7 +53,7 @@ public class Drive extends Subsystem {
     private AdaptivePurePursuitController mPathController;
 
     // These gains get reset below!!
-    private ProfileFollower mProfileFollower = new ProfileFollower(0, 0, 0,0,0);
+    private ProfileFollower mProfileFollower = new ProfileFollower(0,0,0,0,0);
 
     // Hardware states
     private boolean mIsHighGear;
@@ -314,26 +314,20 @@ public class Drive extends Subsystem {
         return -mNavXBoard.getRawGyroZ();
     }
 
-    private final MotionProfileConstraints mMotionConstraints=  new MotionProfileConstraints(
-            Constants.kDriveTurnMaxVel, Constants.kDriveTurnMaxAcc);
     private void updateTurnToHeading(double timestamp) {
-        Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState.getLatestFieldToVehicle();
-        RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
-        double tsAtObservation = latest_field_to_robot.getKey().value;
+        final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState.getLatestFieldToVehicle();
+        final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
+        final double t_observation = latest_field_to_robot.getKey().value;
+        final ShooterAimingParameters aim = mRobotState.getAimingParameters(t_observation);
 
-        MotionState motionState = new MotionState(tsAtObservation,
-                field_to_robot.getRotation().getDegrees(), getGyroVelocity(), 0);
-        ShooterAimingParameters aim = mRobotState.getAimingParameters(timestamp);
+        final MotionState motion_state = new MotionState(t_observation,
+                (aim.getFieldToGoal().inverse().rotateBy(field_to_robot.getRotation())).getDegrees(), getGyroVelocity(), 0.0);
+        final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
 
-        mProfileFollower.setGoal(new MotionProfileGoal(aim.getFieldToGoal().getDegrees()),
-                mMotionConstraints);
+        Kinematics.DriveVelocity wheel_vel = Kinematics.inverseKinematics(new RigidTransform2d.Delta(0,0,
+                Rotation2d.fromDegrees(angular_velocity_command).getRadians()));
 
-        double velocitySignal = mProfileFollower.update(motionState, timestamp + Constants.kLooperDt);
-
-        Kinematics.DriveVelocity wheelVel = Kinematics.inverseKinematics(new RigidTransform2d.Delta(0,0,
-                Rotation2d.fromDegrees(velocitySignal).getRadians()));
-
-        updateVelocitySetpoint(wheelVel.left, wheelVel.right);
+        updateVelocitySetpoint(wheel_vel.left, wheel_vel.right);
     }
 
     private void updateTurnToHeadingSimplePid(double timestamp) {
@@ -399,6 +393,8 @@ public class Drive extends Subsystem {
             resetProfileGains();
             mProfileFollower.resetProfile();
             mProfileFollower.resetSetpoint();
+            mProfileFollower.setGoal(new MotionProfileGoal(0.0), new MotionProfileConstraints(
+                    Constants.kDriveTurnMaxVel, Constants.kDriveTurnMaxAcc));
             mDriveControlState = DriveControlState.AIM_TO_GOAL;
         }
     }
