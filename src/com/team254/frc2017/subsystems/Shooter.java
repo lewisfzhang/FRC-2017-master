@@ -5,6 +5,7 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.CSVWriter;
+import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,12 +26,11 @@ public class Shooter extends Subsystem {
         CLOSED_LOOP,
     }
 
-    private double mCachedVelocitySetpoint = 0;
-    private static final double kCacheSetpointDeadband = 5;
-
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
 
     private ControlMethod mControlMethod;
+    // The setpoint the talon currently has
+    private double mCurTalonSetpointRpm = Double.MIN_VALUE;
 
     private final CSVWriter mCSVWriter;
 
@@ -114,21 +114,20 @@ public class Shooter extends Subsystem {
             mControlMethod = ControlMethod.OPEN_LOOP;
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
         }
-        mCachedVelocitySetpoint = 0;
         mRightMaster.set(voltage);
     }
 
-
     public synchronized void setClosedLoopRpm(double setpointRpm) {
         if (mControlMethod == ControlMethod.OPEN_LOOP) {
-            mCachedVelocitySetpoint = 0;
             mControlMethod = ControlMethod.CLOSED_LOOP;
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+            mCurTalonSetpointRpm = Double.MIN_VALUE;
         }
-        // Talon speed is rpm
-        if (Math.abs(mCachedVelocitySetpoint - setpointRpm) > kCacheSetpointDeadband) {
+
+        if (!Util.epsilonEquals(setpointRpm, mCurTalonSetpointRpm, 5)) {
+            // Talon speed is in rpm
             mRightMaster.set(setpointRpm);
-            mCachedVelocitySetpoint = setpointRpm;
+            mCurTalonSetpointRpm = setpointRpm;
         }
     }
 
