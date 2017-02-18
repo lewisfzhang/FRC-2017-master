@@ -65,11 +65,11 @@ public class SetpointGenerator {
             regenerate = !expected_state.isPresent() || !expected_state.get().equals(prev_state);
         }
         if (regenerate) {
-            System.out.println("Regenerating profile");
             // Regenerate the profile, as our current profile does not satisfy the inputs.
             mConstraints = constraints;
             mGoal = goal;
             mProfile = MotionProfileGenerator.generateProfile(constraints, goal, prev_state);
+            // System.out.println("Regenerating profile: " + mProfile);
         }
 
         // Sample the profile one dt from now.
