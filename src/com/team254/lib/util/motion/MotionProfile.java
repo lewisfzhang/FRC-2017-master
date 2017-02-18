@@ -102,7 +102,7 @@ public class MotionProfile {
             final boolean vel_positive = s.start().vel() > 0.0 || s.end().vel() > 0.0;
             if (vel_positive ? (s.start().pos() <= pos && s.end().pos() >= pos)
                     : (s.start().pos() >= pos && s.end().pos() <= pos)) {
-                final double t = s.start().nextTimeAtPos(pos);
+                final double t = Math.min(s.start().nextTimeAtPos(pos), s.end().t());
                 if (Double.isNaN(t)) {
                     System.err.println("Error! We should reach 'pos' but we don't");
                     return Optional.empty();
