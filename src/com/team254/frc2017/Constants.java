@@ -39,7 +39,8 @@ public class Constants extends ConstantsBase {
 
     // CONTROL LOOP GAINS
     // DRIVE GAINS
-    // TODO add some!
+
+    // Wheel velocity - onboard talon
     public static double kDriveVelocityKp = 0.225;
     public static double kDriveVelocityKi = 0.0;
     public static double kDriveVelocityKd = 0.2;
@@ -47,6 +48,15 @@ public class Constants extends ConstantsBase {
     public static int kDriveVelocityIZone = 0;
     public static double kDriveVelocityRampRate = 0.0;
     public static int kDriveVelocityAllowableError = 0;
+
+    // Turn to heading
+    public static double kDriveTurnKp = 0.0;
+    public static double kDriveTurnKi = 0.0;
+    public static double kDriveTurnKv = 0.0;
+    public static double kDriveTurnKffv = 1.0;
+    public static double kDriveTurnKffa = 0.0;
+    public static double kDriveTurnMaxVel = 90;
+    public static double kDriveTurnMaxAcc = 90;
 
 
     // SHOOTER GAINS

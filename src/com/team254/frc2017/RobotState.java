@@ -146,6 +146,10 @@ public class RobotState {
     }
   }
 
+  public ShooterAimingParameters getAimingParameters(double currentTimestamp) {
+    return new ShooterAimingParameters(0, new Rotation2d());
+  }
+
   public synchronized void resetVision() {
     goal_tracker_.reset();
   }
