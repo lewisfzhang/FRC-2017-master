@@ -327,7 +327,7 @@ public class Drive extends Subsystem {
         final Rotation2d field_to_new_goal = aim.getFieldToGoal();
         final Rotation2d new_goal_to_field = field_to_new_goal.inverse();
         MotionProfileGoal prev_profile_goal = mProfileFollower.getGoal();
-        final Rotation2d prev_goal_to_field = (prev_profile_goal == null ? new_goal_to_field
+        final Rotation2d prev_goal_to_field = (prev_profile_goal == null ? Rotation2d.identity()
                 : Rotation2d.fromDegrees(prev_profile_goal.pos()).inverse());
         if (prev_profile_goal == null) {
             prev_profile_goal = new MotionProfileGoal();
