@@ -81,7 +81,7 @@ public class MotionProfile {
             return Optional.of(endState());
         }
         for (MotionSegment s : mSegments) {
-            if (s.start().t() <= t && s.end().t() >= t) {
+            if (s.containsTime(t)) {
                 return Optional.of(s.start().extrapolate(t));
             }
         }
@@ -99,9 +99,7 @@ public class MotionProfile {
      */
     public Optional<MotionState> firstStateByPos(double pos) {
         for (MotionSegment s : mSegments) {
-            final boolean vel_positive = s.start().vel() > 0.0 || s.end().vel() > 0.0;
-            if (vel_positive ? (s.start().pos() <= pos && s.end().pos() >= pos)
-                    : (s.start().pos() >= pos && s.end().pos() <= pos)) {
+            if (s.containsPos(pos)) {
                 final double t = Math.min(s.start().nextTimeAtPos(pos), s.end().t());
                 if (Double.isNaN(t)) {
                     System.err.println("Error! We should reach 'pos' but we don't");

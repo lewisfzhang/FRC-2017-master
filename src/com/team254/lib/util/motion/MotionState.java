@@ -110,7 +110,7 @@ public class MotionState {
         final double sqrt_disc = Math.sqrt(disc);
         final double max_dt = (-vel + sqrt_disc) / acc;
         final double min_dt = (-vel - sqrt_disc) / acc;
-        if (min_dt >= 0.0 && min_dt < max_dt) {
+        if (min_dt >= 0.0 && (max_dt < 0.0 || min_dt < max_dt)) {
             return t + min_dt;
         }
         if (max_dt >= 0.0) {

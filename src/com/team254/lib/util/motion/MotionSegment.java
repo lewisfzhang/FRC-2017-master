@@ -48,6 +48,14 @@ public class MotionSegment {
         }
         return true;
     }
+    
+    public boolean containsTime(double t) {
+        return t >= start().t() && t <= end().t();
+    }
+    
+    public boolean containsPos(double pos) {
+        return pos >= start().pos() && pos <= end().pos() || pos <= start().pos() && pos >= end().pos();
+    }
 
     public MotionState start() {
         return mStart;
