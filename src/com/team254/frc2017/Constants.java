@@ -37,6 +37,9 @@ public class Constants extends ConstantsBase {
     public static double kCenterToRearBumperDistance = 16.99;
     public static double kCenterToSideBumperDistance = 17.225;
 
+    // Shooting suggestions
+    public static double kOnTargetErrorThreshold = 1.0;
+
     // CONTROL LOOP GAINS
     // DRIVE GAINS
 

@@ -56,6 +56,7 @@ public class Drive extends Subsystem {
     // Hardware states
     private boolean mIsHighGear;
     private boolean mIsBrakeMode;
+    private boolean mIsOnTarget = false;
 
     private final Loop mLoop = new Loop() {
         @Override
@@ -351,6 +352,9 @@ public class Drive extends Subsystem {
                 new RigidTransform2d.Delta(0,0, Rotation2d.fromDegrees(velocitySignal).getRadians()));
 
         SmartDashboard.putNumber("drive_turn_wheel_vel", wheelVel.left );
+
+        mIsOnTarget = error < Constants.kOnTargetErrorThreshold;
+
         updateVelocitySetpoint(-velocitySignal, velocitySignal);
     }
 
@@ -382,6 +386,10 @@ public class Drive extends Subsystem {
                 Constants.kDriveTurnKffv,
                 Constants.kDriveTurnKffa
         );
+    }
+
+    public boolean isOnTarget() {
+        return mIsOnTarget && mDriveControlState == DriveControlState.AIM_TO_GOAL;
     }
 
     public void setWantAimToGoal() {
