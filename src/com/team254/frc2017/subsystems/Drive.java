@@ -1,18 +1,24 @@
 package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
+import com.kauailabs.navx.frc.AHRS;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.Kinematics;
 import com.team254.frc2017.RobotState;
+import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.*;
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.SPI;
+import com.team254.lib.util.motion.MotionProfileConstraints;
+import com.team254.lib.util.motion.MotionProfileGoal;
+import com.team254.lib.util.motion.MotionState;
+import com.team254.lib.util.motion.ProfileFollower;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.Map;
 
 public class Drive extends Subsystem {
 
@@ -28,15 +34,24 @@ public class Drive extends Subsystem {
     public enum DriveControlState {
         OPEN_LOOP,
         VELOCITY_SETPOINT,
-        PATH_FOLLOWING
+        PATH_FOLLOWING,
+        AIM_TO_GOAL,
     }
 
+    // Control states
+    private DriveControlState mDriveControlState;
+
+    // Hardware
     private final CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
     private final Solenoid mShifter;
     private final AHRS mNavXBoard;
-    private AdaptivePurePursuitController mPathController;
-    private DriveControlState mDriveControlState;
 
+    // Controllers
+    private RobotState mRobotState = RobotState.getInstance();
+    private AdaptivePurePursuitController mPathController;
+    private ProfileFollower mProfileFollower = new ProfileFollower(0, 0, 0,0 ,0);
+
+    // Hardware states
     private boolean mIsHighGear;
     private boolean mIsBrakeMode;
 
@@ -60,10 +75,13 @@ public class Drive extends Subsystem {
                         return;
                     case PATH_FOLLOWING:
                         if(mPathController != null && !mPathController.isFinished()) {
-                            updatePathFollower();
+                            updatePathFollower(timestamp);
                         } else {
                             setVelocitySetpoint(0.0, 0.0);
                         }
+                        return;
+                    case AIM_TO_GOAL:
+                        updateTurnToHeading(timestamp);
                         return;
                     default:
                         System.out.println("Unexpected drive control state: " + mDriveControlState);
@@ -161,7 +179,7 @@ public class Drive extends Subsystem {
         mShifter.set(!highGear);
     }
 
-    public boolean isBreakMode() {
+    public boolean isBrakeMode() {
         return mIsBrakeMode;
     }
 
@@ -236,7 +254,8 @@ public class Drive extends Subsystem {
      */
     private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         if (mDriveControlState == DriveControlState.VELOCITY_SETPOINT ||
-                mDriveControlState == DriveControlState.PATH_FOLLOWING) {
+                mDriveControlState == DriveControlState.PATH_FOLLOWING ||
+                mDriveControlState == DriveControlState.AIM_TO_GOAL) {
             mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec));
             mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec));
         } else {
@@ -282,7 +301,26 @@ public class Drive extends Subsystem {
         return Rotation2d.fromDegrees(-mNavXBoard.getAngle());
     }
 
-    private void updatePathFollower() {
+    public synchronized double getGyroVelocity() {
+        return -mNavXBoard.getRate();
+    }
+
+    private void updateTurnToHeading(double timestamp) {
+        Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState.getLatestFieldToVehicle();
+        RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
+        MotionState motionState = new MotionState(timestamp,
+                field_to_robot.getRotation().getDegrees(), getGyroVelocity(), 0);
+        ShooterAimingParameters aim = mRobotState.getAimingParameters(timestamp);
+        mProfileFollower.setGoal(new MotionProfileGoal(aim.getFieldToGoal().getDegrees()),
+                new MotionProfileConstraints(Constants.kDriveTurnMaxVel,
+                        Constants.kDriveTurnMaxAcc));
+        double velocitySignal = mProfileFollower.update(motionState, timestamp);
+        Kinematics.DriveVelocity wheelVel = Kinematics.inverseKinematics(
+                new RigidTransform2d.Delta(0, 0, velocitySignal));
+        updateVelocitySetpoint(wheelVel.left, wheelVel.right);
+    }
+
+    private void updatePathFollower(double timestamp) {
         RigidTransform2d robot_pose = RobotState.getInstance().getLatestFieldToVehicle().getValue();
         RigidTransform2d.Delta command = mPathController.update(robot_pose);
         if(!mPathController.isFinished()) {
@@ -299,6 +337,25 @@ public class Drive extends Subsystem {
             updateVelocitySetpoint(setpoint.left, setpoint.right);
         } else {
             updateVelocitySetpoint(0,0);
+        }
+    }
+
+    public void resetProfileGains() {
+        mProfileFollower.setGains(
+                Constants.kDriveTurnKp,
+                Constants.kDriveTurnKi,
+                Constants.kDriveTurnKv,
+                Constants.kDriveTurnKffv,
+                Constants.kDriveTurnKffa
+        );
+    }
+
+    public void setWantAimToGoal() {
+        if (mDriveControlState != DriveControlState.AIM_TO_GOAL) {
+            resetProfileGains();
+            mProfileFollower.resetProfile();
+            mProfileFollower.resetSetpoint();
+            mDriveControlState = DriveControlState.AIM_TO_GOAL;
         }
     }
 
