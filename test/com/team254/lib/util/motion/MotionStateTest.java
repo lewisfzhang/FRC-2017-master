@@ -99,7 +99,7 @@ public class MotionStateTest {
         assertThat(a.nextTimeAtPos(1.51), is(equalTo(Double.NaN)));
         assertThat(a.nextTimeAtPos(-0.5), is(equalTo(4.0)));
     }
-
+    
     @Test
     public void flipped() {
         MotionState a = new MotionState(1.0, 1.0, 1.0, 1.0);
