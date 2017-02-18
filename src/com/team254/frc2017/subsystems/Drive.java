@@ -325,10 +325,13 @@ public class Drive extends Subsystem {
         // we need to "unwrap" our angles around the previous goal. This requires using a custom version of a transform
         // operator that does NOT bound the resulting angle (e.g. new_angle = prev_angle +
         // shortest_distance_from_prev_to_new).
-        final MotionProfileGoal prev_goal = mProfileFollower.getGoal();
-        final Rotation2d prev_goal_to_field = (prev_goal == null ? Rotation2d.identity()
-                : Rotation2d.fromDegrees(prev_goal.pos()).inverse());
         final Rotation2d field_to_new_goal = aim.getFieldToGoal();
+        MotionProfileGoal prev_goal = mProfileFollower.getGoal();
+        if (prev_goal == null) {
+            prev_goal = new MotionProfileGoal();
+        }
+        final Rotation2d prev_goal_to_field = (prev_goal == null ? field_to_new_goal.inverse()
+                : Rotation2d.fromDegrees(prev_goal.pos()).inverse());
 
         // Update the goal.
         mProfileFollower.setGoal(
