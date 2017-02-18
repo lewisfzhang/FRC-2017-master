@@ -322,5 +322,13 @@ public abstract class PathSegment {
         public MotionState getEndState() {
             return speedController.endState();
         }
+        
+        public String toString() {
+            if(curvature == 0) {
+                return "(" + "start: " + start + ", end: " + end + ", speed: " + maxSpeed + ", profile: " + speedController + ")";
+            } else {
+                return "(" + "start: " + start + ", end: " + end + ", center: " + center + ", speed: " + maxSpeed + ", profile: " + speedController + ")";
+            }
+        }
     }
 }

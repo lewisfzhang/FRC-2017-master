@@ -39,6 +39,11 @@ public class Path {
          last.extrapolateLookahead(true);
      }
      
+     public Translation2d getEndPosition() {
+         PathSegment.Translation last = ((PathSegment.Translation) segments.get(segments.size() - 1));
+         return last.getEnd();
+     }
+     
      public Path() { segments = new ArrayList<PathSegment>(); }
      
      private void loadFile(String filepath) {
@@ -174,5 +179,13 @@ public class Path {
          if(remainingDist < Constants.kSegmentCompletionTolerance) {
              prevSegment = segments.remove(0);
          }
-     }  
+     }
+     
+     public String toString() {
+         String str = "";
+         for(PathSegment s : segments) {
+             str += ((PathSegment.Translation) s).toString() + "\n";
+         }
+         return str;
+     }
 }

@@ -88,6 +88,9 @@ public class Translation2d implements Interpolable<Translation2d> {
         return new Translation2d(-x_, -y_);
     }
     
+    public Translation2d perpendicular() {
+        return new Translation2d(-y_, x_);
+    }
 
     @Override
     public Translation2d interpolate(Translation2d other, double x) {
