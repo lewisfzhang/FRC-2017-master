@@ -110,7 +110,7 @@ public class Translation2d implements Interpolable<Translation2d> {
         return "(" + fmt.format(x_) + "," + fmt.format(y_) + ")";
     }
     
-    public static double Cross(Translation2d a, Translation2d b) {
+    public static double Dot(Translation2d a, Translation2d b) {
         return a.x_ * b.x_ + a.y_ * b.y_;
     }
     
@@ -118,7 +118,7 @@ public class Translation2d implements Interpolable<Translation2d> {
         return Math.acos(Dot(a, b) / (a.norm() * b.norm()));
     }
     
-    public static double Dot(Translation2d a, Translation2d b) {
+    public static double Cross(Translation2d a, Translation2d b) {
         return a.x_ * b.y_ - a.y_ * b.x_;
     }
 }

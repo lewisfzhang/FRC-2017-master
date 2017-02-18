@@ -1,5 +1,14 @@
 package com.team254.lib.util;
 
+import java.util.Optional;
+
+import com.team254.frc2017.Constants;
+import com.team254.lib.util.motion.MotionProfile;
+import com.team254.lib.util.motion.MotionProfileConstraints;
+import com.team254.lib.util.motion.MotionProfileGenerator;
+import com.team254.lib.util.motion.MotionProfileGoal;
+import com.team254.lib.util.motion.MotionState;
+
 /**
  * Class representing a segment of the robot's autonomous path.  There are
  * two types of segments: Translation (line or arc), and Rotation (turn in place)
@@ -24,6 +33,7 @@ public abstract class PathSegment {
         private double maxSpeed;
         private double startAngle;
         private double endAngle;
+        private MotionProfile speedController;
         
         /**
          * Constructor for a linear segment
@@ -42,30 +52,27 @@ public abstract class PathSegment {
             this.startAngle = 0;
             this.endAngle = 0;
             extrapolateLookahead = false;
+            createMotionProfiler(new MotionState(0.0, 0.0, 0.0, 0.0));
         }
         
         /**
-         * Constructor for an arc segment
+         * Constructor for a linear segment
          * @param x1 start x
          * @param y1 start y
          * @param x2 end x
          * @param y2 end y
-         * @param cx center x
-         * @param cy center
-         * @param curvature arc curvature (1 / radius)
-         * @param startAngle starting angle of the arc
-         * @param endAngle ending angle of the arc
          * @param maxSpeed maximum speed allowed on the segment
          */
-        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double curvature, double startAngle, double endAngle, double maxSpeed) {
+        public Translation(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState) {
             this.start = new Translation2d(x1, y1);
             this.end = new Translation2d(x2, y2);
-            this.center = new Translation2d(cx, cy);
-            this.curvature = curvature;
+            this.center = null;
+            this.curvature = 0;
             this.maxSpeed = maxSpeed;
-            this.startAngle = startAngle;
-            this.endAngle = endAngle;
+            this.startAngle = 0;
+            this.endAngle = 0;
             extrapolateLookahead = false;
+            createMotionProfiler(startState);
         }
         
         /**
@@ -85,6 +92,27 @@ public abstract class PathSegment {
             this.maxSpeed = maxSpeed;
             extrapolateLookahead = false;
             calcArc();
+            createMotionProfiler(new MotionState(0.0, 0.0, 0.0, 0.0));
+        }
+        
+        /**
+         * Constructor for an arc segment
+         * @param x1 start x
+         * @param y1 start y
+         * @param x2 end x
+         * @param y2 end y
+         * @param cx center x
+         * @param cy center y
+         * @param maxSpeed maximum speed allowed on the segment 
+         */
+        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed, MotionState startState) {
+            this.start = new Translation2d(x1, y1);
+            this.end = new Translation2d(x2, y2);
+            this.center = new Translation2d(cx, cy);
+            this.maxSpeed = maxSpeed;
+            extrapolateLookahead = false;
+            calcArc();
+            createMotionProfiler(startState);
         }
         
         /**
@@ -99,6 +127,13 @@ public abstract class PathSegment {
          */
         public double getMaxSpeed() {
             return maxSpeed;
+        }
+        
+        private void createMotionProfiler(MotionState start_state) {
+            MotionProfileConstraints motionConstraints = new MotionProfileConstraints(maxSpeed, Constants.kMaxAccel);
+            MotionProfileGoal goal_state = new MotionProfileGoal(getLength());
+            speedController = MotionProfileGenerator.generateProfile(motionConstraints, goal_state, start_state);
+            System.out.println(speedController);
         }
         
         private void calcArc() {
@@ -226,56 +261,47 @@ public abstract class PathSegment {
             if(curvature == 0) {
                 return new Translation2d(end, point).norm();
             } else {
-                Double angle = Math.atan2(point.getY() - center.getY(), point.getX() - center.getX());
-                angle = (angle < 0) ? angle + Math.PI*2 : angle;
-                double totalAngle;
-                if(endAngle - startAngle <= Math.PI) {
-                    totalAngle = (endAngle - startAngle);
-                } else {
-                    totalAngle = (Math.PI * 2 - endAngle + startAngle);
-                }
-                double deltaAngle = Math.abs(endAngle - angle);
-                deltaAngle = (deltaAngle > Math.PI) ? Math.PI*2 - deltaAngle : deltaAngle;
-                return deltaAngle/totalAngle * getLength();
+                Translation2d e = new Translation2d(center, end);
+                Translation2d s = new Translation2d(center, start);
+                Translation2d p = new Translation2d(center, point);
+                double angle = Translation2d.GetAngle(e, p);
+                double totalAngle = Translation2d.GetAngle(s, e);
+                return angle/totalAngle * getLength();
             }
-        }    
-    }
-    
-    public static class Turn extends PathSegment {
-        Translation2d center;
-        double turnAmount;
-        double turnSpeed;
-        
-        public Turn(Translation2d center, Double turnAmount, Double turnSpeed) {
-            this.center = center;
-            this.turnAmount = turnAmount;
-            this.turnSpeed = turnSpeed;
         }
         
-        public Turn(double x, double y, double turnAmount, double turnSpeed) {
-            this.center = new Translation2d(x, y);
-            this.turnAmount = turnAmount;
-            this.turnSpeed = turnSpeed;
+        private double getDistanceTravelled(Translation2d robotPosition) {
+            Translation2d pathPosition = getClosestPoint(robotPosition); 
+            double remainingDist = getRemainingDistance(pathPosition);
+            return getLength() - remainingDist;
+            
         }
         
-        public Translation2d getCenter() {
-            return center;
+        public double getSpeed(Translation2d robotPosition) {
+            double dist = getDistanceTravelled(robotPosition);
+            Optional<MotionState> state = speedController.firstStateByPos(dist);
+            if(state.isPresent()) {
+                return state.get().vel();
+            } else {
+                System.out.println("Velocity does not exist at that position!");
+                return 0.0;
+            }
         }
         
-        public double getTurnAmount() {
-            return turnAmount;
+        public double getSpeed(double t) {
+            System.out.println("time: " + t);
+            Optional<MotionState> state = speedController.stateByTime(t);
+            if(state.isPresent()) {
+                System.out.println(state.get());
+                return state.get().vel();
+            } else {
+                System.out.println("ripipipip");
+                return Constants.kMinSpeed; //TODO idk what this should return if state isn't present
+            }
         }
         
-        public double getTurnSpeed() {
-            return turnSpeed;
-        }
-        
-        public boolean isTurn() {
-            return true;
-        }
-        
-        public double getMaxSpeed() {
-            return 0.0;
+        public MotionState getEndState() {
+            return speedController.endState();
         }
     }
 }

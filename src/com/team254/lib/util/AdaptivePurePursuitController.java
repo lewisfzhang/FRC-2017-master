@@ -1,5 +1,6 @@
 package com.team254.lib.util;
 
+import com.team254.frc2017.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -16,7 +17,6 @@ public class AdaptivePurePursuitController {
     private static final double kReallyBigNumber = 1E9;
 
     Path mPath;
-    SpeedController mSpeedController;
     boolean mReversed;
     String filepath;
     
@@ -33,16 +33,25 @@ public class AdaptivePurePursuitController {
     public AdaptivePurePursuitController(String filepath) {
         mPath = new Path(filepath);
         mReversed = false;
-        mSpeedController = new SpeedController(mPath);
         this.filepath = filepath;
     }
     
+    /**
+     * Creates a new Adaptive Pure Pursuit Controller from the path object
+     * @param path
+     *      path for the Adaptive Pure Pursuit Controller to follow
+     */
     public AdaptivePurePursuitController(Path path) {       
         mPath = path;     
-        mReversed = false;        
-        mSpeedController = new SpeedController(mPath);        
+        mReversed = false;              
     }     
 
+    /**
+     * Gives the RigidTransform2d.Delta that the robot should take to follow the path
+     * @param pose 
+     *      robot pose
+     * @return RigidTransform2d movement command for the robot to follow
+     */
     public RigidTransform2d.Delta update(RigidTransform2d pose) {
         if (mReversed) {
             pose = new RigidTransform2d(pose.getTranslation(),
@@ -53,7 +62,10 @@ public class AdaptivePurePursuitController {
         if(isFinished())
             return new RigidTransform2d.Delta(0, 0, 0);
         
-        double speed = mSpeedController.getSpeed(pose.getTranslation(), getLength(pose, lookaheadPoint));
+        double speed = mPath.getSpeed(pose.getTranslation());
+        if(speed < Constants.kMinSpeed)
+            speed = Constants.kMinSpeed;
+        
         SmartDashboard.putNumber("Desired Speed", speed);
         
         RigidTransform2d.Delta rv;
@@ -61,6 +73,14 @@ public class AdaptivePurePursuitController {
         return rv;
     }
     
+    /**
+     * Gives the center of the circle joining the lookahead point and robot pose
+     * @param pose
+     *      robot pose
+     * @param point
+     *      lookahead point
+     * @return center of the circle joining the lookahead point and robot pose
+     */
     public static Translation2d getCenter(RigidTransform2d pose, Translation2d point) {
         Translation2d poseToPoint = new Translation2d(pose.getTranslation(), point);
         Line perpendicularBisector = new Line(pose.getTranslation().translateBy(poseToPoint.scale(0.5)),
@@ -70,11 +90,27 @@ public class AdaptivePurePursuitController {
         return Line.intersection(perpendicularBisector, radiusLine);
     }
     
+    /**
+     * Gives the radius of the circle joining the lookahead point and robot pose
+     * @param pose
+     *      robot pose
+     * @param point
+     *      lookahead point
+     * @return radius of the circle joining the lookahead point and robot pose
+     */
     public static double getRadius(RigidTransform2d pose, Translation2d point) {
         Translation2d center = getCenter(pose, point);
         return new Translation2d(center, point).norm();
     }
     
+    /**
+     * Gives the length of the arc joining the lookahead point and robot pose
+     * @param pose
+     *      robot pose
+     * @param point
+     *      lookahead point
+     * @return the length of the arc joining the lookahead point and robot pose
+     */
     public static double getLength(RigidTransform2d pose, Translation2d point) {
         double radius = getRadius(pose, point);
         if(radius < kReallyBigNumber) {
@@ -89,6 +125,14 @@ public class AdaptivePurePursuitController {
         }
     }
     
+    /**
+     * Gives the direction the robot should turn to stay on the path
+     * @param pose
+     *      robot pose
+     * @param point
+     *      lookahead point
+     * @return the direction the robot should turn: -1 is left, +1 is right
+     */
     public static int getDirection(RigidTransform2d pose, Translation2d point) {
         Translation2d poseToPoint = new Translation2d(pose.getTranslation(), point);        
         Translation2d robot = pose.getRotation().toTranslation();  
@@ -96,6 +140,9 @@ public class AdaptivePurePursuitController {
         return (cross < 0) ? -1 : 1; //if robot < pose turn left
     }
     
+    /**
+     * @return has the robot reached the end of the path
+     */
     public boolean isFinished() {
         return mPath.segments.size() == 0;
     }
@@ -103,7 +150,6 @@ public class AdaptivePurePursuitController {
     public void reset() {
         mPath = new Path(filepath);
         mReversed = false;
-        mSpeedController = new SpeedController(mPath);
     }
     
     public static class Line {
@@ -137,5 +183,4 @@ public class AdaptivePurePursuitController {
             return l1.getPoint(x);
         }
     }
-
 }

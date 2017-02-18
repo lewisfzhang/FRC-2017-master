@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.team254.frc2017.Constants;
+import com.team254.lib.util.motion.MotionState;
 
 /**
  * Class representing the robot's autonomous path.
@@ -29,9 +30,7 @@ public class Path {
      public Path(String filepath) {
          segments = new ArrayList<PathSegment>();
          loadFile(filepath);
-         ((PathSegment.Translation) segments.get(segments.size() - 1)).extrapolateLookahead(true);
-         
-         //Odometer.getInstance().setPose(getStartPose());
+         ((PathSegment.Translation) segments.get(segments.size() - 1)).extrapolateLookahead(true); //extrapolate last lookahead point
      }
      
      public Path() { segments = new ArrayList<PathSegment>(); }
@@ -47,11 +46,9 @@ public class Path {
                      System.out.print(a + " ");
                  System.out.print("\n");
                  if(s[0].equals("LINE"))
-                     segments.add(new PathSegment.Translation(Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4]), Double.parseDouble(s[5])));
+                     segments.add(new PathSegment.Translation(Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4]), Double.parseDouble(s[5]), getLastMotionState()));
                  else if(s[0].equals("ARC"))
-                     segments.add(new PathSegment.Translation(Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4]), Double.parseDouble(s[5]), Double.parseDouble(s[6]), Double.parseDouble(s[7])));
-                 else if(s[0].equals("TURN"))
-                     segments.add(new PathSegment.Turn(Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4])));
+                     segments.add(new PathSegment.Translation(Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4]), Double.parseDouble(s[5]), Double.parseDouble(s[6]), Double.parseDouble(s[7]), getLastMotionState()));
              }
              sc.close();
          } catch (Exception e) {
@@ -59,20 +56,48 @@ public class Path {
          }
      }
      
+     /**
+      * add a segment to the Path
+      * @param segment
+      *     the segment to add
+      */
      public void addSegment(PathSegment segment) {      
          segments.add(segment);       
      }
      
+    /**
+     * @return the last MotionState in the path
+     */
+     public MotionState getLastMotionState() {
+         if(segments.size() > 0) {
+             return ((PathSegment.Translation) segments.get(segments.size() - 1)).getEndState();
+         } else {
+             return new MotionState(0, 0, 0, 0);
+         }
+     }
+     
+     /**
+      * get the remaining distance left for the robot to travel on the current segment
+      * @param robotPos
+      *     robot position
+      * @return remaining distance on current segment
+      */
      public double getSegmentRemainingDist(Translation2d robotPos) {
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
          return currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
      }
      
+     /**
+      * @return the length of the current segment
+      */
      public double getSegmentLength() {
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
          return currentSegment.getLength();
      }
      
+     /**
+      * @return the starting pose of the robot
+      */
      public RigidTransform2d getStartPose() {
          if(segments.get(0) == null)
              return new RigidTransform2d();
@@ -82,6 +107,13 @@ public class Path {
          }
      }
      
+     
+     /**
+      * Gives the position of the lookahead point
+      * @param robotPos
+      *     Robot position
+      * @return lookahead point position
+      */
      public Translation2d getTargetPoint(Translation2d robotPos) {
          Translation2d target;
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
@@ -92,9 +124,6 @@ public class Path {
          lookAheadDist -= remainingDist;
          int i = 1;
          while(lookAheadDist > 0 && i < segments.size()) {
-//                 if(segments.get(i).isTurn()) {
-//                     return ((PathSegment.Turn)segments.get(i)).getCenter();
-//                 }
              currentSegment = (PathSegment.Translation)segments.get(i);
              lookAheadDist -= currentSegment.getLength();
              i++;
@@ -104,50 +133,39 @@ public class Path {
          return target;
      }
      
+     /**
+      * Gives the speed the robot should be traveling at the given position
+      * @param robotPos
+      *     position of the robot
+      * @return speed robot should be traveling
+      */
+     public double getSpeed(Translation2d robotPos) {
+         PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
+         return currentSegment.getSpeed(robotPos);
+     }
+     
+     /**
+      * Gives the speed the robot should be traveling at the given time
+      * @param t
+      *     time since the robot started path following in seconds
+      * @return speed robot should be traveling
+      */
+     public double getSpeed(double t) {
+         PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
+         return currentSegment.getSpeed(t);
+     }
+     
+     /**
+      * Checks if the robot has finished traveling along the current segment then removes it from
+      * the path if it has
+      * @param robotPos
+      *     robot position
+      */
      public void checkSegmentDone(Translation2d robotPos) {
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0); 
          double remainingDist = currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
          if(remainingDist < Constants.kSegmentCompletionTolerance) {
              prevSegment = segments.remove(0);
          }
-     }
-     
-     public double getMaxSpeed() {
-         return (segments.size() == 0) ? 0.0 : segments.get(0).getMaxSpeed();
-     }
-     
-     public double getStartSpeed() {
-         if(prevSegment == null)
-             return 0;
-         return (segments.size() == 0) ? 0.0 : prevSegment.getMaxSpeed();
-     }
-     
-     public double getEndSpeed() {
-         return (segments.size() < 2) ? 0.0 : segments.get(1).getMaxSpeed();
-     }
-     
-     public static void main(String[] args) {
-         PathSegment.Translation curve = new PathSegment.Translation(10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 1.0);
-         
-         Translation2d p = new Translation2d(2.0, 1.0);
-         System.out.println(curve.getRemainingDistance(curve.getClosestPoint(p)));
-         System.out.println(curve.getLength());
-         System.out.println(curve.getLookAheadPoint(15.707963267948964/4));
-         PathSegment.Translation line = new PathSegment.Translation(0.0, 0.0, 20.0, 20.0, 1.0);
-         p = new Translation2d(15.0, 10.0);
-         System.out.println(line.getClosestPoint(p));
-         System.out.println(line.getLength());
-         
-         //PathSegment.Segment curve = new PathSegment.Segment(43.533040796611594, 200.4199794406889, 100, 250.0, 100, 193.05472389242087, 100);
-         //System.out.println(curve.getLookAheadPoint(18.05));
-         //Path test = new Path("~/path.txt");
-         //System.out.println(test.getTargetPoint(new Translation2d(20, 20)));
-         Path mPath = new Path();
-         mPath.segments.add(new PathSegment.Translation(0.0, 0.0, 117.677669, 0.0, 100.0));
-         mPath.segments.add(new PathSegment.Translation(50.0, 0.0, 60.0, 0.0, 1000.0));
-         mPath.segments.add(new PathSegment.Translation(60.0, 0.0, 150.0, 0.0, 20.0));
-         SpeedController mSpeed = new SpeedController(mPath);
-         mPath.getTargetPoint(new Translation2d(49.6, 0));
-         //System.out.println(mSpeed.getSpeed(new Translation2d(55, 0)));
-     }     
+     }  
 }
