@@ -80,6 +80,14 @@ public class Constants extends ConstantsBase {
     public static double kShooterSetpointDeadbandRpm = 1.0;
     public static double kShooterAllowableErrorRpm = 50;
 
+
+    // Feeder gains
+    public static double kFeederKP = 0;
+    public static double kFeederKI = 0;
+    public static double kFeederKD = 0;
+    public static double kFeederKF = 0.008;
+    public static double kFeederFeedSpeedRpm = 12e3;
+
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
@@ -95,8 +103,8 @@ public class Constants extends ConstantsBase {
     public static final int kRightDriverSlaveId = 4;
 
     //Feeder
-    public static final int kFeederMasterId = 7;
-    public static final int kFeederSlaveId = 8;
+    public static final int kFeederMasterId = 8;
+    public static final int kFeederSlaveId = 7;
 
     // Intake
     public static final int kIntakeMasterId = 5;

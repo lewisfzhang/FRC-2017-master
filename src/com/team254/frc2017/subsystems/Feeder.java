@@ -4,14 +4,16 @@ import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.ConstantsBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Feeder extends Subsystem {
     private static final double kReversing = -1.0;
     private static final double kUnjamInPeriod = .1 * kReversing;
     private static final double kUnjamOutPeriod = .2 * kReversing;
-    private static final double kUnjamInPower = .5 * kReversing;
-    private static final double kUnjamOutPower = -.5 * kReversing;
-    private static final double kFeedPower = 1.0 * kReversing;
+    private static final double kUnjamInPower = 6.0 * kReversing;
+    private static final double kUnjamOutPower = -6.0 * kReversing;
+    private static final double kExaustVoltage = -8.0;
 
     private static Feeder sInstance = null;
     public static Feeder getInstance() {
@@ -25,11 +27,18 @@ public class Feeder extends Subsystem {
 
     public Feeder() {
         mMasterTalon = new CANTalon(Constants.kFeederMasterId);
-        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mMasterTalon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        mMasterTalon.reverseOutput(false);
+        mMasterTalon.setNominalClosedLoopVoltage(12);
+        mMasterTalon.enableBrakeMode(true);
+
         mSlaveTalon = new CANTalon(Constants.kFeederSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kFeederMasterId);
         mSlaveTalon.reverseOutput(true);
+        mSlaveTalon.setNominalClosedLoopVoltage(12);
+        mSlaveTalon.enableBrakeMode(true);
     }
 
     public enum SystemState {
@@ -156,12 +165,20 @@ public class Feeder extends Subsystem {
     }
 
     private SystemState handleFeeding() {
-        setOpenLoop(kFeedPower);
+        if (mStateChanged) {
+            mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Speed);
+            mMasterTalon.setP(Constants.kFeederKP);
+            mMasterTalon.setI(Constants.kFeederKI);
+            mMasterTalon.setD(Constants.kFeederKD);
+            mMasterTalon.setF(Constants.kFeederKF);
+            mMasterTalon.set(Constants.kFeederFeedSpeedRpm);
+        }
+
         return defaultStateTransfer();
     }
 
     private SystemState handleExhaust() {
-        setOpenLoop(-kFeedPower);
+        setOpenLoop(kExaustVoltage);
         return defaultStateTransfer();
     }
 
@@ -169,13 +186,17 @@ public class Feeder extends Subsystem {
         mWantedState = state;
     }
 
-    private void setOpenLoop(double openLoop) {
-        mMasterTalon.set(openLoop);
+    private void setOpenLoop(double voltage) {
+        if (mStateChanged) {
+            mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        }
+        mMasterTalon.set(voltage);
     }
 
     @Override
     public void outputToSmartDashboard() {
-
+        SmartDashboard.putNumber("feeder_speed", mMasterTalon.getSpeed());
+        SmartDashboard.putNumber("feeder_i_accum", mMasterTalon.GetIaccum());
     }
 
     @Override
