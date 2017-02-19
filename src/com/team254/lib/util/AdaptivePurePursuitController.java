@@ -1,6 +1,12 @@
 package com.team254.lib.util;
 
 import com.team254.frc2017.Constants;
+import com.team254.lib.util.motion.MotionProfile;
+import com.team254.lib.util.motion.MotionProfileConstraints;
+import com.team254.lib.util.motion.MotionProfileGenerator;
+import com.team254.lib.util.motion.MotionProfileGoal;
+import com.team254.lib.util.motion.MotionProfileGoal.CompletionBehavior;
+import com.team254.lib.util.motion.MotionState;
 
 /**
  * Implements an adaptive pure pursuit controller. See:
@@ -18,6 +24,7 @@ public class AdaptivePurePursuitController {
     Path mPath;
     boolean mReversed;
     String filepath;
+    MotionProfileConstraints mConstraints;
 
     RigidTransform2d.Delta mLastCommand = RigidTransform2d.Delta.identity();
 
@@ -36,6 +43,7 @@ public class AdaptivePurePursuitController {
     public AdaptivePurePursuitController(Path path, boolean reversed) {
         mPath = path;
         mReversed = reversed;
+        mConstraints = new MotionProfileConstraints(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel);
     }
 
     /**
@@ -60,8 +68,22 @@ public class AdaptivePurePursuitController {
 
         final Arc arc = new Arc(pose, report.lookahead_point);
 
-        // TODO: Use a ProfileFollower here to profile from mLastCommand to the lookahead point speed.
-        double target_speed = report.lookahead_point_speed;
+        // Generate a profile from our current speed to the lookahead point.
+        // The goal is at x=arc length (or remaining length of segment if we are stopping), v=lookahead_point_speed
+        // The current state is at x=0, v=previous velocity command
+        final MotionProfile profile = MotionProfileGenerator.generateProfile(mConstraints,
+                new MotionProfileGoal(
+                        Math.min(arc.length,
+                                report.lookahead_point_speed == 0.0 ? report.remaining_segment_distance
+                                        : Double.POSITIVE_INFINITY),
+                        report.lookahead_point_speed, CompletionBehavior.VIOLATE_MAX_ACCEL),
+                new MotionState(0.0, 0.0, mLastCommand.dx, 0.0));
+        // Sample the profile one dt from now.
+        double target_speed = (profile.endTime() >= Constants.kLooperDt
+                ? profile.stateByTime(Constants.kLooperDt).get().vel() : profile.endState().vel());
+        if (Double.isNaN(target_speed)) {
+            target_speed = 0.0;
+        }
         if (target_speed < Constants.kMinSpeed) {
             target_speed = Constants.kMinSpeed;
         }

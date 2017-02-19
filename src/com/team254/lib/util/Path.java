@@ -157,7 +157,7 @@ public class Path {
          double maxStartSpeed = 0.0;
          for (int i=segments.size() - 1; i>=0; i--) {
              PathSegment.Translation segment = (PathSegment.Translation)(segments.get(i));
-             maxStartSpeed += Math.sqrt(maxStartSpeed*maxStartSpeed + 2*Constants.kMaxAccel*segment.getLength());
+             maxStartSpeed += Math.sqrt(maxStartSpeed*maxStartSpeed + 2*Constants.kPathFollowingMaxAccel*segment.getLength());
              System.out.println(maxStartSpeed + ", "+ segment.getStartVel());
              if(segment.getStartVel() > maxStartSpeed) {
                  segment.setStartVel(maxStartSpeed);
