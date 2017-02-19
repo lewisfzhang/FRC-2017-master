@@ -135,10 +135,6 @@ public class Shooter extends Subsystem {
         }
     }
 
-    public boolean isFlywheelOnTarget() {
-        return Util.epsilonEquals(getSpeedRpm(),mSetpointRpm, Constants.kShooterAllowableErrorRpm);
-    }
-
     private double getSpeedRpm() {
         return mRightMaster.getSpeed();
     }
@@ -154,6 +150,6 @@ public class Shooter extends Subsystem {
     }
 
     public boolean isOnTarget() {
-        return false;
+        return Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, Constants.kShooterAllowableErrorRpm);
     }
 }
