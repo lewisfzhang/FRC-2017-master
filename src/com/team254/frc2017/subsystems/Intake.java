@@ -58,16 +58,16 @@ public class Intake extends Subsystem {
         mDeployed = true;
     }
 
-    public void setOn() {
+    public synchronized void setOn() {
         deploy();
         setOpenLoop(Constants.kIntakeVoltage);
     }
 
-    public void setOff() {
+    public synchronized void setOff() {
         setOpenLoop(0.0);
     }
 
-    public void setReverse() {
+    public synchronized void setReverse() {
         setOpenLoop(-Constants.kIntakeVoltage);
     }
 
