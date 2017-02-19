@@ -9,15 +9,18 @@ import com.team254.lib.util.PathSegment;
 import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
 import com.team254.lib.util.Translation2d;
+import com.team254.lib.util.motion.MotionProfile;
+import com.team254.lib.util.motion.MotionState;
 
 import org.junit.Test;
 
 public class PathTest {
     public static final double kTestEpsilon = 1E-9;
+    public static final MotionState stopped = new MotionState(0,0,0,0);
 
     @Test
     public void testLinearPathSegment() {
-        PathSegment.Translation segment = new PathSegment.Translation(0.0, 0.0, 100.0, 0.0, 50.0);
+        PathSegment.Translation segment = new PathSegment.Translation(0.0, 0.0, 100.0, 0.0, 50.0, stopped, 0.0);
         assertEquals(100, segment.getLength(), kTestEpsilon);
 
         // GetClosestPoint - point on path
@@ -54,7 +57,7 @@ public class PathTest {
         assertEquals(0, dist, kTestEpsilon);
     
         //Try a different linear segment
-        segment = new PathSegment.Translation(10.0, -12.0, -30.0, -120.0, 100.0);
+        segment = new PathSegment.Translation(10.0, -12.0, -30.0, -120.0, 100, stopped, 0.0);
         assertEquals(115.169440391, segment.getLength(), kTestEpsilon);
 
         // GetClosestPoint - point on path
@@ -91,7 +94,7 @@ public class PathTest {
     }
     
     public void testArcPathSegment() {
-        PathSegment.Translation segment = new PathSegment.Translation(0.0, 0.0, 100.0, 0.0, 50.0);
+        PathSegment.Translation segment = new PathSegment.Translation(0.0, 0.0, 100.0, 0.0, 50.0, stopped, 0.0);
         assertEquals(100, segment.getLength(), kTestEpsilon);
 
         // GetClosestPoint - point on path
