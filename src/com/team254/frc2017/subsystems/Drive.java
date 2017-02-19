@@ -82,9 +82,6 @@ public class Drive extends Subsystem {
                     case PATH_FOLLOWING:
                         if(mPathController != null && !mPathController.isFinished()) {
                             updatePathFollower(timestamp);
-                        } else {
-                            //setVelocitySetpoint(0,0);
-                            setWantDrivePath(GearToHopper.buildPath(), GearToHopper.isReversed());
                         }
                         return;
                     case AIM_TO_GOAL:
@@ -429,6 +426,15 @@ public class Drive extends Subsystem {
             mCurrentPath = path;
         } else {
             setVelocitySetpoint(0,0);
+        }
+    }
+    
+    public boolean isDoneWithPath() {
+        if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathController != null) {
+            return mPathController.isFinished();
+        } else {
+            System.out.println("Robot is not in path following mode");
+            return false;
         }
     }
 }

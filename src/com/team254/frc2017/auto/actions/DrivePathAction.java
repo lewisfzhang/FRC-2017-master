@@ -18,8 +18,7 @@ public class DrivePathAction implements Action {
 
     @Override
     public boolean isFinished() {
-        // TODO: @mario: Implement isDoneWithPath in Drive.java that inspects APPC
-        return false;
+        return mDrive.isDoneWithPath();
     }
 
     @Override

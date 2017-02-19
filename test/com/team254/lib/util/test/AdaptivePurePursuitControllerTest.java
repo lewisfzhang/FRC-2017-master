@@ -75,11 +75,12 @@ public class AdaptivePurePursuitControllerTest {
     
     @Test
     public void testAuto() {
-        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(StartToGear.buildPath(), StartToGear.isReversed());
+        PathContainer p = new StartToGear();
+        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(p.buildPath(), p.isReversed());
 
         double dt = .01;
-
-        RigidTransform2d robot_pose = StartToGear.getStartPose();
+        
+        RigidTransform2d robot_pose = p.getStartPose();
         double t = 0;
         while (!controller.isFinished() && t < 250) {
             // Follow the path
@@ -96,7 +97,8 @@ public class AdaptivePurePursuitControllerTest {
         assertEquals(109, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance*2);
         assertEquals(107, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*2);
        
-        controller = new AdaptivePurePursuitController(GearToHopper.buildPath(), GearToHopper.isReversed());
+        p = new GearToHopper();
+        controller = new AdaptivePurePursuitController(p.buildPath(), p.isReversed());
         while (!controller.isFinished() && t < 500) {
             // Follow the path
             RigidTransform2d.Delta command = controller.update(robot_pose);
