@@ -84,11 +84,9 @@ public class AdaptivePurePursuitController {
         if (mReversed) {
             target_speed *= -1;
         }
-        
-        final double speed_ratio = target_speed / arc.length;
 
-        mLastCommand = new RigidTransform2d.Delta(target_speed, 0,
-                speed_ratio * getDirection(pose, report.lookahead_point) * Math.abs(target_speed) / arc.radius);
+        mLastCommand = new RigidTransform2d.Delta(target_speed, 0.0,
+                getDirection(pose, report.lookahead_point) * Math.abs(target_speed) / arc.radius);
         return mLastCommand;
     }
 
