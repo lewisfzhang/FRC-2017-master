@@ -62,7 +62,7 @@ public class Shooter extends Subsystem {
 
         mControlMethod = ControlMethod.OPEN_LOOP;
 
-        mCSVWriter = new CSVWriter("SHOOTER-LOGS.csv", new String[]{"time", "flywheel_rpm"});
+        mCSVWriter = new CSVWriter("/home/lvuser/SHOOTER-LOGS.csv", new String[]{"time", "flywheel_rpm"});
     }
 
     public void refreshControllerConsts() {
