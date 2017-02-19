@@ -41,9 +41,9 @@ public class AdaptivePurePursuitController {
      * @param path
      *      path for the Adaptive Pure Pursuit Controller to follow
      */
-    public AdaptivePurePursuitController(Path path) {       
+    public AdaptivePurePursuitController(Path path, boolean reversed) {       
         mPath = path;     
-        mReversed = false;              
+        mReversed = reversed;              
     }     
 
     /**
@@ -65,8 +65,10 @@ public class AdaptivePurePursuitController {
         double speed = mPath.getSpeed(pose.getTranslation());
         if(speed < Constants.kMinSpeed)
             speed = Constants.kMinSpeed;
-        
-         SmartDashboard.putNumber("Desired Speed", speed);
+        if (mReversed)
+            speed *= -1;
+        //SmartDashboard.putNumber("Desired Speed", speed);
+         
         
         RigidTransform2d.Delta rv;
         rv = new RigidTransform2d.Delta(speed, 0, getDirection(pose, lookaheadPoint) * Math.abs(speed) / getRadius(pose, lookaheadPoint));

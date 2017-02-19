@@ -6,11 +6,10 @@ import com.team254.lib.util.AdaptivePurePursuitController;
 import com.team254.lib.util.Path;
 import com.team254.lib.util.PathSegment;
 import com.team254.lib.util.Translation2d;
-import com.team254.lib.util.motion.MotionState;
 
 public class PathBuilder {
     private static final double kEpsilon = 1E-9;
-    private static Waypoint[] waypoints;
+    private static final double kReallyBigNumber = 1E9;
     
     static Path buildPathFromWaypoints(List<Waypoint> w) {
         Path p = new Path();
@@ -25,6 +24,7 @@ public class PathBuilder {
         }
         new Line(w.get(w.size() - 2), w.get(w.size() - 1)).addToPath(p, 0);
         p.extrapolateLast();
+        p.verifySpeeds();
         return p;
     }
 
@@ -64,7 +64,8 @@ public class PathBuilder {
         }
         
         private void addToPath(Path p, double endSpeed) {
-            if(new Translation2d(end, start).norm() > kEpsilon)
+            double pathLength = new Translation2d(end, start).norm();
+            if(pathLength > kEpsilon)
                 p.addSegment(new PathSegment.Translation(start.getX(), start.getY(), end.getX(), end.getY(), b.speed, p.getLastMotionState(), endSpeed));
         }
     }
@@ -90,12 +91,12 @@ public class PathBuilder {
         
         private void addToPath(Path p) {
             a.addToPath(p, speed);
-            if(radius > kEpsilon)
-                p.addSegment(new PathSegment.Translation(a.end.getX(), a.end.getY(), b.end.getX(), b.end.getY(), center.getX(), center.getY(), speed, p.getLastMotionState(), b.speed));
+            if(radius > kEpsilon && radius < kReallyBigNumber)
+                p.addSegment(new PathSegment.Translation(a.end.getX(), a.end.getY(), b.start.getX(), b.start.getY(), center.getX(), center.getY(), speed, p.getLastMotionState(), b.speed));
         }
         
         private static Translation2d intersect(Line l1, Line l2) {
-            AdaptivePurePursuitController.Line lineA = new AdaptivePurePursuitController.Line(l1.start, l1.slope.perpendicular());
+            AdaptivePurePursuitController.Line lineA = new AdaptivePurePursuitController.Line(l1.end, l1.slope.perpendicular());
             AdaptivePurePursuitController.Line lineB = new AdaptivePurePursuitController.Line(l2.start, l2.slope.perpendicular());
             return AdaptivePurePursuitController.Line.intersection(lineA, lineB);
         }

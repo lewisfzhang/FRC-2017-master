@@ -19,8 +19,11 @@ public class TestArcPath extends PathBuilder {
     }
     
     public static RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(0, 0), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0.0)); 
     }
-
+    
+    public static boolean isReversed() {
+        return false;
+    }
     
 }

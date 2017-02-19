@@ -181,6 +181,30 @@ public class Path {
          }
      }
      
+     /**
+      * Ensures that all speeds in the path are attainable and robot can slow down in time
+      */
+     public void verifySpeeds() {
+         double maxStartSpeed = 0.0;
+         for (int i=segments.size() - 1; i>=0; i--) {
+             PathSegment.Translation segment = (PathSegment.Translation)(segments.get(i));
+             maxStartSpeed += Math.sqrt(maxStartSpeed*maxStartSpeed + 2*Constants.kMaxAccel*segment.getLength());
+             System.out.println(maxStartSpeed + ", "+ segment.getStartVel());
+             if(segment.getStartVel() > maxStartSpeed) {
+                 segment.setStartVel(maxStartSpeed);
+                 System.out.println("Segment starting speed is too high!");
+             }
+             maxStartSpeed = segment.getStartVel();
+         }
+         for(int i=0; i<segments.size(); i++) {
+             PathSegment.Translation segment = (PathSegment.Translation)(segments.get(i));
+             double endSpeed = (i < segments.size()-1) ? ((PathSegment.Translation)(segments.get(i+1))).getStartVel() : 0.0;
+             MotionState startState = (i > 0) ? ((PathSegment.Translation)(segments.get(i-1))).getEndState() : new MotionState(0,0,0,0);
+             startState = new MotionState(0, 0, startState.vel(), startState.vel());
+             segment.createMotionProfiler(startState, endSpeed);
+         }
+     }
+     
      public String toString() {
          String str = "";
          for(PathSegment s : segments) {

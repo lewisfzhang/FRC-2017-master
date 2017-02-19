@@ -31,6 +31,8 @@ public abstract class PathSegment {
         private boolean extrapolateLookahead;
         private double curvature;
         private double maxSpeed;
+        private double startSpeed;
+        private double endSpeed;
         private double startAngle;
         private double endAngle;
         private MotionProfile speedController;
@@ -152,6 +154,8 @@ public abstract class PathSegment {
             MotionProfileConstraints motionConstraints = new MotionProfileConstraints(maxSpeed, Constants.kMaxAccel);
             MotionProfileGoal goal_state = new MotionProfileGoal(getLength(), end_speed);
             speedController = MotionProfileGenerator.generateProfile(motionConstraints, goal_state, start_state);
+            this.endSpeed = end_speed;
+            this.startSpeed = start_state.vel();
             System.out.println(speedController);
         }
         
@@ -321,6 +325,18 @@ public abstract class PathSegment {
         
         public MotionState getEndState() {
             return speedController.endState();
+        }
+        
+        public MotionState getStartState() {
+            return speedController.startState();
+        }
+        
+        public double getStartVel() {
+            return startSpeed;
+        }
+        
+        public double setStartVel(double vel) {
+            return startSpeed = vel;
         }
         
         public String toString() {

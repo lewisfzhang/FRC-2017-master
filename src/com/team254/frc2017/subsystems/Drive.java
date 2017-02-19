@@ -401,9 +401,10 @@ public class Drive extends Subsystem {
     
     
     private Path mCurrentPath = null;
-    public void setWantDrivePath(Path path) {
+    
+    public void setWantDrivePath(Path path, boolean reversed) {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
-            mPathController = new AdaptivePurePursuitController(path);
+            mPathController = new AdaptivePurePursuitController(path, reversed);
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         }    

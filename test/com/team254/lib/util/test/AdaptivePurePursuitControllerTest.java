@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.team254.frc2017.Constants;
+import com.team254.frc2017.paths.*;
 import com.team254.lib.util.AdaptivePurePursuitController;
 import com.team254.lib.util.Path;
 import com.team254.lib.util.PathSegment;
@@ -53,18 +54,15 @@ public class AdaptivePurePursuitControllerTest {
     }
 
     @Test
-    public void testPath1() {
-        //Make a super simple path to drive straight forwards 200 inches
-        Path path = new Path();
-        path.addSegment(new PathSegment.Translation(0.0, 0.0, 200.0, 0.0, 50.0));
-        
-        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(path);
+    public void testArcPath() {
+        Path path = TestArcPath.buildPath();
+        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(path, false);
 
         double dt = .01;
 
         RigidTransform2d robot_pose = new RigidTransform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0));
         double t = 0;
-        while (!controller.isFinished() && t < 100) {
+        while (!controller.isFinished() && t < 250) {
             // Follow the path
             RigidTransform2d.Delta command = controller.update(robot_pose);
             robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
@@ -77,109 +75,9 @@ public class AdaptivePurePursuitControllerTest {
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
         assertEquals(200, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
-        assertEquals(0, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
-    }
-    
-    @Test
-    public void testPath2() {
-        //Test a path with some arcs in it
-        Path path = new Path();
-        path.addSegment(new PathSegment.Translation(0.0,0.0,136.0,0.0,40.0));
-        path.addSegment(new PathSegment.Translation(136,0,160,24,136,24,40));
-        path.addSegment(new PathSegment.Translation(160.0,24.0,160.0,100.0,40.0));
-
-        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(path);
-
-        double dt = .01;
-
-        RigidTransform2d robot_pose = new RigidTransform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0));
-        double t = 0;
-        while (!controller.isFinished() && t < 100) {
-            // Follow the path
-            RigidTransform2d.Delta command = controller.update(robot_pose);
-            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
-                    Rotation2d.fromRadians(command.dtheta * dt)));
-
-            System.out.println(
-                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
-            t += dt;
-        }
-        System.out.println(robot_pose);
-        assertTrue(controller.isFinished());
-        assertEquals(160, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
         assertEquals(100, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
     }
 
-    @Test
-    public void testPath3() {
-        //Test a path with some sharper turns
-        Path path = new Path();
-        path.addSegment(new PathSegment.Translation(0.0,0.0,176.0,0.0,120.0));
-        path.addSegment(new PathSegment.Translation(176,0,210.73312629199899,21.46625258399798,176,38.83281572999746,120));
-        path.addSegment(new PathSegment.Translation(210.73312629199899,21.46625258399798,245.52786404500043,91.05572809000084,60));
-        path.addSegment(new PathSegment.Translation(245.52786404500043,91.05572809000084,246.4887655841161,109.36329177569044,225.01674906383332,101.31128558058441,100));
-        path.addSegment(new PathSegment.Translation(246.4887655841161,109.36329177569044,197.02246883176784,241.27341644861912,100));
-        path.addSegment(new PathSegment.Translation(197.02246883176784,241.27341644861912,178.9059960754954,243.3589941132431,187.43008082579254,237.67627094637837,100));
-        path.addSegment(new PathSegment.Translation(178.9059960754954,243.3589941132431,50.0,50.0,100));
-        
-        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(path);
-
-        double dt = .01;
-
-        RigidTransform2d robot_pose = new RigidTransform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0));
-        double t = 0;
-        while (!controller.isFinished() && t < 100) {
-            // Follow the path
-            RigidTransform2d.Delta command = controller.update(robot_pose);
-            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
-                    Rotation2d.fromRadians(command.dtheta * dt)));
-
-            System.out.println(
-                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
-            t += dt;
-        }
-        System.out.println(robot_pose);
-        assertTrue(controller.isFinished());
-        assertEquals(50, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
-        assertEquals(50, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
-    }
-    
-//    @Test
-//    public void testPath4() {
-//        //Test a path with some sharper turns
-//
-//        Path path = new Path();
-//        path.addSegment(new PathSegment.Translation(0,0,90,0,60));
-//        path.addSegment(new PathSegment.Translation(90,0,100,10,90,10,60));
-//        path.addSegment(new PathSegment.Translation(100,10,100,90,60));
-//        path.addSegment(new PathSegment.Translation(100,90,90,100,90,90,60));
-//        path.addSegment(new PathSegment.Translation(90,100,10,100,60));
-//        path.addSegment(new PathSegment.Translation(10,100,0,90,10,90,60));
-//        path.addSegment(new PathSegment.Translation(0,90,0,0,60));
-//        
-//        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(path);
-//
-//        double dt = .01;
-//
-//        RigidTransform2d robot_pose = new RigidTransform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0));
-//        double t = 0;
-//        while (!controller.isFinished() && t < 100) {
-//            // Follow the path
-//            RigidTransform2d.Delta command = controller.update(robot_pose);
-//            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
-//                    Rotation2d.fromRadians(command.dtheta * dt)));
-//
-//            System.out.println(
-//                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
-//            t += dt;
-//        }
-//        System.out.println(robot_pose);
-//        assertTrue(controller.isFinished());
-//        assertEquals(0, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
-//        assertEquals(0, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
-//    }
-    
-//
 //    @Test
 //    public void testControllerReversed() {
 //        List<Waypoint> waypoints = new ArrayList<>();
