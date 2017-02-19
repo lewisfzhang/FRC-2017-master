@@ -25,6 +25,9 @@ public class Shooter extends Subsystem {
         CLOSED_LOOP,
     }
 
+    private double mCachedVelocitySetpoint = 0;
+    private static final double kCacheSetpointDeadband = 5;
+
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
 
     private ControlMethod mControlMethod;
@@ -111,17 +114,23 @@ public class Shooter extends Subsystem {
             mControlMethod = ControlMethod.OPEN_LOOP;
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
         }
+        mCachedVelocitySetpoint = 0;
         mRightMaster.set(voltage);
     }
 
 
     public synchronized void setClosedLoopRpm(double setpointRpm) {
         if (mControlMethod == ControlMethod.OPEN_LOOP) {
+            mCachedVelocitySetpoint = 0;
             mControlMethod = ControlMethod.CLOSED_LOOP;
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
         }
         // Talon speed is in ??? units
-        mRightMaster.set(setpointRpm);
+        if (Math.abs(mCachedVelocitySetpoint - setpointRpm) > kCacheSetpointDeadband) {
+            mRightMaster.set(setpointRpm);
+            mCachedVelocitySetpoint = setpointRpm;
+        }
+
     }
 
     private double getSpeedRpm() {
@@ -136,5 +145,9 @@ public class Shooter extends Subsystem {
         slave.enableBrakeMode(false);
         slave.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
         return slave;
+    }
+
+    public boolean isOnTarget() {
+        return false;
     }
 }

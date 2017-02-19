@@ -62,6 +62,9 @@ public class RobotState {
   private Rotation2d camera_pitch_correction_;
   private Rotation2d camera_yaw_correction_;
   private double differential_height_;
+  private ShooterAimingParameters cached_shooter_aiming_params_ = null;
+  private double cached_shooter_aiming_params_ts_ = 0;
+  private static final double kCacheTime = 1.0 / 20.0;
 
   private RobotState() {
     reset(0, new RigidTransform2d());
@@ -149,9 +152,17 @@ public class RobotState {
     }
   }
 
-  public ShooterAimingParameters getAimingParameters(double currentTimestamp) {
+  public ShooterAimingParameters getAimingParameters(double currentTimestamp, boolean forceUpdate) {
+    if (forceUpdate) {
+      cached_shooter_aiming_params_ = null;
+    }
+    return getAimingParameters(currentTimestamp);
+  }
 
-    RigidTransform2d test;
+  public ShooterAimingParameters getAimingParameters(double currentTimestamp) {
+    if (cached_shooter_aiming_params_ != null && (currentTimestamp - cached_shooter_aiming_params_ts_ < kCacheTime)) {
+      return cached_shooter_aiming_params_;
+    }
     RigidTransform2d robot_to_goal = getLatestFieldToVehicle().getValue().inverse()
             .transformBy(kTestFieldToGoal);
     Rotation2d angle_to_goal = new Rotation2d(robot_to_goal.getTranslation().getX(),

@@ -157,9 +157,9 @@ public class Robot extends IterativeRobot {
                 }
 
                 if (mControlBoard.getFeedButton()) {
-                    mSuperstructure.setWantFeedOn();
+                    mSuperstructure.setmWantedState(Superstructure.WantedState.MANUAL_FEED);
                 } else {
-                    mSuperstructure.setWantFeedIdle();
+                    mSuperstructure.setmWantedState(Superstructure.WantedState.IDLE);
                 }
 
                 if (mControlBoard.getSpinShooterButton()) {

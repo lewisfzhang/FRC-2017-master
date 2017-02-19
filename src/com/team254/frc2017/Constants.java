@@ -1,6 +1,8 @@
 package com.team254.frc2017;
 
 import com.team254.lib.util.ConstantsBase;
+import com.team254.lib.util.InterpolatingDouble;
+import com.team254.lib.util.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.Solenoid;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -111,17 +113,9 @@ public class Constants extends ConstantsBase {
     public static final int kLeftShooterSlave1Id = 13;
     public static final int kLeftShooterSlave2Id = 14;
 
-    //PATH FOLLOWING
-    public static double kAutoLookAhead = 25.0; //inches
-    public static double kSegmentCompletionTolerance = 2.0; //inches
-    public static double kMaxAccel = 25.0; //inches per second^2
-    public static double kMaxDecel = 50.0; //should be positive
-    public static double kPathFollowingMaxVel = 10000; //inches per second
-    public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file 
-    public static double kMinSpeed = 10.0; //inches per second
-
     // SOLENOIDS
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0
+    public static final int kDeploySolenoidId = 1;
 
     // Analog Inputs
     // TODO add some!
@@ -131,6 +125,16 @@ public class Constants extends ConstantsBase {
 
     // Phone
     public static int kAndroidAppTcpPort = 8254;
+
+    //PATH FOLLOWING
+    public static double kAutoLookAhead = 25.0; //inches
+    public static double kSegmentCompletionTolerance = 2.0; //inches
+    public static double kMaxAccel = 25.0; //inches per second^2
+    public static double kMaxDecel = 50.0; //should be positive
+    public static double kPathFollowingMaxVel = 10000; //inches per second
+    public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file
+    public static double kMinSpeed = 10.0; //inches per second
+
 
     // Goal tracker constants
     public static double kMaxGoalTrackAge = 0.3;
@@ -150,6 +154,16 @@ public class Constants extends ConstantsBase {
 
     // Flywheel PID
     // TODO give these actual values
+
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
+
+    static {
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(10.),
+                new InterpolatingDouble(3000.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(20.),
+                new InterpolatingDouble(3200.));
+    }
+
 
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid
