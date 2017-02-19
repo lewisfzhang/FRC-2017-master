@@ -13,7 +13,8 @@ public class Feeder extends Subsystem {
     private static final double kUnjamOutPeriod = .2 * kReversing;
     private static final double kUnjamInPower = 6.0 * kReversing;
     private static final double kUnjamOutPower = -6.0 * kReversing;
-    private static final double kExaustVoltage = -8.0;
+    private static final double kFeedVoltage = 8.0;
+    private static final double kExhaustVoltage = kFeedVoltage * kReversing;
 
     private static Feeder sInstance = null;
     public static Feeder getInstance() {
@@ -27,17 +28,21 @@ public class Feeder extends Subsystem {
 
     public Feeder() {
         mMasterTalon = new CANTalon(Constants.kFeederMasterId);
-        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+
         mMasterTalon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mMasterTalon.SetVelocityMeasurementWindow(64);
+        mMasterTalon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms);
+
+        mMasterTalon.setVoltageRampRate(0.0);
         mMasterTalon.reverseOutput(false);
-        mMasterTalon.setNominalClosedLoopVoltage(12);
         mMasterTalon.enableBrakeMode(true);
 
         mSlaveTalon = new CANTalon(Constants.kFeederSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kFeederMasterId);
+        mSlaveTalon.setVoltageRampRate(0.0);
         mSlaveTalon.reverseOutput(true);
-        mSlaveTalon.setNominalClosedLoopVoltage(12);
         mSlaveTalon.enableBrakeMode(true);
     }
 
@@ -166,23 +171,18 @@ public class Feeder extends Subsystem {
 
     private SystemState handleFeeding() {
         if (mStateChanged) {
-            mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Speed);
-            mMasterTalon.setP(Constants.kFeederKP);
-            mMasterTalon.setI(Constants.kFeederKI);
-            mMasterTalon.setD(Constants.kFeederKD);
-            mMasterTalon.setF(Constants.kFeederKF);
-            mMasterTalon.set(Constants.kFeederFeedSpeedRpm);
+            setOpenLoop(kFeedVoltage);
         }
 
         return defaultStateTransfer();
     }
 
     private SystemState handleExhaust() {
-        setOpenLoop(kExaustVoltage);
+        setOpenLoop(kExhaustVoltage);
         return defaultStateTransfer();
     }
 
-    public void setWantedState(WantedState state) {
+    public synchronized void setWantedState(WantedState state) {
         mWantedState = state;
     }
 
