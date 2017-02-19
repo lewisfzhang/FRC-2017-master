@@ -104,6 +104,7 @@ public class Hopper extends Subsystem {
     }
 
     private SystemState handleIdle() {
+        setOpenLoop(0);
         return defaultStateTransfer();
     }
 
@@ -146,12 +147,30 @@ public class Hopper extends Subsystem {
 
     private SystemState handleFeeding() {
         setOpenLoop(kFeedPower);
-        return defaultStateTransfer();
+        switch (mWantedState) {
+            case FEED:
+                return SystemState.FEEDING;
+            case UNJAM:
+                return SystemState.UNJAMMING_OUT;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
+            default:
+                return SystemState.IDLE;
+        }
     }
 
     private SystemState handleExhaust() {
         setOpenLoop(-kFeedPower);
-        return defaultStateTransfer();
+        switch (mWantedState) {
+            case FEED:
+                return SystemState.FEEDING;
+            case UNJAM:
+                return SystemState.UNJAMMING_OUT;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
+            default:
+                return SystemState.IDLE;
+        }
     }
 
     private Hopper() {
@@ -160,6 +179,7 @@ public class Hopper extends Subsystem {
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kHopperMasterId);
+        mSlaveTalon.reverseOutput(true);
     }
 
 
