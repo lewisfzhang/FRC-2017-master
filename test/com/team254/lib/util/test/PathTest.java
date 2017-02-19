@@ -20,7 +20,7 @@ public class PathTest {
 
     @Test
     public void testLinearPathSegment() {
-        PathSegment.Translation segment = new PathSegment.Translation(0.0, 0.0, 100.0, 0.0, 50.0, stopped, 0.0);
+        PathSegment segment = new PathSegment(0.0, 0.0, 100.0, 0.0, 50.0, stopped, 0.0);
         assertEquals(100, segment.getLength(), kTestEpsilon);
 
         // GetClosestPoint - point on path
@@ -57,7 +57,7 @@ public class PathTest {
         assertEquals(0, dist, kTestEpsilon);
     
         //Try a different linear segment
-        segment = new PathSegment.Translation(10.0, -12.0, -30.0, -120.0, 100, stopped, 0.0);
+        segment = new PathSegment(10.0, -12.0, -30.0, -120.0, 100, stopped, 0.0);
         assertEquals(115.169440391, segment.getLength(), kTestEpsilon);
 
         // GetClosestPoint - point on path
@@ -94,7 +94,7 @@ public class PathTest {
     }
     
     public void testArcPathSegment() {
-        PathSegment.Translation segment = new PathSegment.Translation(0.0, 0.0, 100.0, 0.0, 50.0, stopped, 0.0);
+        PathSegment segment = new PathSegment(0.0, 0.0, 100.0, 0.0, 50.0, stopped, 0.0);
         assertEquals(100, segment.getLength(), kTestEpsilon);
 
         // GetClosestPoint - point on path
