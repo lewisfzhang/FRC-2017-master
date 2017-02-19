@@ -45,38 +45,6 @@ public abstract class PathSegment {
          * @param y2 end y
          * @param maxSpeed maximum speed allowed on the segment
          */
-        public Translation(double x1, double y1, double x2, double y2, double maxSpeed) {
-            this.start = new Translation2d(x1, y1);
-            this.end = new Translation2d(x2, y2);
-            this.center = null;
-            this.curvature = 0;
-            this.maxSpeed = maxSpeed;
-            this.startAngle = 0;
-            this.endAngle = 0;
-            extrapolateLookahead = false;
-            createMotionProfiler(new MotionState(0.0, 0.0, 0.0, 0.0));
-        }
-        
-        /**
-         * Constructor for a linear segment
-         * @param x1 start x
-         * @param y1 start y
-         * @param x2 end x
-         * @param y2 end y
-         * @param maxSpeed maximum speed allowed on the segment
-         */
-        public Translation(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState) {
-            this.start = new Translation2d(x1, y1);
-            this.end = new Translation2d(x2, y2);
-            this.center = null;
-            this.curvature = 0;
-            this.maxSpeed = maxSpeed;
-            this.startAngle = 0;
-            this.endAngle = 0;
-            extrapolateLookahead = false;
-            createMotionProfiler(startState);
-        }
-        
         public Translation(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState, double endSpeed) {
             this.start = new Translation2d(x1, y1);
             this.end = new Translation2d(x2, y2);
@@ -110,26 +78,6 @@ public abstract class PathSegment {
         }
         
         /**
-         * Constructor for an arc segment
-         * @param x1 start x
-         * @param y1 start y
-         * @param x2 end x
-         * @param y2 end y
-         * @param cx center x
-         * @param cy center y
-         * @param maxSpeed maximum speed allowed on the segment 
-         */
-        public Translation(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed, MotionState startState) {
-            this.start = new Translation2d(x1, y1);
-            this.end = new Translation2d(x2, y2);
-            this.center = new Translation2d(cx, cy);
-            this.maxSpeed = maxSpeed;
-            extrapolateLookahead = false;
-            calcArc();
-            createMotionProfiler(startState);
-        }
-        
-        /**
          * @return is this segment a rotation
          */
         public boolean isTurn() {
@@ -141,13 +89,6 @@ public abstract class PathSegment {
          */
         public double getMaxSpeed() {
             return maxSpeed;
-        }
-        
-        private void createMotionProfiler(MotionState start_state) {
-            MotionProfileConstraints motionConstraints = new MotionProfileConstraints(maxSpeed, Constants.kMaxAccel);
-            MotionProfileGoal goal_state = new MotionProfileGoal(getLength(), maxSpeed);
-            speedController = MotionProfileGenerator.generateProfile(motionConstraints, goal_state, start_state);
-            System.out.println(speedController);
         }
         
         public void createMotionProfiler(MotionState start_state, double end_speed) {
@@ -308,18 +249,6 @@ public abstract class PathSegment {
             } else {
                 System.out.println("Velocity does not exist at that position!");
                 return 0.0;
-            }
-        }
-        
-        public double getSpeed(double t) {
-            System.out.println("time: " + t);
-            Optional<MotionState> state = speedController.stateByTime(t);
-            if(state.isPresent()) {
-                System.out.println(state.get());
-                return state.get().vel();
-            } else {
-                System.out.println("ripipipip");
-                return Constants.kMinSpeed; //TODO idk what this should return if state isn't present
             }
         }
         

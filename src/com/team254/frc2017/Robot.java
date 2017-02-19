@@ -105,7 +105,6 @@ public class Robot extends IterativeRobot {
         }
         mEnabledLooper.start();
         zeroAllSensors();
-        //mDrive.setVelocitySetpoint(-15,15);
         //mDrive.setWantAimToGoal();
         mRobotState.reset(Timer.getFPGATimestamp(), TestArcPath.getStartPose());
         mDrive.setWantDrivePath(TestArcPath.buildPath(), TestArcPath.isReversed());

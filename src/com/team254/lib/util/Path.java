@@ -23,17 +23,6 @@ public class Path {
      List<PathSegment> segments;
      PathSegment prevSegment;
      
-     /**
-      * Creates a new Path with the path segment specified in <code>filepath</code>
-      * @param filepath path to the text file containing the autonomous path
-      */
-     public Path(String filepath) {
-         segments = new ArrayList<PathSegment>();
-         loadFile(filepath);
-         if(segments.size() > 0)
-             ((PathSegment.Translation) segments.get(segments.size() - 1)).extrapolateLookahead(true); //extrapolate last lookahead point
-     }
-     
      public void extrapolateLast() {
          PathSegment.Translation last = ((PathSegment.Translation) segments.get(segments.size() - 1));
          last.extrapolateLookahead(true);
@@ -46,26 +35,6 @@ public class Path {
      
      public Path() { segments = new ArrayList<PathSegment>(); }
      
-     private void loadFile(String filepath) {
-         filepath = filepath.replaceFirst("^~", System.getProperty("user.home"));
-         try {
-             File file = new File(filepath);
-             Scanner sc = new Scanner(file);
-             while (sc.hasNextLine()) {
-                 String[] s = sc.nextLine().split(",");
-                 for(String a: s)
-                     System.out.print(a + " ");
-                 System.out.print("\n");
-                 if(s[0].equals("LINE"))
-                     segments.add(new PathSegment.Translation(Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4]), Double.parseDouble(s[5]), getLastMotionState()));
-                 else if(s[0].equals("ARC"))
-                     segments.add(new PathSegment.Translation(Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4]), Double.parseDouble(s[5]), Double.parseDouble(s[6]), Double.parseDouble(s[7]), getLastMotionState()));
-             }
-             sc.close();
-         } catch (Exception e) {
-             e.printStackTrace(); 
-         }
-     }
      
      /**
       * add a segment to the Path
@@ -154,17 +123,6 @@ public class Path {
      public double getSpeed(Translation2d robotPos) {
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
          return currentSegment.getSpeed(robotPos);
-     }
-     
-     /**
-      * Gives the speed the robot should be traveling at the given time
-      * @param t
-      *     time since the robot started path following in seconds
-      * @return speed robot should be traveling
-      */
-     public double getSpeed(double t) {
-         PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
-         return currentSegment.getSpeed(t);
      }
      
      /**

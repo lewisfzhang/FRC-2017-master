@@ -27,16 +27,6 @@ public class AdaptivePurePursuitController {
     }
     
     /**
-     * Creates a new Adaptive Pure Pursuit Controller with the path specified in <code>filepath</code>
-     * @param filepath path to the text file containing the autonomous path
-     */
-    public AdaptivePurePursuitController(String filepath) {
-        mPath = new Path(filepath);
-        mReversed = false;
-        this.filepath = filepath;
-    }
-    
-    /**
      * Creates a new Adaptive Pure Pursuit Controller from the path object
      * @param path
      *      path for the Adaptive Pure Pursuit Controller to follow
@@ -147,11 +137,6 @@ public class AdaptivePurePursuitController {
      */
     public boolean isFinished() {
         return mPath.segments.size() == 0;
-    }
-    
-    public void reset() {
-        mPath = new Path(filepath);
-        mReversed = false;
     }
     
     public static class Line {

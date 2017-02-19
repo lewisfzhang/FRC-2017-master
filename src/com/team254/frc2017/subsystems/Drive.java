@@ -81,7 +81,8 @@ public class Drive extends Subsystem {
                         if(mPathController != null && !mPathController.isFinished()) {
                             updatePathFollower(timestamp);
                         } else {
-                            setVelocitySetpoint(0.0, 0.0);
+                            setVelocitySetpoint(0,0);
+                            //setWantDrivePath(TestArcPath.buildPath(), TestArcPath.isReversed());
                         }
                         return;
                     case AIM_TO_GOAL:
