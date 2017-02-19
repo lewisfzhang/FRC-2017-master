@@ -95,18 +95,24 @@ public class Path {
          PathSegment currentSegment = segments.get(0);
          rv.closest_point = currentSegment.getClosestPoint(robot);
          rv.closest_point_distance = new Translation2d(robot, rv.closest_point).norm();
-         double lookahead_distance = fixed_lookahead_distance + rv.closest_point_distance;
          rv.remaining_segment_distance = currentSegment.getRemainingDistance(rv.closest_point);
-         lookahead_distance -= rv.remaining_segment_distance;
-         int i = 1;
-         while(lookahead_distance > 0 && i < segments.size()) {
-             currentSegment = segments.get(i);
-             lookahead_distance -= currentSegment.getLength();
-             i++;
+         double lookahead_distance = fixed_lookahead_distance + rv.closest_point_distance;
+         if (rv.remaining_segment_distance < lookahead_distance && segments.size() > 1) {
+             lookahead_distance -= rv.remaining_segment_distance;
+             for (int i = 1; i < segments.size(); ++i) {
+                 currentSegment = segments.get(i);
+                 final double length = currentSegment.getLength();
+                 if (length < lookahead_distance && i < segments.size() - 1) {
+                     lookahead_distance -= length;
+                 } else {
+                     break;
+                 }
+             }
+         } else {
+             lookahead_distance += (currentSegment.getLength() - rv.remaining_segment_distance);
          }
-
-         rv.lookahead_point = currentSegment.getLookAheadPoint(currentSegment.getLength() + lookahead_distance);
-         rv.lookahead_point_speed = currentSegment.getSpeedByDistance(currentSegment.getLength() - rv.remaining_segment_distance);
+         rv.lookahead_point = currentSegment.getPointByDistance(lookahead_distance);
+         rv.lookahead_point_speed = currentSegment.getSpeedByDistance(lookahead_distance);
          checkSegmentDone(rv.closest_point);
          return rv;
      }

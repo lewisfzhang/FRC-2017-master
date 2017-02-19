@@ -4,17 +4,16 @@ import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
 
 /**
- * Provides forward and inverse kinematics equations for the robot modeling the
- * wheelbase as a differential drive (with a corrective factor to account for
- * the inherent skidding of the center 4 wheels quasi-kinematically).
+ * Provides forward and inverse kinematics equations for the robot modeling the wheelbase as a differential drive (with
+ * a corrective factor to account for the inherent skidding of the center 4 wheels quasi-kinematically).
  */
 
 public class Kinematics {
     private static final double kEpsilon = 1E-9;
 
     /**
-     * Forward kinematics using only encoders, rotation is implicit (less
-     * accurate than below, but useful for predicting motion)
+     * Forward kinematics using only encoders, rotation is implicit (less accurate than below, but useful for predicting
+     * motion)
      */
     public static RigidTransform2d.Delta forwardKinematics(double left_wheel_delta, double right_wheel_delta) {
         double linear_velocity = (left_wheel_delta + right_wheel_delta) / 2;
@@ -24,20 +23,33 @@ public class Kinematics {
     }
 
     /**
-     * Forward kinematics using encoders and explicitly measured rotation (ex.
-     * from gyro)
+     * Forward kinematics using encoders and explicitly measured rotation (ex. from gyro)
      */
     public static RigidTransform2d.Delta forwardKinematics(double left_wheel_delta, double right_wheel_delta,
             double delta_rotation_rads) {
         return new RigidTransform2d.Delta((left_wheel_delta + right_wheel_delta) / 2, 0, delta_rotation_rads);
     }
 
+    /**
+     * For convenience, forward kinematic with an absolute rotation and previous rotation.
+     */
+    public static RigidTransform2d.Delta forwardKinematics(Rotation2d prev_heading, double left_wheel_delta,
+            double right_wheel_delta, Rotation2d current_heading) {
+        return new RigidTransform2d.Delta((left_wheel_delta + right_wheel_delta) / 2, 0,
+                prev_heading.inverse().rotateBy(current_heading).getRadians());
+    }
+
     /** Append the result of forward kinematics to a previous pose. */
     public static RigidTransform2d integrateForwardKinematics(RigidTransform2d current_pose, double left_wheel_delta,
             double right_wheel_delta, Rotation2d current_heading) {
-        RigidTransform2d.Delta with_gyro = forwardKinematics(left_wheel_delta, right_wheel_delta,
-                current_pose.getRotation().inverse().rotateBy(current_heading).getRadians());
-        return current_pose.transformBy(RigidTransform2d.fromVelocity(with_gyro));
+        RigidTransform2d.Delta with_gyro = forwardKinematics(current_pose.getRotation(), left_wheel_delta,
+                right_wheel_delta, current_heading);
+        return integrateForwardKinematics(current_pose, with_gyro);
+    }
+
+    public static RigidTransform2d integrateForwardKinematics(RigidTransform2d current_pose,
+            RigidTransform2d.Delta forward_kinematics) {
+        return current_pose.transformBy(RigidTransform2d.fromVelocity(forward_kinematics));
     }
 
     public static class DriveVelocity {

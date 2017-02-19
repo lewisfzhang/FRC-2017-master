@@ -9,16 +9,12 @@ import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.paths.GearToHopper;
-import com.team254.frc2017.paths.TestArcPath;
 import com.team254.lib.util.*;
 import com.team254.lib.util.motion.HeadingProfileFollower;
 import com.team254.lib.util.motion.MotionProfileConstraints;
-import com.team254.lib.util.motion.MotionProfileGoal;
-import com.team254.lib.util.motion.MotionState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
@@ -52,7 +48,7 @@ public class Drive extends Subsystem {
 
     // Controllers
     private RobotState mRobotState = RobotState.getInstance();
-    private AdaptivePurePursuitController mPathController;
+    private PathFollower mPathFollower;
 
     // These gains get reset below!!
     private HeadingProfileFollower mProfileFollower = new HeadingProfileFollower(0,0,0,0,0);
@@ -80,7 +76,7 @@ public class Drive extends Subsystem {
                     case VELOCITY_SETPOINT:
                         return;
                     case PATH_FOLLOWING:
-                        if(mPathController != null && !mPathController.isFinished()) {
+                        if(mPathFollower != null && !mPathFollower.isFinished()) {
                             updatePathFollower(timestamp);
                         }
                         return;
@@ -373,21 +369,13 @@ public class Drive extends Subsystem {
 
     private void updatePathFollower(double timestamp) {
         RigidTransform2d robot_pose = RobotState.getInstance().getLatestFieldToVehicle().getValue();
-        RigidTransform2d.Delta command = mPathController.update(robot_pose);
-        if(!mPathController.isFinished()) {
+        RigidTransform2d.Delta command = mPathFollower.update(timestamp, robot_pose,
+                RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getVelocity().dx);
+        if (!mPathFollower.isFinished()) {
             Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
-    
-            // Scale the command to respect the max velocity limits
-            double max_vel = 0.0;
-            max_vel = Math.max(max_vel, Math.abs(setpoint.left));
-            max_vel = Math.max(max_vel, Math.abs(setpoint.right));
-            if (max_vel > Constants.kPathFollowingMaxVel) {
-                double scaling = Constants.kPathFollowingMaxVel / max_vel;
-                setpoint = new Kinematics.DriveVelocity(setpoint.left * scaling, setpoint.right * scaling);
-            }
             updateVelocitySetpoint(setpoint.left, setpoint.right);
         } else {
-            updateVelocitySetpoint(0,0);
+            updateVelocitySetpoint(0, 0);
         }
     }
 
@@ -421,17 +409,21 @@ public class Drive extends Subsystem {
     
     public void setWantDrivePath(Path path, boolean reversed) {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
-            mPathController = new AdaptivePurePursuitController(path, reversed);
+            mPathFollower = new PathFollower(path, reversed,
+                    new PathFollower.Parameters(Constants.kAutoLookAhead, Constants.kPathFollowingProfileKp,
+                            Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
+                            Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
+                            Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kLooperDt));
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         } else {
-            setVelocitySetpoint(0,0);
+            setVelocitySetpoint(0, 0);
         }
     }
     
     public boolean isDoneWithPath() {
-        if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathController != null) {
-            return mPathController.isFinished();
+        if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+            return mPathFollower.isFinished();
         } else {
             System.out.println("Robot is not in path following mode");
             return false;

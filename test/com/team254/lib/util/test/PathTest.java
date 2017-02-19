@@ -2,14 +2,8 @@ package com.team254.lib.util.test;
 
 import static org.junit.Assert.*;
 
-import com.team254.frc2017.Constants;
-import com.team254.lib.util.AdaptivePurePursuitController;
-import com.team254.lib.util.Path;
 import com.team254.lib.util.PathSegment;
-import com.team254.lib.util.RigidTransform2d;
-import com.team254.lib.util.Rotation2d;
 import com.team254.lib.util.Translation2d;
-import com.team254.lib.util.motion.MotionProfile;
 import com.team254.lib.util.motion.MotionState;
 
 import org.junit.Test;
@@ -29,7 +23,7 @@ public class PathTest {
         assertEquals(0, closestPoint.getY(), kTestEpsilon);
         double dist = segment.getRemainingDistance(closestPoint);
         assertEquals(50, dist, kTestEpsilon);
-        Translation2d lookAheadPoint = segment.getLookAheadPoint(75.0);
+        Translation2d lookAheadPoint = segment.getPointByDistance(75.0);
         assertEquals(75, lookAheadPoint.getX(), kTestEpsilon);
         assertEquals(0, lookAheadPoint.getY(), kTestEpsilon);
 
@@ -66,7 +60,7 @@ public class PathTest {
         assertEquals(-93, closestPoint.getY(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(28.7923600978, dist, kTestEpsilon);
-        lookAheadPoint = segment.getLookAheadPoint(75.0);
+        lookAheadPoint = segment.getPointByDistance(75.0);
         assertEquals(-16.048576686769547, lookAheadPoint.getX(), kTestEpsilon);
         assertEquals(-82.33115705427778, lookAheadPoint.getY(), kTestEpsilon);
 
@@ -103,7 +97,7 @@ public class PathTest {
         assertEquals(0, closestPoint.getY(), kTestEpsilon);
         double dist = segment.getRemainingDistance(closestPoint);
         assertEquals(50, dist, kTestEpsilon);
-        Translation2d lookAheadPoint = segment.getLookAheadPoint(75.0);
+        Translation2d lookAheadPoint = segment.getPointByDistance(75.0);
         assertEquals(75, lookAheadPoint.getX(), kTestEpsilon);
         assertEquals(0, lookAheadPoint.getY(), kTestEpsilon);
 

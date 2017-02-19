@@ -1,32 +1,36 @@
 package com.team254.lib.util;
 
-import com.team254.frc2017.Constants;
-import com.team254.lib.util.motion.MotionProfile;
-import com.team254.lib.util.motion.MotionProfileConstraints;
-import com.team254.lib.util.motion.MotionProfileGenerator;
-import com.team254.lib.util.motion.MotionProfileGoal;
-import com.team254.lib.util.motion.MotionProfileGoal.CompletionBehavior;
-import com.team254.lib.util.motion.MotionState;
-
 /**
  * Implements an adaptive pure pursuit controller. See:
  * https://www.ri.cmu.edu/pub_files/pub1/kelly_alonzo_1994_4/kelly_alonzo_1994_4 .pdf
  * 
- * Basically, we find a spot on the path we'd like to follow and calculate the wheel speeds necessary to make us land on
- * that spot. The target spot is a specified distance ahead of us, and we look further ahead the greater our tracking
- * error.
+ * Basically, we find a spot on the path we'd like to follow and calculate the arc necessary to make us land on that
+ * spot. The target spot is a specified distance ahead of us, and we look further ahead the greater our tracking error.
+ * We also return the maximum speed we'd like to be going when we reach the target spot.
  */
 
 public class AdaptivePurePursuitController {
-    private static final double kEpsilon = 1E-9;
-    private static final double kReallyBigNumber = 1E9;
+    private static final double kEpsilon = 1E-6;
+    private static final double kReallyBigNumber = 1E6;
+
+    public static class Command {
+        public RigidTransform2d.Delta delta = RigidTransform2d.Delta.identity();
+        public double cross_track_error;
+        public double end_velocity;
+
+        public Command() {
+        }
+
+        public Command(RigidTransform2d.Delta delta, double cross_track_error, double end_velocity) {
+            this.delta = delta;
+            this.cross_track_error = cross_track_error;
+            this.end_velocity = end_velocity;
+        }
+    }
 
     Path mPath;
     boolean mReversed;
-    String filepath;
-    MotionProfileConstraints mConstraints;
-
-    RigidTransform2d.Delta mLastCommand = RigidTransform2d.Delta.identity();
+    double mFixedLookahead;
 
     /**
      * Creates a new Adaptive Pure Pursuit Controller from the path object
@@ -34,10 +38,10 @@ public class AdaptivePurePursuitController {
      * @param path
      *            path for the Adaptive Pure Pursuit Controller to follow
      */
-    public AdaptivePurePursuitController(Path path, boolean reversed) {
+    public AdaptivePurePursuitController(Path path, boolean reversed, double fixed_lookahead) {
         mPath = path;
         mReversed = reversed;
-        mConstraints = new MotionProfileConstraints(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel);
+        mFixedLookahead = fixed_lookahead;
     }
 
     /**
@@ -45,49 +49,33 @@ public class AdaptivePurePursuitController {
      * 
      * @param pose
      *            robot pose
-     * @return RigidTransform2d movement command for the robot to follow
+     * @return movement command for the robot to follow
      */
-    public RigidTransform2d.Delta update(RigidTransform2d pose) {
+    public Command update(RigidTransform2d pose) {
         if (mReversed) {
             pose = new RigidTransform2d(pose.getTranslation(),
                     pose.getRotation().rotateBy(Rotation2d.fromRadians(Math.PI)));
         }
 
-        final Path.TargetPointReport report = mPath.getTargetPoint(pose.getTranslation(), Constants.kAutoLookAhead);
+        final Path.TargetPointReport report = mPath.getTargetPoint(pose.getTranslation(), mFixedLookahead);
         if (isFinished()) {
             // Stop.
-            mLastCommand = RigidTransform2d.Delta.identity();
-            return mLastCommand;
+            return new Command(RigidTransform2d.Delta.identity(), report.closest_point_distance, 0.0);
         }
 
         final Arc arc = new Arc(pose, report.lookahead_point);
-
-        // Generate a profile from our current speed to the lookahead point.
-        // The goal is at x=arc length (or remaining length of segment if we are stopping), v=lookahead_point_speed
-        // The current state is at x=0, v=previous velocity command
-        final MotionProfile profile = MotionProfileGenerator.generateProfile(mConstraints,
-                new MotionProfileGoal(
-                        Math.min(arc.length,
-                                report.lookahead_point_speed == 0.0 ? report.remaining_segment_distance
-                                        : Double.POSITIVE_INFINITY),
-                        report.lookahead_point_speed, CompletionBehavior.VIOLATE_MAX_ACCEL),
-                new MotionState(0.0, 0.0, mLastCommand.dx, 0.0));
-        // Sample the profile one dt from now.
-        double target_speed = (profile.endTime() >= Constants.kLooperDt
-                ? profile.stateByTime(Constants.kLooperDt).get().vel() : profile.endState().vel());
-        if (Double.isNaN(target_speed)) {
-            target_speed = 0.0;
-        }
-        if (target_speed < Constants.kMinSpeed) {
-            target_speed = Constants.kMinSpeed;
+        double scale_factor = 1.0;
+        if (report.lookahead_point_speed < kEpsilon) {
+            scale_factor = report.remaining_segment_distance / arc.length;
         }
         if (mReversed) {
-            target_speed *= -1;
+            scale_factor *= -1;
         }
 
-        mLastCommand = new RigidTransform2d.Delta(target_speed, 0.0,
-                getDirection(pose, report.lookahead_point) * Math.abs(target_speed) / arc.radius);
-        return mLastCommand;
+        return new Command(
+                new RigidTransform2d.Delta(scale_factor * arc.length, 0.0,
+                        arc.length * getDirection(pose, report.lookahead_point) * Math.abs(scale_factor) / arc.radius),
+                report.closest_point_distance, report.lookahead_point_speed * Math.signum(scale_factor));
     }
 
     public static class Arc {

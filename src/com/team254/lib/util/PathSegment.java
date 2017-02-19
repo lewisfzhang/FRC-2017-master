@@ -81,7 +81,7 @@ public class PathSegment {
         MotionProfileConstraints motionConstraints = new MotionProfileConstraints(maxSpeed, Constants.kPathFollowingMaxAccel);
         MotionProfileGoal goal_state = new MotionProfileGoal(getLength(), end_speed);
         speedController = MotionProfileGenerator.generateProfile(motionConstraints, goal_state, start_state);
-        System.out.println(speedController);
+        // System.out.println(speedController);
     }
     
     /**
@@ -145,14 +145,15 @@ public class PathSegment {
     }
     
     /**
-     * Calculates the point on the segment <code>dist</code> distance from the starting point
-     * @param dist distance from the starting point (lookahead distance)
+     * Calculates the point on the segment <code>dist</code> distance from the starting point along the segment.
+     * @param dist distance from the starting point
      * @return point on the segment <code>dist</code> distance from the starting point
      */
-    public Translation2d getLookAheadPoint(double dist) {
+    public Translation2d getPointByDistance(double dist) {
         double length = getLength();
-        if(!extrapolateLookahead && dist > length)
+        if(!extrapolateLookahead && dist > length) {
             dist = length;
+        }
         if(isLine) {
             return start.translateBy( deltaStart.scale(dist / length));
         } else {
@@ -187,6 +188,11 @@ public class PathSegment {
     }
     
     public double getSpeedByDistance(double dist) {
+        if (dist < speedController.startPos()) {
+            dist = speedController.startPos();
+        } else if (dist > speedController.endPos()) {
+            dist = speedController.endPos();
+        }
         Optional<MotionState> state = speedController.firstStateByPos(dist);
         if(state.isPresent()) {
             return state.get().vel();

@@ -57,6 +57,7 @@ public class RobotState {
   // FPGATimestamp -> RigidTransform2d or Rotation2d
   private InterpolatingTreeMap<InterpolatingDouble, RigidTransform2d> field_to_vehicle_;
   private RigidTransform2d.Delta vehicle_velocity_;
+  private double distance_driven_;
   private GoalTracker goal_tracker_;
   private Rotation2d camera_pitch_correction_;
   private Rotation2d camera_yaw_correction_;
@@ -77,6 +78,7 @@ public class RobotState {
     camera_pitch_correction_ = Rotation2d.fromDegrees(-Constants.kCameraPitchAngleDegrees);
     camera_yaw_correction_ = Rotation2d.fromDegrees(-Constants.kCameraYawAngleDegrees);
     differential_height_ = Constants.kCenterOfTargetHeight - Constants.kCameraZOffset;
+    distance_driven_ = 0.0;
   }
 
   public synchronized RigidTransform2d getFieldToVehicle(double timestamp) {
@@ -187,11 +189,21 @@ public class RobotState {
     goal_tracker_.reset();
   }
 
-  public RigidTransform2d generateOdometryFromSensors(double left_encoder_delta_distance,
+  public synchronized RigidTransform2d generateOdometryFromSensors(double left_encoder_delta_distance,
                                                       double right_encoder_delta_distance, Rotation2d current_gyro_angle) {
-    RigidTransform2d last_measurement = getLatestFieldToVehicle().getValue();
-    return Kinematics.integrateForwardKinematics(last_measurement, left_encoder_delta_distance,
-            right_encoder_delta_distance, current_gyro_angle);
+    final RigidTransform2d last_measurement = getLatestFieldToVehicle().getValue();
+    final RigidTransform2d.Delta delta = Kinematics.forwardKinematics(last_measurement.getRotation(),
+            left_encoder_delta_distance, right_encoder_delta_distance, current_gyro_angle);
+    distance_driven_ += delta.dx;
+    return Kinematics.integrateForwardKinematics(last_measurement, delta);
+  }
+  
+  public synchronized double getDistanceDriven() {
+      return distance_driven_;
+  }
+  
+  public synchronized RigidTransform2d.Delta getVelocity() {
+      return vehicle_velocity_;
   }
 
   public void outputToSmartDashboard() {

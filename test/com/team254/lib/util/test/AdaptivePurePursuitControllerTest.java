@@ -4,17 +4,14 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.team254.frc2017.Constants;
-import com.team254.frc2017.paths.*;
 import com.team254.lib.util.AdaptivePurePursuitController;
-import com.team254.lib.util.Path;
 import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
 import com.team254.lib.util.Translation2d;
 
 public class AdaptivePurePursuitControllerTest {
-    private static final double kEpsilon = 1E-9;
-    private static final double kReallyBigNumber = 1E9;
+    private static final double kEpsilon = 1E-6;
+    private static final double kReallyBigNumber = 1E6;
     
     @Test
     public void testJoinRadius() {
@@ -46,72 +43,5 @@ public class AdaptivePurePursuitControllerTest {
         lookahead_point = new Translation2d(-40, 10);
         System.out.println(AdaptivePurePursuitController.getRadius(robot_pose, lookahead_point));
         assertEquals(AdaptivePurePursuitController.getRadius(robot_pose, lookahead_point), 22.929806792642722, kEpsilon);
-    }
-
-    @Test
-    public void testArcPath() {
-        Path path = TestArcPath.buildPath();
-        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(path, false);
-
-        double dt = .01;
-
-        RigidTransform2d robot_pose = new RigidTransform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0));
-        double t = 0;
-        while (!controller.isFinished() && t < 250) {
-            // Follow the path
-            RigidTransform2d.Delta command = controller.update(robot_pose);
-            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
-                    Rotation2d.fromRadians(command.dtheta * dt)));
-
-            System.out.println(
-                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
-            t += dt;
-        }
-        System.out.println(robot_pose);
-        assertTrue(controller.isFinished());
-        assertEquals(200, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
-        assertEquals(100, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
-    }
-    
-    @Test
-    public void testAuto() {
-        PathContainer p = new StartToGear();
-        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(p.buildPath(), p.isReversed());
-
-        double dt = .01;
-        
-        RigidTransform2d robot_pose = p.getStartPose();
-        double t = 0;
-        while (!controller.isFinished() && t < 250) {
-            // Follow the path
-            RigidTransform2d.Delta command = controller.update(robot_pose);
-            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
-                    Rotation2d.fromRadians(command.dtheta * dt)));
-
-            System.out.println(
-                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
-            t += dt;
-        }
-        System.out.println(robot_pose);
-        assertTrue(controller.isFinished());
-        assertEquals(109, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance*2);
-        assertEquals(107, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*2);
-       
-        p = new GearToHopper();
-        controller = new AdaptivePurePursuitController(p.buildPath(), p.isReversed());
-        while (!controller.isFinished() && t < 500) {
-            // Follow the path
-            RigidTransform2d.Delta command = controller.update(robot_pose);
-            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
-                    Rotation2d.fromRadians(command.dtheta * dt)));
-            
-            System.out.println(
-                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
-            t += dt;
-        }
-        System.out.println(robot_pose);
-        assertTrue(controller.isFinished());
-        assertEquals(132, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance*2);
-        assertEquals(20, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*2);
     }
 }

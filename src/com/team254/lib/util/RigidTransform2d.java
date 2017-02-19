@@ -27,6 +27,10 @@ public class RigidTransform2d implements Interpolable<RigidTransform2d> {
             this.dy = dy;
             this.dtheta = dtheta;
         }
+        
+        public Delta scaled(double scale) {
+            return new Delta(dx * scale, dy * scale, dtheta * scale);
+        }
     }
 
     protected Translation2d translation_;
