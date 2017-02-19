@@ -2,17 +2,12 @@ package com.team254.lib.util.test;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.Test;
 
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.paths.*;
 import com.team254.lib.util.AdaptivePurePursuitController;
 import com.team254.lib.util.Path;
-import com.team254.lib.util.PathSegment;
 import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
 import com.team254.lib.util.Translation2d;
@@ -77,39 +72,44 @@ public class AdaptivePurePursuitControllerTest {
         assertEquals(200, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
         assertEquals(100, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
     }
+    
+    @Test
+    public void testAuto() {
+        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(StartToGear.buildPath(), StartToGear.isReversed());
 
-//    @Test
-//    public void testControllerReversed() {
-//        List<Waypoint> waypoints = new ArrayList<>();
-//        waypoints.add(new Waypoint(new Translation2d(0, 0), 1));
-//        waypoints.add(new Waypoint(new Translation2d(1, 0), 1));
-//        waypoints.add(new Waypoint(new Translation2d(2, 0), 2, "StartedTurn"));
-//        waypoints.add(new Waypoint(new Translation2d(2, -1), 2));
-//        waypoints.add(new Waypoint(new Translation2d(2, -2), 1, "FinishedTurn"));
-//        waypoints.add(new Waypoint(new Translation2d(3, -2), 1));
-//        waypoints.add(new Waypoint(new Translation2d(4, -2), 3));
-//        waypoints.add(new Waypoint(new Translation2d(5, -2), 1));
-//        Path path = new Path(waypoints);
-//
-//        double dt = .01;
-//        AdaptivePurePursuitController controller = new AdaptivePurePursuitController(0.25, 1.0, dt, path, true,
-//                kEpsilon);
-//
-//        RigidTransform2d robot_pose = RigidTransform2d.fromRotation(Rotation2d.fromRadians(Math.PI));
-//        double t = 0;
-//        while (!controller.isDone() && t < 10) {
-//            // Follow the path
-//            RigidTransform2d.Delta command = controller.update(robot_pose, t);
-//            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
-//                    Rotation2d.fromRadians(command.dtheta * dt)));
-//
-//            System.out.println(
-//                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
-//            t += dt;
-//        }
-//        assertTrue(controller.isDone());
-//        assertEquals(2, controller.getMarkersCrossed().size());
-//        assertEquals(5, robot_pose.getTranslation().getX(), .01);
-//        assertEquals(-2, robot_pose.getTranslation().getY(), .01);
-//    }
+        double dt = .01;
+
+        RigidTransform2d robot_pose = StartToGear.getStartPose();
+        double t = 0;
+        while (!controller.isFinished() && t < 250) {
+            // Follow the path
+            RigidTransform2d.Delta command = controller.update(robot_pose);
+            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
+                    Rotation2d.fromRadians(command.dtheta * dt)));
+
+            System.out.println(
+                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
+            t += dt;
+        }
+        System.out.println(robot_pose);
+        assertTrue(controller.isFinished());
+        assertEquals(109, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance*2);
+        assertEquals(107, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*2);
+       
+        controller = new AdaptivePurePursuitController(GearToHopper.buildPath(), GearToHopper.isReversed());
+        while (!controller.isFinished() && t < 500) {
+            // Follow the path
+            RigidTransform2d.Delta command = controller.update(robot_pose);
+            robot_pose = robot_pose.transformBy(new RigidTransform2d(new Translation2d(command.dx * dt, 0),
+                    Rotation2d.fromRadians(command.dtheta * dt)));
+            
+            System.out.println(
+                    "t = " + t + ", lin vel " + command.dx + ", ang vel " + command.dtheta + ", pose " + robot_pose);
+            t += dt;
+        }
+        System.out.println(robot_pose);
+        assertTrue(controller.isFinished());
+        assertEquals(132, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance*2);
+        assertEquals(20, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*2);
+    }
 }

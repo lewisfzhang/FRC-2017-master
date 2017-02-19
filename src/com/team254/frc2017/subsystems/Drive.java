@@ -8,6 +8,7 @@ import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.frc2017.paths.GearToHopper;
 import com.team254.frc2017.paths.TestArcPath;
 import com.team254.lib.util.*;
 import com.team254.lib.util.motion.HeadingProfileFollower;
@@ -82,8 +83,8 @@ public class Drive extends Subsystem {
                         if(mPathController != null && !mPathController.isFinished()) {
                             updatePathFollower(timestamp);
                         } else {
-                            setVelocitySetpoint(0,0);
-                            //setWantDrivePath(TestArcPath.buildPath(), TestArcPath.isReversed());
+                            //setVelocitySetpoint(0,0);
+                            setWantDrivePath(GearToHopper.buildPath(), GearToHopper.isReversed());
                         }
                         return;
                     case AIM_TO_GOAL:
@@ -309,8 +310,14 @@ public class Drive extends Subsystem {
     }
 
     public synchronized Rotation2d getGyroAngle() {
-        return Rotation2d.fromDegrees(-mNavXBoard.getAngle());
+        return Rotation2d.fromDegrees(-mNavXBoard.getAngle());    
     }
+    
+    public synchronized void setGyroAngle(Rotation2d angle) {
+        mNavXBoard.reset();
+        mNavXBoard.setAngleAdjustment(angle.getDegrees()); 
+    }
+    
 
     public synchronized double getGyroVelocity() {
         return -mNavXBoard.getRawGyroZ();
@@ -420,6 +427,8 @@ public class Drive extends Subsystem {
             mPathController = new AdaptivePurePursuitController(path, reversed);
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
-        }    
+        } else {
+            setVelocitySetpoint(0,0);
+        }
     }
 }

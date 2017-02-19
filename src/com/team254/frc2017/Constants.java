@@ -80,14 +80,13 @@ public class Constants extends ConstantsBase {
     public static double kShooterSetpointDeadbandRpm = 1.0;
     public static double kShooterAllowableErrorRpm = 50;
 
-
     // Feeder gains
     public static double kFeederKP = 0;
     public static double kFeederKI = 0;
     public static double kFeederKD = 0;
     public static double kFeederKF = 0.008;
     public static double kFeederFeedSpeedRpm = 12e3;
-
+    
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
@@ -134,8 +133,8 @@ public class Constants extends ConstantsBase {
     public static int kAndroidAppTcpPort = 8254;
 
     //PATH FOLLOWING
-    public static double kAutoLookAhead = 25.0; //inches
-    public static double kSegmentCompletionTolerance = 2.0; //inches
+    public static double kAutoLookAhead = 20.0; //inches
+    public static double kSegmentCompletionTolerance = 1.0; //inches
     public static double kPathFollowingMaxAccel = 25.0; //inches per second^2
     public static double kPathFollowingMaxVel = 120.0; //inches per second
     public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file

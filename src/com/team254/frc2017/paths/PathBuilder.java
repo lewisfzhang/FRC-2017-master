@@ -25,6 +25,7 @@ public class PathBuilder {
         new Line(w.get(w.size() - 2), w.get(w.size() - 1)).addToPath(p, 0);
         p.extrapolateLast();
         p.verifySpeeds();
+        System.out.println(p);
         return p;
     }
 
@@ -66,7 +67,7 @@ public class PathBuilder {
         private void addToPath(Path p, double endSpeed) {
             double pathLength = new Translation2d(end, start).norm();
             if(pathLength > kEpsilon)
-                p.addSegment(new PathSegment.Translation(start.getX(), start.getY(), end.getX(), end.getY(), b.speed, p.getLastMotionState(), endSpeed));
+                p.addSegment(new PathSegment(start.getX(), start.getY(), end.getX(), end.getY(), b.speed, p.getLastMotionState(), endSpeed));
         }
     }
     
@@ -92,7 +93,7 @@ public class PathBuilder {
         private void addToPath(Path p) {
             a.addToPath(p, speed);
             if(radius > kEpsilon && radius < kReallyBigNumber)
-                p.addSegment(new PathSegment.Translation(a.end.getX(), a.end.getY(), b.start.getX(), b.start.getY(), center.getX(), center.getY(), speed, p.getLastMotionState(), b.speed));
+                p.addSegment(new PathSegment(a.end.getX(), a.end.getY(), b.start.getX(), b.start.getY(), center.getX(), center.getY(), speed, p.getLastMotionState(), b.speed));
         }
         
         private static Translation2d intersect(Line l1, Line l2) {

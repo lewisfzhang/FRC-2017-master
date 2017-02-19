@@ -28,12 +28,6 @@ public class AdaptivePurePursuitController {
 
     RigidTransform2d.Delta mLastCommand = RigidTransform2d.Delta.identity();
 
-    // public static void main(String[] args) {
-    // RigidTransform2d pose = new RigidTransform2d(new Translation2d(0,0), Rotation2d.fromDegrees(0));
-    // Translation2d point = new Translation2d(0, 100);
-    // System.out.println(getLength(pose,point));
-    // }
-
     /**
      * Creates a new Adaptive Pure Pursuit Controller from the path object
      * 
