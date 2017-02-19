@@ -5,8 +5,6 @@ import com.team254.frc2017.auto.AutoModeExecuter;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
-import com.team254.frc2017.paths.StartToGear;
-import com.team254.frc2017.paths.TestArcPath;
 import com.team254.frc2017.subsystems.*;
 import com.team254.frc2017.vision.VisionServer;
 import com.team254.frc2017.web.WebServer;
@@ -19,7 +17,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -163,8 +160,8 @@ public class Robot extends IterativeRobot {
             // Drive base
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
-            mDrive.setHighGear(!mControlBoard.getLowGear());
 
+            mDrive.setHighGear(!mControlBoard.getLowGear());
 
             if (mControlBoard.getDriveAimButton()) {
                 mDrive.setWantAimToGoal();
@@ -174,50 +171,42 @@ public class Robot extends IterativeRobot {
             } else {
                 mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
 
-                if (mSuperstructure != null) {
+                boolean wantsExhaust = mControlBoard.getExhaustButton();
 
-                    boolean wantsExhaust = mControlBoard.getExhaustButton();
+                // Intake on has highest priority for intake.
+                if (mControlBoard.getIntakeButton()) {
+                    mSuperstructure.setWantIntakeOn();
+                } else if (wantsExhaust) {
+                    // Exhaust has lowest priority.
+                    mSuperstructure.setWantIntakeReversed();
+                } else {
+                    mSuperstructure.setWantIntakeStopped();
+                }
 
-                    // Intake on has highest priority for intake.
-                    if (mControlBoard.getIntakeButton()) {
-                        mSuperstructure.setWantIntakeOn();
-                    } else if (wantsExhaust) {
-                        // Exhaust has lowest priority.
-                        mSuperstructure.setWantIntakeReversed();
-                    } else {
-                        mSuperstructure.setWantIntakeStopped();
-                    }
+                if (mControlBoard.getFeedButton()) {
+                    mSuperstructure.setWantedState(Superstructure.WantedState.MANUAL_FEED);
+                } else if (wantsExhaust) {
+                    // Exhaust has lowest priority for feeder as well.
+                    mSuperstructure.setWantedState(Superstructure.WantedState.EXHAUST);
+                } else {
+                    mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
+                }
 
-                    if (mControlBoard.getFeedButton()) {
-                        mSuperstructure.setWantedState(Superstructure.WantedState.MANUAL_FEED);
-                    } else if (wantsExhaust) {
-                        // Exhaust has lowest priority for feeder as well.
-                        mSuperstructure.setWantedState(Superstructure.WantedState.EXHAUST);
-                    } else {
-                        mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
-                    }
-
-                    if (mControlBoard.getSpinShooterButton()) {
-                        mSuperstructure.setShooterOpenLoop(8.0);
-                    } else if (mControlBoard.getShootButton()) {
-                        mSuperstructure.setClosedLoopRpm(3000.0);
-                    } else {
-                        mSuperstructure.setShooterOpenLoop(0);
-                    }
-
+                if (mControlBoard.getSpinShooterButton()) {
+                    mSuperstructure.setShooterOpenLoop(8.0);
+                } else if (mControlBoard.getShootButton()) {
+                    mSuperstructure.setClosedLoopRpm(3000.0);
+                } else {
+                    mSuperstructure.setShooterOpenLoop(0);
                 }
             }
 
-            // Super structure.  For testing check if null.
-            // TODO: Remove for comp.
-
-
-            allPeriodic();
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
+        allPeriodic();
+    } catch (Throwable t) {
+        CrashTracker.logThrowableCrash(t);
+        throw t;
     }
+}
 
     @Override
     public void disabledInit() {
