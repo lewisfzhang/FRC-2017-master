@@ -1,9 +1,7 @@
 package com.team254.lib.util;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import com.team254.frc2017.Constants;
 import com.team254.lib.util.motion.MotionState;
@@ -89,29 +87,42 @@ public class Path {
          }
      }
      
-     
+     public static class TargetPointReport {
+         public Translation2d closest_point;
+         public double closest_point_distance;
+         public Translation2d lookahead_point;
+         public double lookahead_point_speed;
+         public double remaining_segment_distance;
+         
+         public TargetPointReport() {
+         }
+     }
+
      /**
-      * Gives the position of the lookahead point
-      * @param robotPos
-      *     Robot position
-      * @return lookahead point position
+      * Gives the position of the lookahead point (and removes any segments prior to this point).
+      * @param robot
+      *     Translation of the current robot pose.
+      * @return report containing everything we might want to know about the target point.
       */
-     public Translation2d getTargetPoint(Translation2d robotPos) {
-         Translation2d target;
+     public TargetPointReport getTargetPoint(Translation2d robot, double fixed_lookahead_distance) {
+         TargetPointReport rv = new TargetPointReport();
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
-         double lookAheadDist = Constants.kAutoLookAhead;
-         Translation2d closest = currentSegment.getClosestPoint(robotPos);
-         double remainingDist = currentSegment.getRemainingDistance(closest);
-         lookAheadDist -= remainingDist;
+         rv.closest_point = currentSegment.getClosestPoint(robot);
+         rv.closest_point_distance = new Translation2d(robot, rv.closest_point).norm();
+         double lookahead_distance = fixed_lookahead_distance + rv.closest_point_distance;
+         rv.remaining_segment_distance = currentSegment.getRemainingDistance(rv.closest_point);
+         lookahead_distance -= rv.remaining_segment_distance;
          int i = 1;
-         while(lookAheadDist > 0 && i < segments.size()) {
+         while(lookahead_distance > 0 && i < segments.size()) {
              currentSegment = (PathSegment.Translation)segments.get(i);
-             lookAheadDist -= currentSegment.getLength();
+             lookahead_distance -= currentSegment.getLength();
              i++;
          }
-         target = currentSegment.getLookAheadPoint(currentSegment.getLength() + lookAheadDist);
-         checkSegmentDone(robotPos);
-         return target;
+
+         rv.lookahead_point = currentSegment.getLookAheadPoint(currentSegment.getLength() + lookahead_distance);
+         rv.lookahead_point_speed = currentSegment.getSpeedByDistance(currentSegment.getLength() - rv.remaining_segment_distance);
+         checkSegmentDone(rv.closest_point);
+         return rv;
      }
      
      /**
@@ -122,7 +133,7 @@ public class Path {
       */
      public double getSpeed(Translation2d robotPos) {
          PathSegment.Translation currentSegment = (PathSegment.Translation) segments.get(0);
-         return currentSegment.getSpeed(robotPos);
+         return currentSegment.getSpeedByClosestPoint(robotPos);
      }
      
      /**
