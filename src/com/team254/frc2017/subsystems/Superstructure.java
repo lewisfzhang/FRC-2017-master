@@ -40,6 +40,7 @@ public class Superstructure extends Subsystem {
         UNJAMMING,
         UNJAMMING_WITH_SHOOT,
         JUST_FEED,
+        EXHAUSTING
     };
 
     // Desired function from user
@@ -49,6 +50,7 @@ public class Superstructure extends Subsystem {
         UNJAM,
         UNJAM_SHOOT,
         MANUAL_FEED,
+        EXHAUST,
     }
 
     private SystemState  mSystemState = SystemState.IDLE;
@@ -95,6 +97,9 @@ public class Superstructure extends Subsystem {
                 case JUST_FEED:
                     newState = handleJustFeed();
                     break;
+                case EXHAUSTING:
+                    newState = handleExhaust();
+                    break;
                 default:
                     newState = SystemState.IDLE;
             }
@@ -131,6 +136,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.WAITING_FOR_AIM;
             case MANUAL_FEED:
                 return SystemState.JUST_FEED;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
             default:
                 return SystemState.IDLE;
         }
@@ -152,6 +159,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.WAITING_FOR_AIM;
             case MANUAL_FEED:
                 return SystemState.JUST_FEED;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
             default:
                 return SystemState.IDLE;
         }
@@ -173,6 +182,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.SHOOTING;
             case MANUAL_FEED:
                 return SystemState.JUST_FEED;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
             default:
                 return SystemState.IDLE;
         }
@@ -191,6 +202,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.UNJAMMING_WITH_SHOOT;
             case SHOOT:
                 return SystemState.WAITING_FOR_AIM;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
             default:
                 return SystemState.IDLE;
         }
@@ -224,9 +237,32 @@ public class Superstructure extends Subsystem {
                 return SystemState.WAITING_FOR_AIM;
             case MANUAL_FEED:
                 return SystemState.JUST_FEED;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
             default:
                 return SystemState.IDLE;
         }
+    }
+
+    private  SystemState handleExhaust() {
+        mFeeder.setWantedState(Feeder.WantedState.EXHAUST);
+        mHopper.setWantedState(Hopper.WantedState.EXHAUST);
+
+        switch (mWantedState) {
+            case UNJAM:
+                return SystemState.UNJAMMING;
+            case UNJAM_SHOOT:
+                return SystemState.UNJAMMING_WITH_SHOOT;
+            case SHOOT:
+                return SystemState.WAITING_FOR_AIM;
+            case MANUAL_FEED:
+                return SystemState.JUST_FEED;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
+            default:
+                return SystemState.IDLE;
+        }
+
     }
 
     private double getShootingSetpointRpm(double range) {
@@ -273,6 +309,10 @@ public class Superstructure extends Subsystem {
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
         enabledLooper.register(mLoop);
+    }
+
+    public void setWantIntakeReversed() {
+        mIntake.setReverse();
     }
 
     public void setWantIntakeStopped() {

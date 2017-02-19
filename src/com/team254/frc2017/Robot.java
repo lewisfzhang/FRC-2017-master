@@ -175,14 +175,24 @@ public class Robot extends IterativeRobot {
                 mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
 
                 if (mSuperstructure != null) {
+
+                    boolean wantsExhaust = mControlBoard.getExhaustButton();
+
+                    // Intake on has highest priority for intake.
                     if (mControlBoard.getIntakeButton()) {
                         mSuperstructure.setWantIntakeOn();
+                    } else if (wantsExhaust) {
+                        // Exhaust has lowest priority.
+                        mSuperstructure.setWantIntakeReversed();
                     } else {
                         mSuperstructure.setWantIntakeStopped();
                     }
 
                     if (mControlBoard.getFeedButton()) {
                         mSuperstructure.setWantedState(Superstructure.WantedState.MANUAL_FEED);
+                    } else if (wantsExhaust) {
+                        // Exhaust has lowest priority for feeder as well.
+                        mSuperstructure.setWantedState(Superstructure.WantedState.EXHAUST);
                     } else {
                         mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
                     }
@@ -194,6 +204,7 @@ public class Robot extends IterativeRobot {
                     } else {
                         mSuperstructure.setShooterOpenLoop(0);
                     }
+
                 }
             }
 

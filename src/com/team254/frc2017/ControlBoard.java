@@ -63,6 +63,10 @@ public class ControlBoard {
         return mButtonBoard.getRawButton(1);
     }
 
+    public boolean getExhaustButton() {
+        return mButtonBoard.getRawAxis(0) < -0.1;
+    }
+
 
     public boolean getShootButton() {
         return mButtonBoard.getRawButton(2);
