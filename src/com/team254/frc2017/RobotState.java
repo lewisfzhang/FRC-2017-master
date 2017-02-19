@@ -174,18 +174,7 @@ public class RobotState {
               .translateBy(report.field_to_goal);
       Rotation2d robot_to_goal_in_field = Rotation2d.fromRadians(Math.atan2(robot_to_goal.getY(), robot_to_goal.getX()));
 
-      SmartDashboard.putNumber("robot_to_goal_in_field_theta", robot_to_goal_in_field.getDegrees());
-//      Rotation2d angle_to_goal = new Rotation2d(robot_to_goal.getTranslation().getX(),
-//              robot_to_goal.getTranslation().getY(), true);
-//
-//      Rotation2d field_to_goal_rotation = new Rotation2d(report.field_to_goal.getX(),
-//              report.field_to_goal.getY(), true);
-//
-//      RigidTransform2d robot_to_goal_in_field = getLatestFieldToVehicle().getValue().inverse()
-//              .transformBy(RigidTransform2d.fromTranslation(report.field_to_goal));
-
       ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_in_field);
-
       cached_shooter_aiming_params_ = params;
       cached_shooter_aiming_params_ts_ = currentTimestamp;
       return Optional.of(params);
