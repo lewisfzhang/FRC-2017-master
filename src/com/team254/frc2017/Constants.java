@@ -68,18 +68,13 @@ public class Constants extends ConstantsBase {
 
     // SHOOTER GAINS
     // TODO: set some gains
-    public static double kShooterKI = 0.0;
-    public static double kShooterKF = 0.0;
-    public static double kShooterBangLowThresholdFraction = 0.5;
-    public static double kShooterSaturationDelay = 0.1;
-    public static double kShooterMaxOutput = 10.0;
-    public static double kShooterMinOutput = -10.0;
-    public static double kShooterSaturationOutput = 10.0;
-
     public static double kShooterTalonKP = 0.015;
     public static double kShooterTalonKI = 5.0e-6;
     public static double kShooterTalonKD = 0;
     public static double kShooterTalonKF = 0.0228;
+
+    public static double kShooterSetpointDeadbandRpm = 1.0;
+    public static double kShooterAllowableErrorRpm = 50;
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!

@@ -30,7 +30,9 @@ public class Shooter extends Subsystem {
 
     private ControlMethod mControlMethod;
     // The setpoint the talon currently has
-    private double mCurTalonSetpointRpm = Double.MIN_VALUE;
+    private double mCurTalonSetpointRpm;
+    private double mSetpointRpm;
+
 
     private final CSVWriter mCSVWriter;
 
@@ -124,11 +126,17 @@ public class Shooter extends Subsystem {
             mCurTalonSetpointRpm = Double.MIN_VALUE;
         }
 
-        if (!Util.epsilonEquals(setpointRpm, mCurTalonSetpointRpm, 5)) {
+        mSetpointRpm = setpointRpm;
+
+        if (!Util.epsilonEquals(setpointRpm, mCurTalonSetpointRpm, Constants.kShooterSetpointDeadbandRpm)) {
             // Talon speed is in rpm
             mRightMaster.set(setpointRpm);
             mCurTalonSetpointRpm = setpointRpm;
         }
+    }
+
+    public boolean isFlywheelOnTarget() {
+        return Util.epsilonEquals(getSpeedRpm(),mSetpointRpm, Constants.kShooterAllowableErrorRpm);
     }
 
     private double getSpeedRpm() {
