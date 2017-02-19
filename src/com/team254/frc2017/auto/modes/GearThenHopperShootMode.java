@@ -9,6 +9,6 @@ public class GearThenHopperShootMode extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        runAction(new DrivePathAction(new StartToGear()));
+        runAction(new DrivePathAction(new StartToGear(), true));
     }
 }

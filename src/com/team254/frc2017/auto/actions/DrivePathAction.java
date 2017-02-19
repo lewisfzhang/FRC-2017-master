@@ -15,7 +15,7 @@ public class DrivePathAction implements Action {
     private boolean mResetPose;
     private Drive mDrive = Drive.getInstance();
 
-    DrivePathAction(PathContainer p, boolean resetRobotPose) {
+    public DrivePathAction(PathContainer p, boolean resetRobotPose) {
         mPathContainer = p;
         mResetPose = resetRobotPose;
         mPath = mPathContainer.buildPath();
