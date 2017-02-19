@@ -1,28 +1,19 @@
 package com.team254.frc2017.auto.actions;
 
 
-import com.team254.frc2017.RobotState;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.lib.util.Path;
-import com.team254.lib.util.RigidTransform2d;
-import edu.wpi.first.wpilibj.Timer;
 
 public class DrivePathAction implements Action {
 
     private PathContainer mPathContainer;
     private Path mPath;
-    private boolean mResetPose;
     private Drive mDrive = Drive.getInstance();
 
-    public DrivePathAction(PathContainer p, boolean resetRobotPose) {
-        mPathContainer = p;
-        mResetPose = resetRobotPose;
-        mPath = mPathContainer.buildPath();
-    }
-
     public DrivePathAction(PathContainer p) {
-        this(p, false);
+        mPathContainer = p;
+        mPath = mPathContainer.buildPath();
     }
 
     @Override
@@ -43,11 +34,6 @@ public class DrivePathAction implements Action {
 
     @Override
     public void start() {
-        if (mResetPose) {
-            RigidTransform2d startPose =  mPathContainer.getStartPose();
-            RobotState.getInstance().reset(Timer.getFPGATimestamp(), startPose);
-            mDrive.setGyroAngle(startPose.getRotation());
-        }
         mDrive.setWantDrivePath(mPath, mPathContainer.isReversed());
     }
 }

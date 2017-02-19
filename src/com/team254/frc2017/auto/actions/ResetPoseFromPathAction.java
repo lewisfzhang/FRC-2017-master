@@ -1,0 +1,24 @@
+package com.team254.frc2017.auto.actions;
+
+
+import com.team254.frc2017.RobotState;
+import com.team254.frc2017.paths.PathContainer;
+import com.team254.frc2017.subsystems.Drive;
+import com.team254.lib.util.RigidTransform2d;
+import edu.wpi.first.wpilibj.Timer;
+
+public class ResetPoseFromPathAction extends RunOnceAction {
+
+    protected PathContainer mPathContainer;
+
+    public ResetPoseFromPathAction(PathContainer pathContainer) {
+        mPathContainer = pathContainer;
+    }
+
+    @Override
+    public void runOnce() {
+        RigidTransform2d startPose =  mPathContainer.getStartPose();
+        RobotState.getInstance().reset(Timer.getFPGATimestamp(), startPose);
+        Drive.getInstance().setGyroAngle(startPose.getRotation());
+    }
+}
