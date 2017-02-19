@@ -5,8 +5,7 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
 import com.team254.frc2017.paths.TestArcPath;
-import com.team254.frc2017.subsystems.Drive;
-import com.team254.frc2017.subsystems.Superstructure;
+import com.team254.frc2017.subsystems.*;
 import com.team254.frc2017.vision.VisionServer;
 import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
@@ -18,6 +17,9 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
  * described in the IterativeRobot documentation. If you change the name of this class or the package after creating
@@ -28,6 +30,16 @@ public class Robot extends IterativeRobot {
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
+
+    // All Subsystems
+    private final SubsystemManager mSubsystemManager = new SubsystemManager(
+            Arrays.asList(
+                    Drive.getInstance(),
+                    Feeder.getInstance(),
+                    Hopper.getInstance(),
+                    Intake.getInstance(),
+                    Shooter.getInstance(),
+                    Superstructure.getInstance()));
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -44,7 +56,7 @@ public class Robot extends IterativeRobot {
     }
     
     public void zeroAllSensors() {
-        mDrive.zeroSensors();
+        mSubsystemManager.zeroSensors();
         mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
     }
 
@@ -56,12 +68,7 @@ public class Robot extends IterativeRobot {
         try {
             CrashTracker.logRobotInit();
 
-            mDrive.registerEnabledLoops(mEnabledLooper);
-            if (mSuperstructure != null) {
-                mSuperstructure.registerEnabledLoops(mEnabledLooper);
-            }
-
-
+            mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
 
@@ -207,9 +214,6 @@ public class Robot extends IterativeRobot {
 
     public void allPeriodic() {
         mRobotState.outputToSmartDashboard();
-        mDrive.outputToSmartDashboard();
-        if (mSuperstructure != null) {
-            mSuperstructure.outputToSmartDashboard();
-        }
+        mSubsystemManager.outputToSmartDashboard();
     }
 }

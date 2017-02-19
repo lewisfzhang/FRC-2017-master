@@ -26,7 +26,6 @@ public class Superstructure extends Subsystem {
     private final Intake mIntake = Intake.getInstance();
     private final Hopper mHopper = Hopper.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
-    private List<Subsystem> mSubsystems =  Arrays.asList(mFeeder, mIntake, mHopper, mShooter);
 
     // Superstructure doesn't own the drive, but needs to access it
     private final Drive mDrive = Drive.getInstance();
@@ -227,26 +226,22 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        mShooter.outputToSmartDashboard();
+
     }
 
     @Override
     public void stop() {
-        mSubsystems.forEach((s)->s.stop());
+
     }
 
     @Override
     public void zeroSensors() {
-        mSubsystems.forEach((s)->s.zeroSensors());
+
     }
 
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
         enabledLooper.register(mLoop);
-        mFeeder.registerEnabledLoops(enabledLooper);
-        mIntake.registerEnabledLoops(enabledLooper);
-        mHopper.registerEnabledLoops(enabledLooper);
-        mShooter.registerEnabledLoops(enabledLooper);
     }
 
     public void setWantIntakeStopped() {
