@@ -241,8 +241,7 @@ public abstract class PathSegment {
             
         }
         
-        public double getSpeed(Translation2d robotPosition) {
-            double dist = getDistanceTravelled(robotPosition);
+        public double getSpeedByDistance(double dist) {
             Optional<MotionState> state = speedController.firstStateByPos(dist);
             if(state.isPresent()) {
                 return state.get().vel();
@@ -252,6 +251,10 @@ public abstract class PathSegment {
             }
         }
         
+        public double getSpeedByClosestPoint(Translation2d robotPosition) {
+            return getSpeedByDistance(getDistanceTravelled(robotPosition));
+        }
+                
         public MotionState getEndState() {
             return speedController.endState();
         }

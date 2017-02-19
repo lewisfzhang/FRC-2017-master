@@ -15,6 +15,9 @@ public class RigidTransform2d implements Interpolable<RigidTransform2d> {
     // ideas from "differential calculus" to create new RigidTransform2d's from
     // a Delta.
     public static class Delta {
+        protected static final Delta kIdentity = new Delta(0.0, 0.0, 0.0);
+        public static final Delta identity() { return kIdentity; }
+        
         public final double dx;
         public final double dy;
         public final double dtheta;  // Radians!
