@@ -1,6 +1,7 @@
 package com.team254.frc2017;
 
 import com.team254.frc2017.Constants.RobotName;
+import com.team254.frc2017.auto.AutoModeExecuter;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
@@ -31,6 +32,8 @@ public class Robot extends IterativeRobot {
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
+    private AutoModeExecuter mAutoModeExecuter = null;
+    private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
@@ -100,16 +103,27 @@ public class Robot extends IterativeRobot {
         try {
             CrashTracker.logAutoInit();
 
+            if (mAutoModeExecuter != null) {
+                mAutoModeExecuter.stop();
+            }
+            mAutoModeExecuter = null;
+
+            // Shift to high
+            mDrive.setHighGear(true);
+            mDrive.setBrakeMode(true);
+
+
+            mEnabledLooper.start();
+            zeroAllSensors();
+
+            mAutoModeExecuter = new AutoModeExecuter();
+            mAutoModeExecuter.setAutoMode(mAutoModeSelector.getSelectedAutoMode());
+            mAutoModeExecuter.start();
+
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
         }
-        mEnabledLooper.start();
-        zeroAllSensors();
-        //mDrive.setWantAimToGoal();
-        mRobotState.reset(Timer.getFPGATimestamp(), StartToGear.getStartPose());
-        mDrive.setGyroAngle(StartToGear.getStartPose().getRotation());
-        mDrive.setWantDrivePath(StartToGear.buildPath(), StartToGear.isReversed());
     }
 
     /**
@@ -129,6 +143,8 @@ public class Robot extends IterativeRobot {
             mEnabledLooper.start();
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
             mDrive.setBrakeMode(false);
+            // Shift to high
+            mDrive.setHighGear(true);
             zeroAllSensors();
             mSuperstructure.reloadConstants();
         } catch (Throwable t) {
@@ -196,6 +212,10 @@ public class Robot extends IterativeRobot {
     public void disabledInit() {
         try {
             CrashTracker.logDisabledInit();
+            if (mAutoModeExecuter != null) {
+                mAutoModeExecuter.stop();
+            }
+            mAutoModeExecuter = null;
 
             mEnabledLooper.stop();
 
