@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class Drive extends Subsystem {
 
@@ -316,12 +317,15 @@ public class Drive extends Subsystem {
     }
 
     private void updateTurnToHeading(double timestamp) {
-        final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
+       /* final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
                 .getLatestFieldToVehicle();
         final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
         final double t_observation = latest_field_to_robot.getKey().value;
-        final ShooterAimingParameters aim = mRobotState.getAimingParameters(t_observation);
-        mProfileFollower.setGoal(new MotionProfileGoal(aim.getFieldToGoal().getDegrees()));
+        final Optional<ShooterAimingParameters> aimOptional = mRobotState.getAimingParameters(t_observation, true);
+        if (aimOptional.isPresent()) {
+            final ShooterAimingParameters aim = aimOptional.get();
+            mProfileFollower.setGoal(new MotionProfileGoal(aim.getFieldToGoal().getDegrees()));
+        }
         final MotionState motion_state = new MotionState(t_observation, field_to_robot.getRotation().getDegrees(),
                 getGyroVelocity(), 0.0);
         final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
@@ -330,29 +334,37 @@ public class Drive extends Subsystem {
                 new RigidTransform2d.Delta(0, 0, Rotation2d.fromDegrees(angular_velocity_command).getRadians()));
 
         updateVelocitySetpoint(wheel_vel.left, wheel_vel.right);
+        */
     }
 
     private void updateTurnToHeadingSimplePid(double timestamp) {
         Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState.getLatestFieldToVehicle();
         RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
-        ShooterAimingParameters aim = mRobotState.getAimingParameters(timestamp);
+        final Optional<ShooterAimingParameters> aimOptional = mRobotState.getAimingParameters(timestamp, true);
+        if (aimOptional.isPresent()) {
+            final ShooterAimingParameters aim = aimOptional.get();
+            double error = aim.getRobotToGoalInField().getDegrees() - field_to_robot.getRotation().getDegrees();
+            SmartDashboard.putNumber("drive_turn_error", error);
+            SmartDashboard.putNumber("drive_turn_cur", field_to_robot.getRotation().getDegrees() );
+            double velocitySignal = error * Constants.kDriveTurnSimpleKp;
+            SmartDashboard.putNumber("drive_turn_vel", velocitySignal );
+            SmartDashboard.putNumber("goal_dist", aim.getRange());
 
-        double error = aim.getFieldToGoal().getDegrees() - field_to_robot.getRotation().getDegrees();
-        SmartDashboard.putNumber("drive_turn_goal", aim.getFieldToGoal().getDegrees());
-        SmartDashboard.putNumber("drive_turn_error", error);
-        SmartDashboard.putNumber("drive_turn_cur", field_to_robot.getRotation().getDegrees() );
-        double velocitySignal = error * Constants.kDriveTurnSimpleKp;
-        SmartDashboard.putNumber("drive_turn_vel", velocitySignal );
-        SmartDashboard.putNumber("goal_dist", aim.getRange());
+            Kinematics.DriveVelocity wheelVel = Kinematics.inverseKinematics(
+                    new RigidTransform2d.Delta(0,0, Rotation2d.fromDegrees(velocitySignal).getRadians()));
 
-        Kinematics.DriveVelocity wheelVel = Kinematics.inverseKinematics(
-                new RigidTransform2d.Delta(0,0, Rotation2d.fromDegrees(velocitySignal).getRadians()));
+            SmartDashboard.putNumber("drive_turn_wheel_vel", wheelVel.left );
 
-        SmartDashboard.putNumber("drive_turn_wheel_vel", wheelVel.left );
+            mIsOnTarget = Math.abs(error) < Constants.kOnTargetErrorThreshold;
 
-        mIsOnTarget = error < Constants.kOnTargetErrorThreshold;
+            updateVelocitySetpoint(-velocitySignal, velocitySignal);
+        } else {
+            mIsOnTarget = false;
+            updateVelocitySetpoint(0, 0);
 
-        updateVelocitySetpoint(-velocitySignal, velocitySignal);
+        }
+
+
     }
 
     private void updatePathFollower(double timestamp) {

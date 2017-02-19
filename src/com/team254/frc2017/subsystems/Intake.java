@@ -26,9 +26,10 @@ public class Intake extends Subsystem {
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mSlaveTalon = new CANTalon(Constants.kIntakeSlaveId);
         mSlaveTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
-        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kIntakeMasterId);
+        mSlaveTalon.reverseOutput(true);
         mDeploySolenoid = new Solenoid(Constants.kDeploySolenoidId);
     }
 
@@ -59,7 +60,7 @@ public class Intake extends Subsystem {
 
     public void setOn() {
         deploy();
-        setOpenLoop(1.0);
+        setOpenLoop(Constants.kIntakeVoltage);
     }
 
     public void setOff() {
@@ -67,11 +68,12 @@ public class Intake extends Subsystem {
     }
 
     public void setReverse() {
-        setOpenLoop(-1.0);
+        setOpenLoop(-Constants.kIntakeVoltage);
     }
 
-    private void setOpenLoop(double value) {
-
+    private void setOpenLoop(double voltage) {
+        voltage = -voltage; // Flip so +V = intake
+        mMasterTalon.set(voltage);
     }
 
 }

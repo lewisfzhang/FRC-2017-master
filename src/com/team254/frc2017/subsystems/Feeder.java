@@ -6,11 +6,12 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 
 public class Feeder extends Subsystem {
-    private static final double kUnjamInPeriod = .1;
-    private static final double kUnjamOutPeriod = .2;
-    private static final double kUnjamInPower = .5;
-    private static final double kUnjamOutPower = -.5;
-    private static final double kFeedPower = 1.0;
+    private static final double kReversing = -1.0;
+    private static final double kUnjamInPeriod = .1 * kReversing;
+    private static final double kUnjamOutPeriod = .2 * kReversing;
+    private static final double kUnjamInPower = .5 * kReversing;
+    private static final double kUnjamOutPower = -.5 * kReversing;
+    private static final double kFeedPower = 1.0 * kReversing;
 
     private static Feeder sInstance = null;
     public static Feeder getInstance() {
@@ -85,7 +86,7 @@ public class Feeder extends Subsystem {
                     newState = SystemState.IDLE;
             }
             if (newState != mSystemState) {
-                System.out.println("Superstructure state " + mSystemState + " to " + newState);
+                System.out.println("Feeder state " + mSystemState + " to " + newState);
                 mSystemState = newState;
                 mCurrentStateStartTime = timestamp;
                 mStateChanged = true;
@@ -114,6 +115,7 @@ public class Feeder extends Subsystem {
     }
 
     private SystemState handleIdle() {
+        stop();
         return defaultStateTransfer();
     }
 

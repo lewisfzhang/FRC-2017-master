@@ -147,35 +147,41 @@ public class Robot extends IterativeRobot {
             double turn = mControlBoard.getTurn();
             mDrive.setHighGear(!mControlBoard.getLowGear());
 
-            if (mControlBoard.getAimButton()) {
+
+            if (mControlBoard.getDriveAimButton()) {
                 mDrive.setWantAimToGoal();
+            } else if (mControlBoard.getAimButton()) {
+                mDrive.setWantAimToGoal();
+                mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
             } else {
                 mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
+
+                if (mSuperstructure != null) {
+                    if (mControlBoard.getIntakeButton()) {
+                        mSuperstructure.setWantIntakeOn();
+                    } else {
+                        mSuperstructure.setWantIntakeStopped();
+                    }
+
+                    if (mControlBoard.getFeedButton()) {
+                        mSuperstructure.setWantedState(Superstructure.WantedState.MANUAL_FEED);
+                    } else {
+                        mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
+                    }
+
+                    if (mControlBoard.getSpinShooterButton()) {
+                        mSuperstructure.setShooterOpenLoop(8.0);
+                    } else if (mControlBoard.getShootButton()) {
+                        mSuperstructure.setClosedLoopRpm(3000.0);
+                    } else {
+                        mSuperstructure.setShooterOpenLoop(0);
+                    }
+                }
             }
 
             // Super structure.  For testing check if null.
             // TODO: Remove for comp.
-            if (mSuperstructure != null) {
-                if (mControlBoard.getIntakeButton()) {
-                    mSuperstructure.setWantIntakeOn();
-                } else {
-                    mSuperstructure.setWantIntakeStopped();
-                }
 
-                if (mControlBoard.getFeedButton()) {
-                    mSuperstructure.setmWantedState(Superstructure.WantedState.MANUAL_FEED);
-                } else {
-                    mSuperstructure.setmWantedState(Superstructure.WantedState.IDLE);
-                }
-
-                if (mControlBoard.getSpinShooterButton()) {
-                    mSuperstructure.setShooterOpenLoop(8.0);
-                } else if (mControlBoard.getShootButton()) {
-                    mSuperstructure.setClosedLoopRpm(3000.0);
-                } else {
-                    mSuperstructure.setShooterOpenLoop(0);
-                }
-            }
 
             allPeriodic();
         } catch (Throwable t) {

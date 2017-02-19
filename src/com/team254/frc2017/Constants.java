@@ -40,7 +40,11 @@ public class Constants extends ConstantsBase {
     public static double kCenterToSideBumperDistance = 17.225;
 
     // Shooting suggestions
-    public static double kOnTargetErrorThreshold = 1.0;
+    public static double kOnTargetErrorThreshold = 3.0;
+
+    // Voltages
+    public static double kIntakeVoltage = 9.0;
+
 
     // CONTROL LOOP GAINS
     // DRIVE GAINS
@@ -140,16 +144,17 @@ public class Constants extends ConstantsBase {
 
     // Robot state
     // Pose of the camera frame w.r.t. the robot frame
-    public static double kCameraXOffset = -6.454;
+    public static double kCameraXOffset = -3.35;
     public static double kCameraYOffset = 0.0;
-    public static double kCameraZOffset = 19.75;
-    public static double kCameraPitchAngleDegrees = 35.75;
-    public static double kCameraYawAngleDegrees = -1.0;
+    public static double kCameraZOffset = 21;
+    public static double kCameraPitchAngleDegrees = 26.5;
+    public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
 
     // Flywheel PID
     // TODO give these actual values
 
+    public static double kDefaultShootingDistanceInches = 3700;
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
 
     static {

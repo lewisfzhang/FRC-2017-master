@@ -150,6 +150,7 @@ public class Shooter extends Subsystem {
     }
 
     public boolean isOnTarget() {
-        return Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, Constants.kShooterAllowableErrorRpm);
+        // HACKS
+        return getSpeedRpm() > 1000; //Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, Constants.kShooterAllowableErrorRpm);
     }
 }

@@ -30,11 +30,11 @@ public class ControlBoard {
     }
 
     public double getTurn() {
-        return mThrottleStick.getRawAxis(4);
+        return mTurnStick.getX();
     }
 
     public boolean getQuickTurn() {
-        return mThrottleStick.getRawButton(4);
+        return mTurnStick.getRawButton(1);
     }
 
     public boolean getLowGear() {
@@ -42,8 +42,13 @@ public class ControlBoard {
     }
 
     public boolean getAimButton() {
-        return Math.abs(mThrottleStick.getRawAxis(2)) > 0.5;
+        return mButtonBoard.getRawButton(10);
     }
+
+    public boolean getDriveAimButton() {
+        return mButtonBoard.getRawButton(9);
+    }
+
 
     // OPERATOR CONTROLS
     public boolean getFeedButton() {
@@ -57,6 +62,7 @@ public class ControlBoard {
     public boolean getSpinShooterButton() {
         return mButtonBoard.getRawButton(1);
     }
+
 
     public boolean getShootButton() {
         return mButtonBoard.getRawButton(2);

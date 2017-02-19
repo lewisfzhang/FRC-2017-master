@@ -7,9 +7,11 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.InterpolatingDouble;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class Superstructure extends Subsystem {
 
@@ -76,7 +78,7 @@ public class Superstructure extends Subsystem {
             SystemState newState = mSystemState;
             switch (mSystemState) {
                 case IDLE:
-                    newState = handleIdle();
+                    newState = handleIdle(mStateChanged);
                     break;
                 case WAITING_FOR_AIM:
                     newState = handleWaitingForAim();
@@ -114,8 +116,10 @@ public class Superstructure extends Subsystem {
         }
     };
 
-    private SystemState handleIdle() {
-        stop();
+    private SystemState handleIdle(boolean stateChanged) {
+        if (stateChanged) {
+            stop();
+        }
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
         switch (mWantedState) {
@@ -139,17 +143,39 @@ public class Superstructure extends Subsystem {
         if (isOnTargetToShoot()) {
            return SystemState.SHOOTING;
         }
-        return SystemState.WAITING_FOR_AIM;
+        switch (mWantedState) {
+            case UNJAM:
+                return SystemState.UNJAMMING;
+            case UNJAM_SHOOT:
+                return SystemState.UNJAMMING_WITH_SHOOT;
+            case SHOOT:
+                return SystemState.WAITING_FOR_AIM;
+            case MANUAL_FEED:
+                return SystemState.JUST_FEED;
+            default:
+                return SystemState.IDLE;
+        }
     }
 
     private SystemState handleShooting() {
         autoSpinShooter();
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.FEED);
-        if (!isOnTargetToShoot()) {
-            mSystemState = SystemState.WAITING_FOR_AIM;
+        switch (mWantedState) {
+            case UNJAM:
+                return SystemState.UNJAMMING;
+            case UNJAM_SHOOT:
+                return SystemState.UNJAMMING_WITH_SHOOT;
+            case SHOOT:
+                if (!isOnTargetToShoot()) {
+                    return SystemState.WAITING_FOR_AIM;
+                }
+                return SystemState.SHOOTING;
+            case MANUAL_FEED:
+                return SystemState.JUST_FEED;
+            default:
+                return SystemState.IDLE;
         }
-        return SystemState.SHOOTING;
     }
 
 
@@ -208,11 +234,16 @@ public class Superstructure extends Subsystem {
     }
 
     public void autoSpinShooter() {
-        ShooterAimingParameters aim = RobotState.getInstance().getAimingParameters(Timer.getFPGATimestamp());
-        mShooter.setClosedLoopRpm(getShootingSetpointRpm(aim.getRange()));
+        final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance().getAimingParameters(Timer.getFPGATimestamp());
+        if (aimOptional.isPresent()) {
+            final ShooterAimingParameters aim = aimOptional.get();
+            mShooter.setClosedLoopRpm(getShootingSetpointRpm(aim.getRange()));
+        } else {
+            mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
+        }
     }
 
-    public void setmWantedState(WantedState wantedState) {
+    public void setWantedState(WantedState wantedState) {
         mWantedState = wantedState;
     }
 

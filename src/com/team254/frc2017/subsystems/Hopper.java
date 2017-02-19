@@ -75,7 +75,7 @@ public class Hopper extends Subsystem {
                     newState = SystemState.IDLE;
             }
             if (newState != mSystemState) {
-                System.out.println("Superstructure state " + mSystemState + " to " + newState);
+                System.out.println("Hopper state " + mSystemState + " to " + newState);
                 mSystemState = newState;
                 mCurrentStateStartTime = timestamp;
                 mStateChanged = true;
@@ -159,7 +159,7 @@ public class Hopper extends Subsystem {
         mSlaveTalon = new CANTalon(Constants.kHopperSlaveId);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
-        mSlaveTalon.set(Constants.kHopperSlaveId);
+        mSlaveTalon.set(Constants.kHopperMasterId);
     }
 
 

@@ -1,5 +1,6 @@
 package com.team254.frc2017;
 
+import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
 
 /**
@@ -8,19 +9,21 @@ import com.team254.lib.util.Rotation2d;
  */
 public class ShooterAimingParameters {
     double range;
-    Rotation2d field_to_goal;
+    Rotation2d robot_to_goal_in_field;
 
-    public ShooterAimingParameters(double range, Rotation2d field_to_goal) {
+
+    public ShooterAimingParameters(double range, Rotation2d robot_to_goal_in_field) {
         this.range = range;
-        this.field_to_goal = field_to_goal;
+        this.robot_to_goal_in_field = robot_to_goal_in_field;
     }
+
 
     public double getRange() {
         return range;
     }
 
-    public Rotation2d getFieldToGoal() {
-        return field_to_goal;
+    public Rotation2d getRobotToGoalInField() {
+        return robot_to_goal_in_field;
     }
 
 }
