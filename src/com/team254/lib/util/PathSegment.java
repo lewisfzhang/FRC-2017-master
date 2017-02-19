@@ -106,7 +106,7 @@ public class PathSegment {
             return deltaStart.norm();
         } else {
             double angle = Translation2d.GetAngle(deltaStart, deltaEnd);
-            return 2 * deltaStart.norm() * angle;
+            return deltaStart.norm() * angle;
         }
     }
     
