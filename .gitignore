@@ -10,3 +10,4 @@ sysProps.xml
 *.out
 *.dSYM/
 out/
+*.pyc

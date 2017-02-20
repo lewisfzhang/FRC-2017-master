@@ -28,5 +28,6 @@ while True:
                 "crappy option",
                 "4th option"]))
     table.putNumber("Air Pressure psi", i % 120)
+    table.putString("color_box_color", "ff0000" if i % 2 == 1 else "ffff00")
     i += 1
     time.sleep(1)

@@ -9,11 +9,8 @@ var MIN_PLOT_UPDATE_TIME_MILLIS = 50;
 var TABLE = "/SmartDashboard";
 
 var SELECTED_AUTO_MODE_KEY = "selected_auto_mode";
-var SELECTED_AUTO_LANE_KEY = "selected_auto_lane";
-var HOOD_TUNING_MODE_KEY = "Hood Tuning Mode";
 var COLOR_BOX_COLOR_KEY = "color_box_color";
 var COLOR_BOX_TEXT_KEY = "color_box_text";
-var AUTO_BALLS_WORN_KEY = "auto_balls_worn";
 
 var TYPE_STRING = "string";
 var TYPE_BOOL = "bool";
@@ -22,18 +19,6 @@ var psi_progress_bar = null;
 
 $(document).ready(function() {
 
-  initAutoLaneButton($("#autoLane1"), "1");
-  initAutoLaneButton($("#autoLane2"), "2");
-  initAutoLaneButton($("#autoLane3"), "3");
-  initAutoLaneButton($("#autoLane4"), "4");
-  initAutoLaneButton($("#autoLane5"), "5");
-
-  $("#enableHoodTuningMode").click(function() { setHoodTuningMode(true); });
-  $("#disableHoodTuningMode").click(function() { setHoodTuningMode(false); });
-
-  $("#autoBallsWornButton").click(function() { setAutoBallsWorn(true); });
-  $("#autoBallsNotWornButton").click(function() { setAutoBallsWorn(false); });
-  
   kickWebSocket();
   setInterval(kickWebSocket, 1000);
 
@@ -49,20 +34,6 @@ $(document).ready(function() {
     return null
   })
 });
-
-function initAutoLaneButton(autoLaneButton, stringValue) {
-  autoLaneButton.click(function() {
-    sendValueUpdate(TABLE, SELECTED_AUTO_LANE_KEY, stringValue, TYPE_STRING);
-  });
-}
-
-function setHoodTuningMode(enableHoodTuning) {
-  sendValueUpdate(TABLE, HOOD_TUNING_MODE_KEY, enableHoodTuning, TYPE_BOOL);
-}
-
-function setAutoBallsWorn(ballsWorn) {
-  sendValueUpdate(TABLE, AUTO_BALLS_WORN_KEY, ballsWorn, TYPE_BOOL);
-}
 
 function kickWebSocket() {
   if (webSocket != null) {
@@ -124,9 +95,11 @@ function setOrCreateElement(table, key, value) {
   if (element == null) {
     // Make a new container
     var field = $("<input type='text' disabled></input>");
-    var button = $("<button type='button'>Chart</button>");
+
+    // TODO: add an overwrite field/button here
+    var button = $("<button type='button'>This button does nothing yet</button>");
     button.click(function() {
-      openChartForKey(table.name, key);
+      // TODO
     });
     var container = $("<div/>")
         .append("<span style='display: inline-block; width: 200px;'>" + key + ":</span>")
@@ -161,13 +134,6 @@ function insertElementToTable(table, element) {
   table.elements.push(element);
 }
 
-function openChartForKey(tableName, key) {
-  window.open(
-    "chart.html?table=" + encodeURIComponent(tableName)
-      + "&key=" + encodeURIComponent(key)
-      + "&history_minutes=4");
-}
-
 /**
  * Update for the hard-coded keys which we want to show in the driver UI
  */
@@ -185,24 +151,6 @@ function refreshDriverStatusElements() {
   maybeRefreshAutoOptions();
   refreshAutoMode();
 
-  var autoLaneElement = findElementModelOrNull(TABLE, SELECTED_AUTO_LANE_KEY);
-  if (autoLaneElement == null) {
-    $("#selectedAutoLane").text("UNKNOWN");
-    $(".laneSelector div button").each(function() {
-      this.className = ""
-    });
-  } else {
-    $("#selectedAutoLane").text("Lane " + autoLaneElement.value);
-
-    $(".laneSelector div button").each(function() {
-      if (this.id == "autoLane" + autoLaneElement.value) {
-        this.className = "active"
-      } else {
-        this.className = ""
-      }
-    });
-  }
-
   var airPressureElement = findElementModelOrNull(TABLE, "Air Pressure psi");
   if (airPressureElement == null) {
     $("#airPressureHolder").text("UNKNOWN");
@@ -210,23 +158,6 @@ function refreshDriverStatusElements() {
   } else {
     $("#airPressureHolder").text(airPressureElement.value);
     psi_progress_bar.val = parseInt(airPressureElement.value) / 120;
-  }
-
-  var hoodTuningModeElement = findElementModelOrNull(TABLE, HOOD_TUNING_MODE_KEY);
-  $("#hoodTuningModeHolder").text(
-    hoodTuningModeElement == null ? "UNKNOWN" : hoodTuningModeElement.value);
-
-  var autoBallsWornElement = findElementModelOrNull(TABLE, AUTO_BALLS_WORN_KEY);
-  if (autoBallsWornElement == null) {
-    $("#autoBallsWornHolder").text("UNKNOWN");
-    $(".autoBallsWornSelector div button").each(function() {this.className = "";})
-  } else {
-    $("#autoBallsWornHolder").text(autoBallsWornElement.value);
-    $("#autoBallsWornButton").each(
-      function() { this.className = autoBallsWornElement.value ? "active" : ""; });
-    $("#autoBallsNotWornButton").each(function() {
-      this.className = autoBallsWornElement.value ? "" : "active";
-    });
   }
 }
 
