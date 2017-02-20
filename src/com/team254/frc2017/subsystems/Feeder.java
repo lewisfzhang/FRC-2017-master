@@ -198,7 +198,6 @@ public class Feeder extends Subsystem {
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("feeder_speed", mMasterTalon.getSpeed());
-        SmartDashboard.putNumber("feeder_i_accum", mMasterTalon.GetIaccum());
     }
 
     @Override

@@ -136,10 +136,6 @@ public class RobotState {
         double yr = yyaw;
         double zr = zyaw * camera_pitch_correction_.cos() - xyaw * camera_pitch_correction_.sin();
 
-        SmartDashboard.putNumber("target_y", yyaw);
-        SmartDashboard.putNumber("target_x", xyaw);
-        SmartDashboard.putNumber("target_z", zyaw);
-
         // find intersection with the goal
         if (zr > 0) {
           double scaling = differential_height_ / zr;

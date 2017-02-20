@@ -344,16 +344,10 @@ public class Drive extends Subsystem {
         if (aimOptional.isPresent()) {
             final ShooterAimingParameters aim = aimOptional.get();
             double error = aim.getRobotToGoalInField().getDegrees() - field_to_robot.getRotation().getDegrees();
-            SmartDashboard.putNumber("drive_turn_error", error);
-            SmartDashboard.putNumber("drive_turn_cur", field_to_robot.getRotation().getDegrees() );
             double velocitySignal = error * Constants.kDriveTurnSimpleKp;
-            SmartDashboard.putNumber("drive_turn_vel", velocitySignal );
-            SmartDashboard.putNumber("goal_dist", aim.getRange());
 
             Kinematics.DriveVelocity wheelVel = Kinematics.inverseKinematics(
                     new RigidTransform2d.Delta(0,0, Rotation2d.fromDegrees(velocitySignal).getRadians()));
-
-            SmartDashboard.putNumber("drive_turn_wheel_vel", wheelVel.left );
 
             mIsOnTarget = Math.abs(error) < Constants.kOnTargetErrorThreshold;
 
