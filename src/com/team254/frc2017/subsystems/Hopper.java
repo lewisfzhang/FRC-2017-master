@@ -54,33 +54,35 @@ public class Hopper extends Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
-            SystemState newState;
-            switch(mSystemState) {
-                case IDLE:
-                    newState = handleIdle();
-                    break;
-                case UNJAMMING_OUT:
-                    newState = handleUnjammingOut(timestamp, mCurrentStateStartTime);
-                    break;
-                case UNJAMMING_IN:
-                    newState = handleUnjammingIn(timestamp, mCurrentStateStartTime);
-                    break;
-                case FEEDING:
-                    newState = handleFeeding();
-                    break;
-                case EXHAUSTING:
-                    newState = handleExhaust();
-                    break;
-                default:
-                    newState = SystemState.IDLE;
-            }
-            if (newState != mSystemState) {
-                System.out.println("Hopper state " + mSystemState + " to " + newState);
-                mSystemState = newState;
-                mCurrentStateStartTime = timestamp;
-                mStateChanged = true;
-            } else {
-                mStateChanged = false;
+            synchronized (Hopper.this) {
+                SystemState newState;
+                switch (mSystemState) {
+                    case IDLE:
+                        newState = handleIdle();
+                        break;
+                    case UNJAMMING_OUT:
+                        newState = handleUnjammingOut(timestamp, mCurrentStateStartTime);
+                        break;
+                    case UNJAMMING_IN:
+                        newState = handleUnjammingIn(timestamp, mCurrentStateStartTime);
+                        break;
+                    case FEEDING:
+                        newState = handleFeeding();
+                        break;
+                    case EXHAUSTING:
+                        newState = handleExhaust();
+                        break;
+                    default:
+                        newState = SystemState.IDLE;
+                }
+                if (newState != mSystemState) {
+                    System.out.println("Hopper state " + mSystemState + " to " + newState);
+                    mSystemState = newState;
+                    mCurrentStateStartTime = timestamp;
+                    mStateChanged = true;
+                } else {
+                    mStateChanged = false;
+                }
             }
         }
 
@@ -175,15 +177,15 @@ public class Hopper extends Subsystem {
 
     private Hopper() {
         mMasterTalon = new CANTalon(Constants.kHopperMasterId);
-        mSlaveTalon = new CANTalon(Constants.kHopperSlaveId);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+
+        mSlaveTalon = new CANTalon(Constants.kHopperSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kHopperMasterId);
         mSlaveTalon.reverseOutput(true);
     }
 
-
-    public void setWantedState(WantedState state) {
+    public synchronized void setWantedState(WantedState state) {
         mWantedState = state;
     }
 
@@ -198,8 +200,7 @@ public class Hopper extends Subsystem {
 
     @Override
     public void stop() {
-        mSystemState = SystemState.IDLE;
-        setOpenLoop(0);
+        setWantedState(WantedState.IDLE);
     }
 
     @Override
@@ -211,5 +212,4 @@ public class Hopper extends Subsystem {
     public void registerEnabledLoops(Looper in) {
         in.register(mLoop);
     }
-
 }
