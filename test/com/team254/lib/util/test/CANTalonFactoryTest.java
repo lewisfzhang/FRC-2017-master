@@ -54,7 +54,12 @@ public class CANTalonFactoryTest {
                 "reset",
                 "stopMotor",
                 "processMotionProfileBuffer",
-                "setControlMode");
+                "setControlMode",
+                "stopLiveWindowMode",
+                "getMotionMagicActTrajPosition",
+                "getMotionMagicActTrajVelocity",
+                "DisableNominalClosedLoopVoltage",
+                "createTableListener");
 
         final Set<String> uncalledMethodNames = new HashSet<>(
                 Arrays.stream(CANTalon.class.getMethods())

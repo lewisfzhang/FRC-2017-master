@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj.MotorSafety;
  */
 public class CANTalonFactory {
 
-    private static final int DEFAULT_CONTROL_PERIOD_MS = 5;
-    private static final int DEFAULT_ENABLE_PERIOD_MS = 5;
     private static final int DEFAULT_MOTION_CONTROL_FRAME_PERIOD_MS = 5;
     private static final int DEFAULT_ENCODER_CODES_PER_REV = 1024;
     private static final boolean DEFAULT_LIMIT_SWITCH_NORMALLY_OPEN = true;
@@ -24,23 +22,27 @@ public class CANTalonFactory {
     private static final double DEFAULT_CLOSED_LOOP_RAMP_RATE = 0;
     private static final int DEFAULT_CURRENT_LIMIT = 0;
     private static final double DEFAULT_EXPIRATION_TIMEOUT_SECONDS = MotorSafety.DEFAULT_SAFETY_EXPIRATION;
-    private static final CANTalon.FeedbackDevice DEFAULT_FEEDBACK_DEVICE = CANTalon.FeedbackDevice.CtreMagEncoder_Relative;
+    private static final CANTalon.FeedbackDevice DEFAULT_FEEDBACK_DEVICE =
+            CANTalon.FeedbackDevice.CtreMagEncoder_Relative;
     private static final double DEFAULT_FORWARD_SOFT_LIMIT = 0;
     private static final boolean DEFAULT_INVERTED = false;
     private static final int DEFAULT_I_ZONE = 0;
     private static final double DEFAULT_MOTION_MAGIC_ACCELERATION = 0;
     private static final double DEFAULT_MOTION_MAGIC_CRUISE_VELOCITY = 0;
-    private static final double DEFAULT_NOMINAL_CLOSED_LOOP_VOLTAGE = 0;
+    private static final double DEFAULT_NOMINAL_CLOSED_LOOP_VOLTAGE = 12;
     private static final double DEFAULT_REVERSE_SOFT_LIMIT = 0;
     private static final boolean DEFAULT_SAFETY_ENABLED = false;
 
-    private static final int DEFAULT_GENERAL_STATUS_FRAME_RATE_MS = 5;
-    private static final int DEFAULT_FEEDBACK_STATUS_FRAME_RATE_MS = 5;
-    private static final int DEFAULT_QUAD_ENCODER_STATUS_FRAME_RATE_MS = 5;
-    private static final int DEFAULT_ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 5;
-    private static final int DEFAULT_PULSE_WIDTH_STATUS_FRAME_RATE_MS = 5;
-    private static final CANTalon.VelocityMeasurementPeriod DEFAULT_VELOCITY_MEASUREMENT_PERIOD = CANTalon.VelocityMeasurementPeriod.Period_100Ms;
-    private static final int DEFAULT_VELOCITY_MEASUREMENT_WINDOW = 5;
+    private static final int DEFAULT_GENERAL_STATUS_FRAME_RATE_MS = 10;
+    private static final int DEFAULT_FEEDBACK_STATUS_FRAME_RATE_MS = 20;
+    private static final int DEFAULT_QUAD_ENCODER_STATUS_FRAME_RATE_MS = 100;
+    private static final int DEFAULT_ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 100;
+    private static final int DEFAULT_PULSE_WIDTH_STATUS_FRAME_RATE_MS = 100;
+
+    private static final CANTalon.VelocityMeasurementPeriod DEFAULT_VELOCITY_MEASUREMENT_PERIOD =
+            CANTalon.VelocityMeasurementPeriod.Period_100Ms;
+    private static final int DEFAULT_VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW = 64;
+
     private static final double DEFAULT_VOLTAGE_COMPENSATION_RAMP_RATE = 0;
     private static final double DEFAULT_VOLTAGE_RAMP_RATE = 0;
 
@@ -49,7 +51,7 @@ public class CANTalonFactory {
      * values first.
      */
     public static CANTalon createTalon(int id) {
-        CANTalon talon = new CANTalon(id, DEFAULT_CONTROL_PERIOD_MS, DEFAULT_ENABLE_PERIOD_MS);
+        CANTalon talon = new CANTalon(id);
         talon.changeControlMode(CANTalon.TalonControlMode.Voltage);
         talon.changeMotionControlFramePeriod(DEFAULT_MOTION_CONTROL_FRAME_PERIOD_MS);
         talon.clearIAccum();
@@ -103,13 +105,9 @@ public class CANTalonFactory {
         talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.PulseWidth, DEFAULT_PULSE_WIDTH_STATUS_FRAME_RATE_MS);
 
         talon.SetVelocityMeasurementPeriod(DEFAULT_VELOCITY_MEASUREMENT_PERIOD);
-        talon.SetVelocityMeasurementWindow(DEFAULT_VELOCITY_MEASUREMENT_WINDOW);
+        talon.SetVelocityMeasurementWindow(DEFAULT_VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW);
         talon.setVoltageCompensationRampRate(DEFAULT_VOLTAGE_COMPENSATION_RAMP_RATE);
         talon.setVoltageRampRate(DEFAULT_VOLTAGE_RAMP_RATE);
-
-        // questionable
-        talon.DisableNominalClosedLoopVoltage();
-        talon.stopLiveWindowMode();
 
         return talon;
     }
@@ -152,7 +150,7 @@ public class CANTalonFactory {
                 .append("getFaultUnderVoltage = ").append(talon.getFaultUnderVoltage()).append("\n")
                 .append("getCloseLoopRampRate = ").append(talon.getCloseLoopRampRate()).append("\n")
                 .append("toString = ").append(talon.toString()).append("\n")
-                .append("getMotionMagicActTrajPosition = ").append(talon.getMotionMagicActTrajPosition()).append("\n")
+                // .append("getMotionMagicActTrajPosition = ").append(talon.getMotionMagicActTrajPosition()).append("\n")
                 .append("getF = ").append(talon.getF()).append("\n")
                 .append("getClass = ").append(talon.getClass()).append("\n")
                 .append("getAnalogInVelocity = ").append(talon.getAnalogInVelocity()).append("\n")
@@ -165,7 +163,7 @@ public class CANTalonFactory {
                 .append("GetVelocityMeasurementWindow = ").append(talon.GetVelocityMeasurementWindow()).append("\n")
                 .append("getDeviceID = ").append(talon.getDeviceID()).append("\n")
                 .append("getStickyFaultRevLim = ").append(talon.getStickyFaultRevLim()).append("\n")
-                .append("getMotionMagicActTrajVelocity = ").append(talon.getMotionMagicActTrajVelocity()).append("\n")
+                // .append("getMotionMagicActTrajVelocity = ").append(talon.getMotionMagicActTrajVelocity()).append("\n")
                 .append("getReverseSoftLimit = ").append(talon.getReverseSoftLimit()).append("\n")
                 .append("getD = ").append(talon.getD()).append("\n")
                 .append("getFaultOverTemp = ").append(talon.getFaultOverTemp()).append("\n")
@@ -198,7 +196,7 @@ public class CANTalonFactory {
                 .append("getPosition = ").append(talon.getPosition()).append("\n")
                 .append("getExpiration = ").append(talon.getExpiration()).append("\n")
                 .append("getPulseWidthRiseToFallUs = ").append(talon.getPulseWidthRiseToFallUs()).append("\n")
-                .append("createTableListener = ").append(talon.createTableListener()).append("\n")
+                // .append("createTableListener = ").append(talon.createTableListener()).append("\n")
                 .append("getControlMode = ").append(talon.getControlMode()).append("\n")
                 .append("getMotionMagicAcceleration = ").append(talon.getMotionMagicAcceleration()).append("\n")
                 .append("getControlMode = ").append(talon.getControlMode());
