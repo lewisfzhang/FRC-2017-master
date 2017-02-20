@@ -9,3 +9,4 @@ sysProps.xml
 .DS_Store
 *.out
 *.dSYM/
+out/
