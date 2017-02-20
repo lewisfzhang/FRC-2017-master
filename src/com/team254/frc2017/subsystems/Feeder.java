@@ -79,33 +79,35 @@ public class Feeder extends Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
-            SystemState newState;
-            switch(mSystemState) {
-                case IDLE:
-                    newState = handleIdle();
-                    break;
-                case UNJAMMING_OUT:
-                    newState = handleUnjammingOut(timestamp, mCurrentStateStartTime);
-                    break;
-                case UNJAMMING_IN:
-                    newState = handleUnjammingIn(timestamp, mCurrentStateStartTime);
-                    break;
-                case FEEDING:
-                    newState = handleFeeding();
-                    break;
-                case EXHAUSTING:
-                    newState = handleExhaust();
-                    break;
-                default:
-                    newState = SystemState.IDLE;
-            }
-            if (newState != mSystemState) {
-                System.out.println("Feeder state " + mSystemState + " to " + newState);
-                mSystemState = newState;
-                mCurrentStateStartTime = timestamp;
-                mStateChanged = true;
-            } else {
-                mStateChanged = false;
+            synchronized (Feeder.this) {
+                SystemState newState;
+                switch (mSystemState) {
+                    case IDLE:
+                        newState = handleIdle();
+                        break;
+                    case UNJAMMING_OUT:
+                        newState = handleUnjammingOut(timestamp, mCurrentStateStartTime);
+                        break;
+                    case UNJAMMING_IN:
+                        newState = handleUnjammingIn(timestamp, mCurrentStateStartTime);
+                        break;
+                    case FEEDING:
+                        newState = handleFeeding();
+                        break;
+                    case EXHAUSTING:
+                        newState = handleExhaust();
+                        break;
+                    default:
+                        newState = SystemState.IDLE;
+                }
+                if (newState != mSystemState) {
+                    System.out.println("Feeder state " + mSystemState + " to " + newState);
+                    mSystemState = newState;
+                    mCurrentStateStartTime = timestamp;
+                    mStateChanged = true;
+                } else {
+                    mStateChanged = false;
+                }
             }
         }
 
@@ -129,7 +131,7 @@ public class Feeder extends Subsystem {
     }
 
     private SystemState handleIdle() {
-        stop();
+        setOpenLoop(0.0f);
         return defaultStateTransfer();
     }
 
@@ -201,7 +203,7 @@ public class Feeder extends Subsystem {
 
     @Override
     public void stop() {
-        setOpenLoop(0);
+        setWantedState(WantedState.IDLE);
     }
 
     @Override
