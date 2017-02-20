@@ -59,6 +59,10 @@ public class ControlBoard {
         return mButtonBoard.getRawAxis(2) < -0.1;
     }
 
+    public boolean getIntakeSwitch() {
+        return mButtonBoard.getRawAxis(3) < -0.1;
+    }
+
     public boolean getSpinShooterButton() {
         return mButtonBoard.getRawButton(1);
     }

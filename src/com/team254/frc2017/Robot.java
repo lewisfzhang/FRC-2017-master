@@ -173,12 +173,12 @@ public class Robot extends IterativeRobot {
 
                 boolean wantsExhaust = mControlBoard.getExhaustButton();
 
-                // Intake on has highest priority for intake.
-                if (mControlBoard.getIntakeButton()) {
-                    mSuperstructure.setWantIntakeOn();
-                } else if (wantsExhaust) {
-                    // Exhaust has lowest priority.
+                // Exhaust has highest priority for intake.
+                if (wantsExhaust) {
                     mSuperstructure.setWantIntakeReversed();
+                } else if (mControlBoard.getIntakeSwitch() ||
+                        mControlBoard.getIntakeButton()) {
+                    mSuperstructure.setWantIntakeOn();
                 } else {
                     mSuperstructure.setWantIntakeStopped();
                 }
