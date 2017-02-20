@@ -360,10 +360,11 @@ public class Drive extends Subsystem {
         final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
         final double t_observation = latest_field_to_robot.getKey().value;
         mProfileFollower.setGoal(
-                new MotionProfileGoal(mTargetHeading.getDegrees(), 0.0, CompletionBehavior.OVERSHOOT, 0.75, 0.1));
+                new MotionProfileGoal(mTargetHeading.getDegrees(), 0.0, CompletionBehavior.OVERSHOOT, 1.0, 5.0));
         final MotionState motion_state = new MotionState(t_observation, field_to_robot.getRotation().getDegrees(),
                 getGyroVelocity(), 0.0);
         final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
+        mIsOnTarget = mProfileFollower.onTarget();
 
         Kinematics.DriveVelocity wheel_vel = Kinematics
                 .inverseKinematics(new RigidTransform2d.Delta(0, 0, angular_velocity_command * Math.PI / 180.0));
@@ -388,7 +389,7 @@ public class Drive extends Subsystem {
                 Constants.kDriveTurnKffv, Constants.kDriveTurnKffa);
     }
 
-    public boolean isOnTarget() {
+    public synchronized boolean isOnTarget() {
         return mIsOnTarget && mDriveControlState == DriveControlState.AIM_TO_GOAL;
     }
 

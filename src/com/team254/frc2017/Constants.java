@@ -80,11 +80,11 @@ public class Constants extends ConstantsBase {
 
 
     // SHOOTER GAINS
-    // TODO: set some gains
     public static double kShooterTalonKP = 0.015;
     public static double kShooterTalonKI = 5.0e-6;
     public static double kShooterTalonKD = 0;
     public static double kShooterTalonKF = 0.0228;
+    public static double kShooterRampRate = 60.0;
 
     public static double kShooterSetpointDeadbandRpm = 1.0;
     public static double kShooterAllowableErrorRpm = 50;
@@ -94,6 +94,7 @@ public class Constants extends ConstantsBase {
     public static double kFeederKI = 0;
     public static double kFeederKD = 0;
     public static double kFeederKF = 0.008;
+    public static double kFeederRampRate = 240.0;
     public static double kFeederFeedSpeedRpm = 12e3;
     
     // Do not change anything after this line unless you rewire the robot and
@@ -177,9 +178,9 @@ public class Constants extends ConstantsBase {
 
     static {
         kFlywheelAutoAimMap.put(new InterpolatingDouble(10.),
-                new InterpolatingDouble(3000.));
+                new InterpolatingDouble(4500.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(20.),
-                new InterpolatingDouble(3200.));
+                new InterpolatingDouble(4500.));
     }
 
 

@@ -34,7 +34,7 @@ public class Feeder extends Subsystem {
         mMasterTalon.SetVelocityMeasurementWindow(64);
         mMasterTalon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms);
 
-        mMasterTalon.setVoltageRampRate(0.0);
+        mMasterTalon.setVoltageRampRate(Constants.kFeederRampRate);
         mMasterTalon.reverseOutput(false);
         mMasterTalon.enableBrakeMode(true);
 

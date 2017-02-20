@@ -70,6 +70,7 @@ public class Shooter extends Subsystem {
         mRightMaster.setI(Constants.kShooterTalonKI);
         mRightMaster.setD(Constants.kShooterTalonKD);
         mRightMaster.setF(Constants.kShooterTalonKF);
+        mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
 
     @Override

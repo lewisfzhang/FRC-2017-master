@@ -178,6 +178,7 @@ public class Hopper extends Subsystem {
     private Hopper() {
         mMasterTalon = new CANTalon(Constants.kHopperMasterId);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mMasterTalon.setVoltageRampRate(Constants.kFeederRampRate);
 
         mSlaveTalon = new CANTalon(Constants.kHopperSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
