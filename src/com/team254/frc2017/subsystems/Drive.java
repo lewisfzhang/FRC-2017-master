@@ -12,6 +12,9 @@ import com.team254.frc2017.paths.GearToHopper;
 import com.team254.lib.util.*;
 import com.team254.lib.util.motion.HeadingProfileFollower;
 import com.team254.lib.util.motion.MotionProfileConstraints;
+import com.team254.lib.util.motion.MotionProfileGoal;
+import com.team254.lib.util.motion.MotionState;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -36,6 +39,7 @@ public class Drive extends Subsystem {
         VELOCITY_SETPOINT,
         PATH_FOLLOWING,
         AIM_TO_GOAL,
+        TURN_TO_HEADING,
     }
 
     // Control states
@@ -52,6 +56,7 @@ public class Drive extends Subsystem {
 
     // These gains get reset below!!
     private HeadingProfileFollower mProfileFollower = new HeadingProfileFollower(0,0,0,0,0);
+    private Rotation2d mTargetHeading = new Rotation2d();
 
     // Hardware states
     private boolean mIsHighGear;
@@ -82,6 +87,9 @@ public class Drive extends Subsystem {
                         return;
                     case AIM_TO_GOAL:
                         updateTurnToHeadingSimplePid(timestamp);
+                        return;
+                    case TURN_TO_HEADING:
+                        updateTurnToHeading(timestamp);
                         return;
                     default:
                         System.out.println("Unexpected drive control state: " + mDriveControlState);
@@ -260,7 +268,8 @@ public class Drive extends Subsystem {
     private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         if (mDriveControlState == DriveControlState.VELOCITY_SETPOINT ||
                 mDriveControlState == DriveControlState.PATH_FOLLOWING ||
-                mDriveControlState == DriveControlState.AIM_TO_GOAL) {
+                mDriveControlState == DriveControlState.AIM_TO_GOAL ||
+                mDriveControlState == DriveControlState.TURN_TO_HEADING ) {
             mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec));
             mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec));
         } else {
@@ -317,24 +326,21 @@ public class Drive extends Subsystem {
     }
 
     private void updateTurnToHeading(double timestamp) {
-       /* final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
+       final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
                 .getLatestFieldToVehicle();
         final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
         final double t_observation = latest_field_to_robot.getKey().value;
-        final Optional<ShooterAimingParameters> aimOptional = mRobotState.getAimingParameters(t_observation, true);
-        if (aimOptional.isPresent()) {
-            final ShooterAimingParameters aim = aimOptional.get();
-            mProfileFollower.setGoal(new MotionProfileGoal(aim.getFieldToGoal().getDegrees()));
-        }
+        mProfileFollower.setGoal(new MotionProfileGoal(mTargetHeading.getDegrees()));
         final MotionState motion_state = new MotionState(t_observation, field_to_robot.getRotation().getDegrees(),
                 getGyroVelocity(), 0.0);
         final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
 
+        SmartDashboard.putNumber("desired angular change", angular_velocity_command);
+        
         Kinematics.DriveVelocity wheel_vel = Kinematics.inverseKinematics(
                 new RigidTransform2d.Delta(0, 0, Rotation2d.fromDegrees(angular_velocity_command).getRadians()));
 
         updateVelocitySetpoint(wheel_vel.left, wheel_vel.right);
-        */
     }
 
     private void updateTurnToHeadingSimplePid(double timestamp) {
@@ -396,6 +402,18 @@ public class Drive extends Subsystem {
         }
     }
     
+    public void setWantTurnToHeading(Rotation2d heading) {
+        if (mDriveControlState != DriveControlState.TURN_TO_HEADING) {
+            configureTalonsForSpeedControl(false);
+            resetProfileGains();
+            mProfileFollower.resetProfile();
+            mProfileFollower.resetSetpoint();
+            mProfileFollower.setConstraints(new MotionProfileConstraints(Constants.kDriveTurnMaxVel, Constants.kDriveTurnMaxAcc));
+            mTargetHeading = heading;
+            mDriveControlState = DriveControlState.TURN_TO_HEADING;
+        }
+    }
+    
     
     private Path mCurrentPath = null;
     
@@ -418,6 +436,15 @@ public class Drive extends Subsystem {
             return mPathFollower.isFinished();
         } else {
             System.out.println("Robot is not in path following mode");
+            return false;
+        }
+    }
+    
+    public boolean isDoneWithTurn() {
+        if (mDriveControlState == DriveControlState.TURN_TO_HEADING && mProfileFollower != null) {
+            return mProfileFollower.isFinishedProfile();
+        } else {
+            System.out.println("Robot is not in turn to heading mode");
             return false;
         }
     }
