@@ -7,6 +7,7 @@ import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
 import com.team254.frc2017.subsystems.*;
 import com.team254.frc2017.vision.VisionServer;
+import com.team254.frc2017.web.GraphServer;
 import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
@@ -30,6 +31,7 @@ public class Robot extends IterativeRobot {
     private Superstructure mSuperstructure = Superstructure.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
+    private GraphServer mGraphServer = GraphServer.getInstance();
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
@@ -80,6 +82,8 @@ public class Robot extends IterativeRobot {
             mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
 
             AutoModeSelector.initAutoModeSelector();
+            
+            mGraphServer.startServer();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;

@@ -9,6 +9,8 @@ import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.paths.GearToHopper;
+import com.team254.frc2017.web.GraphData;
+import com.team254.frc2017.web.GraphServer;
 import com.team254.lib.util.*;
 import com.team254.lib.util.motion.HeadingProfileFollower;
 import com.team254.lib.util.motion.MotionProfileConstraints;
@@ -69,6 +71,8 @@ public class Drive extends Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
+            // Test
+            GraphServer.addData(new GraphData("Heading", getGyroAngle().getDegrees(), timestamp));
             synchronized (Drive.this) {
                 switch (mDriveControlState) {
                     case OPEN_LOOP:
