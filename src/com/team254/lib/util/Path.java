@@ -77,6 +77,7 @@ public class Path {
          public Translation2d closest_point;
          public double closest_point_distance;
          public Translation2d lookahead_point;
+         public double max_speed;
          public double lookahead_point_speed;
          public double remaining_segment_distance;
          
@@ -111,6 +112,7 @@ public class Path {
          } else {
              lookahead_distance += (currentSegment.getLength() - rv.remaining_segment_distance);
          }
+         rv.max_speed = currentSegment.getMaxSpeed();
          rv.lookahead_point = currentSegment.getPointByDistance(lookahead_distance);
          rv.lookahead_point_speed = currentSegment.getSpeedByDistance(lookahead_distance);
          checkSegmentDone(rv.closest_point);

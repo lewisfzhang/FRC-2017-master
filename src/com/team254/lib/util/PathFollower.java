@@ -43,6 +43,8 @@ public class PathFollower {
     ProfileFollower mVelocityController;
     final double mDt;
 
+    double mMaxProfileVel;
+    double mMaxProfileAcc;
     double mCrossTrackError = 0.0;
     double mAlongTrackError = 0.0;
 
@@ -56,6 +58,8 @@ public class PathFollower {
                 parameters.profile_kffv, parameters.profile_kffa);
         mVelocityController.setConstraints(
                 new MotionProfileConstraints(parameters.profile_max_abs_vel, parameters.profile_max_abs_acc));
+        mMaxProfileVel = parameters.profile_max_abs_vel;
+        mMaxProfileAcc = parameters.profile_max_abs_acc;
         mDt = parameters.dt;
     }
 
@@ -78,11 +82,14 @@ public class PathFollower {
             mCrossTrackError = steering_command.cross_track_error;
             if (!mSteeringController.isFinished()) {
                 mLastSteeringDelta = steering_command.delta;
-                mVelocityController.setGoal(new MotionProfileGoal(displacement + steering_command.delta.dx,
-                        Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ACCEL));
+                mVelocityController.setGoalAndConstraints(
+                        new MotionProfileGoal(displacement + steering_command.delta.dx,
+                                Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ACCEL),
+                        new MotionProfileConstraints(Math.min(mMaxProfileVel, steering_command.max_velocity),
+                                mMaxProfileAcc));
             }
         }
-       
+
         final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0),
                 t + mDt);
         mAlongTrackError = mVelocityController.getPosError();

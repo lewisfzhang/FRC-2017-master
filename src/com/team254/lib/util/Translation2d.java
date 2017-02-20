@@ -121,7 +121,8 @@ public class Translation2d implements Interpolable<Translation2d> {
     }
     
     public static double GetAngle(Translation2d a, Translation2d b) {
-        return Math.acos(Dot(a, b) / (a.norm() * b.norm()));
+        double cos_angle = Dot(a, b) / (a.norm() * b.norm());
+        return Math.acos(Math.min(1.0, Math.max(cos_angle, -1.0)));
     }
     
     public static double Cross(Translation2d a, Translation2d b) {

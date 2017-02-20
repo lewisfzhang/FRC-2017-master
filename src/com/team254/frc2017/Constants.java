@@ -133,17 +133,15 @@ public class Constants extends ConstantsBase {
     public static int kAndroidAppTcpPort = 8254;
 
     //PATH FOLLOWING
-    public static double kAutoLookAhead = 20.0; //inches
+    public static double kAutoLookAhead = 10.0; //inches
     public static double kSegmentCompletionTolerance = 1.0; //inches
-    public static double kPathFollowingMaxAccel = 25.0; //inches per second^2
+    public static double kPathFollowingMaxAccel = 120.0; //inches per second^2
     public static double kPathFollowingMaxVel = 120.0; //inches per second
     public static double kPathFollowingProfileKp = 5.0;
     public static double kPathFollowingProfileKi = 0.0;
     public static double kPathFollowingProfileKv = 1.0;
     public static double kPathFollowingProfileKffv = 1.0;
     public static double kPathFollowingProfileKffa = 0.0;
-    public static String kAutoFilePath = "~/path.txt"; //file path to the auto path file
-    public static double kMinSpeed = 10.0; //inches per second
 
 
     // Goal tracker constants

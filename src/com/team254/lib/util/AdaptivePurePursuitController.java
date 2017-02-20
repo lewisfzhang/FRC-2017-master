@@ -10,20 +10,23 @@ package com.team254.lib.util;
  */
 
 public class AdaptivePurePursuitController {
-    private static final double kEpsilon = 1E-6;
+    private static final double kEpsilon = 1E-4;
     private static final double kReallyBigNumber = 1E6;
 
     public static class Command {
         public RigidTransform2d.Delta delta = RigidTransform2d.Delta.identity();
         public double cross_track_error;
+        public double max_velocity;
         public double end_velocity;
 
         public Command() {
         }
 
-        public Command(RigidTransform2d.Delta delta, double cross_track_error, double end_velocity) {
+        public Command(RigidTransform2d.Delta delta, double cross_track_error, double max_velocity,
+                double end_velocity) {
             this.delta = delta;
             this.cross_track_error = cross_track_error;
+            this.max_velocity = max_velocity;
             this.end_velocity = end_velocity;
         }
     }
@@ -58,9 +61,10 @@ public class AdaptivePurePursuitController {
         }
 
         final Path.TargetPointReport report = mPath.getTargetPoint(pose.getTranslation(), mFixedLookahead);
+        // System.out.println("Lookahead point " + report.lookahead_point + ", vel " + report.lookahead_point_speed);
         if (isFinished()) {
             // Stop.
-            return new Command(RigidTransform2d.Delta.identity(), report.closest_point_distance, 0.0);
+            return new Command(RigidTransform2d.Delta.identity(), report.closest_point_distance, report.max_speed, 0.0);
         }
 
         final Arc arc = new Arc(pose, report.lookahead_point);
@@ -75,7 +79,8 @@ public class AdaptivePurePursuitController {
         return new Command(
                 new RigidTransform2d.Delta(scale_factor * arc.length, 0.0,
                         arc.length * getDirection(pose, report.lookahead_point) * Math.abs(scale_factor) / arc.radius),
-                report.closest_point_distance, report.lookahead_point_speed * Math.signum(scale_factor));
+                report.closest_point_distance, report.max_speed,
+                report.lookahead_point_speed * Math.signum(scale_factor));
     }
 
     public static class Arc {

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.team254.lib.util.motion.MotionState;
 import static com.team254.lib.util.motion.MotionUtil.*;
+import static com.team254.lib.util.Util.*;
 
 /**
  * A motion profile specifies a 1D time-parameterized trajectory. The trajectory is composed of successively coincident
@@ -100,6 +101,9 @@ public class MotionProfile {
     public Optional<MotionState> firstStateByPos(double pos) {
         for (MotionSegment s : mSegments) {
             if (s.containsPos(pos)) {
+                if (epsilonEquals(s.end().pos(), pos, kEpsilon)) {
+                    return Optional.of(s.end());
+                }
                 final double t = Math.min(s.start().nextTimeAtPos(pos), s.end().t());
                 if (Double.isNaN(t)) {
                     System.err.println("Error! We should reach 'pos' but we don't");
