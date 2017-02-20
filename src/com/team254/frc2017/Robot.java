@@ -183,11 +183,11 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setWantIntakeStopped();
                 }
 
-                if (mControlBoard.getFeedButton()) {
-                    mSuperstructure.setWantedState(Superstructure.WantedState.MANUAL_FEED);
-                } else if (wantsExhaust) {
-                    // Exhaust has lowest priority for feeder as well.
+                // Exhaust has highest priority for feeder.
+                if (wantsExhaust) {
                     mSuperstructure.setWantedState(Superstructure.WantedState.EXHAUST);
+                } else if (mControlBoard.getFeedButton()) {
+                    mSuperstructure.setWantedState(Superstructure.WantedState.MANUAL_FEED);
                 } else {
                     mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
                 }
