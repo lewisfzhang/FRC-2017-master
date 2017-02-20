@@ -227,17 +227,17 @@ public class Drive extends Subsystem {
     }
 
     /**
-     * Start up velocity mode
+     * Start up velocity mode.  This sets the drive train in high gear as well.
      * @param left_inches_per_sec
      * @param right_inches_per_sec
      */
     public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
-        configureTalonsForSpeedControl();
+        configureTalonsForSpeedControl(true);
         mDriveControlState = DriveControlState.VELOCITY_SETPOINT;
         updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
     }
 
-    private void configureTalonsForSpeedControl() {
+    private void configureTalonsForSpeedControl(boolean wantsHighGear) {
         if (mDriveControlState != DriveControlState.VELOCITY_SETPOINT) {
             mLeftMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
             mLeftMaster.setProfile(kVelocityControlSlot);
@@ -247,7 +247,7 @@ public class Drive extends Subsystem {
             mRightMaster.setProfile(kVelocityControlSlot);
             mRightMaster.setAllowableClosedLoopErr(Constants.kDriveVelocityAllowableError);
             mRightMaster.setNominalClosedLoopVoltage(12.0);
-            setHighGear(true);
+            setHighGear(wantsHighGear);
             setBrakeMode(true);
         }
     }
@@ -361,10 +361,7 @@ public class Drive extends Subsystem {
         } else {
             mIsOnTarget = false;
             updateVelocitySetpoint(0, 0);
-
         }
-
-
     }
 
     private void updatePathFollower(double timestamp) {
@@ -395,7 +392,8 @@ public class Drive extends Subsystem {
 
     public void setWantAimToGoal() {
         if (mDriveControlState != DriveControlState.AIM_TO_GOAL) {
-            configureTalonsForSpeedControl();
+            // We aim in low gear.
+            configureTalonsForSpeedControl(false);
             resetProfileGains();
             mProfileFollower.resetProfile();
             mProfileFollower.resetSetpoint();

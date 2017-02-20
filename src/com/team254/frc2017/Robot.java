@@ -161,7 +161,6 @@ public class Robot extends IterativeRobot {
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
 
-            mDrive.setHighGear(!mControlBoard.getLowGear());
 
             if (mControlBoard.getDriveAimButton()) {
                 mDrive.setWantAimToGoal();
@@ -169,6 +168,7 @@ public class Robot extends IterativeRobot {
                 mDrive.setWantAimToGoal();
                 mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
             } else {
+                mDrive.setHighGear(!mControlBoard.getLowGear());
                 mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
 
                 boolean wantsExhaust = mControlBoard.getExhaustButton();
