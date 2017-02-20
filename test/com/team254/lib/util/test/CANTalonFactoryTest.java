@@ -12,13 +12,11 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CANTalonFactory.class)
@@ -79,5 +77,10 @@ public class CANTalonFactoryTest {
         Assert.assertEquals(
                 new HashSet<>(),
                 uncalledMethodNames);
+    }
+
+    @Test
+    public void testCanPrintInfo() {
+        System.out.println(CANTalonFactory.getFullTalonInfo(Mockito.mock(CANTalon.class)));
     }
 }
