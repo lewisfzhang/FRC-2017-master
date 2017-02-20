@@ -31,7 +31,7 @@ public class Constants extends ConstantsBase {
     // Wheels
     public static double kDriveWheelDiameterInches = 3.419; //calibrated on 2/15/17
     public static double kTrackWidthInches = 26.655;
-    public static double kTrackScrubFactor = 1.0;
+    public static double kTrackScrubFactor = 0.90;
     
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
@@ -49,23 +49,32 @@ public class Constants extends ConstantsBase {
     // CONTROL LOOP GAINS
     // DRIVE GAINS
 
-    // Wheel velocity - onboard talon
-    public static double kDriveVelocityKp = 0.4;
-    public static double kDriveVelocityKi = 0.0;
-    public static double kDriveVelocityKd = 5.0;
-    public static double kDriveVelocityKf = .15; //0.145;
-    public static int kDriveVelocityIZone = 0;
-    public static double kDriveVelocityRampRate = 0.0;
-    public static int kDriveVelocityAllowableError = 0;
+    // Wheel velocity - High gear
+    public static double kDriveHighGearVelocityKp = 0.5;
+    public static double kDriveHighGearVelocityKi = 0.0;
+    public static double kDriveHighGearVelocityKd = 4.0;
+    public static double kDriveHighGearVelocityKf = .15;
+    public static int kDriveHighGearVelocityIZone = 0;
+    public static double kDriveHighGearVelocityRampRate = 90.0;
+    public static double kDriveHighGearNominalOutput = 0.6;
+
+    // Wheel velocity - Low gear
+    public static double kDriveLowGearVelocityKp = 0.5;
+    public static double kDriveLowGearVelocityKi = 0.0;
+    public static double kDriveLowGearVelocityKd = 4.0;
+    public static double kDriveLowGearVelocityKf = .45;
+    public static int kDriveLowGearVelocityIZone = 0;
+    public static double kDriveLowGearVelocityRampRate = 240.0;
+    public static double kDriveLowGearNominalOutput = 0.5;
 
     // Turn to heading
-    public static double kDriveTurnKp = 8;
-    public static double kDriveTurnKi = 0.0;
+    public static double kDriveTurnKp = 3.0;
+    public static double kDriveTurnKi = 1.5;
     public static double kDriveTurnKv = 0.0;
-    public static double kDriveTurnKffv = 1.075;
-    public static double kDriveTurnKffa = 0.0;
-    public static double kDriveTurnMaxVel = 600;
-    public static double kDriveTurnMaxAcc = 300;
+    public static double kDriveTurnKffv = 1.0;
+    public static double kDriveTurnKffa = 0.05;
+    public static double kDriveTurnMaxVel = 360.0;
+    public static double kDriveTurnMaxAcc = 360.0;
 
     public static double kDriveTurnSimpleKp = 2.0;
 

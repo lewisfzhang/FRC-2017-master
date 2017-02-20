@@ -73,6 +73,7 @@ public class SetpointGenerator {
         }
 
         // Sample the profile one dt from now.
+        Setpoint rv = null;
         if (!mProfile.isEmpty() && mProfile.isValid()) {
             MotionState setpoint;
             if (t > mProfile.endTime()) {
@@ -84,11 +85,22 @@ public class SetpointGenerator {
             }
             // Shorten the profile and return the new setpoint.
             mProfile.trimBeforeTime(t);
-            return new Setpoint(setpoint, mProfile.isEmpty());
+            rv = new Setpoint(setpoint, mProfile.isEmpty());
         }
 
         // Invalid or empty profile - just output the same state again.
-        return new Setpoint(prev_state, true);
+        if (rv == null) {
+            rv = new Setpoint(prev_state, true);
+        }
+
+        if (rv.final_setpoint) {
+            // Ensure the final setpoint matches the goal exactly.
+            rv.motion_state = new MotionState(rv.motion_state.t(), mGoal.pos(),
+                    Math.signum(rv.motion_state.vel()) * Math.max(mGoal.max_abs_vel(), Math.abs(rv.motion_state.vel())),
+                    0.0);
+        }
+
+        return rv;
     }
 
     /**

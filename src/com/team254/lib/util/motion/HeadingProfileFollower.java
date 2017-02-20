@@ -25,7 +25,12 @@ public class HeadingProfileFollower extends ProfileFollower {
         final MotionState latest_state_unwrapped = new MotionState(latest_state.t(),
                 mGoal.pos() + goal_rotation_inverse.rotateBy(Rotation2d.fromDegrees(latest_state.pos())).getDegrees(),
                 latest_state.vel(), latest_state.acc());
-        return super.update(latest_state_unwrapped, t);
+        double result = super.update(latest_state_unwrapped, t);
+        if (Math.abs(latest_state_unwrapped.pos() - mGoal.pos()) < mGoal.pos_tolerance()) {
+            result = 0.0;
+            super.resetIntegral();
+        }
+        return result;
     }
 
     /**

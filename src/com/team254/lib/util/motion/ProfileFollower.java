@@ -110,6 +110,10 @@ public class ProfileFollower {
         mLatestSetpoint = null;
     }
 
+    public void resetIntegral() {
+        mTotalError = 0.0;
+    }
+
     /**
      * Update the setpoint and apply the control gains to generate a control output.
      * 
@@ -138,7 +142,7 @@ public class ProfileFollower {
         // Calculate the feedforward and proportional terms.
         double output = mKp * mLatestPosError + mKv * mLatestVelError + mKffv * mLatestSetpoint.motion_state.vel()
                 + (Double.isNaN(mLatestSetpoint.motion_state.acc()) ? 0.0 : mKffa * mLatestSetpoint.motion_state.acc());
-        if (output >= mMinOutput && output <= mMaxOutput) {
+        if (output >= mMinOutput && output <= mMaxOutput && isFinishedProfile()) {
             // Update integral.
             mTotalError += mLatestPosError * dt;
             output += mKi * mTotalError;
@@ -148,6 +152,7 @@ public class ProfileFollower {
         }
         // Clamp to limits.
         output = Math.max(mMinOutput, Math.min(mMaxOutput, output));
+
         return output;
     }
 

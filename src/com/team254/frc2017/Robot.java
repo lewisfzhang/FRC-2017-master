@@ -1,6 +1,7 @@
 package com.team254.frc2017;
 
 import com.team254.frc2017.Constants.RobotName;
+import com.team254.frc2017.Kinematics.DriveVelocity;
 import com.team254.frc2017.auto.AutoModeExecuter;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
