@@ -220,6 +220,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.UNJAMMING_WITH_SHOOT;
             case SHOOT:
                 return SystemState.WAITING_FOR_AIM;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
             default:
                 return SystemState.IDLE;
         }
