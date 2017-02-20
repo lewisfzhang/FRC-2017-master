@@ -72,7 +72,7 @@ public class Drive extends Subsystem {
         @Override
         public void onLoop(double timestamp) {
             // Test
-            GraphServer.addData(new GraphData("Heading", getGyroAngle().getDegrees(), timestamp));
+            GraphServer.addData(new GraphData("Drive","Heading", getGyroAngle().getDegrees(), timestamp));
             synchronized (Drive.this) {
                 switch (mDriveControlState) {
                     case OPEN_LOOP:

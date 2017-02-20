@@ -64,7 +64,8 @@ public class GraphServer {
                         GraphData data = (GraphData) mData.poll();
                         if (data.getTimestamp() - firstTimestamp < timeThreshold) {
                             JSONObject outBuilder = new JSONObject();
-                            outBuilder.put("Key", data.getKey());
+                            outBuilder.put("Chart", "\"" + data.getChart() + "\"");
+                            outBuilder.put("Key", "\"" + data.getKey() + "\"");
                             outBuilder.put("Value", data.getData());
                             outBuilder.put("Timestamp", data.getTimestamp());
                             output += outBuilder.toString() + "\n";
