@@ -30,7 +30,6 @@ public class Robot extends IterativeRobot {
     private Superstructure mSuperstructure = Superstructure.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
-    private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
@@ -79,6 +78,8 @@ public class Robot extends IterativeRobot {
             ConstantsModifier.initConstants(name);
 
             mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
+
+            AutoModeSelector.initAutoModeSelector();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -114,7 +115,7 @@ public class Robot extends IterativeRobot {
             zeroAllSensors();
 
             mAutoModeExecuter = new AutoModeExecuter();
-            mAutoModeExecuter.setAutoMode(mAutoModeSelector.getSelectedAutoMode());
+            mAutoModeExecuter.setAutoMode(AutoModeSelector.getSelectedAutoMode());
             mAutoModeExecuter.start();
 
         } catch (Throwable t) {
