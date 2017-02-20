@@ -49,7 +49,6 @@ public class ControlBoard {
         return mButtonBoard.getRawButton(9);
     }
 
-
     // OPERATOR CONTROLS
     public boolean getFeedButton() {
         return mButtonBoard.getRawAxis(1) < -0.1;
@@ -63,7 +62,7 @@ public class ControlBoard {
         return mButtonBoard.getRawAxis(3) < -0.1;
     }
 
-    public boolean getSpinShooterButton() {
+    public boolean getShooterOpenLoopButton() {
         return mButtonBoard.getRawButton(1);
     }
 
@@ -71,8 +70,11 @@ public class ControlBoard {
         return mButtonBoard.getRawAxis(0) < -0.1;
     }
 
+    public boolean getUnjamButton() {
+        return mButtonBoard.getRawButton(4);
+    }
 
-    public boolean getShootButton() {
+    public boolean getShooterClosedLoopButton() {
         return mButtonBoard.getRawButton(2);
     }
 }

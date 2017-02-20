@@ -161,12 +161,16 @@ public class Robot extends IterativeRobot {
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
 
-
             if (mControlBoard.getDriveAimButton()) {
                 mDrive.setWantAimToGoal();
             } else if (mControlBoard.getAimButton()) {
                 mDrive.setWantAimToGoal();
-                mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
+
+                if (mControlBoard.getUnjamButton()) {
+                    mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM_SHOOT);
+                } else {
+                    mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
+                }
             } else {
                 mDrive.setHighGear(!mControlBoard.getLowGear());
                 mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
@@ -183,18 +187,21 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setWantIntakeStopped();
                 }
 
-                // Exhaust has highest priority for feeder.
+                // Exhaust has highest priority for feeder.  Followed by unjamming and finally
+                // feeding.
                 if (wantsExhaust) {
                     mSuperstructure.setWantedState(Superstructure.WantedState.EXHAUST);
+                } else if (mControlBoard.getUnjamButton()) {
+                    mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM);
                 } else if (mControlBoard.getFeedButton()) {
                     mSuperstructure.setWantedState(Superstructure.WantedState.MANUAL_FEED);
                 } else {
                     mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
                 }
 
-                if (mControlBoard.getSpinShooterButton()) {
+                if (mControlBoard.getShooterOpenLoopButton()) {
                     mSuperstructure.setShooterOpenLoop(8.0);
-                } else if (mControlBoard.getShootButton()) {
+                } else if (mControlBoard.getShooterClosedLoopButton()) {
                     mSuperstructure.setClosedLoopRpm(3000.0);
                 } else {
                     mSuperstructure.setShooterOpenLoop(0);

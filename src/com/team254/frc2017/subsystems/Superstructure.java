@@ -189,8 +189,6 @@ public class Superstructure extends Subsystem {
         }
     }
 
-
-
     private SystemState handleUnjammingWithShoot() {
         autoSpinShooter();
         mFeeder.setWantedState(Feeder.WantedState.UNJAM);
