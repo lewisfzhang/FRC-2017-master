@@ -11,7 +11,7 @@ import com.team254.lib.util.Translation2d;
 
 public class AdaptivePurePursuitControllerTest {
     private static final double kEpsilon = 1E-6;
-    private static final double kReallyBigNumber = 1E6;
+    private static final double kReallyBigNumber = 1E5;
     
     @Test
     public void testJoinRadius() {
