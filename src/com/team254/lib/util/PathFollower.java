@@ -6,6 +6,8 @@ import com.team254.lib.util.motion.MotionProfileGoal.CompletionBehavior;
 import com.team254.lib.util.motion.MotionState;
 import com.team254.lib.util.motion.ProfileFollower;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * A PathFollower follows a predefined path using a combination of feedforward and feedback control. It uses an
  * AdaptivePurePursuitController to choose a reference pose and generate a steering command (curvature), and then a
@@ -93,6 +95,9 @@ public class PathFollower {
         final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0),
                 t + mDt);
         mAlongTrackError = mVelocityController.getPosError();
+//        SmartDashboard.putNumber("path tracking error", mAlongTrackError);
+//        SmartDashboard.putNumber("velocity tracking error", mVelocityController.getVelError());
+//        SmartDashboard.putNumber("desired velocity", mVelocityController.getSetpoint().vel());
         final double scale = velocity_command / mLastSteeringDelta.dx;
         return mLastSteeringDelta.scaled(scale);
     }

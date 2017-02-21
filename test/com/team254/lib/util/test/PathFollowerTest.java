@@ -5,9 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.team254.frc2017.Constants;
-import com.team254.frc2017.paths.GearToHopper;
+import com.team254.frc2017.paths.GearToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToGear;
+import com.team254.frc2017.paths.StartToGearRed;
 import com.team254.frc2017.paths.TestArcPath;
 import com.team254.lib.util.Path;
 import com.team254.lib.util.PathFollower;
@@ -30,8 +31,9 @@ public class PathFollowerTest {
 
     @Test
     public void testArcPath() {
-        Path path = TestArcPath.buildPath();
-        PathFollower controller = new PathFollower(path, false, kParameters);
+        PathContainer container = new StartToGearRed();
+        PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
+
 
         final double dt = kParameters.dt;
 
@@ -55,8 +57,8 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(200, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
-        assertEquals(100, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
+        assertEquals(114, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
+        assertEquals(109, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
     }
 
     @Test
@@ -89,7 +91,7 @@ public class PathFollowerTest {
         assertEquals(109, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance * 3);
         assertEquals(107, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance * 3);
 
-        container = new GearToHopper();
+        container = new GearToHopperBlue();
         controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
         while (!controller.isFinished() && t < 50.0) {
             // Follow the path

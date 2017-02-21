@@ -1,7 +1,7 @@
 package com.team254.frc2017;
 
 import com.team254.frc2017.auto.AutoModeBase;
-import com.team254.frc2017.auto.modes.GearThenHopperShootMode;
+import com.team254.frc2017.auto.modes.GearThenHopperShootModeRed;
 import com.team254.frc2017.auto.modes.StandStillMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,7 +25,7 @@ public class AutoModeSelector {
     }
 
     private static final AutoModeCreator mDefaultMode =
-            new AutoModeCreator("Gear then Hopper Shoot", ()->new GearThenHopperShootMode());
+            new AutoModeCreator("Gear then Hopper Shoot", ()->new GearThenHopperShootModeRed());
     private static final AutoModeCreator[] mAllModes = {
             new AutoModeCreator("Stand Still", ()->new StandStillMode()),
             mDefaultMode,

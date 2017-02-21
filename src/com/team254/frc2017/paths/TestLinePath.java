@@ -8,15 +8,13 @@ import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
 import com.team254.lib.util.Translation2d;
 
-public class TestArcPath implements PathContainer {
+public class TestLinePath implements PathContainer {
     
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(0,0,0,0));
-        sWaypoints.add(new Waypoint(100,0,36,60));
-        sWaypoints.add(new Waypoint(100,100,36,60));
-        sWaypoints.add(new Waypoint(200,100,0,60));
+        sWaypoints.add(new Waypoint(100,0,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
