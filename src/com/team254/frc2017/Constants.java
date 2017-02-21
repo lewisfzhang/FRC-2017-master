@@ -59,6 +59,7 @@ public class Constants extends ConstantsBase {
     public static int kDriveHighGearVelocityIZone = 0;
     public static double kDriveHighGearVelocityRampRate = 90.0;
     public static double kDriveHighGearNominalOutput = 0.6;
+    public static double kDriveHighGearMaxSetpoint = 15.0 * 12.0;  // 15 fps
 
     // Wheel velocity - Low gear
     public static double kDriveLowGearVelocityKp = 0.5;
@@ -68,6 +69,7 @@ public class Constants extends ConstantsBase {
     public static int kDriveLowGearVelocityIZone = 0;
     public static double kDriveLowGearVelocityRampRate = 240.0;
     public static double kDriveLowGearNominalOutput = 0.5;
+    public static double kDriveLowGearMaxSetpoint = 6.0 * 12.0;  // 6 fps
 
     // Turn to heading
     public static double kDriveTurnKp = 3.0;

@@ -296,8 +296,12 @@ public class Drive extends Subsystem {
      */
     private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         if (usesTalonVelocityControl(mDriveControlState)) {
-            mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec));
-            mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec));
+            final double max_setpoint = isHighGear() ? Constants.kDriveHighGearMaxSetpoint
+                    : Constants.kDriveLowGearMaxSetpoint;
+            final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
+            final double scale = max_desired > max_setpoint ? max_setpoint / max_desired : 1.0;
+            mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec * scale));
+            mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec * scale));
         } else {
             System.out.println("Hit a bad velocity control state");
             mLeftMaster.set(0);
@@ -369,8 +373,8 @@ public class Drive extends Subsystem {
         final double target_heading = mTargetHeading.getDegrees();
         final double kGoalPosTolerance = 0.75;
         final double kGoalVelTolerance = 5.0;
-        mProfileFollower.setGoal(
-                new MotionProfileGoal(target_heading, 0.0, CompletionBehavior.OVERSHOOT, kGoalPosTolerance, kGoalVelTolerance));
+        mProfileFollower.setGoal(new MotionProfileGoal(target_heading, 0.0, CompletionBehavior.OVERSHOOT,
+                kGoalPosTolerance, kGoalVelTolerance));
         final MotionState motion_state = new MotionState(t_observation, field_to_robot.getRotation().getDegrees(),
                 getGyroVelocity(), 0.0);
         final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
