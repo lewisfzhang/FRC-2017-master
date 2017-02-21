@@ -37,13 +37,8 @@ public class Robot extends IterativeRobot {
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
-            Arrays.asList(
-                    Drive.getInstance(),
-                    Feeder.getInstance(),
-                    Hopper.getInstance(),
-                    Intake.getInstance(),
-                    Shooter.getInstance(),
-                    Superstructure.getInstance()));
+            Arrays.asList(Drive.getInstance(), Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(),
+                    Shooter.getInstance(), Superstructure.getInstance()));
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -58,7 +53,7 @@ public class Robot extends IterativeRobot {
     public Robot() {
         CrashTracker.logRobotConstruction();
     }
-    
+
     public void zeroAllSensors() {
         mSubsystemManager.zeroSensors();
         mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
@@ -114,7 +109,6 @@ public class Robot extends IterativeRobot {
             mDrive.setHighGear(true);
             mDrive.setBrakeMode(true);
 
-
             mEnabledLooper.start();
             zeroAllSensors();
 
@@ -155,7 +149,6 @@ public class Robot extends IterativeRobot {
         }
     }
 
-
     /**
      * This function is called periodically during operator control
      */
@@ -166,9 +159,9 @@ public class Robot extends IterativeRobot {
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
 
-            if (mControlBoard.getDriveAimButton()) {
+            if (mControlBoard.getDriveAimButton() && !mControlBoard.getHangEnabled()) {
                 mDrive.setWantAimToGoal();
-            } else if (mControlBoard.getAimButton()) {
+            } else if (mControlBoard.getAimButton() && !mControlBoard.getHangEnabled()) {
                 mDrive.setWantAimToGoal();
 
                 if (mControlBoard.getUnjamButton()) {
@@ -185,16 +178,21 @@ public class Robot extends IterativeRobot {
                 // Exhaust has highest priority for intake.
                 if (wantsExhaust) {
                     mSuperstructure.setWantIntakeReversed();
-                } else if (mControlBoard.getIntakeSwitch() ||
-                        mControlBoard.getIntakeButton()) {
+                } else if (mControlBoard.getIntakeButton()) {
                     mSuperstructure.setWantIntakeOn();
-                } else if (!mSuperstructure.isShooting()){
+                } else if (!mSuperstructure.isShooting()) {
                     mSuperstructure.setWantIntakeStopped();
                 }
 
-                // Exhaust has highest priority for feeder.  Followed by unjamming and finally
+                // Hanging has highest priority for feeder, followed by exhausting, unjamming, and finally
                 // feeding.
-                if (wantsExhaust) {
+                if (mControlBoard.getHangEnabled()) {
+                    if (mControlBoard.getHangButton()) {
+                        mSuperstructure.setWantedState(Superstructure.WantedState.HANG);
+                    } else {
+                        mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
+                    }
+                } else if (wantsExhaust) {
                     mSuperstructure.setWantedState(Superstructure.WantedState.EXHAUST);
                 } else if (mControlBoard.getUnjamButton()) {
                     mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM);
@@ -213,12 +211,12 @@ public class Robot extends IterativeRobot {
                 }
             }
 
-        allPeriodic();
-    } catch (Throwable t) {
-        CrashTracker.logThrowableCrash(t);
-        throw t;
+            allPeriodic();
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
     }
-}
 
     @Override
     public void disabledInit() {

@@ -37,12 +37,12 @@ public class Superstructure extends Subsystem {
 
     // Intenal state of the system
     public enum SystemState {
-        IDLE, WAITING_FOR_AIM, SHOOTING, UNJAMMING, UNJAMMING_WITH_SHOOT, JUST_FEED, EXHAUSTING
+        IDLE, WAITING_FOR_AIM, SHOOTING, UNJAMMING, UNJAMMING_WITH_SHOOT, JUST_FEED, EXHAUSTING, HANGING
     };
 
     // Desired function from user
     public enum WantedState {
-        IDLE, SHOOT, UNJAM, UNJAM_SHOOT, MANUAL_FEED, EXHAUST,
+        IDLE, SHOOT, UNJAM, UNJAM_SHOOT, MANUAL_FEED, EXHAUST, HANG
     }
 
     private SystemState mSystemState = SystemState.IDLE;
@@ -101,6 +101,9 @@ public class Superstructure extends Subsystem {
                 case EXHAUSTING:
                     newState = handleExhaust();
                     break;
+                case HANGING:
+                    newState = handleHang();
+                    break;
                 default:
                     newState = SystemState.IDLE;
                 }
@@ -128,6 +131,7 @@ public class Superstructure extends Subsystem {
         }
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
+        mShooter.stop();
         mCompressor.setClosedLoopControl(true);
         switch (mWantedState) {
         case UNJAM:
@@ -140,6 +144,8 @@ public class Superstructure extends Subsystem {
             return SystemState.JUST_FEED;
         case EXHAUST:
             return SystemState.EXHAUSTING;
+        case HANG:
+            return SystemState.HANGING;
         default:
             return SystemState.IDLE;
         }
@@ -272,6 +278,20 @@ public class Superstructure extends Subsystem {
             return SystemState.IDLE;
         }
 
+    }
+    
+    private SystemState handleHang() {
+        mCompressor.setClosedLoopControl(false);
+        mFeeder.setWantedState(Feeder.WantedState.IDLE);
+        mHopper.setWantedState(Hopper.WantedState.IDLE);
+        mShooter.setOpenLoop(-12.0);
+
+        switch (mWantedState) {
+        case HANG:
+            return SystemState.HANGING;
+        default:
+            return SystemState.IDLE;
+        }
     }
 
     private double getShootingSetpointRpm(double range) {

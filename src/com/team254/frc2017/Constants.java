@@ -90,12 +90,12 @@ public class Constants extends ConstantsBase {
     public static double kShooterAllowableErrorRpm = 150.0;
 
     // Feeder gains
-    public static double kFeederKP = 0;
-    public static double kFeederKI = 0;
+    public static double kFeederKP = 0.02;
+    public static double kFeederKI = 0.0;
     public static double kFeederKD = 0;
-    public static double kFeederKF = 0.008;
+    public static double kFeederKF = 0.0095;
     public static double kFeederRampRate = 90.0;
-    public static double kFeederFeedSpeedRpm = 12e3;
+    public static double kFeederFeedSpeedRpm = 9001.0;
     
     // Hopper gains
     public static double kHopperRampRate = 24.0;
@@ -181,17 +181,17 @@ public class Constants extends ConstantsBase {
 
     static {
         kFlywheelAutoAimMap.put(new InterpolatingDouble(105.),
-                new InterpolatingDouble(3800.));
+                new InterpolatingDouble(3250.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(115.),
-                new InterpolatingDouble(4000.));
+                new InterpolatingDouble(3450.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(125.),
-                new InterpolatingDouble(4100.));
+                new InterpolatingDouble(3550.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(135.),
-                new InterpolatingDouble(4200.));
+                new InterpolatingDouble(3650.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(145.),
-                new InterpolatingDouble(4300.));
+                new InterpolatingDouble(3750.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(155.),
-                new InterpolatingDouble(4500.));
+                new InterpolatingDouble(3850.));
     }
 
 

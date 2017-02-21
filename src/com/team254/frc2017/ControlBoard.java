@@ -58,10 +58,6 @@ public class ControlBoard {
         return mButtonBoard.getRawAxis(2) < -0.1 || mTurnStick.getRawButton(2);
     }
 
-    public boolean getIntakeSwitch() {
-        return mButtonBoard.getRawAxis(3) < -0.1;
-    }
-
     public boolean getShooterOpenLoopButton() {
         return mButtonBoard.getRawButton(1);
     }
@@ -76,5 +72,13 @@ public class ControlBoard {
 
     public boolean getShooterClosedLoopButton() {
         return mButtonBoard.getRawButton(2);
+    }
+    
+    public boolean getHangButton() {
+        return mButtonBoard.getRawButton(7);
+    }
+    
+    public boolean getHangEnabled() {
+        return mButtonBoard.getRawAxis(3) < -0.1;
     }
 }

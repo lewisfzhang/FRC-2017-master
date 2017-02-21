@@ -2,7 +2,6 @@ package com.team254.lib.util.test;
 
 
 import com.team254.frc2017.AutoModeSelector;
-import com.team254.frc2017.auto.modes.GearThenHopperShootMode;
 import com.team254.frc2017.auto.modes.StandStillMode;
 import com.team254.lib.util.CANTalonFactory;
 import edu.wpi.first.wpilibj.HLUsageReporting;

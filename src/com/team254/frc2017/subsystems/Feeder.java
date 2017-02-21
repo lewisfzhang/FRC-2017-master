@@ -1,6 +1,7 @@
 package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
@@ -32,11 +33,16 @@ public class Feeder extends Subsystem {
         mMasterTalon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mMasterTalon.SetVelocityMeasurementWindow(64);
-        mMasterTalon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms);
+        mMasterTalon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
 
         mMasterTalon.setVoltageRampRate(Constants.kFeederRampRate);
         mMasterTalon.reverseOutput(false);
         mMasterTalon.enableBrakeMode(true);
+
+        mMasterTalon.setP(Constants.kFeederKP);
+        mMasterTalon.setI(Constants.kFeederKI);
+        mMasterTalon.setD(Constants.kFeederKD);
+        mMasterTalon.setF(Constants.kFeederKF);
 
         mSlaveTalon = new CANTalon(Constants.kFeederSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
@@ -173,7 +179,8 @@ public class Feeder extends Subsystem {
 
     private SystemState handleFeeding() {
         if (mStateChanged) {
-            setOpenLoop(kFeedVoltage);
+            mMasterTalon.changeControlMode(TalonControlMode.Speed);
+            mMasterTalon.setSetpoint(Constants.kFeederFeedSpeedRpm);
         }
 
         return defaultStateTransfer();
