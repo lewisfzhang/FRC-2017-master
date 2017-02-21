@@ -82,6 +82,10 @@ public class AdaptivePurePursuitController {
                 report.closest_point_distance, report.max_speed,
                 report.lookahead_point_speed * Math.signum(scale_factor));
     }
+    
+    public boolean hasPassedMarker(String marker) {
+        return mPath.hasPassedMarker(marker);
+    }
 
     public static class Arc {
         public Translation2d center;

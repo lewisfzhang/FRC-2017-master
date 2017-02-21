@@ -14,9 +14,8 @@ public class StartToGearBlue implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(16,234,0,0));
-        sWaypoints.add(new Waypoint(85,234,0,120));
-        sWaypoints.add(new Waypoint(104.5,234,0,40));
-        sWaypoints.add(new Waypoint(114,214,0,40));
+        sWaypoints.add(new Waypoint(94,234,12,80));
+        sWaypoints.add(new Waypoint(110,214,0,80));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

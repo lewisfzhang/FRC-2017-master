@@ -53,7 +53,7 @@ public class Intake extends Subsystem {
 
     }
 
-    private void deploy() {
+    public synchronized void deploy() {
         mDeploySolenoid.set(true);
         mDeployed = true;
     }

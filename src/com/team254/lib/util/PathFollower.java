@@ -108,4 +108,8 @@ public class PathFollower {
     public boolean isFinished() {
         return mSteeringController.isFinished() && mVelocityController.isFinishedProfile();
     }
+    
+    public boolean hasPassedMarker(String marker) {
+        return mSteeringController.hasPassedMarker(marker);
+    }
 }

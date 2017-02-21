@@ -25,6 +25,7 @@ public class PathSegment {
     private boolean isLine;
     private MotionProfile speedController;
     private boolean extrapolateLookahead;
+    private String marker;
         
     /**
      * Constructor for a linear segment
@@ -43,6 +44,19 @@ public class PathSegment {
         this.maxSpeed = maxSpeed;
         extrapolateLookahead = false;
         isLine = true;
+        createMotionProfiler(startState, endSpeed);
+    }
+    
+    public PathSegment(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState, double endSpeed, String marker) {
+        this.start = new Translation2d(x1, y1);
+        this.end = new Translation2d(x2, y2);
+        
+        this.deltaStart = new Translation2d(start, end);
+        
+        this.maxSpeed = maxSpeed;
+        extrapolateLookahead = false;
+        isLine = true;
+        this.marker = marker;
         createMotionProfiler(startState, endSpeed);
     }
         
@@ -67,6 +81,21 @@ public class PathSegment {
         this.maxSpeed = maxSpeed;
         extrapolateLookahead = false;
         isLine = false;
+        createMotionProfiler(startState, endSpeed);
+    }
+    
+    public PathSegment(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed, MotionState startState, double endSpeed, String marker) {
+        this.start = new Translation2d(x1, y1);
+        this.end = new Translation2d(x2, y2);
+        this.center = new Translation2d(cx, cy);
+        
+        this.deltaStart = new Translation2d(center, start);
+        this.deltaEnd = new Translation2d(center, end);
+        
+        this.maxSpeed = maxSpeed;
+        extrapolateLookahead = false;
+        isLine = false;
+        this.marker = marker;
         createMotionProfiler(startState, endSpeed);
     }
     
@@ -212,6 +241,10 @@ public class PathSegment {
     
     public MotionState getStartState() {
         return speedController.startState();
+    }
+    
+    public String getMarker() {
+        return marker;
     }
     
     public String toString() {

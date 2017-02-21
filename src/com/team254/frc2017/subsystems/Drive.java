@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class Drive extends Subsystem {
 
@@ -464,6 +465,15 @@ public class Drive extends Subsystem {
             return mProfileFollower.isFinishedProfile();
         } else {
             System.out.println("Robot is not in turn to heading mode");
+            return false;
+        }
+    }
+    
+    public synchronized boolean hasPassedMarker(String marker) {
+        if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+            return mPathFollower.hasPassedMarker(marker);
+        } else {
+            System.out.println("Robot is not in path following mode");
             return false;
         }
     }

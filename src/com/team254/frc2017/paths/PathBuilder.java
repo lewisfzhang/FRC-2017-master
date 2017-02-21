@@ -39,11 +39,19 @@ public class PathBuilder {
         Translation2d position;
         double radius;
         double speed;
+        String marker;
         
         public Waypoint(double x, double y, double r, double s) {
             position = new Translation2d(x, y);
             radius = r;
             speed = s;
+        }
+        
+        public Waypoint(double x, double y, double r, double s, String m) {
+            position = new Translation2d(x, y);
+            radius = r;
+            speed = s;
+            marker = m;
         }
     }
     
@@ -66,8 +74,14 @@ public class PathBuilder {
         
         private void addToPath(Path p, double endSpeed) {
             double pathLength = new Translation2d(end, start).norm();
-            if(pathLength > kEpsilon)
-                p.addSegment(new PathSegment(start.getX(), start.getY(), end.getX(), end.getY(), b.speed, p.getLastMotionState(), endSpeed));
+            if(pathLength > kEpsilon) {
+                if(b.marker != null) {
+                    p.addSegment(new PathSegment(start.getX(), start.getY(), end.getX(), end.getY(), b.speed, p.getLastMotionState(), endSpeed, b.marker));
+                } else {
+                    p.addSegment(new PathSegment(start.getX(), start.getY(), end.getX(), end.getY(), b.speed, p.getLastMotionState(), endSpeed));
+                }
+            }
+
         }
     }
     
@@ -92,8 +106,9 @@ public class PathBuilder {
         
         private void addToPath(Path p) {
             a.addToPath(p, speed);
-            if(radius > kEpsilon && radius < kReallyBigNumber)
+            if(radius > kEpsilon && radius < kReallyBigNumber) {
                 p.addSegment(new PathSegment(a.end.getX(), a.end.getY(), b.start.getX(), b.start.getY(), center.getX(), center.getY(), speed, p.getLastMotionState(), b.speed));
+            }
         }
         
         private static Translation2d intersect(Line l1, Line l2) {

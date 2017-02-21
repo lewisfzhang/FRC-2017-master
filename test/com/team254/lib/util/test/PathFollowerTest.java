@@ -8,6 +8,7 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.paths.GearToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToGear;
+import com.team254.frc2017.paths.StartToGearBlue;
 import com.team254.frc2017.paths.StartToGearRed;
 import com.team254.frc2017.paths.TestArcPath;
 import com.team254.lib.util.Path;
@@ -18,7 +19,7 @@ import com.team254.lib.util.Translation2d;
 
 public class PathFollowerTest {
 
-    static final PathFollower.Parameters kParameters = new PathFollower.Parameters(25.0, // Fixed lookahead
+    static final PathFollower.Parameters kParameters = new PathFollower.Parameters(16.0, // Fixed lookahead
             0.0, // Profile kp
             0.0, // Profile ki
             0.0, // Profile kv
@@ -37,7 +38,7 @@ public class PathFollowerTest {
 
         final double dt = kParameters.dt;
 
-        RigidTransform2d robot_pose = new RigidTransform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0));
+        RigidTransform2d robot_pose = container.getStartPose();
         double t = 0;
         double displacement = 0.0;
         double velocity = 0.0;
@@ -57,13 +58,13 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(114, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance);
-        assertEquals(109, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance);
+        assertEquals(114, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance*3);
+        assertEquals(109, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*3);
     }
 
     @Test
     public void testAuto() {
-        PathContainer container = new StartToGear();
+        PathContainer container = new StartToGearBlue();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
         final double dt = kParameters.dt;
@@ -88,9 +89,10 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(109, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance * 3);
-        assertEquals(107, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance * 3);
+        assertEquals(110, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance * 3);
+        assertEquals(214, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance * 3);
 
+        Constants.kAutoLookAhead = 24.0;
         container = new GearToHopperBlue();
         controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
         while (!controller.isFinished() && t < 50.0) {
@@ -109,7 +111,7 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(132, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance * 3);
-        assertEquals(20, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance * 3);
+        assertEquals(91, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance * 5);
+        assertEquals(301, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance * 5);
     }
 }

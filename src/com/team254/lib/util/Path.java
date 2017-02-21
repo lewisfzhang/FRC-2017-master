@@ -1,7 +1,9 @@
 package com.team254.lib.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.team254.frc2017.Constants;
 import com.team254.lib.util.motion.MotionState;
@@ -20,6 +22,7 @@ import com.team254.lib.util.motion.MotionState;
 public class Path {
      List<PathSegment> segments;
      PathSegment prevSegment;
+     HashSet<String> mMarkersCrossed = new HashSet<String>();
      
      public void extrapolateLast() {
          PathSegment last = segments.get(segments.size() - 1);
@@ -141,6 +144,9 @@ public class Path {
          double remainingDist = new Translation2d(robotPos, currentSegment.getEnd()).norm();//currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
          if(remainingDist < Constants.kSegmentCompletionTolerance) {
              prevSegment = segments.remove(0);
+             String marker = prevSegment.getMarker();
+             if(marker != null)
+                 mMarkersCrossed.add(marker);
          }
      }
      
@@ -169,6 +175,10 @@ public class Path {
              startState = new MotionState(0, 0, startState.vel(), startState.vel());
              segment.createMotionProfiler(startState, endSpeed);
          }
+     }
+     
+     public boolean hasPassedMarker(String marker) {
+         return mMarkersCrossed.contains(marker);
      }
      
      public String toString() {
