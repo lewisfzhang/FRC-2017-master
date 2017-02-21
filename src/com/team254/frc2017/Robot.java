@@ -188,7 +188,7 @@ public class Robot extends IterativeRobot {
                 } else if (mControlBoard.getIntakeSwitch() ||
                         mControlBoard.getIntakeButton()) {
                     mSuperstructure.setWantIntakeOn();
-                } else {
+                } else if (!mSuperstructure.isShooting()){
                     mSuperstructure.setWantIntakeStopped();
                 }
 

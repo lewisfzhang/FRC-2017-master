@@ -45,7 +45,7 @@ public class Shooter extends Subsystem {
         mRightMaster.reverseOutput(false);
         mRightMaster.enableBrakeMode(false);
         mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
-        mRightMaster.SetVelocityMeasurementWindow(4);
+        mRightMaster.SetVelocityMeasurementWindow(32);
         mRightMaster.setNominalClosedLoopVoltage(12);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =

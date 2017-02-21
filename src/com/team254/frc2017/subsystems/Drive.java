@@ -360,6 +360,7 @@ public class Drive extends Subsystem {
     private void updateTurnToHeading(double timestamp) {
         if (Superstructure.getInstance().isShooting()) {
             updateVelocitySetpoint(0.0, 0.0);
+            return;
         }
         final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
                 .getLatestFieldToVehicle();
