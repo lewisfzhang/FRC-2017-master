@@ -1,12 +1,10 @@
 package com.team254.frc2017.pixy;
 
-import java.util.ArrayList;
-
 import com.team254.lib.util.CrashTrackingRunnable;
 import com.team254.lib.util.pixy.Frame;
-import com.team254.lib.util.pixy.FrameAdjuster;
 import com.team254.lib.util.pixy.PixyCam;
-import com.team254.lib.util.pixy.constants.PixyNumberConstants;
+
+import java.util.ArrayList;
 
 public class PixyVisionServer {
 
@@ -15,7 +13,6 @@ public class PixyVisionServer {
     private static PixyVisionServer _instance;
     boolean mRunning = false;
     Thread mThread = null;
-    FrameAdjuster mAdjuster = null;
 
     /**
      * Gets the singleton <code>VisionServer</code> instance.
@@ -31,14 +28,13 @@ public class PixyVisionServer {
 
 
     private PixyCam pixy;
-    private ArrayList<VisionUpdateListener> listeners = new ArrayList<>();
+    private ArrayList<PixyUpdateListener> listeners = new ArrayList<>();
 
     /**
      * Initializes the PixyCam and starts a new thread to poll it for data.
      */
     private PixyVisionServer() {
         pixy = new PixyCam();
-        mAdjuster = new FrameAdjuster(PixyNumberConstants.getThisRobotConstants());
     }
 
     public void start() {
@@ -54,8 +50,7 @@ public class PixyVisionServer {
                     // get a Frame from the pixy (if available)
                     Frame frame = pixy.getFrame();
                     if (frame != null) {
-                        mAdjuster.adjustFrame(frame);
-                        for (VisionUpdateListener l : listeners) {
+                        for (PixyUpdateListener l : listeners) {
                             l.onUpdate(frame); // TODO: pass the update
                         }
                     }
@@ -83,7 +78,7 @@ public class PixyVisionServer {
      * @param listener – the listener
      * @throws IllegalArgumentException if <code>listener</code> is <code>null</code>
      */
-    public void addListener(VisionUpdateListener listener) {
+    public void addListener(PixyUpdateListener listener) {
         if (listener == null) throw new IllegalArgumentException("Cannot add a null listener!");
         listeners.add(listener);
     }

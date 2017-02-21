@@ -1,7 +1,5 @@
 package com.team254.lib.util.pixy;
 
-import java.util.*;
-
 import edu.wpi.first.wpilibj.SPI;
 
 public class PeekableSPI {
@@ -80,29 +78,4 @@ public class PeekableSPI {
             hex = "0" + hex;
         return hex;
     }
-
-//    public static void visualizeBytes(List<Integer> byteStream) {
-//        System.out.println(byteStream.size() + " bytes:");
-//        int numZeros = 0;
-//        for (int i : byteStream) {
-//            if (i == 0) {
-//                numZeros++;
-//            } else {
-//                if (numZeros > 5)
-//                    System.out.println("\n---- " + numZeros + " ZEROS ----");
-//                else
-//                    for (; numZeros > 0; numZeros--)
-//                        System.out.print("00 ");
-//                numZeros = 0;
-//                System.out.print(hexByte(i) + " ");
-//            }
-//        }
-//        if (numZeros > 5)
-//            System.out.println("\n---- " + numZeros + " ZEROS ----");
-//        else
-//            for (; numZeros > 0; numZeros--)
-//                System.out.print("00 ");
-//        System.out.println();
-//    }
-
 }

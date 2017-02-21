@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj.SPI;
 public class PixyCam {
 
     private Frame mCurrentFrame;
+    private PeekableSPI pspi;
+    private int frameCount = 0;
+    private List<Frame.Block> blocksRead = new ArrayList<>();
+    private boolean wasFrameBoundary = false;
 
     public PixyCam() {
         this(500000, SPI.Port.kOnboardCS0);
@@ -119,10 +123,4 @@ public class PixyCam {
     public String toString() {
         return "{ frameCount: " + frameCount + " }";
     }
-
-    private PeekableSPI pspi;
-    private int frameCount = 0;
-    private List<Frame.Block> blocksRead = new ArrayList<>();
-    private boolean wasFrameBoundary = false;
-
 }
