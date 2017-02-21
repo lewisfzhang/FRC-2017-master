@@ -19,8 +19,10 @@ public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
 
     // Target parameters
-    public static double kBoilerTargetTopHeight = 86.0; // TODO: Verify
-    public static double kBoilerRadius = 9.0;  // TODO: Verify
+    // Source of current values: https://firstfrc.blob.core.windows.net/frc2017/Manual/2017FRCGameSeasonManual.pdf
+    // Section 3.13
+    public static double kBoilerTargetTopHeight = 88.0;  // TODO: Verify on field and in field drawings
+    public static double kBoilerRadius = 7.5;  // TODO: Verify on field and in field drawings
 
     public enum RobotName {
         COMP_BOT, PRAC_BOT, PROG_BOT
