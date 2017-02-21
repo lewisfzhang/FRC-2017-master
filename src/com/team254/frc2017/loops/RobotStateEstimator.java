@@ -37,11 +37,11 @@ public class RobotStateEstimator implements Loop {
         double left_distance = drive_.getLeftDistanceInches();
         double right_distance = drive_.getRightDistanceInches();
         Rotation2d gyro_angle = drive_.getGyroAngle();
-        RigidTransform2d odometry = robot_state_.generateOdometryFromSensors(
+        RigidTransform2d.Delta odometry_velocity = robot_state_.generateOdometryFromSensors(
                 left_distance - left_encoder_prev_distance_, right_distance - right_encoder_prev_distance_, gyro_angle);
-        RigidTransform2d.Delta velocity = Kinematics.forwardKinematics(drive_.getLeftVelocityInchesPerSec(),
+        RigidTransform2d.Delta predicted_velocity = Kinematics.forwardKinematics(drive_.getLeftVelocityInchesPerSec(),
                 drive_.getRightVelocityInchesPerSec());
-        robot_state_.addObservations(timestamp, odometry, velocity);
+        robot_state_.addObservations(timestamp, odometry_velocity, predicted_velocity);
         left_encoder_prev_distance_ = left_distance;
         right_encoder_prev_distance_ = right_distance;
     }

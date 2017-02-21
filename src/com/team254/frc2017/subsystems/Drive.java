@@ -8,7 +8,6 @@ import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import com.team254.frc2017.paths.GearToHopperBlue;
 import com.team254.lib.util.*;
 import com.team254.lib.util.motion.HeadingProfileFollower;
 import com.team254.lib.util.motion.MotionProfileConstraints;
@@ -351,11 +350,11 @@ public class Drive extends Subsystem {
     }
 
     public synchronized double getGyroVelocity() {
-        return -mNavXBoard.getRate() * 180.0 / Math.PI;
+        return mRobotState.getMeasuredVelocity().dtheta * 180.0 / Math.PI;
     }
 
     private void updateGoalHeading(double timestamp) {
-        Optional<ShooterAimingParameters> aim = RobotState.getInstance().getAimingParameters(timestamp, true);
+        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
         if (aim.isPresent()) {
             mTargetHeading = aim.get().getRobotToGoalInField();
         }
@@ -387,9 +386,9 @@ public class Drive extends Subsystem {
     }
 
     private void updatePathFollower(double timestamp) {
-        RigidTransform2d robot_pose = RobotState.getInstance().getLatestFieldToVehicle().getValue();
+        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
         RigidTransform2d.Delta command = mPathFollower.update(timestamp, robot_pose,
-                RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getVelocity().dx);
+                RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getMeasuredVelocity().dx);
         if (!mPathFollower.isFinished()) {
             Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
             updateVelocitySetpoint(setpoint.left, setpoint.right);
