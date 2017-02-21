@@ -94,7 +94,9 @@ public class Drive extends Subsystem {
                     }
                     return;
                 case AIM_TO_GOAL:
-                    updateGoalHeading(timestamp);
+                    if (!Superstructure.getInstance().isShooting()) {
+                        updateGoalHeading(timestamp);
+                    }
                     // fallthrough intended
                 case TURN_TO_HEADING:
                     updateTurnToHeading(timestamp);
@@ -232,6 +234,7 @@ public class Drive extends Subsystem {
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getPosition());
         SmartDashboard.putNumber("gyro vel", getGyroVelocity());
         SmartDashboard.putNumber("gyro pos", getGyroAngle().getDegrees());
+        SmartDashboard.putBoolean("drive on target", isOnTarget());
     }
 
     public synchronized void resetEncoders() {
@@ -355,12 +358,18 @@ public class Drive extends Subsystem {
     }
 
     private void updateTurnToHeading(double timestamp) {
+        if (Superstructure.getInstance().isShooting()) {
+            updateVelocitySetpoint(0.0, 0.0);
+        }
         final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
                 .getLatestFieldToVehicle();
         final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
         final double t_observation = latest_field_to_robot.getKey().value;
+        final double target_heading = mTargetHeading.getDegrees();
+        final double kGoalPosTolerance = 0.75;
+        final double kGoalVelTolerance = 5.0;
         mProfileFollower.setGoal(
-                new MotionProfileGoal(mTargetHeading.getDegrees(), 0.0, CompletionBehavior.OVERSHOOT, 1.0, 5.0));
+                new MotionProfileGoal(target_heading, 0.0, CompletionBehavior.OVERSHOOT, kGoalPosTolerance, kGoalVelTolerance));
         final MotionState motion_state = new MotionState(t_observation, field_to_robot.getRotation().getDegrees(),
                 getGyroVelocity(), 0.0);
         final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
@@ -395,6 +404,7 @@ public class Drive extends Subsystem {
 
     public synchronized void setWantAimToGoal() {
         if (mDriveControlState != DriveControlState.AIM_TO_GOAL) {
+            mIsOnTarget = false;
             // We aim in low gear.
             configureTalonsForSpeedControl(false);
             resetProfileGains();
@@ -409,6 +419,7 @@ public class Drive extends Subsystem {
 
     public synchronized void setWantTurnToHeading(Rotation2d heading) {
         if (mDriveControlState != DriveControlState.TURN_TO_HEADING) {
+            mIsOnTarget = false;
             configureTalonsForSpeedControl(false);
             resetProfileGains();
             mProfileFollower.resetProfile();

@@ -18,7 +18,9 @@ import java.util.HashMap;
 public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
 
-    public static double kCenterOfTargetHeight = 100; // TODO: Fix
+    // Target parameters
+    public static double kBoilerTargetTopHeight = 86.0; // TODO: Verify
+    public static double kBoilerRadius = 9.0;  // TODO: Verify
 
     public enum RobotName {
         COMP_BOT, PRAC_BOT, PROG_BOT
@@ -43,7 +45,7 @@ public class Constants extends ConstantsBase {
     public static double kOnTargetErrorThreshold = 3.0;
 
     // Voltages
-    public static double kIntakeVoltage = 9.0;
+    public static double kIntakeVoltage = 7.5;
 
 
     // CONTROL LOOP GAINS
@@ -72,30 +74,31 @@ public class Constants extends ConstantsBase {
     public static double kDriveTurnKi = 1.5;
     public static double kDriveTurnKv = 0.0;
     public static double kDriveTurnKffv = 1.0;
-    public static double kDriveTurnKffa = 0.05;
+    public static double kDriveTurnKffa = 0.0;
     public static double kDriveTurnMaxVel = 360.0;
-    public static double kDriveTurnMaxAcc = 360.0;
-
-    public static double kDriveTurnSimpleKp = 2.0;
+    public static double kDriveTurnMaxAcc = 720.0;
 
 
     // SHOOTER GAINS
-    public static double kShooterTalonKP = 0.015;
-    public static double kShooterTalonKI = 5.0e-6;
-    public static double kShooterTalonKD = 0;
-    public static double kShooterTalonKF = 0.0228;
+    public static double kShooterTalonKP = 0.02;
+    public static double kShooterTalonKI = 0.00004;
+    public static double kShooterTalonKD = 0.0;
+    public static double kShooterTalonKF = 0.02;
     public static double kShooterRampRate = 60.0;
 
     public static double kShooterSetpointDeadbandRpm = 1.0;
-    public static double kShooterAllowableErrorRpm = 50;
+    public static double kShooterAllowableErrorRpm = 150.0;
 
     // Feeder gains
     public static double kFeederKP = 0;
     public static double kFeederKI = 0;
     public static double kFeederKD = 0;
     public static double kFeederKF = 0.008;
-    public static double kFeederRampRate = 240.0;
+    public static double kFeederRampRate = 90.0;
     public static double kFeederFeedSpeedRpm = 12e3;
+    
+    // Hopper gains
+    public static double kHopperRampRate = 24.0;
     
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
@@ -155,7 +158,7 @@ public class Constants extends ConstantsBase {
 
 
     // Goal tracker constants
-    public static double kMaxGoalTrackAge = 0.3;
+    public static double kMaxGoalTrackAge = 1.0;
     public static double kMaxTrackerDistance = 18.0;
     public static double kCameraFrameRate = 30.0;
     public static double kTrackReportComparatorStablityWeight = 1.0;
@@ -163,10 +166,10 @@ public class Constants extends ConstantsBase {
 
     // Robot state
     // Pose of the camera frame w.r.t. the robot frame
-    public static double kCameraXOffset = -3.35;
+    public static double kCameraXOffset = -3.3211;
     public static double kCameraYOffset = 0.0;
-    public static double kCameraZOffset = 21;
-    public static double kCameraPitchAngleDegrees = 26.5;
+    public static double kCameraZOffset = 20.9;
+    public static double kCameraPitchAngleDegrees = 30.0;
     public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
 
@@ -177,9 +180,17 @@ public class Constants extends ConstantsBase {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
 
     static {
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(10.),
-                new InterpolatingDouble(4500.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(20.),
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(105.),
+                new InterpolatingDouble(3800.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(115.),
+                new InterpolatingDouble(4000.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(125.),
+                new InterpolatingDouble(4100.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(135.),
+                new InterpolatingDouble(4200.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(145.),
+                new InterpolatingDouble(4300.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(155.),
                 new InterpolatingDouble(4500.));
     }
 

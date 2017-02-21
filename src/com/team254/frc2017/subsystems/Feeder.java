@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Feeder extends Subsystem {
     private static final double kReversing = -1.0;
-    private static final double kUnjamInPeriod = .1 * kReversing;
-    private static final double kUnjamOutPeriod = .2 * kReversing;
+    private static final double kUnjamInPeriod = .2 * kReversing;
+    private static final double kUnjamOutPeriod = .4 * kReversing;
     private static final double kUnjamInPower = 6.0 * kReversing;
     private static final double kUnjamOutPower = -6.0 * kReversing;
-    private static final double kFeedVoltage = 8.0;
+    private static final double kFeedVoltage = 10.0;
     private static final double kExhaustVoltage = kFeedVoltage * kReversing;
 
     private static Feeder sInstance = null;

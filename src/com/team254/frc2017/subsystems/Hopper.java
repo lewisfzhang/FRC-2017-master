@@ -10,7 +10,7 @@ public class Hopper extends Subsystem {
     private static final double kUnjamOutPeriod = .2;
     private static final double kUnjamInPower = .5;
     private static final double kUnjamOutPower = -.5;
-    private static final double kFeedPower = 1.0;
+    private static final double kFeedPower = 0.75;
 
     private static Hopper sInstance = null;
     public static Hopper getInstance() {
@@ -178,7 +178,7 @@ public class Hopper extends Subsystem {
     private Hopper() {
         mMasterTalon = new CANTalon(Constants.kHopperMasterId);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-        mMasterTalon.setVoltageRampRate(Constants.kFeederRampRate);
+        mMasterTalon.setVoltageRampRate(Constants.kHopperRampRate);
 
         mSlaveTalon = new CANTalon(Constants.kHopperSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);

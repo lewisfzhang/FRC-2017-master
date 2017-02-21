@@ -77,7 +77,7 @@ public class RobotState {
     goal_tracker_ = new GoalTracker();
     camera_pitch_correction_ = Rotation2d.fromDegrees(-Constants.kCameraPitchAngleDegrees);
     camera_yaw_correction_ = Rotation2d.fromDegrees(-Constants.kCameraYawAngleDegrees);
-    differential_height_ = Constants.kCenterOfTargetHeight - Constants.kCameraZOffset;
+    differential_height_ = Constants.kBoilerTargetTopHeight - Constants.kCameraZOffset;
     distance_driven_ = 0.0;
   }
 
@@ -139,7 +139,7 @@ public class RobotState {
         // find intersection with the goal
         if (zr > 0) {
           double scaling = differential_height_ / zr;
-          double distance = Math.hypot(xr, yr) * scaling;
+          double distance = Math.hypot(xr, yr) * scaling + Constants.kBoilerRadius;
           Rotation2d angle = new Rotation2d(xr, yr, true);
           field_to_goals.add(field_to_camera
                   .transformBy(RigidTransform2d
@@ -152,15 +152,19 @@ public class RobotState {
       goal_tracker_.update(timestamp, field_to_goals);
     }
   }
+  
+  public synchronized Optional<ShooterAimingParameters> getCachedAimingParameters() {
+      return cached_shooter_aiming_params_ == null ? Optional.empty() : Optional.of(cached_shooter_aiming_params_);
+  }
 
-  public Optional<ShooterAimingParameters> getAimingParameters(double currentTimestamp, boolean forceUpdate) {
+  public synchronized Optional<ShooterAimingParameters> getAimingParameters(double currentTimestamp, boolean forceUpdate) {
     if (forceUpdate) {
       cached_shooter_aiming_params_ = null;
     }
     return getAimingParameters(currentTimestamp);
   }
 
-  public Optional<ShooterAimingParameters> getAimingParameters(double currentTimestamp) {
+  public synchronized Optional<ShooterAimingParameters> getAimingParameters(double currentTimestamp) {
     if (cached_shooter_aiming_params_ != null && (currentTimestamp - cached_shooter_aiming_params_ts_ < kCacheTime)) {
       return Optional.of(cached_shooter_aiming_params_);
     }
@@ -213,6 +217,14 @@ public class RobotState {
       SmartDashboard.putNumber("goal_pose_x", pose.getTranslation().getX());
       SmartDashboard.putNumber("goal_pose_y", pose.getTranslation().getY());
       break;
+    }
+    Optional<ShooterAimingParameters> aiming_params = getCachedAimingParameters();
+    if (aiming_params.isPresent()) {
+        SmartDashboard.putNumber("goal_range", aiming_params.get().getRange());
+        SmartDashboard.putNumber("goal_theta", aiming_params.get().getRobotToGoalInField().getDegrees());
+    } else {
+        SmartDashboard.putNumber("goal_range", 0.0);
+        SmartDashboard.putNumber("goal_theta", 0.0);
     }
   }
 }

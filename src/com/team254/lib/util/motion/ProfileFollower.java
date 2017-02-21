@@ -142,7 +142,7 @@ public class ProfileFollower {
         // Calculate the feedforward and proportional terms.
         double output = mKp * mLatestPosError + mKv * mLatestVelError + mKffv * mLatestSetpoint.motion_state.vel()
                 + (Double.isNaN(mLatestSetpoint.motion_state.acc()) ? 0.0 : mKffa * mLatestSetpoint.motion_state.acc());
-        if (output >= mMinOutput && output <= mMaxOutput && isFinishedProfile()) {
+        if (output >= mMinOutput && output <= mMaxOutput) {
             // Update integral.
             mTotalError += mLatestPosError * dt;
             output += mKi * mTotalError;

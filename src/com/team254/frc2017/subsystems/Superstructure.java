@@ -6,6 +6,8 @@ import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.InterpolatingDouble;
+
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,36 +30,34 @@ public class Superstructure extends Subsystem {
     private final Intake mIntake = Intake.getInstance();
     private final Hopper mHopper = Hopper.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
+    private final Compressor mCompressor = new Compressor(0);
 
     // Superstructure doesn't own the drive, but needs to access it
     private final Drive mDrive = Drive.getInstance();
 
     // Intenal state of the system
     public enum SystemState {
-        IDLE,
-        WAITING_FOR_AIM,
-        SHOOTING,
-        UNJAMMING,
-        UNJAMMING_WITH_SHOOT,
-        JUST_FEED,
-        EXHAUSTING
+        IDLE, WAITING_FOR_AIM, SHOOTING, UNJAMMING, UNJAMMING_WITH_SHOOT, JUST_FEED, EXHAUSTING
     };
 
     // Desired function from user
     public enum WantedState {
-        IDLE,
-        SHOOT,
-        UNJAM,
-        UNJAM_SHOOT,
-        MANUAL_FEED,
-        EXHAUST,
+        IDLE, SHOOT, UNJAM, UNJAM_SHOOT, MANUAL_FEED, EXHAUST,
     }
 
-    private SystemState  mSystemState = SystemState.IDLE;
+    private SystemState mSystemState = SystemState.IDLE;
     private WantedState mWantedState = WantedState.IDLE;
 
     public boolean isOnTargetToShoot() {
         return mDrive.isOnTarget() && mShooter.isOnTarget();
+    }
+
+    public boolean isOnTargetToKeepShooting() {
+        return true;
+    }
+
+    public synchronized boolean isShooting() {
+        return mSystemState == SystemState.SHOOTING;
     }
 
     private Loop mLoop = new Loop() {
@@ -77,8 +77,9 @@ public class Superstructure extends Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
-            SystemState newState = mSystemState;
-            switch (mSystemState) {
+            synchronized (Superstructure.this) {
+                SystemState newState = mSystemState;
+                switch (mSystemState) {
                 case IDLE:
                     newState = handleIdle(mStateChanged);
                     break;
@@ -102,17 +103,17 @@ public class Superstructure extends Subsystem {
                     break;
                 default:
                     newState = SystemState.IDLE;
-            }
+                }
 
-            if (newState != mSystemState) {
-                System.out.println("Superstructure state " + mSystemState + " to " + newState);
-                mSystemState = newState;
-                mCurrentStateStartTime = timestamp;
-                mStateChanged = true;
-            } else {
-                mStateChanged = false;
+                if (newState != mSystemState) {
+                    System.out.println("Superstructure state " + mSystemState + " to " + newState);
+                    mSystemState = newState;
+                    mCurrentStateStartTime = timestamp;
+                    mStateChanged = true;
+                } else {
+                    mStateChanged = false;
+                }
             }
-
         }
 
         @Override
@@ -127,140 +128,147 @@ public class Superstructure extends Subsystem {
         }
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
+        mCompressor.setClosedLoopControl(true);
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                return SystemState.WAITING_FOR_AIM;
-            case MANUAL_FEED:
-                return SystemState.JUST_FEED;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            return SystemState.WAITING_FOR_AIM;
+        case MANUAL_FEED:
+            return SystemState.JUST_FEED;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
     private SystemState handleWaitingForAim() {
         autoSpinShooter();
+        mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
         if (isOnTargetToShoot()) {
-           return SystemState.SHOOTING;
+            return SystemState.SHOOTING;
         }
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                return SystemState.WAITING_FOR_AIM;
-            case MANUAL_FEED:
-                return SystemState.JUST_FEED;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            return SystemState.WAITING_FOR_AIM;
+        case MANUAL_FEED:
+            return SystemState.JUST_FEED;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
     private SystemState handleShooting() {
         autoSpinShooter();
+        mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.FEED);
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                if (!isOnTargetToShoot()) {
-                    return SystemState.WAITING_FOR_AIM;
-                }
-                return SystemState.SHOOTING;
-            case MANUAL_FEED:
-                return SystemState.JUST_FEED;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            if (!isOnTargetToKeepShooting()) {
+                return SystemState.WAITING_FOR_AIM;
+            }
+            return SystemState.SHOOTING;
+        case MANUAL_FEED:
+            return SystemState.JUST_FEED;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
     private SystemState handleUnjammingWithShoot() {
         autoSpinShooter();
+        mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.UNJAM);
         mHopper.setWantedState(Hopper.WantedState.UNJAM);
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                return SystemState.WAITING_FOR_AIM;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            return SystemState.WAITING_FOR_AIM;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
     private SystemState handleUnjamming() {
         mShooter.stop();
+        mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.UNJAM);
         mHopper.setWantedState(Hopper.WantedState.UNJAM);
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                return SystemState.WAITING_FOR_AIM;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            return SystemState.WAITING_FOR_AIM;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
     private SystemState handleJustFeed() {
+        mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.FEED);
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                return SystemState.WAITING_FOR_AIM;
-            case MANUAL_FEED:
-                return SystemState.JUST_FEED;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            return SystemState.WAITING_FOR_AIM;
+        case MANUAL_FEED:
+            return SystemState.JUST_FEED;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
-    private  SystemState handleExhaust() {
+    private SystemState handleExhaust() {
+        mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.EXHAUST);
         mHopper.setWantedState(Hopper.WantedState.EXHAUST);
 
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                return SystemState.WAITING_FOR_AIM;
-            case MANUAL_FEED:
-                return SystemState.JUST_FEED;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            return SystemState.WAITING_FOR_AIM;
+        case MANUAL_FEED:
+            return SystemState.JUST_FEED;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
 
     }
@@ -269,17 +277,20 @@ public class Superstructure extends Subsystem {
         return Constants.kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(range)).value;
     }
 
-    public void autoSpinShooter() {
-        final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance().getAimingParameters(Timer.getFPGATimestamp());
+    public synchronized void autoSpinShooter() {
+        final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
+                .getAimingParameters(Timer.getFPGATimestamp());
         if (aimOptional.isPresent()) {
             final ShooterAimingParameters aim = aimOptional.get();
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(aim.getRange()));
+        } else if (Superstructure.getInstance().isShooting()) {
+            // Keep the previous setpoint.
         } else {
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
         }
     }
 
-    public void setWantedState(WantedState wantedState) {
+    public synchronized void setWantedState(WantedState wantedState) {
         mWantedState = wantedState;
     }
 
@@ -293,7 +304,6 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-
     }
 
     @Override

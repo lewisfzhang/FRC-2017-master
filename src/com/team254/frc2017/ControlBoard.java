@@ -42,7 +42,7 @@ public class ControlBoard {
     }
 
     public boolean getAimButton() {
-        return mButtonBoard.getRawButton(10);
+        return mButtonBoard.getRawButton(10) || mThrottleStick.getRawButton(2);
     }
 
     public boolean getDriveAimButton() {
@@ -55,7 +55,7 @@ public class ControlBoard {
     }
 
     public boolean getIntakeButton() {
-        return mButtonBoard.getRawAxis(2) < -0.1;
+        return mButtonBoard.getRawAxis(2) < -0.1 || mTurnStick.getRawButton(2);
     }
 
     public boolean getIntakeSwitch() {

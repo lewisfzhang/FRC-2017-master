@@ -39,13 +39,13 @@ public class Shooter extends Subsystem {
     private Shooter() {
         mRightMaster = new CANTalon(Constants.kRightShooterMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 2);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mRightMaster.reverseSensor(true);
         mRightMaster.reverseOutput(false);
         mRightMaster.enableBrakeMode(false);
-        mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_2Ms);
-        mRightMaster.SetVelocityMeasurementWindow(1);
+        mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
+        mRightMaster.SetVelocityMeasurementWindow(4);
         mRightMaster.setNominalClosedLoopVoltage(12);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =
@@ -76,6 +76,9 @@ public class Shooter extends Subsystem {
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("shooter_speed_talon", getSpeedRpm());
+        SmartDashboard.putNumber("shooter_speed_error", mRightMaster.getSetpoint() - getSpeedRpm());
+
+        SmartDashboard.putBoolean("shooter on target", isOnTarget());
         // SmartDashboard.putNumber("shooter_talon_position", mRightMaster.getPosition());
         // SmartDashboard.putNumber("shooter_talon_enc_position", mRightMaster.getEncPosition());
     }
@@ -152,6 +155,7 @@ public class Shooter extends Subsystem {
 
     public boolean isOnTarget() {
         // HACKS
-        return getSpeedRpm() > 1000; //Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, Constants.kShooterAllowableErrorRpm);
+        //return getSpeedRpm() > 1000;
+        return Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, Constants.kShooterAllowableErrorRpm);
     }
 }
