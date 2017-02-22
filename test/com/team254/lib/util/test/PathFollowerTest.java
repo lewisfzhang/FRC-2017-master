@@ -54,7 +54,7 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(114, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance*3);
+        assertEquals(114, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance );
         assertEquals(109, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*3);
     }
 

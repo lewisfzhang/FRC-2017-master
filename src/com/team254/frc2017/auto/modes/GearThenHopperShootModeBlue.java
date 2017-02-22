@@ -3,6 +3,7 @@ package com.team254.frc2017.auto.modes;
 import java.util.Arrays;
 
 import com.team254.frc2017.Constants;
+import com.team254.frc2017.RobotState;
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.AutoModeEndedException;
 import com.team254.frc2017.auto.actions.Action;
@@ -26,7 +27,8 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
         PathContainer gearPath = new StartToGearBlue();
         runAction(new ResetPoseFromPathAction(gearPath));
         runAction(new DrivePathAction(gearPath));
-        runAction(new WaitAction(0.5));
+        System.out.println(RobotState.getInstance().getLatestFieldToVehicle());
+        runAction(new WaitAction(0.25));
         Constants.kAutoLookAhead = 24.0;
         runAction(
                 new ParallelAction(Arrays.asList(new Action[]{

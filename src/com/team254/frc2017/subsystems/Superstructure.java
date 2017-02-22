@@ -30,6 +30,7 @@ public class Superstructure extends Subsystem {
     private final Shooter mShooter = Shooter.getInstance();
     private final Compressor mCompressor = new Compressor(0);
     private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
+    private boolean mIsTeleop = false;
 
     // Superstructure doesn't own the drive, but needs to access it
     private final Drive mDrive = Drive.getInstance();
@@ -47,6 +48,10 @@ public class Superstructure extends Subsystem {
     private SystemState mSystemState = SystemState.IDLE;
     private WantedState mWantedState = WantedState.IDLE;
 
+    public synchronized void isTeleop(boolean teleop) {
+        mIsTeleop = teleop;
+    }
+    
     public boolean isOnTargetToShoot() {
         return mDrive.isOnTarget() && mShooter.isOnTarget();
     }
@@ -130,7 +135,7 @@ public class Superstructure extends Subsystem {
         }
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
-        mCompressor.setClosedLoopControl(true);
+        mCompressor.setClosedLoopControl(mIsTeleop);
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;

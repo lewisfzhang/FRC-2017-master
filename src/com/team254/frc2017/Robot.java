@@ -70,6 +70,7 @@ public class Robot extends IterativeRobot {
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
+            mSuperstructure.isTeleop(false);
 
             // initialize robot constants
             RobotName name = Constants.getRobotName();
@@ -110,6 +111,8 @@ public class Robot extends IterativeRobot {
             mDrive.setBrakeMode(true);
 
             mEnabledLooper.start();
+            mSuperstructure.reloadConstants();
+            mSuperstructure.isTeleop(false);
             zeroAllSensors();
 
             mAutoModeExecuter = new AutoModeExecuter();
@@ -143,6 +146,7 @@ public class Robot extends IterativeRobot {
             mDrive.setHighGear(true);
             zeroAllSensors();
             mSuperstructure.reloadConstants();
+            mSuperstructure.isTeleop(true);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;

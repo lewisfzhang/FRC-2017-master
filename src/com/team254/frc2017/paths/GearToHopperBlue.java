@@ -16,7 +16,7 @@ public class GearToHopperBlue implements PathContainer {
         sWaypoints.add(new Waypoint(114,214,0,0)); //dat gear doe
         sWaypoints.add(new Waypoint(150,250,12,100));
         sWaypoints.add(new Waypoint(130,293,4,100, "DeployIntake"));
-        sWaypoints.add(new Waypoint(91,301,0,100));
+        sWaypoints.add(new Waypoint(91.5,301,0,100));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
