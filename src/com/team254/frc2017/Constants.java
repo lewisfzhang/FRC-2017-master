@@ -152,7 +152,9 @@ public class Constants extends ConstantsBase {
     public static int kAndroidAppTcpPort = 8254;
 
     //PATH FOLLOWING
-    public static double kAutoLookAhead = 15.0; //inches
+    public static double kAutoLookAhead = 15.0; // inches
+    public static double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain * our speed
+                                                     // in inches per sec
     public static double kSegmentCompletionTolerance = 1.0; //inches
     public static double kPathFollowingMaxAccel = 80.0; //inches per second^2
     public static double kPathFollowingMaxVel = 120.0; //inches per second

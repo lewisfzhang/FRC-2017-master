@@ -7,19 +7,15 @@ import org.junit.Test;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.paths.GearToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
-import com.team254.frc2017.paths.StartToGear;
 import com.team254.frc2017.paths.StartToGearBlue;
 import com.team254.frc2017.paths.StartToGearRed;
-import com.team254.frc2017.paths.TestArcPath;
-import com.team254.lib.util.Path;
 import com.team254.lib.util.PathFollower;
 import com.team254.lib.util.RigidTransform2d;
-import com.team254.lib.util.Rotation2d;
-import com.team254.lib.util.Translation2d;
 
 public class PathFollowerTest {
 
     static final PathFollower.Parameters kParameters = new PathFollower.Parameters(16.0, // Fixed lookahead
+            0.0, // Inertia gain
             0.0, // Profile kp
             0.0, // Profile ki
             0.0, // Profile kv

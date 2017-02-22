@@ -14,6 +14,7 @@ import com.team254.lib.util.motion.ProfileFollower;
 public class PathFollower {
     public static class Parameters {
         public final double fixed_lookahead;
+        public final double inertia_gain;
         public final double profile_kp;
         public final double profile_ki;
         public final double profile_kv;
@@ -23,10 +24,11 @@ public class PathFollower {
         public final double profile_max_abs_acc;
         public final double dt;
 
-        public Parameters(double fixed_lookahead, double profile_kp, double profile_ki, double profile_kv,
-                double profile_kffv, double profile_kffa, double profile_max_abs_vel, double profile_max_abs_acc,
-                double dt) {
+        public Parameters(double fixed_lookahead, double inertia_gain, double profile_kp, double profile_ki,
+                double profile_kv, double profile_kffv, double profile_kffa, double profile_max_abs_vel,
+                double profile_max_abs_acc, double dt) {
             this.fixed_lookahead = fixed_lookahead;
+            this.inertia_gain = inertia_gain;
             this.profile_kp = profile_kp;
             this.profile_ki = profile_ki;
             this.profile_kv = profile_kv;
@@ -42,6 +44,7 @@ public class PathFollower {
     RigidTransform2d.Delta mLastSteeringDelta;
     ProfileFollower mVelocityController;
     final double mDt;
+    final double mInertiaGain;
 
     double mMaxProfileVel;
     double mMaxProfileAcc;
@@ -61,6 +64,7 @@ public class PathFollower {
         mMaxProfileVel = parameters.profile_max_abs_vel;
         mMaxProfileAcc = parameters.profile_max_abs_acc;
         mDt = parameters.dt;
+        mInertiaGain = parameters.inertia_gain;
     }
 
     /**
@@ -93,8 +97,10 @@ public class PathFollower {
         final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0),
                 t + mDt);
         mAlongTrackError = mVelocityController.getPosError();
-        final double scale = velocity_command / mLastSteeringDelta.dx;
-        return mLastSteeringDelta.scaled(scale);
+        final double linear_scale = velocity_command / mLastSteeringDelta.dx;
+        final double angular_scale = linear_scale * (1.0 + mInertiaGain * Math.abs(velocity_command));
+        return new RigidTransform2d.Delta(mLastSteeringDelta.dx * linear_scale, mLastSteeringDelta.dy * linear_scale,
+                mLastSteeringDelta.dtheta * angular_scale);
     }
 
     public double getCrossTrackError() {
@@ -108,7 +114,7 @@ public class PathFollower {
     public boolean isFinished() {
         return mSteeringController.isFinished() && mVelocityController.isFinishedProfile();
     }
-    
+
     public boolean hasPassedMarker(String marker) {
         return mSteeringController.hasPassedMarker(marker);
     }

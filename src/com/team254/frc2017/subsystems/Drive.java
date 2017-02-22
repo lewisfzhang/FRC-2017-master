@@ -438,10 +438,11 @@ public class Drive extends Subsystem {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             configureTalonsForSpeedControl(true);
             mPathFollower = new PathFollower(path, reversed,
-                    new PathFollower.Parameters(Constants.kAutoLookAhead, Constants.kPathFollowingProfileKp,
-                            Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
-                            Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
-                            Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kLooperDt));
+                    new PathFollower.Parameters(Constants.kAutoLookAhead, Constants.kInertiaSteeringGain,
+                            Constants.kPathFollowingProfileKp, Constants.kPathFollowingProfileKi,
+                            Constants.kPathFollowingProfileKv, Constants.kPathFollowingProfileKffv,
+                            Constants.kPathFollowingProfileKffa, Constants.kPathFollowingMaxVel,
+                            Constants.kPathFollowingMaxAccel, Constants.kLooperDt));
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         } else {
