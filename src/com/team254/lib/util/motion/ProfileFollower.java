@@ -133,7 +133,7 @@ public class ProfileFollower {
             mInitialState = prev_state;
         }
         final double dt = Math.max(0.0, t - prev_state.t());
-        mLatestSetpoint = mSetpointGenerator.getSetpoint(mConstraints, mGoal, prev_state, dt);
+        mLatestSetpoint = mSetpointGenerator.getSetpoint(mConstraints, mGoal, prev_state, t);
 
         // Update error.
         mLatestPosError = mLatestSetpoint.motion_state.pos() - latest_state.pos();

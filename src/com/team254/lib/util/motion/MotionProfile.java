@@ -88,6 +88,28 @@ public class MotionProfile {
         }
         return Optional.empty();
     }
+    
+    /**
+     * Get the interpolated MotionState at any given time, clamping to the endpoints if time is out of bounds.
+     * 
+     * @param t
+     *            The time to query.
+     * @return The MotionState at time t, or closest to it if t is outside the profile.
+     */
+    public MotionState stateByTimeClamped(double t) {
+        if (t < startTime()) {
+            return startState();
+        } else if (t > endTime()) {
+            return endState();
+        }
+        for (MotionSegment s : mSegments) {
+            if (s.containsTime(t)) {
+                return s.start().extrapolate(t);
+            }
+        }
+        // Should never get here.
+        return MotionState.kInvalidState;
+    }
 
     /**
      * Get the interpolated MotionState by distance (the "pos()" field of MotionState). Note that since a profile may

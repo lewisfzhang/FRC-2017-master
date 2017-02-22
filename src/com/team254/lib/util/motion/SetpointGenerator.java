@@ -51,13 +51,12 @@ public class SetpointGenerator {
      *            The goal to use.
      * @param prev_state
      *            The previous setpoint (or measured state of the system to do a reset).
-     * @param dt
-     *            Added to prev_state.t() to generate the returned Setpoint's time.
-     * @return The next Setpoint.
+     * @param t
+     *            The time to generate a setpoint for.
+     * @return The new Setpoint at time t.
      */
     public Setpoint getSetpoint(MotionProfileConstraints constraints, MotionProfileGoal goal, MotionState prev_state,
-            double dt) {
-        final double t = prev_state.t() + dt;
+            double t) {
         boolean regenerate = mConstraints == null || !mConstraints.equals(constraints) || mGoal == null
                 || !mGoal.equals(goal) || mProfile == null;
         if (!regenerate && !mProfile.isEmpty()) {

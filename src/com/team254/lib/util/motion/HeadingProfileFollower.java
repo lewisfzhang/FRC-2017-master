@@ -26,6 +26,7 @@ public class HeadingProfileFollower extends ProfileFollower {
                 mGoal.pos() + goal_rotation_inverse.rotateBy(Rotation2d.fromDegrees(latest_state.pos())).getDegrees(),
                 latest_state.vel(), latest_state.acc());
         double result = super.update(latest_state_unwrapped, t);
+        // Reset the integrator when we are close to the goal (encourage stiction!).
         if (Math.abs(latest_state_unwrapped.pos() - mGoal.pos()) < mGoal.pos_tolerance()) {
             result = 0.0;
             super.resetIntegral();

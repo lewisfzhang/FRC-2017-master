@@ -14,7 +14,7 @@ public class SetpointGeneratorTest {
         System.out.println("Start state: " + prev_state);
         int i = 0;
         for (; i < max_iterations; ++i) {
-            SetpointGenerator.Setpoint setpoint = spg.getSetpoint(constraints, goal, prev_state, dt);
+            SetpointGenerator.Setpoint setpoint = spg.getSetpoint(constraints, goal, prev_state, prev_state.t() + dt);
             prev_state = setpoint.motion_state;
             System.out.println(prev_state);
             if (setpoint.final_setpoint) {
