@@ -22,11 +22,10 @@ public class PathFollower {
         public final double profile_kffa;
         public final double profile_max_abs_vel;
         public final double profile_max_abs_acc;
-        public final double dt;
 
         public Parameters(double fixed_lookahead, double inertia_gain, double profile_kp, double profile_ki,
                 double profile_kv, double profile_kffv, double profile_kffa, double profile_max_abs_vel,
-                double profile_max_abs_acc, double dt) {
+                double profile_max_abs_acc) {
             this.fixed_lookahead = fixed_lookahead;
             this.inertia_gain = inertia_gain;
             this.profile_kp = profile_kp;
@@ -36,14 +35,12 @@ public class PathFollower {
             this.profile_kffa = profile_kffa;
             this.profile_max_abs_vel = profile_max_abs_vel;
             this.profile_max_abs_acc = profile_max_abs_acc;
-            this.dt = dt;
         }
     }
 
     AdaptivePurePursuitController mSteeringController;
     RigidTransform2d.Delta mLastSteeringDelta;
     ProfileFollower mVelocityController;
-    final double mDt;
     final double mInertiaGain;
 
     double mMaxProfileVel;
@@ -63,7 +60,6 @@ public class PathFollower {
                 new MotionProfileConstraints(parameters.profile_max_abs_vel, parameters.profile_max_abs_acc));
         mMaxProfileVel = parameters.profile_max_abs_vel;
         mMaxProfileAcc = parameters.profile_max_abs_acc;
-        mDt = parameters.dt;
         mInertiaGain = parameters.inertia_gain;
     }
 
@@ -78,7 +74,7 @@ public class PathFollower {
      *            The current robot displacement (total distance driven).
      * @param velocity
      *            The current robot velocity.
-     * @return The velocity command to apply until time t + dt.
+     * @return The velocity command to apply
      */
     public RigidTransform2d.Delta update(double t, RigidTransform2d pose, double displacement, double velocity) {
         if (!mSteeringController.isFinished()) {
@@ -95,10 +91,11 @@ public class PathFollower {
         }
 
         final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0),
-                t + mDt);
+                t);
         mAlongTrackError = mVelocityController.getPosError();
         final double linear_scale = velocity_command / mLastSteeringDelta.dx;
-        final double angular_scale = linear_scale * (1.0 + mInertiaGain * Math.abs(velocity_command));
+        final double abs_velocity_setpoint = Math.abs(mVelocityController.getSetpoint().vel());
+        final double angular_scale = linear_scale * (1.0 + mInertiaGain * abs_velocity_setpoint);
         return new RigidTransform2d.Delta(mLastSteeringDelta.dx * linear_scale, mLastSteeringDelta.dy * linear_scale,
                 mLastSteeringDelta.dtheta * angular_scale);
     }

@@ -22,8 +22,7 @@ public class PathFollowerTest {
             1.0, // Profile kffv
             0.0, // Profile kffa
             Constants.kPathFollowingMaxVel, // Profile max abs vel
-            Constants.kPathFollowingMaxAccel, // Profile max abs accel
-            0.01 // Profile dt
+            Constants.kPathFollowingMaxAccel  // Profile max abs accel
     );
 
     @Test
@@ -32,7 +31,7 @@ public class PathFollowerTest {
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
 
-        final double dt = kParameters.dt;
+        final double dt = 0.01;
 
         RigidTransform2d robot_pose = container.getStartPose();
         double t = 0;
@@ -54,7 +53,7 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(114, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance );
+        assertEquals(110, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance );
         assertEquals(109, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*3);
     }
 
@@ -63,7 +62,7 @@ public class PathFollowerTest {
         PathContainer container = new StartToGearBlue();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
-        final double dt = kParameters.dt;
+        final double dt = 0.01;;
 
         RigidTransform2d robot_pose = container.getStartPose();
         double t = 0;

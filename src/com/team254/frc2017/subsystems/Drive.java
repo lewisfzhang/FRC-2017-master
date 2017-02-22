@@ -442,7 +442,7 @@ public class Drive extends Subsystem {
                             Constants.kPathFollowingProfileKp, Constants.kPathFollowingProfileKi,
                             Constants.kPathFollowingProfileKv, Constants.kPathFollowingProfileKffv,
                             Constants.kPathFollowingProfileKffa, Constants.kPathFollowingMaxVel,
-                            Constants.kPathFollowingMaxAccel, Constants.kLooperDt));
+                            Constants.kPathFollowingMaxAccel));
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         } else {
