@@ -1,7 +1,6 @@
 package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
-import com.kauailabs.navx.frc.AHRS;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.Kinematics;
 import com.team254.frc2017.RobotState;
@@ -22,7 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public class Drive extends Subsystem {
 
@@ -53,7 +51,7 @@ public class Drive extends Subsystem {
     // Hardware
     private final CANTalon mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
     private final Solenoid mShifter;
-    private final AHRS mNavXBoard;
+    private final NavX mNavXBoard;
 
     // Controllers
     private RobotState mRobotState = RobotState.getInstance();
@@ -158,7 +156,7 @@ public class Drive extends Subsystem {
         setOpenLoop(DriveSignal.NEUTRAL);
 
         // Path Following stuff
-        mNavXBoard = new AHRS(SPI.Port.kMXP);
+        mNavXBoard = new NavX(SPI.Port.kMXP);
 
         // Force a CAN message across.
         mIsBrakeMode = true;
@@ -232,7 +230,7 @@ public class Drive extends Subsystem {
         }
         SmartDashboard.putNumber("left position (rotations)", mLeftMaster.getPosition());
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getPosition());
-        SmartDashboard.putNumber("gyro vel", getGyroVelocity());
+        SmartDashboard.putNumber("gyro vel", getGyroVelocityDegreesPerSec());
         SmartDashboard.putNumber("gyro pos", getGyroAngle().getDegrees());
         SmartDashboard.putBoolean("drive on target", isOnTarget());
     }
@@ -342,16 +340,16 @@ public class Drive extends Subsystem {
     }
 
     public synchronized Rotation2d getGyroAngle() {
-        return Rotation2d.fromDegrees(-mNavXBoard.getAngle());
+        return mNavXBoard.getYaw().inverse();
     }
 
     public synchronized void setGyroAngle(Rotation2d angle) {
         mNavXBoard.reset();
-        mNavXBoard.setAngleAdjustment(angle.getDegrees());
+        mNavXBoard.setAngleAdjustment(angle);
     }
 
-    public synchronized double getGyroVelocity() {
-        return mRobotState.getMeasuredVelocity().dtheta * 180.0 / Math.PI;
+    public synchronized double getGyroVelocityDegreesPerSec() {
+        return -mNavXBoard.getYawRateDegreesPerSec();
     }
 
     private void updateGoalHeading(double timestamp) {
@@ -376,7 +374,7 @@ public class Drive extends Subsystem {
         mProfileFollower.setGoal(new MotionProfileGoal(target_heading, 0.0, CompletionBehavior.OVERSHOOT,
                 kGoalPosTolerance, kGoalVelTolerance));
         final MotionState motion_state = new MotionState(t_observation, field_to_robot.getRotation().getDegrees(),
-                getGyroVelocity(), 0.0);
+                getGyroVelocityDegreesPerSec(), 0.0);
         final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
         mIsOnTarget = mProfileFollower.onTarget();
 
