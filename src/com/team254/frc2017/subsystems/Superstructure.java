@@ -6,13 +6,11 @@ import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.InterpolatingDouble;
-
+import com.team254.lib.util.RevRoboticsAirPressureSensor;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class Superstructure extends Subsystem {
@@ -31,6 +29,7 @@ public class Superstructure extends Subsystem {
     private final Hopper mHopper = Hopper.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
     private final Compressor mCompressor = new Compressor(0);
+    private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
 
     // Superstructure doesn't own the drive, but needs to access it
     private final Drive mDrive = Drive.getInstance();
@@ -131,7 +130,6 @@ public class Superstructure extends Subsystem {
         }
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
-        mShooter.stop();
         mCompressor.setClosedLoopControl(true);
         switch (mWantedState) {
         case UNJAM:
@@ -325,6 +323,7 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
+        SmartDashboard.putNumber("Air Pressure psi", mAirPressureSensor.getAirPressurePsi());
     }
 
     @Override
