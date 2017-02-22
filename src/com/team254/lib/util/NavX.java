@@ -13,8 +13,8 @@ public class NavX {
                 Object context) {
             synchronized (NavX.this) {
                 if (mLastSensorTimestampMs != kInvalidTimestamp && mLastSensorTimestampMs < sensor_timestamp) {
-                    mYawRateDegreesPerSecond = (update.yaw - mYawDegrees)
-                            / (1000.0 * (sensor_timestamp - mLastSensorTimestampMs));
+                    mYawRateDegreesPerSecond = 1000.0 * (update.yaw - mYawDegrees)
+                            / (double)(sensor_timestamp - mLastSensorTimestampMs);
                 }
                 mLastSensorTimestampMs = sensor_timestamp;
                 mYawDegrees = update.yaw;
