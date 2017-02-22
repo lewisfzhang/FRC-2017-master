@@ -5,7 +5,7 @@ import com.team254.lib.util.Rotation2d;
 
 /**
  * Provides forward and inverse kinematics equations for the robot modeling the wheelbase as a differential drive (with
- * a corrective factor to account for the inherent skidding of the center 4 wheels quasi-kinematically).
+ * a corrective factor to account for skidding).
  */
 
 public class Kinematics {

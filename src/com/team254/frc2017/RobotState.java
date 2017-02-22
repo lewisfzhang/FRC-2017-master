@@ -21,9 +21,9 @@ import java.util.Optional;
  *
  * 2. Vehicle frame: origin is the center of the robot wheelbase, facing forwards
  *
- * 3. Camera frame: origin is the center of the camera imager relative to the robot base. This is a constant.
+ * 3. Camera frame: origin is the center of the camera imager relative to the robot base.
  *
- * 4. Goal frame: origin is the center of the goal (note that orientation in this frame is arbitrary). Also note that
+ * 4. Goal frame: origin is the center of the boiler (note that orientation in this frame is arbitrary). Also note that
  * there can be multiple goal frames.
  *
  * As a kinematic chain with 4 frames, there are 3 transforms of interest:
