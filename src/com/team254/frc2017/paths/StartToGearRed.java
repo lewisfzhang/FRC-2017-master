@@ -14,9 +14,11 @@ public class StartToGearRed implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(16,89,0,0));
-        sWaypoints.add(new Waypoint(85,89,0,120));
-        sWaypoints.add(new Waypoint(104.5,89,0,40));
-        sWaypoints.add(new Waypoint(114,109,0,40));
+        sWaypoints.add(new Waypoint(94,89,12,80));
+        sWaypoints.add(new Waypoint(110,109,0,80));
+//        sWaypoints.add(new Waypoint(85,89,0,120));
+//        sWaypoints.add(new Waypoint(104.5,89,0,40));
+//        sWaypoints.add(new Waypoint(114,109,0,40));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
