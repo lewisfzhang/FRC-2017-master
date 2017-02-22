@@ -340,7 +340,7 @@ public class Drive extends Subsystem {
     }
 
     public synchronized Rotation2d getGyroAngle() {
-        return mNavXBoard.getYaw().inverse();
+        return mNavXBoard.getYaw();
     }
 
     public synchronized void setGyroAngle(Rotation2d angle) {
@@ -349,7 +349,7 @@ public class Drive extends Subsystem {
     }
 
     public synchronized double getGyroVelocityDegreesPerSec() {
-        return -mNavXBoard.getYawRateDegreesPerSec();
+        return mNavXBoard.getYawRateDegreesPerSec();
     }
 
     private void updateGoalHeading(double timestamp) {

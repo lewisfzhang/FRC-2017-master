@@ -12,12 +12,13 @@ public class NavX {
         public void timestampedDataReceived(long system_timestamp, long sensor_timestamp, AHRSUpdateBase update,
                 Object context) {
             synchronized (NavX.this) {
+                // This handles the fact that the sensor is inverted from our coordinate conventions.
                 if (mLastSensorTimestampMs != kInvalidTimestamp && mLastSensorTimestampMs < sensor_timestamp) {
-                    mYawRateDegreesPerSecond = 1000.0 * (update.yaw - mYawDegrees)
+                    mYawRateDegreesPerSecond = 1000.0 * (mYawDegrees - update.yaw)
                             / (double)(sensor_timestamp - mLastSensorTimestampMs);
                 }
                 mLastSensorTimestampMs = sensor_timestamp;
-                mYawDegrees = update.yaw;
+                mYawDegrees = -update.yaw;
             }
         }
     }
