@@ -1,2 +1,2 @@
 start dashboard.html
-C:/Python27/python dash.py 10.2.54.2
+C:/Python27/python dash.py roborio-254-frc.local
