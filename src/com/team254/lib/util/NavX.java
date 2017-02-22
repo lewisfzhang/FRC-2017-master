@@ -34,6 +34,7 @@ public class NavX {
     public NavX(SPI.Port spi_port_id) {
         mAHRS = new AHRS(spi_port_id, (byte) 200);
         resetState();
+        mAHRS.registerCallback(new Callback(), null);
     }
 
     public synchronized void reset() {
