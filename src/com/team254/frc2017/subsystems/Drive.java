@@ -8,25 +8,19 @@ import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.*;
-import com.team254.lib.util.motion.HeadingProfileFollower;
-import com.team254.lib.util.motion.MotionProfileConstraints;
-import com.team254.lib.util.motion.MotionProfileGoal;
-import com.team254.lib.util.motion.MotionProfileGoal.CompletionBehavior;
-import com.team254.lib.util.motion.MotionState;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.Map;
 import java.util.Optional;
 
 public class Drive extends Subsystem {
 
     private static Drive mInstance = new Drive();
 
-    private static final int kLowGearVelocityControlSlot = 0;
+    private static final int kLowGearPositionControlSlot = 0;
     private static final int kHighGearVelocityControlSlot = 1;
 
     public static Drive getInstance() {
@@ -39,10 +33,17 @@ public class Drive extends Subsystem {
     }
 
     protected static boolean usesTalonVelocityControl(DriveControlState state) {
-        if (state == DriveControlState.OPEN_LOOP) {
-            return false;
+        if (state == DriveControlState.VELOCITY_SETPOINT || state == DriveControlState.PATH_FOLLOWING) {
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    protected static boolean usesTalonPositionControl(DriveControlState state) {
+        if (state == DriveControlState.AIM_TO_GOAL || state == DriveControlState.TURN_TO_HEADING) {
+            return true;
+        }
+        return false;
     }
 
     // Control states
@@ -58,7 +59,6 @@ public class Drive extends Subsystem {
     private PathFollower mPathFollower;
 
     // These gains get reset below!!
-    private HeadingProfileFollower mProfileFollower = new HeadingProfileFollower(0, 0, 0, 0, 0);
     private Rotation2d mTargetHeading = new Rotation2d();
     private Path mCurrentPath = null;
 
@@ -266,32 +266,43 @@ public class Drive extends Subsystem {
      * @param right_inches_per_sec
      */
     public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
-        configureTalonsForSpeedControl(mIsHighGear);
+        configureTalonsForSpeedControl();
         mDriveControlState = DriveControlState.VELOCITY_SETPOINT;
         updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
     }
 
-    private void configureTalonsForSpeedControl(boolean wantsHighGear) {
-        final boolean enterVelocityControl = !usesTalonVelocityControl(mDriveControlState);
-        final boolean changeVelocityControlGearing = enterVelocityControl || (wantsHighGear != isHighGear());
-        if (enterVelocityControl) {
+    private void configureTalonsForSpeedControl() {
+        if (!usesTalonVelocityControl(mDriveControlState)) {
             // We entered a velocity control state.
             mLeftMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
             mLeftMaster.setNominalClosedLoopVoltage(12.0);
+            mLeftMaster.setProfile(kHighGearVelocityControlSlot);
+            mLeftMaster.configNominalOutputVoltage(Constants.kDriveHighGearNominalOutput,
+                    -Constants.kDriveHighGearNominalOutput);
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
             mRightMaster.setNominalClosedLoopVoltage(12.0);
+            mRightMaster.setProfile(kHighGearVelocityControlSlot);
+            mRightMaster.configNominalOutputVoltage(Constants.kDriveHighGearNominalOutput,
+                    -Constants.kDriveHighGearNominalOutput);
             setBrakeMode(true);
         }
-        if (changeVelocityControlGearing) {
-            // We changed gears while remaining in a velocity control state.
-            setHighGear(wantsHighGear);
-            final double nominal_abs_output = wantsHighGear ? Constants.kDriveHighGearNominalOutput
-                    : Constants.kDriveLowGearNominalOutput;
-            mLeftMaster.setProfile(wantsHighGear ? kHighGearVelocityControlSlot : kLowGearVelocityControlSlot);
-            mLeftMaster.configNominalOutputVoltage(nominal_abs_output, -nominal_abs_output);
-            mRightMaster.setProfile(wantsHighGear ? kHighGearVelocityControlSlot : kLowGearVelocityControlSlot);
-            mRightMaster.configNominalOutputVoltage(nominal_abs_output, -nominal_abs_output);
+    }
 
+    private void configureTalonsForPositionControl() {
+        if (!usesTalonPositionControl(mDriveControlState)) {
+            // We entered a position control state.
+            mLeftMaster.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
+            mLeftMaster.setNominalClosedLoopVoltage(12.0);
+            mLeftMaster.setProfile(kLowGearPositionControlSlot);
+            mLeftMaster.configNominalOutputVoltage(Constants.kDriveLowGearNominalOutput,
+                    -Constants.kDriveLowGearNominalOutput);
+            mRightMaster.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
+            mRightMaster.setNominalClosedLoopVoltage(12.0);
+            mRightMaster.setProfile(kLowGearPositionControlSlot);
+            mRightMaster.configNominalOutputVoltage(Constants.kDriveLowGearNominalOutput,
+                    -Constants.kDriveLowGearNominalOutput);
+            setBrakeMode(true);
+            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
         }
     }
 
@@ -303,12 +314,22 @@ public class Drive extends Subsystem {
      */
     private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         if (usesTalonVelocityControl(mDriveControlState)) {
-            final double max_setpoint = isHighGear() ? Constants.kDriveHighGearMaxSetpoint
-                    : Constants.kDriveLowGearMaxSetpoint;
             final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
-            final double scale = max_desired > max_setpoint ? max_setpoint / max_desired : 1.0;
+            final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
+                    ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
             mLeftMaster.set(inchesPerSecondToRpm(left_inches_per_sec * scale));
             mRightMaster.set(inchesPerSecondToRpm(right_inches_per_sec * scale));
+        } else {
+            System.out.println("Hit a bad velocity control state");
+            mLeftMaster.set(0);
+            mRightMaster.set(0);
+        }
+    }
+
+    private synchronized void updatePositionSetpoint(double left_position_inches, double right_position_inches) {
+        if (usesTalonPositionControl(mDriveControlState)) {
+            mLeftMaster.set(inchesToRotations(left_position_inches));
+            mRightMaster.set(inchesToRotations(right_position_inches));
         } else {
             System.out.println("Hit a bad velocity control state");
             mLeftMaster.set(0);
@@ -370,27 +391,29 @@ public class Drive extends Subsystem {
 
     private void updateTurnToHeading(double timestamp) {
         if (Superstructure.getInstance().isShooting()) {
-            updateVelocitySetpoint(0.0, 0.0);
+            // Do not update heading while shooting - just base lock. By not updating the setpoint, we will fight to
+            // keep position.
             return;
         }
-        final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
-                .getLatestFieldToVehicle();
-        final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
-        final double t_observation = latest_field_to_robot.getKey().value;
-        final double target_heading = mTargetHeading.getDegrees();
-        final double kGoalPosTolerance = 0.75;
-        final double kGoalVelTolerance = 5.0;
-        mProfileFollower.setGoal(new MotionProfileGoal(target_heading, 0.0, CompletionBehavior.OVERSHOOT,
-                kGoalPosTolerance, kGoalVelTolerance));
-        final MotionState motion_state = new MotionState(t_observation, field_to_robot.getRotation().getDegrees(),
-                getGyroVelocityDegreesPerSec(), 0.0);
-        final double angular_velocity_command = mProfileFollower.update(motion_state, timestamp + Constants.kLooperDt);
-        mIsOnTarget = mProfileFollower.onTarget();
+        final Rotation2d field_to_robot = mRobotState.getLatestFieldToVehicle().getValue().getRotation();
 
-        Kinematics.DriveVelocity wheel_vel = Kinematics
-                .inverseKinematics(new RigidTransform2d.Delta(0, 0, angular_velocity_command * Math.PI / 180.0));
+        // Figure out the rotation necessary to turn to face the goal.
+        final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
 
-        updateVelocitySetpoint(wheel_vel.left, wheel_vel.right);
+        final double kGoalPosTolerance = 0.75; // degrees
+        final double kGoalVelTolerance = 3.0; // inches per second
+        if (Math.abs(robot_to_target.getDegrees()) < kGoalPosTolerance
+                && Math.abs(getLeftVelocityInchesPerSec()) < kGoalVelTolerance
+                && Math.abs(getRightVelocityInchesPerSec()) < kGoalVelTolerance) {
+            // Use the current setpoint and base lock.
+            mIsOnTarget = true;
+            return;
+        }
+
+        Kinematics.DriveVelocity wheel_delta = Kinematics
+                .inverseKinematics(new RigidTransform2d.Delta(0, 0, robot_to_target.getRadians()));
+        updatePositionSetpoint(wheel_delta.left + getLeftDistanceInches(),
+                wheel_delta.right + getRightDistanceInches());
     }
 
     private void updatePathFollower(double timestamp) {
@@ -405,11 +428,6 @@ public class Drive extends Subsystem {
         }
     }
 
-    public synchronized void resetProfileGains() {
-        mProfileFollower.setGains(Constants.kDriveTurnKp, Constants.kDriveTurnKi, Constants.kDriveTurnKv,
-                Constants.kDriveTurnKffv, Constants.kDriveTurnKffa);
-    }
-
     public synchronized boolean isOnTarget() {
         return mIsOnTarget && mDriveControlState == DriveControlState.AIM_TO_GOAL;
     }
@@ -417,13 +435,7 @@ public class Drive extends Subsystem {
     public synchronized void setWantAimToGoal() {
         if (mDriveControlState != DriveControlState.AIM_TO_GOAL) {
             mIsOnTarget = false;
-            // We aim in low gear.
-            configureTalonsForSpeedControl(false);
-            resetProfileGains();
-            mProfileFollower.resetProfile();
-            mProfileFollower.resetSetpoint();
-            mProfileFollower.setConstraints(
-                    new MotionProfileConstraints(Constants.kDriveTurnMaxVel, Constants.kDriveTurnMaxAcc));
+            configureTalonsForPositionControl();
             mDriveControlState = DriveControlState.AIM_TO_GOAL;
             mTargetHeading = getGyroAngle();
         }
@@ -432,20 +444,15 @@ public class Drive extends Subsystem {
     public synchronized void setWantTurnToHeading(Rotation2d heading) {
         if (mDriveControlState != DriveControlState.TURN_TO_HEADING) {
             mIsOnTarget = false;
-            configureTalonsForSpeedControl(false);
-            resetProfileGains();
-            mProfileFollower.resetProfile();
-            mProfileFollower.resetSetpoint();
-            mProfileFollower.setConstraints(
-                    new MotionProfileConstraints(Constants.kDriveTurnMaxVel, Constants.kDriveTurnMaxAcc));
-            mTargetHeading = heading;
+            configureTalonsForPositionControl();
             mDriveControlState = DriveControlState.TURN_TO_HEADING;
+            mTargetHeading = heading;
         }
     }
 
     public synchronized void setWantDrivePath(Path path, boolean reversed) {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
-            configureTalonsForSpeedControl(true);
+            configureTalonsForSpeedControl();
             mPathFollower = new PathFollower(path, reversed,
                     new PathFollower.Parameters(Constants.kAutoLookAhead, Constants.kInertiaSteeringGain,
                             Constants.kPathFollowingProfileKp, Constants.kPathFollowingProfileKi,
@@ -469,14 +476,14 @@ public class Drive extends Subsystem {
     }
 
     public synchronized boolean isDoneWithTurn() {
-        if (mDriveControlState == DriveControlState.TURN_TO_HEADING && mProfileFollower != null) {
-            return mProfileFollower.isFinishedProfile();
+        if (mDriveControlState == DriveControlState.TURN_TO_HEADING) {
+            return mIsOnTarget;
         } else {
             System.out.println("Robot is not in turn to heading mode");
             return false;
         }
     }
-    
+
     public synchronized boolean hasPassedMarker(String marker) {
         if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
             return mPathFollower.hasPassedMarker(marker);
@@ -487,14 +494,18 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void reloadGains() {
-        mLeftMaster.setPID(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi,
-                Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf,
-                Constants.kDriveLowGearVelocityIZone, Constants.kDriveLowGearVelocityRampRate,
-                kLowGearVelocityControlSlot);
-        mRightMaster.setPID(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi,
-                Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf,
-                Constants.kDriveLowGearVelocityIZone, Constants.kDriveLowGearVelocityRampRate,
-                kLowGearVelocityControlSlot);
+        mLeftMaster.setPID(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi,
+                Constants.kDriveLowGearPositionKd, Constants.kDriveLowGearPositionKf,
+                Constants.kDriveLowGearPositionIZone, Constants.kDriveLowGearPositionRampRate,
+                kLowGearPositionControlSlot);
+        mLeftMaster.setMotionMagicCruiseVelocity(Constants.kDriveLowGearMaxVelocity);
+        mLeftMaster.setMotionMagicAcceleration(Constants.kDriveLowGearMaxAccel);
+        mRightMaster.setPID(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi,
+                Constants.kDriveLowGearPositionKd, Constants.kDriveLowGearPositionKf,
+                Constants.kDriveLowGearPositionIZone, Constants.kDriveLowGearPositionRampRate,
+                kLowGearPositionControlSlot);
+        mRightMaster.setMotionMagicCruiseVelocity(Constants.kDriveLowGearMaxVelocity);
+        mRightMaster.setMotionMagicAcceleration(Constants.kDriveLowGearMaxAccel);
 
         mLeftMaster.setPID(Constants.kDriveHighGearVelocityKp, Constants.kDriveHighGearVelocityKi,
                 Constants.kDriveHighGearVelocityKd, Constants.kDriveHighGearVelocityKf,
