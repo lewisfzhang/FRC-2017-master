@@ -56,24 +56,29 @@ public class Constants extends ConstantsBase {
     // DRIVE GAINS
 
     // Wheel velocity - High gear
+    // Setpoint, error, and output are in inches per second.
     public static double kDriveHighGearVelocityKp = 0.5;
     public static double kDriveHighGearVelocityKi = 0.0;
     public static double kDriveHighGearVelocityKd = 4.0;
     public static double kDriveHighGearVelocityKf = .15;
     public static int kDriveHighGearVelocityIZone = 0;
-    public static double kDriveHighGearVelocityRampRate = 90.0;
-    public static double kDriveHighGearNominalOutput = 0.6;
+    public static double kDriveHighGearVelocityRampRate = 90.0;  // V/s
+    public static double kDriveHighGearNominalOutput = 0.6;  // V
     public static double kDriveHighGearMaxSetpoint = 15.0 * 12.0;  // 15 fps
 
-    // Wheel velocity - Low gear
-    public static double kDriveLowGearVelocityKp = 0.5;
-    public static double kDriveLowGearVelocityKi = 0.0;
-    public static double kDriveLowGearVelocityKd = 4.0;
-    public static double kDriveLowGearVelocityKf = .45;
-    public static int kDriveLowGearVelocityIZone = 0;
-    public static double kDriveLowGearVelocityRampRate = 240.0;
-    public static double kDriveLowGearNominalOutput = 0.5;
-    public static double kDriveLowGearMaxSetpoint = 6.0 * 12.0;  // 6 fps
+    // Wheel position - Low gear
+    // Setpoint is in rotations.
+    // Error is in encoder ticks (4096 per revolution)
+    // Output is +/- 1023, where 1023 corresponds to +12V
+    public static double kDriveLowGearPositionKp = 0.5;  // TODO: tune
+    public static double kDriveLowGearPositionKi = 0.0;
+    public static double kDriveLowGearPositionKd = 0.0;
+    public static double kDriveLowGearPositionKf = .45;
+    public static int kDriveLowGearPositionIZone = 0;
+    public static double kDriveLowGearPositionRampRate = 240.0;  // V/s
+    public static double kDriveLowGearNominalOutput = 0.5;  // V
+    public static double kDriveLowGearMaxVelocity = 6.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches);  // 6 fps in RPM
+    public static double kDriveLowGearMaxAccel = 18.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches);  // 18 fps/s in RPM/s
 
     // Turn to heading
     public static double kDriveTurnKp = 3.0;
