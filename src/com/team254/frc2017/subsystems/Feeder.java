@@ -5,7 +5,6 @@ import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import com.team254.lib.util.ConstantsBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Feeder extends Subsystem {

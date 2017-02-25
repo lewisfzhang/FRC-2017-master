@@ -19,8 +19,6 @@ public class Intake extends Subsystem {
     private CANTalon mMasterTalon, mSlaveTalon;
     private Solenoid mDeploySolenoid;
 
-    private boolean mDeployed = false;
-
     private Intake() {
         mMasterTalon = new CANTalon(Constants.kIntakeMasterId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
@@ -55,7 +53,6 @@ public class Intake extends Subsystem {
 
     public synchronized void deploy() {
         mDeploySolenoid.set(true);
-        mDeployed = true;
     }
 
     public synchronized void setOn() {

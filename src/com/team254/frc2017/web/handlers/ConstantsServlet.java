@@ -13,6 +13,8 @@ import java.util.Collection;
 
 public class ConstantsServlet extends HttpServlet {
 
+    private static final long serialVersionUID = -4434525306009098528L;
+
     private void buildPage(HttpServletResponse response) throws IOException {
         Constants constants = new Constants();
 
