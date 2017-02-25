@@ -28,20 +28,17 @@ public class CheesyDriveHelper {
         double wheelNonLinearity;
         if (isHighGear) {
             wheelNonLinearity = 0.65;
+            final double denominator = Math.sin(Math.PI / 2.0 * wheelNonLinearity);
             // Apply a sin function that's scaled to make it feel better.
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
-                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
-                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
         } else {
             wheelNonLinearity = 0.5;
+            final double denominator = Math.sin(Math.PI / 2.0 * wheelNonLinearity);
             // Apply a sin function that's scaled to make it feel better.
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
-                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
-                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
-                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
         }
 
         double leftPwm, rightPwm, overPower;
