@@ -175,7 +175,7 @@ public class Robot extends IterativeRobot {
                 }
             } else {
                 mDrive.setHighGear(!mControlBoard.getLowGear());
-                mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn()));
+                mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(), !mControlBoard.getLowGear()));
 
                 boolean wantsExhaust = mControlBoard.getExhaustButton();
 

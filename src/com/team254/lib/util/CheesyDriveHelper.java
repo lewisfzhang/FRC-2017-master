@@ -1,8 +1,5 @@
 package com.team254.lib.util;
 
-import com.team254.lib.util.DriveSignal;
-import com.team254.lib.util.Util;
-
 /**
  * Helper class to implement "Cheesy Drive". "Cheesy Drive" simply means that the "turning" stick controls the curvature
  * of the robot's path rather than its rate of heading change. This helps make the robot more controllable at high
@@ -15,37 +12,99 @@ public class CheesyDriveHelper {
     public static final double kThrottleDeadband = 0.02;
     private static final double kWheelDeadband = 0.02;
     private static final double kTurnSensitivity = 1.0;
+    private double mOldWheel = 0.0;
+    private double mQuickStopAccumlator = 0.0;
+    private double mNegInertiaAccumlator = 0.0;
 
-    public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn) {
+    public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,
+                                   boolean isHighGear) {
 
         wheel = handleDeadband(wheel, kWheelDeadband);
         throttle = handleDeadband(throttle, kThrottleDeadband);
 
-        double overPower;
+        double negInertia = wheel - mOldWheel;
+        mOldWheel = wheel;
+
+        double wheelNonLinearity;
+        if (isHighGear) {
+            wheelNonLinearity = 0.65;
+            // Apply a sin function that's scaled to make it feel better.
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
+                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
+                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
+        } else {
+            wheelNonLinearity = 0.5;
+            // Apply a sin function that's scaled to make it feel better.
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
+                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
+                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
+            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel)
+                    / Math.sin(Math.PI / 2.0 * wheelNonLinearity);
+        }
+
+        double leftPwm, rightPwm, overPower;
+        double sensitivity;
 
         double angularPower;
+        double linearPower;
 
+        // Negative inertia!
+        double negInertiaScalar;
+        if (isHighGear) {
+            negInertiaScalar = 4.0;
+            sensitivity = 0.75;
+        } else {
+            if (wheel * negInertia > 0) {
+                negInertiaScalar = 2.5;
+            } else {
+                if (Math.abs(wheel) > 0.65) {
+                    negInertiaScalar = 5.0;
+                } else {
+                    negInertiaScalar = 3.0;
+                }
+            }
+            sensitivity = .85;
+        }
+        double negInertiaPower = negInertia * negInertiaScalar;
+        mNegInertiaAccumlator += negInertiaPower;
+
+        wheel = wheel + mNegInertiaAccumlator;
+        if (mNegInertiaAccumlator > 1) {
+            mNegInertiaAccumlator -= 1;
+        } else if (mNegInertiaAccumlator < -1) {
+            mNegInertiaAccumlator += 1;
+        } else {
+            mNegInertiaAccumlator = 0;
+        }
+        linearPower = throttle;
+
+        // Quickturn!
         if (isQuickTurn) {
-            if (Math.abs(throttle) < 0.2) {
+            if (Math.abs(linearPower) < 0.2) {
                 double alpha = 0.1;
-                mQuickStopAccumulator = (1 - alpha) * mQuickStopAccumulator + alpha * Util.limit(wheel, 1.0) * 2;
+                mQuickStopAccumlator = (1 - alpha) * mQuickStopAccumlator
+                        + alpha * Util.limit(wheel, 1.0) * 5;
             }
             overPower = 1.0;
             angularPower = wheel;
         } else {
             overPower = 0.0;
-            angularPower = Math.abs(throttle) * wheel * kTurnSensitivity - mQuickStopAccumulator;
-            if (mQuickStopAccumulator > 1) {
-                mQuickStopAccumulator -= 1;
-            } else if (mQuickStopAccumulator < -1) {
-                mQuickStopAccumulator += 1;
+            angularPower = Math.abs(throttle) * wheel * sensitivity - mQuickStopAccumlator;
+            if (mQuickStopAccumlator > 1) {
+                mQuickStopAccumlator -= 1;
+            } else if (mQuickStopAccumlator < -1) {
+                mQuickStopAccumlator += 1;
             } else {
-                mQuickStopAccumulator = 0.0;
+                mQuickStopAccumlator = 0.0;
             }
         }
 
-        double rightPwm = throttle - angularPower;
-        double leftPwm = throttle + angularPower;
+        rightPwm = leftPwm = linearPower;
+        leftPwm += angularPower;
+        rightPwm -= angularPower;
+
         if (leftPwm > 1.0) {
             rightPwm -= overPower * (leftPwm - 1.0);
             leftPwm = 1.0;
