@@ -32,13 +32,14 @@ public class Robot extends IterativeRobot {
     // Subsystems
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
+    private GearGrabber mGearGrabber = GearGrabber.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
             Arrays.asList(Drive.getInstance(), Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(),
-                    Shooter.getInstance(), Superstructure.getInstance()));
+                    Shooter.getInstance(), Superstructure.getInstance(), GearGrabber.getInstance()));
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -212,6 +213,16 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setClosedLoopRpm(3000.0);
                 } else {
                     mSuperstructure.setShooterOpenLoop(0);
+                }
+                
+                // Gear grabbing code
+                // !!!WILL NEED TO CHANGE MAPPING ON CONTROLBOARD.JAVA!!!
+                if (mControlBoard.getStowGearGrabberButton()) {
+                    mGearGrabber.setWantedState(GearGrabber.WantedState.STOWED);
+                } else if (mControlBoard.getGrabGearButton()) {
+                    mGearGrabber.setWantedState(GearGrabber.WantedState.GRAB_GEAR);
+                } else if (mControlBoard.getScoreGearButton()) {
+                    mGearGrabber.setWantedState(GearGrabber.WantedState.SCORE_GEAR);
                 }
             }
 

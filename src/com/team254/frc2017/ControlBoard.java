@@ -16,13 +16,14 @@ public class ControlBoard {
     private final Joystick mThrottleStick;
     private final Joystick mTurnStick;
     private final Joystick mButtonBoard;
+    private final Joystick mXboxController;
 
     private ControlBoard() {
         mThrottleStick = new Joystick(0);
         mTurnStick = new Joystick(1);
         mButtonBoard = new Joystick(2);
+        mXboxController = new Joystick(3);
     }
-
 
     // DRIVER CONTROLS
     public double getThrottle() {
@@ -55,7 +56,8 @@ public class ControlBoard {
     }
 
     public boolean getIntakeButton() {
-        return mButtonBoard.getRawAxis(2) < -0.1 || mTurnStick.getRawButton(2);
+//        return mButtonBoard.getRawAxis(2) < -0.1 || mTurnStick.getRawButton(2);
+        return mXboxController.getRawButton(3);
     }
 
     public boolean getShooterOpenLoopButton() {
@@ -80,5 +82,17 @@ public class ControlBoard {
     
     public boolean getHangEnabled() {
         return mButtonBoard.getRawAxis(3) < -0.1;
+    }
+    
+    public boolean getStowGearGrabberButton() {
+        return mXboxController.getRawButton(4);
+    }
+    
+    public boolean getGrabGearButton() {
+        return mXboxController.getRawButton(2);
+    }
+    
+    public boolean getScoreGearButton() {
+        return mXboxController.getRawButton(1);
     }
 }
