@@ -1,11 +1,5 @@
 package com.team254.frc2017.auto.actions;
 
-import java.util.Set;
-
-/**
- * 
- */
-
 import com.team254.frc2017.subsystems.Drive;
 
 /**

@@ -2,7 +2,6 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
-import com.team254.frc2017.auto.modes.GearThenHopperShootModeRed;
 import com.team254.frc2017.auto.modes.StandStillMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

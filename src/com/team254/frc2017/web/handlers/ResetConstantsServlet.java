@@ -1,7 +1,6 @@
 package com.team254.frc2017.web.handlers;
 
 import com.team254.frc2017.Constants;
-import com.team254.lib.util.ConstantsBase.Constant;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,9 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
 
 public class ResetConstantsServlet extends HttpServlet {
+
+    private static final long serialVersionUID = -5275248129097698957L;
 
     private void buildPage(HttpServletResponse response) throws IOException {
         Constants constants = new Constants();

@@ -17,7 +17,6 @@ import com.team254.frc2017.auto.actions.WaitAction;
 import com.team254.frc2017.auto.actions.WaitForPathMarkerAction;
 import com.team254.frc2017.paths.GearToHopperRed;
 import com.team254.frc2017.paths.PathContainer;
-import com.team254.frc2017.paths.StartToGearBlue;
 import com.team254.frc2017.paths.StartToGearRed;
 
 public class GearThenHopperShootModeRed extends AutoModeBase {

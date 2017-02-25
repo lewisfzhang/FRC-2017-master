@@ -3,7 +3,6 @@ package com.team254.lib.util;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.team254.frc2017.Constants;
 import com.team254.lib.util.motion.MotionState;
