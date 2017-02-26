@@ -212,7 +212,6 @@ public class Robot extends IterativeRobot {
                 }
                 
                 // Gear grabbing code
-                // !!!WILL NEED TO CHANGE MAPPING ON CONTROLBOARD.JAVA!!!
                 if (mControlBoard.getStowGearGrabberButton()) {
                     mGearGrabber.setWantedState(GearGrabber.WantedState.STOWED);
                 } else if (mControlBoard.getGrabGearButton()) {
