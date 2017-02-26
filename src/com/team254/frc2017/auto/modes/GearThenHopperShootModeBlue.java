@@ -26,7 +26,7 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
         PathContainer gearPath = new StartToGearBlue();
         runAction(new ResetPoseFromPathAction(gearPath));
         runAction(new DrivePathAction(gearPath));
-        runAction(new ScoreGearAction());
+        runAction(new WaitAction(0.25));
         Constants.kAutoLookAhead = 24.0;
         runAction(
                 new ParallelAction(Arrays.asList(new Action[]{
