@@ -95,4 +95,8 @@ public class ControlBoard {
     public boolean getScoreGearButton() {
         return mButtonBoard.getRawButton(3);
     }
+
+    public boolean getPlaceGearButton() {
+        return mButtonBoard.getRawButton(5);
+    }
 }
