@@ -302,7 +302,6 @@ public class Drive extends Subsystem {
             mRightMaster.configNominalOutputVoltage(Constants.kDriveLowGearNominalOutput,
                     -Constants.kDriveLowGearNominalOutput);
             setBrakeMode(true);
-            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
         }
     }
 
@@ -331,7 +330,7 @@ public class Drive extends Subsystem {
             mLeftMaster.set(inchesToRotations(left_position_inches));
             mRightMaster.set(inchesToRotations(right_position_inches));
         } else {
-            System.out.println("Hit a bad velocity control state");
+            System.out.println("Hit a bad position control state");
             mLeftMaster.set(0);
             mRightMaster.set(0);
         }
@@ -401,7 +400,7 @@ public class Drive extends Subsystem {
         final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
 
         final double kGoalPosTolerance = 0.75; // degrees
-        final double kGoalVelTolerance = 3.0; // inches per second
+        final double kGoalVelTolerance = 5.0; // inches per second
         if (Math.abs(robot_to_target.getDegrees()) < kGoalPosTolerance
                 && Math.abs(getLeftVelocityInchesPerSec()) < kGoalVelTolerance
                 && Math.abs(getRightVelocityInchesPerSec()) < kGoalVelTolerance) {
@@ -429,7 +428,11 @@ public class Drive extends Subsystem {
     }
 
     public synchronized boolean isOnTarget() {
-        return mIsOnTarget && mDriveControlState == DriveControlState.AIM_TO_GOAL;
+        return mIsOnTarget;
+    }
+    
+    public synchronized boolean isAutoAiming() {
+        return mDriveControlState == DriveControlState.AIM_TO_GOAL;
     }
 
     public synchronized void setWantAimToGoal() {
@@ -437,16 +440,20 @@ public class Drive extends Subsystem {
             mIsOnTarget = false;
             configureTalonsForPositionControl();
             mDriveControlState = DriveControlState.AIM_TO_GOAL;
+            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
             mTargetHeading = getGyroAngle();
         }
     }
 
     public synchronized void setWantTurnToHeading(Rotation2d heading) {
         if (mDriveControlState != DriveControlState.TURN_TO_HEADING) {
-            mIsOnTarget = false;
             configureTalonsForPositionControl();
             mDriveControlState = DriveControlState.TURN_TO_HEADING;
+            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+        }
+        if (Math.abs(heading.inverse().rotateBy(mTargetHeading).getDegrees()) > 1E-3) {
             mTargetHeading = heading;
+            mIsOnTarget = false;
         }
     }
 
