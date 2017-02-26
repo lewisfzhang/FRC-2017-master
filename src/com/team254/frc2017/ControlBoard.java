@@ -58,8 +58,7 @@ public class ControlBoard {
     }
 
     public boolean getShooterOpenLoopButton() {
-        // return mButtonBoard.getRawButton(1);
-        return false;
+        return mButtonBoard.getRawButton(8);
     }
 
     public boolean getExhaustButton() {

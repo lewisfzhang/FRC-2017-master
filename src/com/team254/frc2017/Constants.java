@@ -37,7 +37,7 @@ public class Constants extends ConstantsBase {
     // Wheels
     public static double kDriveWheelDiameterInches = 3.419; //calibrated on 2/15/17
     public static double kTrackWidthInches = 26.655;
-    public static double kTrackScrubFactor = 0.90;
+    public static double kTrackScrubFactor = 0.924;
     
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
@@ -61,7 +61,7 @@ public class Constants extends ConstantsBase {
     public static double kDriveHighGearVelocityKd = 4.0;
     public static double kDriveHighGearVelocityKf = .15;
     public static int kDriveHighGearVelocityIZone = 0;
-    public static double kDriveHighGearVelocityRampRate = 90.0;
+    public static double kDriveHighGearVelocityRampRate = 240.0;
     public static double kDriveHighGearNominalOutput = 0.6;
     public static double kDriveHighGearMaxSetpoint = 15.0 * 12.0;  // 15 fps
 
@@ -101,7 +101,7 @@ public class Constants extends ConstantsBase {
     public static double kFeederKD = 0;
     public static double kFeederKF = 0.0095;
     public static double kFeederRampRate = 90.0;
-    public static double kFeederFeedSpeedRpm = 9001.0;
+    public static double kFeederFeedSpeedRpm = 12000.0;
     
     // Hopper gains
     public static double kHopperRampRate = 24.0;
@@ -165,7 +165,7 @@ public class Constants extends ConstantsBase {
     public static double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain * our speed
                                                      // in inches per sec
     public static double kSegmentCompletionTolerance = 1.0; //inches
-    public static double kPathFollowingMaxAccel = 70.0; //inches per second^2
+    public static double kPathFollowingMaxAccel = 120.0; //inches per second^2
     public static double kPathFollowingMaxVel = 120.0; //inches per second
     public static double kPathFollowingProfileKp = 2.5;
     public static double kPathFollowingProfileKi = 0.05;

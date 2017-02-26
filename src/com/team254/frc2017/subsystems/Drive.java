@@ -228,6 +228,15 @@ public class Drive extends Subsystem {
             SmartDashboard.putNumber("left speed error (ips)", 0.0);
             SmartDashboard.putNumber("right speed error (ips)", 0.0);
         }
+        synchronized (this) {
+            if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+                SmartDashboard.putNumber("drive CTE", mPathFollower.getCrossTrackError());
+                SmartDashboard.putNumber("drive ATE", mPathFollower.getAlongTrackError());
+            } else {
+                SmartDashboard.putNumber("drive CTE", 0.0);
+                SmartDashboard.putNumber("drive ATE", 0.0);
+            }
+        }
         SmartDashboard.putNumber("left position (rotations)", mLeftMaster.getPosition());
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getPosition());
         SmartDashboard.putNumber("gyro vel", getGyroVelocityDegreesPerSec());

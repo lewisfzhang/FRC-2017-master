@@ -3,6 +3,8 @@ package com.team254.frc2017;
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
 import com.team254.frc2017.auto.modes.StandStillMode;
+import com.team254.frc2017.auto.modes.TestLineMode;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.json.simple.JSONArray;
@@ -27,6 +29,7 @@ public class AutoModeSelector {
     private static final AutoModeCreator mDefaultMode =
             new AutoModeCreator("Gear then Hopper Shoot", ()->new GearThenHopperShootModeBlue());
     private static final AutoModeCreator[] mAllModes = {
+            new AutoModeCreator("Test", ()->new TestLineMode()),
             new AutoModeCreator("Stand Still", ()->new StandStillMode()),
             mDefaultMode,
     };
