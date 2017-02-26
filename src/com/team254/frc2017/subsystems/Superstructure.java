@@ -53,7 +53,7 @@ public class Superstructure extends Subsystem {
     }
     
     public boolean isOnTargetToShoot() {
-        return mDrive.isOnTarget() && mShooter.isOnTarget();
+        return (mDrive.isOnTarget() && mDrive.isAutoAiming()) && mShooter.isOnTarget();
     }
 
     public boolean isOnTargetToKeepShooting() {

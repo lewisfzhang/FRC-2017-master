@@ -70,11 +70,11 @@ public class Constants extends ConstantsBase {
     // Setpoint is in rotations.
     // Error is in encoder ticks (4096 per revolution)
     // Output is +/- 1023, where 1023 corresponds to +12V
-    public static double kDriveLowGearPositionKp = 0.5;  // TODO: tune
-    public static double kDriveLowGearPositionKi = 0.0;
-    public static double kDriveLowGearPositionKd = 0.0;
+    public static double kDriveLowGearPositionKp = 0.8;
+    public static double kDriveLowGearPositionKi = 0.002;
+    public static double kDriveLowGearPositionKd = 100.0;
     public static double kDriveLowGearPositionKf = .45;
-    public static int kDriveLowGearPositionIZone = 0;
+    public static int kDriveLowGearPositionIZone = 700;
     public static double kDriveLowGearPositionRampRate = 240.0;  // V/s
     public static double kDriveLowGearNominalOutput = 0.5;  // V
     public static double kDriveLowGearMaxVelocity = 6.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches);  // 6 fps in RPM
