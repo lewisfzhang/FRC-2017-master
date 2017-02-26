@@ -24,8 +24,8 @@ public class GearGrabber extends Subsystem {
         STOWED, GRAB_GEAR, SCORE_GEAR
     }
     
-    private SystemState mSystemState;
-    private WantedState mWantedState;
+    private SystemState mSystemState = SystemState.STOWED;
+    private WantedState mWantedState = WantedState.STOWED;
     
     // Declare solenoids
     private final Solenoid mGearPusher;
