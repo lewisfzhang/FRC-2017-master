@@ -12,6 +12,8 @@ import com.team254.lib.util.motion.ProfileFollower;
  * ProfileFollower to generate a profile (displacement and velocity) command.
  */
 public class PathFollower {
+    private static final double kReallyBigNumber = 1E6;
+
     public static class Parameters {
         public final double fixed_lookahead;
         public final double inertia_gain;
@@ -90,14 +92,17 @@ public class PathFollower {
             }
         }
 
-        final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0),
-                t);
+        final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0), t);
         mAlongTrackError = mVelocityController.getPosError();
-        final double linear_scale = velocity_command / mLastSteeringDelta.dx;
-        final double abs_velocity_setpoint = Math.abs(mVelocityController.getSetpoint().vel());
-        final double angular_scale = linear_scale * (1.0 + mInertiaGain * abs_velocity_setpoint);
-        return new RigidTransform2d.Delta(mLastSteeringDelta.dx * linear_scale, mLastSteeringDelta.dy * linear_scale,
-                mLastSteeringDelta.dtheta * angular_scale);
+        final double curvature = mLastSteeringDelta.dtheta / mLastSteeringDelta.dx;
+        double dtheta = mLastSteeringDelta.dtheta;
+        if (!Double.isNaN(curvature) && Math.abs(curvature) < kReallyBigNumber) {
+            // Regenerate angular velocity command from adjusted curvature.
+            final double abs_velocity_setpoint = Math.abs(mVelocityController.getSetpoint().vel());
+            dtheta = mLastSteeringDelta.dx * curvature * (1.0 + mInertiaGain * abs_velocity_setpoint);
+        }
+        final double scale = velocity_command / mLastSteeringDelta.dx;
+        return new RigidTransform2d.Delta(mLastSteeringDelta.dx * scale, 0.0, dtheta * scale);
     }
 
     public double getCrossTrackError() {
