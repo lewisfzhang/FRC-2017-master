@@ -98,6 +98,16 @@ public class Path {
          PathSegment currentSegment = segments.get(0);
          rv.closest_point = currentSegment.getClosestPoint(robot);
          rv.closest_point_distance = new Translation2d(robot, rv.closest_point).norm();
+         if (segments.size() > 1) {
+             // Check next segment to see if it is closer.
+             final Translation2d next_segment_closest_point = segments.get(1).getClosestPoint(robot);
+             final double next_segment_closest_point_distance = new Translation2d(robot, next_segment_closest_point).norm();
+             if (next_segment_closest_point_distance < rv.closest_point_distance) {
+                 rv.closest_point = next_segment_closest_point;
+                 rv.closest_point_distance = next_segment_closest_point_distance;
+                 removeCurrentSegment();
+             }
+         }
          rv.remaining_segment_distance = currentSegment.getRemainingDistance(rv.closest_point);
          double lookahead_distance = fixed_lookahead_distance + rv.closest_point_distance;
          if (rv.remaining_segment_distance < lookahead_distance && segments.size() > 1) {
@@ -142,11 +152,15 @@ public class Path {
          PathSegment currentSegment = segments.get(0); 
          double remainingDist = new Translation2d(robotPos, currentSegment.getEnd()).norm();//currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
          if(remainingDist < Constants.kSegmentCompletionTolerance) {
-             prevSegment = segments.remove(0);
-             String marker = prevSegment.getMarker();
-             if(marker != null)
-                 mMarkersCrossed.add(marker);
+             removeCurrentSegment();
          }
+     }
+     
+     public void removeCurrentSegment() {
+         prevSegment = segments.remove(0);
+         String marker = prevSegment.getMarker();
+         if(marker != null)
+             mMarkersCrossed.add(marker);
      }
      
      /**
