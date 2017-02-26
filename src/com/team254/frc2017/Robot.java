@@ -160,9 +160,9 @@ public class Robot extends IterativeRobot {
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
 
-            if (mControlBoard.getDriveAimButton() && !mControlBoard.getHangEnabled()) {
+            if (mControlBoard.getDriveAimButton()) {
                 mDrive.setWantAimToGoal();
-            } else if (mControlBoard.getAimButton() && !mControlBoard.getHangEnabled()) {
+            } else if (mControlBoard.getAimButton()) {
                 mDrive.setWantAimToGoal();
 
                 if (mControlBoard.getUnjamButton()) {
@@ -187,12 +187,8 @@ public class Robot extends IterativeRobot {
 
                 // Hanging has highest priority for feeder, followed by exhausting, unjamming, and finally
                 // feeding.
-                if (mControlBoard.getHangEnabled()) {
-                    if (mControlBoard.getHangButton()) {
-                        mSuperstructure.setWantedState(Superstructure.WantedState.HANG);
-                    } else {
-                        mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
-                    }
+                if (mControlBoard.getHangButton()) {
+                    mSuperstructure.setWantedState(Superstructure.WantedState.HANG);
                 } else if (wantsExhaust) {
                     mSuperstructure.setWantedState(Superstructure.WantedState.EXHAUST);
                 } else if (mControlBoard.getUnjamButton()) {

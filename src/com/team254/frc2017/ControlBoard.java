@@ -79,11 +79,6 @@ public class ControlBoard {
         return mButtonBoard.getRawButton(10);
     }
     
-    public boolean getHangEnabled() {
-        // return mButtonBoard.getRawAxis(3) < -0.1;
-        return true;
-    }
-    
     public boolean getStowGearGrabberButton() {
         return mButtonBoard.getRawButton(1);
     }
