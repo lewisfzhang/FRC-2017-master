@@ -5,6 +5,8 @@ import java.util.List;
 import com.team254.lib.util.AdaptivePurePursuitController;
 import com.team254.lib.util.Path;
 import com.team254.lib.util.PathSegment;
+import com.team254.lib.util.RigidTransform2d;
+import com.team254.lib.util.Rotation2d;
 import com.team254.lib.util.Translation2d;
 
 public class PathBuilder {
@@ -76,9 +78,9 @@ public class PathBuilder {
             double pathLength = new Translation2d(end, start).norm();
             if(pathLength > kEpsilon) {
                 if(b.marker != null) {
-                    p.addSegment(new PathSegment(start.getX(), start.getY(), end.getX(), end.getY(), b.speed, p.getLastMotionState(), endSpeed, b.marker));
+                    p.addSegment(new PathSegment(start.x(), start.y(), end.x(), end.y(), b.speed, p.getLastMotionState(), endSpeed, b.marker));
                 } else {
-                    p.addSegment(new PathSegment(start.getX(), start.getY(), end.getX(), end.getY(), b.speed, p.getLastMotionState(), endSpeed));
+                    p.addSegment(new PathSegment(start.x(), start.y(), end.x(), end.y(), b.speed, p.getLastMotionState(), endSpeed));
                 }
             }
 
@@ -107,14 +109,14 @@ public class PathBuilder {
         private void addToPath(Path p) {
             a.addToPath(p, speed);
             if(radius > kEpsilon && radius < kReallyBigNumber) {
-                p.addSegment(new PathSegment(a.end.getX(), a.end.getY(), b.start.getX(), b.start.getY(), center.getX(), center.getY(), speed, p.getLastMotionState(), b.speed));
+                p.addSegment(new PathSegment(a.end.x(), a.end.y(), b.start.x(), b.start.y(), center.x(), center.y(), speed, p.getLastMotionState(), b.speed));
             }
         }
         
         private static Translation2d intersect(Line l1, Line l2) {
-            AdaptivePurePursuitController.Line lineA = new AdaptivePurePursuitController.Line(l1.end, l1.slope.perpendicular());
-            AdaptivePurePursuitController.Line lineB = new AdaptivePurePursuitController.Line(l2.start, l2.slope.perpendicular());
-            return AdaptivePurePursuitController.Line.intersection(lineA, lineB);
+            final RigidTransform2d lineA = new RigidTransform2d(l1.end, new Rotation2d(l1.slope, true).normal());
+            final RigidTransform2d lineB = new RigidTransform2d(l2.start, new Rotation2d(l2.slope, true).normal());
+            return lineA.intersection(lineB);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.team254.frc2017.RobotState;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.lib.util.RigidTransform2d;
 import com.team254.lib.util.Rotation2d;
+import com.team254.lib.util.Twist2d;
 
 /**
  * Periodically estimates the state of the robot using the robot's distance
@@ -34,12 +35,12 @@ public class RobotStateEstimator implements Loop {
 
     @Override
     public void onLoop(double timestamp) {
-        double left_distance = drive_.getLeftDistanceInches();
-        double right_distance = drive_.getRightDistanceInches();
-        Rotation2d gyro_angle = drive_.getGyroAngle();
-        RigidTransform2d.Delta odometry_velocity = robot_state_.generateOdometryFromSensors(
+        final double left_distance = drive_.getLeftDistanceInches();
+        final double right_distance = drive_.getRightDistanceInches();
+        final Rotation2d gyro_angle = drive_.getGyroAngle();
+        final Twist2d odometry_velocity = robot_state_.generateOdometryFromSensors(
                 left_distance - left_encoder_prev_distance_, right_distance - right_encoder_prev_distance_, gyro_angle);
-        RigidTransform2d.Delta predicted_velocity = Kinematics.forwardKinematics(drive_.getLeftVelocityInchesPerSec(),
+        final Twist2d predicted_velocity = Kinematics.forwardKinematics(drive_.getLeftVelocityInchesPerSec(),
                 drive_.getRightVelocityInchesPerSec());
         robot_state_.addObservations(timestamp, odometry_velocity, predicted_velocity);
         left_encoder_prev_distance_ = left_distance;

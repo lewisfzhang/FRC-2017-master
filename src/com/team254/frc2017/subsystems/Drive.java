@@ -410,14 +410,14 @@ public class Drive extends Subsystem {
         }
 
         Kinematics.DriveVelocity wheel_delta = Kinematics
-                .inverseKinematics(new RigidTransform2d.Delta(0, 0, robot_to_target.getRadians()));
+                .inverseKinematics(new Twist2d(0, 0, robot_to_target.getRadians()));
         updatePositionSetpoint(wheel_delta.left + getLeftDistanceInches(),
                 wheel_delta.right + getRightDistanceInches());
     }
 
     private void updatePathFollower(double timestamp) {
         RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
-        RigidTransform2d.Delta command = mPathFollower.update(timestamp, robot_pose,
+        Twist2d command = mPathFollower.update(timestamp, robot_pose,
                 RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getMeasuredVelocity().dx);
         if (!mPathFollower.isFinished()) {
             Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);

@@ -19,34 +19,34 @@ public class PathTest {
 
         // GetClosestPoint - point on path
         Translation2d closestPoint = segment.getClosestPoint(new Translation2d(50,0));
-        assertEquals(50, closestPoint.getX(), kTestEpsilon);
-        assertEquals(0, closestPoint.getY(), kTestEpsilon);
+        assertEquals(50, closestPoint.x(), kTestEpsilon);
+        assertEquals(0, closestPoint.y(), kTestEpsilon);
         double dist = segment.getRemainingDistance(closestPoint);
         assertEquals(50, dist, kTestEpsilon);
         Translation2d lookAheadPoint = segment.getPointByDistance(75.0);
-        assertEquals(75, lookAheadPoint.getX(), kTestEpsilon);
-        assertEquals(0, lookAheadPoint.getY(), kTestEpsilon);
+        assertEquals(75, lookAheadPoint.x(), kTestEpsilon);
+        assertEquals(0, lookAheadPoint.y(), kTestEpsilon);
 
 
         // GetClosestPoint - point off of path
         closestPoint = segment.getClosestPoint(new Translation2d(20,50));
-        assertEquals(20, closestPoint.getX(), kTestEpsilon);
-        assertEquals(0, closestPoint.getY(), kTestEpsilon);
+        assertEquals(20, closestPoint.x(), kTestEpsilon);
+        assertEquals(0, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(80, dist, kTestEpsilon);
 
 
         // GetClosestPoint - point behind start
         closestPoint = segment.getClosestPoint(new Translation2d(-30,-30));
-        assertEquals(0, closestPoint.getX(), kTestEpsilon);
-        assertEquals(0, closestPoint.getY(), kTestEpsilon);
+        assertEquals(0, closestPoint.x(), kTestEpsilon);
+        assertEquals(0, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(100, dist, kTestEpsilon);
 
         // GetClosestPoint - point after end
         closestPoint = segment.getClosestPoint(new Translation2d(120,150));
-        assertEquals(100, closestPoint.getX(), kTestEpsilon);
-        assertEquals(0, closestPoint.getY(), kTestEpsilon);
+        assertEquals(100, closestPoint.x(), kTestEpsilon);
+        assertEquals(0, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(0, dist, kTestEpsilon);
     
@@ -56,33 +56,33 @@ public class PathTest {
 
         // GetClosestPoint - point on path
         closestPoint = segment.getClosestPoint(new Translation2d(-20,-93));
-        assertEquals(-20, closestPoint.getX(), kTestEpsilon);
-        assertEquals(-93, closestPoint.getY(), kTestEpsilon);
+        assertEquals(-20, closestPoint.x(), kTestEpsilon);
+        assertEquals(-93, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(28.7923600978, dist, kTestEpsilon);
         lookAheadPoint = segment.getPointByDistance(75.0);
-        assertEquals(-16.048576686769547, lookAheadPoint.getX(), kTestEpsilon);
-        assertEquals(-82.33115705427778, lookAheadPoint.getY(), kTestEpsilon);
+        assertEquals(-16.048576686769547, lookAheadPoint.x(), kTestEpsilon);
+        assertEquals(-82.33115705427778, lookAheadPoint.y(), kTestEpsilon);
 
         // GetClosestPoint - point off of path
         closestPoint = segment.getClosestPoint(new Translation2d(30,-39));
-        assertEquals(3.618817852834706, closestPoint.getX(), kTestEpsilon);
-        assertEquals(-29.2291917973462, closestPoint.getY(), kTestEpsilon);
+        assertEquals(3.618817852834706, closestPoint.x(), kTestEpsilon);
+        assertEquals(-29.2291917973462, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(96.79651096803562, dist, kTestEpsilon);
 
 
         // GetClosestPoint - point behind start
         closestPoint = segment.getClosestPoint(new Translation2d(30,30));
-        assertEquals(10, closestPoint.getX(), kTestEpsilon);
-        assertEquals(-12, closestPoint.getY(), kTestEpsilon);
+        assertEquals(10, closestPoint.x(), kTestEpsilon);
+        assertEquals(-12, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(115.169440391, dist, kTestEpsilon);
 
         // GetClosestPoint - point after end
         closestPoint = segment.getClosestPoint(new Translation2d(-21,-150));
-        assertEquals(-30, closestPoint.getX(), kTestEpsilon);
-        assertEquals(-120, closestPoint.getY(), kTestEpsilon);
+        assertEquals(-30, closestPoint.x(), kTestEpsilon);
+        assertEquals(-120, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(0, dist, kTestEpsilon);
     }
@@ -93,34 +93,34 @@ public class PathTest {
 
         // GetClosestPoint - point on path
         Translation2d closestPoint = segment.getClosestPoint(new Translation2d(50,0));
-        assertEquals(50, closestPoint.getX(), kTestEpsilon);
-        assertEquals(0, closestPoint.getY(), kTestEpsilon);
+        assertEquals(50, closestPoint.x(), kTestEpsilon);
+        assertEquals(0, closestPoint.y(), kTestEpsilon);
         double dist = segment.getRemainingDistance(closestPoint);
         assertEquals(50, dist, kTestEpsilon);
         Translation2d lookAheadPoint = segment.getPointByDistance(75.0);
-        assertEquals(75, lookAheadPoint.getX(), kTestEpsilon);
-        assertEquals(0, lookAheadPoint.getY(), kTestEpsilon);
+        assertEquals(75, lookAheadPoint.x(), kTestEpsilon);
+        assertEquals(0, lookAheadPoint.y(), kTestEpsilon);
 
 
         // GetClosestPoint - point off of path
         closestPoint = segment.getClosestPoint(new Translation2d(20,50));
-        assertEquals(20, closestPoint.getX(), kTestEpsilon);
-        assertEquals(0, closestPoint.getY(), kTestEpsilon);
+        assertEquals(20, closestPoint.x(), kTestEpsilon);
+        assertEquals(0, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(80, dist, kTestEpsilon);
 
 
         // GetClosestPoint - point behind start
         closestPoint = segment.getClosestPoint(new Translation2d(-30,-30));
-        assertEquals(0, closestPoint.getX(), kTestEpsilon);
-        assertEquals(0, closestPoint.getY(), kTestEpsilon);
+        assertEquals(0, closestPoint.x(), kTestEpsilon);
+        assertEquals(0, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(100, dist, kTestEpsilon);
 
         // GetClosestPoint - point after end
         closestPoint = segment.getClosestPoint(new Translation2d(120,150));
-        assertEquals(100, closestPoint.getX(), kTestEpsilon);
-        assertEquals(0, closestPoint.getY(), kTestEpsilon);
+        assertEquals(100, closestPoint.x(), kTestEpsilon);
+        assertEquals(0, closestPoint.y(), kTestEpsilon);
         dist = segment.getRemainingDistance(closestPoint);
         assertEquals(0, dist, kTestEpsilon);
     }

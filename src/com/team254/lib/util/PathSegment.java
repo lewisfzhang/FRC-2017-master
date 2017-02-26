@@ -134,7 +134,7 @@ public class PathSegment {
         if(isLine) {
             return deltaStart.norm();
         } else {
-            double angle = Translation2d.GetAngle(deltaStart, deltaEnd);
+            double angle = Translation2d.getAngle(deltaStart, deltaEnd);
             return deltaStart.norm() * angle;
         }
     }
@@ -156,14 +156,14 @@ public class PathSegment {
     public Translation2d getClosestPoint(Translation2d position) {
         if(isLine) {
             Translation2d delta = new Translation2d(start, end);
-            double u = ((position.getX() - start.getX()) * delta.getX() + (position.getY() - start.getY()) * delta.getY()) / (delta.getX() * delta.getX() + delta.getY() * delta.getY());
+            double u = ((position.x() - start.x()) * delta.x() + (position.y() - start.y()) * delta.y()) / (delta.x() * delta.x() + delta.y() * delta.y());
             if (u >= 0 && u <= 1)
-                return new Translation2d(start.getX() + u * delta.getX(), start.getY() + u * delta.getY());
+                return new Translation2d(start.x() + u * delta.x(), start.y() + u * delta.y());
             return (u < 0) ? start : end;
         } else {
             Translation2d deltaPosition = new Translation2d(center, position);
             deltaPosition = deltaPosition.scale(deltaStart.norm() / deltaPosition.norm());
-            if(Translation2d.Cross(deltaPosition, deltaStart) * Translation2d.Cross(deltaPosition, deltaEnd) < 0) {
+            if(Translation2d.cross(deltaPosition, deltaStart) * Translation2d.cross(deltaPosition, deltaEnd) < 0) {
                 return center.translateBy(deltaPosition);
             } else {
                 Translation2d startDist = new Translation2d(position, start);
@@ -186,7 +186,7 @@ public class PathSegment {
         if(isLine) {
             return start.translateBy( deltaStart.scale(dist / length));
         } else {
-            double deltaAngle = Translation2d.GetAngle(deltaStart, deltaEnd) * ((Translation2d.Cross(deltaStart, deltaEnd) >= 0) ? 1 : -1);
+            double deltaAngle = Translation2d.getAngle(deltaStart, deltaEnd) * ((Translation2d.cross(deltaStart, deltaEnd) >= 0) ? 1 : -1);
             deltaAngle *= dist / length;
             Translation2d t = deltaStart.rotateBy(Rotation2d.fromRadians(deltaAngle));
             return center.translateBy(t);
@@ -203,8 +203,8 @@ public class PathSegment {
             return new Translation2d(end, position).norm();
         } else {
             Translation2d deltaPosition = new Translation2d(center, position);
-            double angle = Translation2d.GetAngle(deltaEnd, deltaPosition);
-            double totalAngle = Translation2d.GetAngle(deltaStart, deltaEnd);
+            double angle = Translation2d.getAngle(deltaEnd, deltaPosition);
+            double totalAngle = Translation2d.getAngle(deltaStart, deltaEnd);
             return angle/totalAngle * getLength();
         }
     }

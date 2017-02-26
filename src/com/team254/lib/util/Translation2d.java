@@ -7,8 +7,11 @@ import java.text.DecimalFormat;
  */
 public class Translation2d implements Interpolable<Translation2d> {
     protected static final Translation2d kIdentity = new Translation2d();
-    public static final Translation2d identity() { return kIdentity; }
-    
+
+    public static final Translation2d identity() {
+        return kIdentity;
+    }
+
     protected double x_;
     protected double y_;
 
@@ -26,7 +29,7 @@ public class Translation2d implements Interpolable<Translation2d> {
         x_ = other.x_;
         y_ = other.y_;
     }
-    
+
     public Translation2d(Translation2d start, Translation2d end) {
         x_ = end.x_ - start.x_;
         y_ = end.y_ - start.y_;
@@ -41,11 +44,15 @@ public class Translation2d implements Interpolable<Translation2d> {
         return Math.hypot(x_, y_);
     }
 
-    public double getX() {
+    public double norm2() {
+        return x_ * x_ + y_ * y_;
+    }
+
+    public double x() {
         return x_;
     }
 
-    public double getY() {
+    public double y() {
         return y_;
     }
 
@@ -79,6 +86,10 @@ public class Translation2d implements Interpolable<Translation2d> {
         return new Translation2d(x_ * rotation.cos() - y_ * rotation.sin(), x_ * rotation.sin() + y_ * rotation.cos());
     }
 
+    public Rotation2d direction() {
+        return new Rotation2d(x_, y_, true);
+    }
+
     /**
      * The inverse simply means a Translation2d that "undoes" this object.
      * 
@@ -86,10 +97,6 @@ public class Translation2d implements Interpolable<Translation2d> {
      */
     public Translation2d inverse() {
         return new Translation2d(-x_, -y_);
-    }
-    
-    public Translation2d perpendicular() {
-        return new Translation2d(-y_, x_);
     }
 
     @Override
@@ -105,7 +112,7 @@ public class Translation2d implements Interpolable<Translation2d> {
     public Translation2d extrapolate(Translation2d other, double x) {
         return new Translation2d(x * (other.x_ - x_) + x_, x * (other.y_ - y_) + y_);
     }
-    
+
     public Translation2d scale(double s) {
         return new Translation2d(x_ * s, y_ * s);
     }
@@ -115,17 +122,20 @@ public class Translation2d implements Interpolable<Translation2d> {
         final DecimalFormat fmt = new DecimalFormat("#0.000");
         return "(" + fmt.format(x_) + "," + fmt.format(y_) + ")";
     }
-    
-    public static double Dot(Translation2d a, Translation2d b) {
+
+    public static double dot(Translation2d a, Translation2d b) {
         return a.x_ * b.x_ + a.y_ * b.y_;
     }
-    
-    public static double GetAngle(Translation2d a, Translation2d b) {
-        double cos_angle = Dot(a, b) / (a.norm() * b.norm());
+
+    public static double getAngle(Translation2d a, Translation2d b) {
+        double cos_angle = dot(a, b) / (a.norm() * b.norm());
+        if (Double.isNaN(cos_angle)) {
+            return 0.0;
+        }
         return Math.acos(Math.min(1.0, Math.max(cos_angle, -1.0)));
     }
-    
-    public static double Cross(Translation2d a, Translation2d b) {
+
+    public static double cross(Translation2d a, Translation2d b) {
         return a.x_ * b.y_ - a.y_ * b.x_;
     }
 }

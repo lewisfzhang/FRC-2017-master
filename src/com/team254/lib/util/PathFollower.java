@@ -41,7 +41,7 @@ public class PathFollower {
     }
 
     AdaptivePurePursuitController mSteeringController;
-    RigidTransform2d.Delta mLastSteeringDelta;
+    Twist2d mLastSteeringDelta;
     ProfileFollower mVelocityController;
     final double mInertiaGain;
 
@@ -55,7 +55,7 @@ public class PathFollower {
      */
     public PathFollower(Path path, boolean reversed, Parameters parameters) {
         mSteeringController = new AdaptivePurePursuitController(path, reversed, parameters.fixed_lookahead);
-        mLastSteeringDelta = RigidTransform2d.Delta.identity();
+        mLastSteeringDelta = Twist2d.identity();
         mVelocityController = new ProfileFollower(parameters.profile_kp, parameters.profile_ki, parameters.profile_kv,
                 parameters.profile_kffv, parameters.profile_kffa);
         mVelocityController.setConstraints(
@@ -78,7 +78,7 @@ public class PathFollower {
      *            The current robot velocity.
      * @return The velocity command to apply
      */
-    public RigidTransform2d.Delta update(double t, RigidTransform2d pose, double displacement, double velocity) {
+    public Twist2d update(double t, RigidTransform2d pose, double displacement, double velocity) {
         if (!mSteeringController.isFinished()) {
             final AdaptivePurePursuitController.Command steering_command = mSteeringController.update(pose);
             mCrossTrackError = steering_command.cross_track_error;
@@ -102,7 +102,7 @@ public class PathFollower {
             dtheta = mLastSteeringDelta.dx * curvature * (1.0 + mInertiaGain * abs_velocity_setpoint);
         }
         final double scale = velocity_command / mLastSteeringDelta.dx;
-        return new RigidTransform2d.Delta(mLastSteeringDelta.dx * scale, 0.0, dtheta * scale);
+        return new Twist2d(mLastSteeringDelta.dx * scale, 0.0, dtheta * scale);
     }
 
     public double getCrossTrackError() {

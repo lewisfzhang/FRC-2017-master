@@ -11,6 +11,7 @@ import com.team254.frc2017.paths.StartToGearBlue;
 import com.team254.frc2017.paths.StartToGearRed;
 import com.team254.lib.util.PathFollower;
 import com.team254.lib.util.RigidTransform2d;
+import com.team254.lib.util.Twist2d;
 
 public class PathFollowerTest {
 
@@ -39,8 +40,8 @@ public class PathFollowerTest {
         double velocity = 0.0;
         while (!controller.isFinished() && t < 10.0) {
             // Follow the path
-            RigidTransform2d.Delta command = controller.update(t, robot_pose, displacement, velocity);
-            robot_pose = robot_pose.transformBy(RigidTransform2d.fromVelocity(command.scaled(dt)));
+            Twist2d command = controller.update(t, robot_pose, displacement, velocity);
+            robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
 
             t += dt;
             final double prev_vel = velocity;
@@ -53,8 +54,8 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(110, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance );
-        assertEquals(109, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance*3);
+        assertEquals(110, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance );
+        assertEquals(109, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance*3);
     }
 
     @Test
@@ -70,8 +71,8 @@ public class PathFollowerTest {
         double velocity = 0.0;
         while (!controller.isFinished() && t < 25.0) {
             // Follow the path
-            RigidTransform2d.Delta command = controller.update(t, robot_pose, displacement, velocity);
-            robot_pose = robot_pose.transformBy(RigidTransform2d.fromVelocity(command.scaled(dt)));
+            Twist2d command = controller.update(t, robot_pose, displacement, velocity);
+            robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
 
             t += dt;
             final double prev_vel = velocity;
@@ -84,16 +85,16 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(110, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance * 3);
-        assertEquals(214, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance * 3);
+        assertEquals(110, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
+        assertEquals(214, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
 
         Constants.kAutoLookAhead = 24.0;
         container = new GearToHopperBlue();
         controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
         while (!controller.isFinished() && t < 50.0) {
             // Follow the path
-            RigidTransform2d.Delta command = controller.update(t, robot_pose, displacement, velocity);
-            robot_pose = robot_pose.transformBy(RigidTransform2d.fromVelocity(command.scaled(dt)));
+            Twist2d command = controller.update(t, robot_pose, displacement, velocity);
+            robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
 
             t += dt;
             final double prev_vel = velocity;
@@ -106,7 +107,7 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(91, robot_pose.getTranslation().getX(), Constants.kSegmentCompletionTolerance * 5);
-        assertEquals(301, robot_pose.getTranslation().getY(), Constants.kSegmentCompletionTolerance * 5);
+        assertEquals(91, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 5);
+        assertEquals(301, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 5);
     }
 }

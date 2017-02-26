@@ -14,7 +14,7 @@ public class AdaptivePurePursuitController {
     private static final double kReallyBigNumber = 1E6;
 
     public static class Command {
-        public RigidTransform2d.Delta delta = RigidTransform2d.Delta.identity();
+        public Twist2d delta = Twist2d.identity();
         public double cross_track_error;
         public double max_velocity;
         public double end_velocity;
@@ -22,8 +22,7 @@ public class AdaptivePurePursuitController {
         public Command() {
         }
 
-        public Command(RigidTransform2d.Delta delta, double cross_track_error, double max_velocity,
-                double end_velocity) {
+        public Command(Twist2d delta, double cross_track_error, double max_velocity, double end_velocity) {
             this.delta = delta;
             this.cross_track_error = cross_track_error;
             this.max_velocity = max_velocity;
@@ -64,7 +63,7 @@ public class AdaptivePurePursuitController {
         // System.out.println("Lookahead point " + report.lookahead_point + ", vel " + report.lookahead_point_speed);
         if (isFinished()) {
             // Stop.
-            return new Command(RigidTransform2d.Delta.identity(), report.closest_point_distance, report.max_speed, 0.0);
+            return new Command(Twist2d.identity(), report.closest_point_distance, report.max_speed, 0.0);
         }
 
         final Arc arc = new Arc(pose, report.lookahead_point);
@@ -77,12 +76,12 @@ public class AdaptivePurePursuitController {
         }
 
         return new Command(
-                new RigidTransform2d.Delta(scale_factor * arc.length, 0.0,
+                new Twist2d(scale_factor * arc.length, 0.0,
                         arc.length * getDirection(pose, report.lookahead_point) * Math.abs(scale_factor) / arc.radius),
                 report.closest_point_distance, report.max_speed,
                 report.lookahead_point_speed * Math.signum(scale_factor));
     }
-    
+
     public boolean hasPassedMarker(String marker) {
         return mPath.hasPassedMarker(marker);
     }
@@ -109,12 +108,16 @@ public class AdaptivePurePursuitController {
      * @return center of the circle joining the lookahead point and robot pose
      */
     public static Translation2d getCenter(RigidTransform2d pose, Translation2d point) {
-        Translation2d poseToPoint = new Translation2d(pose.getTranslation(), point);
-        Line perpendicularBisector = new Line(pose.getTranslation().translateBy(poseToPoint.scale(0.5)),
-                new Translation2d(-poseToPoint.getY(), poseToPoint.getX()));
-        Line radiusLine = new Line(pose.getTranslation(),
-                new Translation2d(-pose.getRotation().sin(), pose.getRotation().cos()));
-        return Line.intersection(perpendicularBisector, radiusLine);
+        final Translation2d poseToPointHalfway = pose.getTranslation().interpolate(point, 0.5);
+        final Rotation2d normal = pose.getTranslation().inverse().translateBy(poseToPointHalfway).direction().normal();
+        final RigidTransform2d perpendicularBisector = new RigidTransform2d(poseToPointHalfway, normal);
+        final RigidTransform2d normalFromPose = new RigidTransform2d(pose.getTranslation(),
+                pose.getRotation().normal());
+        if (normalFromPose.isColinear(perpendicularBisector.normal())) {
+            // Special case: center is poseToPointHalfway.
+            return poseToPointHalfway;
+        }
+        return normalFromPose.intersection(perpendicularBisector);
     }
 
     /**
@@ -132,7 +135,7 @@ public class AdaptivePurePursuitController {
     }
 
     /**
-     * Gives the length of the arc joining the lookahead point and robot pose
+     * Gives the length of the arc joining the lookahead point and robot pose (assuming forward motion).
      * 
      * @param pose
      *            robot pose
@@ -150,10 +153,13 @@ public class AdaptivePurePursuitController {
         if (radius < kReallyBigNumber) {
             final Translation2d centerToPoint = new Translation2d(center, point);
             final Translation2d centerToPose = new Translation2d(center, pose.getTranslation());
-            final double dotProduct = centerToPoint.getX() * centerToPose.getX()
-                    + centerToPoint.getY() * centerToPose.getY();
-            final double angle = Math.acos(dotProduct / (centerToPoint.norm() * centerToPose.norm()));
-            return radius * angle;
+            final double angle = Translation2d.getAngle(centerToPose, centerToPoint);
+            // If the point is behind pose, we want the complement of this angle. To determine if the point is behind,
+            // check the sign of the cross-product.
+            final boolean behind = Math.signum(
+                    Translation2d.cross(pose.getTranslation().translateBy(pose.getRotation().normal().toTranslation()),
+                            new Translation2d(pose.getTranslation(), point))) > 0.0;
+            return radius * (behind ? angle + Math.PI : angle);
         } else {
             return new Translation2d(pose.getTranslation(), point).norm();
         }
@@ -171,7 +177,7 @@ public class AdaptivePurePursuitController {
     public static int getDirection(RigidTransform2d pose, Translation2d point) {
         Translation2d poseToPoint = new Translation2d(pose.getTranslation(), point);
         Translation2d robot = pose.getRotation().toTranslation();
-        double cross = robot.getX() * poseToPoint.getY() - robot.getY() * poseToPoint.getX();
+        double cross = robot.x() * poseToPoint.y() - robot.y() * poseToPoint.x();
         return (cross < 0) ? -1 : 1; // if robot < pose turn left
     }
 
@@ -180,37 +186,5 @@ public class AdaptivePurePursuitController {
      */
     public boolean isFinished() {
         return mPath.segments.size() == 0;
-    }
-
-    public static class Line {
-        public final Translation2d point;
-        public final Translation2d slope;
-
-        public Line(Translation2d point, Translation2d slope) {
-            this.point = point;
-            this.slope = slope;
-        }
-
-        public void print() {
-            System.out.println("Slope: " + slope);
-            System.out.println("Point: " + point);
-        }
-
-        public double getSlope() {
-            return slope.getY() / ((slope.getX() == 0) ? kEpsilon : slope.getX());
-        }
-
-        public double getYIntercept() {
-            return point.getY() - point.getX() * getSlope();
-        }
-
-        public Translation2d getPoint(double x) {
-            return new Translation2d(x, x * getSlope() + getYIntercept());
-        }
-
-        public static Translation2d intersection(Line l1, Line l2) {
-            double x = (l1.getYIntercept() - l2.getYIntercept()) / (l2.getSlope() - l1.getSlope());
-            return l1.getPoint(x);
-        }
     }
 }

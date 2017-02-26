@@ -1,6 +1,7 @@
 package com.team254.lib.util;
 
 import java.text.DecimalFormat;
+import static com.team254.lib.util.Util.*;
 
 /**
  * A rotation in a 2d coordinate frame represented a point on the unit circle (cosine and sine).
@@ -9,8 +10,11 @@ import java.text.DecimalFormat;
  */
 public class Rotation2d implements Interpolable<Rotation2d> {
     protected static final Rotation2d kIdentity = new Rotation2d();
-    public static final Rotation2d identity() { return kIdentity; }
-    
+
+    public static final Rotation2d identity() {
+        return kIdentity;
+    }
+
     protected static final double kEpsilon = 1E-9;
 
     protected double cos_angle_;
@@ -31,6 +35,10 @@ public class Rotation2d implements Interpolable<Rotation2d> {
     public Rotation2d(Rotation2d other) {
         cos_angle_ = other.cos_angle_;
         sin_angle_ = other.sin_angle_;
+    }
+
+    public Rotation2d(Translation2d direction, boolean normalize) {
+        this(direction.x(), direction.y(), normalize);
     }
 
     public static Rotation2d fromRadians(double angle_radians) {
@@ -65,7 +73,7 @@ public class Rotation2d implements Interpolable<Rotation2d> {
     }
 
     public double tan() {
-        if (cos_angle_ < kEpsilon) {
+        if (Math.abs(cos_angle_) < kEpsilon) {
             if (sin_angle_ >= 0.0) {
                 return Double.POSITIVE_INFINITY;
             } else {
@@ -95,6 +103,10 @@ public class Rotation2d implements Interpolable<Rotation2d> {
                 cos_angle_ * other.sin_angle_ + sin_angle_ * other.cos_angle_, true);
     }
 
+    public Rotation2d normal() {
+        return new Rotation2d(-sin_angle_, cos_angle_, false);
+    }
+
     /**
      * The inverse of a Rotation2d "undoes" the effect of this rotation.
      * 
@@ -104,10 +116,14 @@ public class Rotation2d implements Interpolable<Rotation2d> {
         return new Rotation2d(cos_angle_, -sin_angle_, false);
     }
 
-    public Translation2d toTranslation() {      
-        return new Translation2d(cos_angle_, sin_angle_);     
+    public boolean isParallel(Rotation2d other) {
+        return epsilonEquals(Translation2d.cross(toTranslation(), other.toTranslation()), 0.0, kEpsilon);
     }
-    
+
+    public Translation2d toTranslation() {
+        return new Translation2d(cos_angle_, sin_angle_);
+    }
+
     @Override
     public Rotation2d interpolate(Rotation2d other, double x) {
         if (x <= 0) {
