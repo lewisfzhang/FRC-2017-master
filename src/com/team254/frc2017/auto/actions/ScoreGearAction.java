@@ -23,6 +23,6 @@ public class ScoreGearAction implements Action {
 
     @Override
     public void start() {
-        mGearGrabber.setWantedState(GearGrabber.WantedState.SCORE_GEAR);
+        mGearGrabber.setWantedState(GearGrabber.WantedState.SCORE);
     }
 }
