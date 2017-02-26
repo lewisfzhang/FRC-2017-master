@@ -13,7 +13,7 @@ public class GearToHopperRed implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(110,109,0,0)); //dat gear doe
+        sWaypoints.add(new Waypoint(110 ,109,0,0)); //dat gear doe
         sWaypoints.add(new Waypoint(150,73,12,100));
         sWaypoints.add(new Waypoint(130,30,4,100, "DeployIntake"));
         sWaypoints.add(new Waypoint(91.5,22,0,100));
