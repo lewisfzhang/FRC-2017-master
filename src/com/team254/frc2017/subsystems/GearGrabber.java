@@ -85,6 +85,7 @@ public class GearGrabber extends Subsystem {
                 if (newState != mSystemState) {
                     System.out.println("Changed state: " + mSystemState + " -> " + newState);
                     mIsSameState = false;
+                    mSystemState = newState;
                 }
                 else {
                     mIsSameState = true;
