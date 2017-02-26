@@ -105,6 +105,11 @@ public class Constants extends ConstantsBase {
     
     // Hopper gains
     public static double kHopperRampRate = 24.0;
+
+    // Grabber constants
+    public static double kGrabberPlaceTimeSeconds = 0.5;
+    public static double kGrabberGrabTimeSeconds = 0.5;
+
     
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!

@@ -215,9 +215,11 @@ public class Robot extends IterativeRobot {
                 if (mControlBoard.getStowGearGrabberButton()) {
                     mGearGrabber.setWantedState(GearGrabber.WantedState.STOWED);
                 } else if (mControlBoard.getGrabGearButton()) {
-                    mGearGrabber.setWantedState(GearGrabber.WantedState.GRAB_GEAR);
+                    mGearGrabber.setWantedState(GearGrabber.WantedState.DOWN_FOR_GEAR);
+                } else if (mControlBoard.getPlaceGearButton()) {
+                    mGearGrabber.setWantedState(GearGrabber.WantedState.PLACE);
                 } else if (mControlBoard.getScoreGearButton()) {
-                    mGearGrabber.setWantedState(GearGrabber.WantedState.SCORE_GEAR);
+                    mGearGrabber.setWantedState(GearGrabber.WantedState.SCORE);
                 }
             }
 
