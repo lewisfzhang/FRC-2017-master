@@ -1,5 +1,7 @@
-package com.team254.lib.util;
+package com.team254.lib.util.control;
 
+import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Twist2d;
 import com.team254.lib.util.motion.MotionProfileConstraints;
 import com.team254.lib.util.motion.MotionProfileGoal;
 import com.team254.lib.util.motion.MotionProfileGoal.CompletionBehavior;

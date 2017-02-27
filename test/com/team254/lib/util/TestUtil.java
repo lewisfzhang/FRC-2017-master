@@ -1,4 +1,4 @@
-package com.team254.lib.util.test;
+package com.team254.lib.util;
 
 import com.team254.lib.util.Util;
 import org.hamcrest.BaseMatcher;

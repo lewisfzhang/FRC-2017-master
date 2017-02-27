@@ -1,9 +1,10 @@
-package com.team254.lib.util.test;
+package com.team254.lib.util.control;
 
-import com.team254.lib.util.ShooterController;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.team254.lib.util.control.ShooterController;
 
 /**
  * Created by leighpauls on 2/15/17.

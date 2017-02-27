@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import com.team254.lib.util.Translation2d;
+import com.team254.lib.util.math.Translation2d;
 
 /**
  * This is used in the event that multiple goals are detected to judge all goals

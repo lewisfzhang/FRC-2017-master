@@ -1,15 +1,15 @@
-package com.team254.lib.util.test;
+package com.team254.lib.util.math;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.team254.lib.util.RigidTransform2d;
-import com.team254.lib.util.Rotation2d;
-import com.team254.lib.util.Translation2d;
-import com.team254.lib.util.Twist2d;
+import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Rotation2d;
+import com.team254.lib.util.math.Translation2d;
+import com.team254.lib.util.math.Twist2d;
 
-public class TestRigidTransform2d {
+public class TestMath {
     public static final double kTestEpsilon = 1E-9;
 
     @Test

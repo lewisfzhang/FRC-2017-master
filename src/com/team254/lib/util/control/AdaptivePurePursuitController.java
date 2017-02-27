@@ -1,4 +1,9 @@
-package com.team254.lib.util;
+package com.team254.lib.util.control;
+
+import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Rotation2d;
+import com.team254.lib.util.math.Translation2d;
+import com.team254.lib.util.math.Twist2d;
 
 /**
  * Implements an adaptive pure pursuit controller. See:

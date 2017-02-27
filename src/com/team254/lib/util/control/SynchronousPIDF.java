@@ -1,4 +1,4 @@
-package com.team254.lib.util;
+package com.team254.lib.util.control;
 
 import edu.wpi.first.wpilibj.util.BoundaryException;
 

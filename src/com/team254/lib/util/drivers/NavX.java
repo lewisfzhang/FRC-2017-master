@@ -1,8 +1,9 @@
-package com.team254.lib.util;
+package com.team254.lib.util.drivers;
 
 import com.kauailabs.navx.AHRSProtocol.AHRSUpdateBase;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.ITimestampedDataSubscriber;
+import com.team254.lib.util.math.Rotation2d;
 
 import edu.wpi.first.wpilibj.SPI;
 

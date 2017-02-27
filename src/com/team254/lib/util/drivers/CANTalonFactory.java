@@ -1,4 +1,4 @@
-package com.team254.lib.util;
+package com.team254.lib.util.drivers;
 
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.MotorSafety;

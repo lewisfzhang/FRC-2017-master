@@ -1,7 +1,7 @@
 package com.team254.frc2017.auto.actions;
 
 import com.team254.frc2017.subsystems.Drive;
-import com.team254.lib.util.Rotation2d;
+import com.team254.lib.util.math.Rotation2d;
 
 public class TurnToHeadingAction implements Action {
 

@@ -1,4 +1,4 @@
-package com.team254.lib.util;
+package com.team254.lib.util.math;
 
 /**
  * A movement along an arc at constant curvature and velocity.  We can use ideas from "differential calculus" to create

@@ -1,4 +1,6 @@
-package com.team254.lib.util;
+package com.team254.lib.util.control;
+
+import com.team254.lib.util.Util;
 
 /**
  * A modified bang-bang controller:

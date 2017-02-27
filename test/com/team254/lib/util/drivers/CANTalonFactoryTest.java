@@ -1,7 +1,8 @@
-package com.team254.lib.util.test;
+package com.team254.lib.util.drivers;
 
 import com.ctre.CANTalon;
-import com.team254.lib.util.CANTalonFactory;
+import com.team254.lib.util.drivers.CANTalonFactory;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

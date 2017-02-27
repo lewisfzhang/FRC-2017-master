@@ -1,6 +1,6 @@
 package com.team254.frc2017;
 
-import com.team254.lib.util.Rotation2d;
+import com.team254.lib.util.math.Rotation2d;
 
 /**
  * A container class to specify the shooter angle. It contains the desired

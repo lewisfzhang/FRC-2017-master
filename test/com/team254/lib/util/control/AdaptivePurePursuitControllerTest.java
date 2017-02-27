@@ -1,14 +1,14 @@
-package com.team254.lib.util.test;
+package com.team254.lib.util.control;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.team254.lib.util.AdaptivePurePursuitController;
-import com.team254.lib.util.AdaptivePurePursuitController.Arc;
-import com.team254.lib.util.RigidTransform2d;
-import com.team254.lib.util.Rotation2d;
-import com.team254.lib.util.Translation2d;
+import com.team254.lib.util.control.AdaptivePurePursuitController;
+import com.team254.lib.util.control.AdaptivePurePursuitController.Arc;
+import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Rotation2d;
+import com.team254.lib.util.math.Translation2d;
 
 public class AdaptivePurePursuitControllerTest {
     private static final double kEpsilon = 1E-6;

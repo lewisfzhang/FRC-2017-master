@@ -3,10 +3,10 @@ package com.team254.frc2017.paths;
 import java.util.ArrayList;
 
 import com.team254.frc2017.paths.PathBuilder.Waypoint;
-import com.team254.lib.util.Path;
-import com.team254.lib.util.RigidTransform2d;
-import com.team254.lib.util.Rotation2d;
-import com.team254.lib.util.Translation2d;
+import com.team254.lib.util.control.Path;
+import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Rotation2d;
+import com.team254.lib.util.math.Translation2d;
 
 public class GearToHopperBlue implements PathContainer {
     

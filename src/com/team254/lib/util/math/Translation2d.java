@@ -1,6 +1,8 @@
-package com.team254.lib.util;
+package com.team254.lib.util.math;
 
 import java.text.DecimalFormat;
+
+import com.team254.lib.util.Interpolable;
 
 /**
  * A translation in a 2d coordinate frame. Translations are simply shifts in an (x, y) plane.

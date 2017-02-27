@@ -1,9 +1,9 @@
-package com.team254.lib.util.test;
+package com.team254.lib.util.control;
 
 import static org.junit.Assert.*;
 
-import com.team254.lib.util.PathSegment;
-import com.team254.lib.util.Translation2d;
+import com.team254.lib.util.control.PathSegment;
+import com.team254.lib.util.math.Translation2d;
 import com.team254.lib.util.motion.MotionState;
 
 import org.junit.Test;

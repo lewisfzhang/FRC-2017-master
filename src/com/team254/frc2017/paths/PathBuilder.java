@@ -2,12 +2,12 @@ package com.team254.frc2017.paths;
 
 import java.util.List;
 
-import com.team254.lib.util.AdaptivePurePursuitController;
-import com.team254.lib.util.Path;
-import com.team254.lib.util.PathSegment;
-import com.team254.lib.util.RigidTransform2d;
-import com.team254.lib.util.Rotation2d;
-import com.team254.lib.util.Translation2d;
+import com.team254.lib.util.control.AdaptivePurePursuitController;
+import com.team254.lib.util.control.Path;
+import com.team254.lib.util.control.PathSegment;
+import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Rotation2d;
+import com.team254.lib.util.math.Translation2d;
 
 public class PathBuilder {
     private static final double kEpsilon = 1E-9;

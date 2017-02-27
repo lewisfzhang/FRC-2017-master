@@ -1,6 +1,8 @@
-package com.team254.lib.util;
+package com.team254.lib.util.math;
 
 import static com.team254.lib.util.Util.*;
+
+import com.team254.lib.util.Interpolable;
 
 /**
  * Represents a 2d pose (rigid transform) containing translational and rotational elements.

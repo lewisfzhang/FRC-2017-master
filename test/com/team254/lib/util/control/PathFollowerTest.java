@@ -1,4 +1,4 @@
-package com.team254.lib.util.test;
+package com.team254.lib.util.control;
 
 import static org.junit.Assert.*;
 
@@ -9,9 +9,9 @@ import com.team254.frc2017.paths.GearToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToGearBlue;
 import com.team254.frc2017.paths.StartToGearRed;
-import com.team254.lib.util.PathFollower;
-import com.team254.lib.util.RigidTransform2d;
-import com.team254.lib.util.Twist2d;
+import com.team254.lib.util.control.PathFollower;
+import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Twist2d;
 
 public class PathFollowerTest {
 
