@@ -34,8 +34,8 @@ public class Robot extends IterativeRobot {
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
-            Arrays.asList(Drive.getInstance(), Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(),
-                    Shooter.getInstance(), Superstructure.getInstance(), GearGrabber.getInstance()));
+            Arrays.asList(Drive.getInstance(), Superstructure.getInstance(), Shooter.getInstance(),
+                    Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(), GearGrabber.getInstance()));
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
