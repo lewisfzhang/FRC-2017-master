@@ -156,6 +156,7 @@ public class Drive extends Subsystem {
 
         reloadGains();
 
+        mIsHighGear = false;
         setHighGear(true);
         setOpenLoop(DriveSignal.NEUTRAL);
 
@@ -191,9 +192,11 @@ public class Drive extends Subsystem {
         return mIsHighGear;
     }
 
-    public synchronized void setHighGear(boolean highGear) {
-        mIsHighGear = highGear;
-        mShifter.set(!highGear);
+    public synchronized void setHighGear(boolean wantsHighGear) {
+        if (wantsHighGear != mIsHighGear) {
+            mIsHighGear = wantsHighGear;
+            mShifter.set(!wantsHighGear);
+        }
     }
 
     public boolean isBrakeMode() {
