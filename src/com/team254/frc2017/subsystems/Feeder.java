@@ -5,6 +5,8 @@ import com.ctre.CANTalon.TalonControlMode;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.drivers.LazyCANTalon;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Feeder extends Subsystem {
@@ -27,7 +29,7 @@ public class Feeder extends Subsystem {
     private final CANTalon mMasterTalon, mSlaveTalon;
 
     public Feeder() {
-        mMasterTalon = new CANTalon(Constants.kFeederMasterId);
+        mMasterTalon = new LazyCANTalon(Constants.kFeederMasterId);
 
         mMasterTalon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
@@ -43,7 +45,7 @@ public class Feeder extends Subsystem {
         mMasterTalon.setD(Constants.kFeederKD);
         mMasterTalon.setF(Constants.kFeederKF);
 
-        mSlaveTalon = new CANTalon(Constants.kFeederSlaveId);
+        mSlaveTalon = new LazyCANTalon(Constants.kFeederSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kFeederMasterId);
         mSlaveTalon.setVoltageRampRate(0.0);

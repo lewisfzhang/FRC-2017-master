@@ -6,6 +6,8 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.CSVWriter;
 import com.team254.lib.util.Util;
+import com.team254.lib.util.drivers.LazyCANTalon;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,7 +39,7 @@ public class Shooter extends Subsystem {
     private final CSVWriter mCSVWriter;
 
     private Shooter() {
-        mRightMaster = new CANTalon(Constants.kRightShooterMasterId);
+        mRightMaster = new LazyCANTalon(Constants.kRightShooterMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 2);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -103,14 +105,14 @@ public class Shooter extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                mCSVWriter.addValue(0, Timer.getFPGATimestamp());
-                mCSVWriter.addValue(1, getSpeedRpm());
-                mCSVWriter.write();
+                // mCSVWriter.addValue(0, Timer.getFPGATimestamp());
+                // mCSVWriter.addValue(1, getSpeedRpm());
+                // mCSVWriter.write();
             }
 
             @Override
             public void onStop(double timestamp) {
-                mCSVWriter.flush();
+                // mCSVWriter.flush();
             }
         });
     }
@@ -144,7 +146,7 @@ public class Shooter extends Subsystem {
     }
 
     private static CANTalon makeSlave(int talonId, boolean flipOutput) {
-        CANTalon slave = new CANTalon(talonId);
+        CANTalon slave = new LazyCANTalon(talonId);
         slave.changeControlMode(CANTalon.TalonControlMode.Follower);
         slave.reverseOutput(flipOutput);
         slave.set(Constants.kRightShooterMasterId);

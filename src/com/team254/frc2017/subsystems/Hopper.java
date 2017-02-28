@@ -4,6 +4,7 @@ import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.drivers.LazyCANTalon;
 
 public class Hopper extends Subsystem {
     private static final double kUnjamInPeriod = .1;
@@ -176,11 +177,11 @@ public class Hopper extends Subsystem {
     }
 
     private Hopper() {
-        mMasterTalon = new CANTalon(Constants.kHopperMasterId);
+        mMasterTalon = new LazyCANTalon(Constants.kHopperMasterId);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mMasterTalon.setVoltageRampRate(Constants.kHopperRampRate);
 
-        mSlaveTalon = new CANTalon(Constants.kHopperSlaveId);
+        mSlaveTalon = new LazyCANTalon(Constants.kHopperSlaveId);
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kHopperMasterId);
         mSlaveTalon.reverseOutput(true);
