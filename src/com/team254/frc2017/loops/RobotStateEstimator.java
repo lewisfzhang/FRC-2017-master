@@ -3,7 +3,6 @@ package com.team254.frc2017.loops;
 import com.team254.frc2017.Kinematics;
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.subsystems.Drive;
-import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Twist2d;
 
