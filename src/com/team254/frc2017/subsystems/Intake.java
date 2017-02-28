@@ -3,7 +3,7 @@ package com.team254.frc2017.subsystems;
 import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Looper;
-import com.team254.lib.util.drivers.LazyCANTalon;
+import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -22,13 +22,10 @@ public class Intake extends Subsystem {
     private Solenoid mDeploySolenoid;
 
     private Intake() {
-        mMasterTalon = new LazyCANTalon(Constants.kIntakeMasterId);
+        mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kIntakeMasterId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mSlaveTalon = new LazyCANTalon(Constants.kIntakeSlaveId);
-        mSlaveTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
-        mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
-        mSlaveTalon.set(Constants.kIntakeMasterId);
+        mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kIntakeSlaveId, Constants.kIntakeMasterId);
         mSlaveTalon.reverseOutput(true);
         mDeploySolenoid = new Solenoid(Constants.kDeploySolenoidId);
     }

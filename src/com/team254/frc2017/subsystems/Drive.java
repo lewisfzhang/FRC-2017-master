@@ -10,7 +10,7 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.*;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.control.PathFollower;
-import com.team254.lib.util.drivers.LazyCANTalon;
+import com.team254.lib.util.drivers.CANTalonFactory;
 import com.team254.lib.util.drivers.NavX;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
@@ -121,9 +121,8 @@ public class Drive extends Subsystem {
 
     private Drive() {
         // Start all Talons in open loop mode.
-        mLeftMaster = new LazyCANTalon(Constants.kLeftDriveMasterId);
+        mLeftMaster = CANTalonFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
         mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-        mLeftMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10);
         mLeftMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mLeftMaster.reverseSensor(true);
         mLeftMaster.reverseOutput(false);
@@ -133,14 +132,12 @@ public class Drive extends Subsystem {
             DriverStation.reportError("Could not detect left encoder: " + leftSensorPresent, false);
         }
 
-        mLeftSlave = new LazyCANTalon(Constants.kLeftDriveSlaveId);
-        mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
-        mLeftSlave.set(Constants.kLeftDriveMasterId);
+        mLeftSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveId,
+                Constants.kLeftDriveMasterId);
         mLeftSlave.reverseOutput(false);
 
-        mRightMaster = new LazyCANTalon(Constants.kRightDriveMasterId);
+        mRightMaster = CANTalonFactory.createDefaultTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10);
         mRightMaster.reverseSensor(false);
         mRightMaster.reverseOutput(true);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -150,9 +147,8 @@ public class Drive extends Subsystem {
             DriverStation.reportError("Could not detect right encoder: " + rightSensorPresent, false);
         }
 
-        mRightSlave = new LazyCANTalon(Constants.kRightDriverSlaveId);
-        mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
-        mRightSlave.set(Constants.kRightDriveMasterId);
+        mRightSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kRightDriverSlaveId,
+                Constants.kRightDriveMasterId);
         mRightSlave.reverseOutput(false);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);

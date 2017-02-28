@@ -6,7 +6,7 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.CSVWriter;
 import com.team254.lib.util.Util;
-import com.team254.lib.util.drivers.LazyCANTalon;
+import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -39,7 +39,7 @@ public class Shooter extends Subsystem {
     private final CSVWriter mCSVWriter;
 
     private Shooter() {
-        mRightMaster = new LazyCANTalon(Constants.kRightShooterMasterId);
+        mRightMaster = CANTalonFactory.createDefaultTalon(Constants.kRightShooterMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 2);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -146,12 +146,9 @@ public class Shooter extends Subsystem {
     }
 
     private static CANTalon makeSlave(int talonId, boolean flipOutput) {
-        CANTalon slave = new LazyCANTalon(talonId);
-        slave.changeControlMode(CANTalon.TalonControlMode.Follower);
+        CANTalon slave = CANTalonFactory.createPermanentSlaveTalon(talonId, Constants.kRightShooterMasterId);
         slave.reverseOutput(flipOutput);
-        slave.set(Constants.kRightShooterMasterId);
         slave.enableBrakeMode(false);
-        slave.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 5);
         return slave;
     }
 
