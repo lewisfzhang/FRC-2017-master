@@ -40,6 +40,20 @@ public class PathFollower {
             this.profile_max_abs_vel = profile_max_abs_vel;
             this.profile_max_abs_acc = profile_max_abs_acc;
         }
+        
+        public Parameters(double inertia_gain, double profile_kp, double profile_ki,
+                double profile_kv, double profile_kffv, double profile_kffa, double profile_max_abs_vel,
+                double profile_max_abs_acc) {
+            this.fixed_lookahead = -1; //use speed for lookahead
+            this.inertia_gain = inertia_gain;
+            this.profile_kp = profile_kp;
+            this.profile_ki = profile_ki;
+            this.profile_kv = profile_kv;
+            this.profile_kffv = profile_kffv;
+            this.profile_kffa = profile_kffa;
+            this.profile_max_abs_vel = profile_max_abs_vel;
+            this.profile_max_abs_acc = profile_max_abs_acc;
+        }
     }
 
     AdaptivePurePursuitController mSteeringController;

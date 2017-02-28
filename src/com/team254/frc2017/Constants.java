@@ -166,7 +166,14 @@ public class Constants extends ConstantsBase {
     public static int kAndroidAppTcpPort = 8254;
 
     //PATH FOLLOWING
-    public static double kAutoLookAhead = 15.0; // inches
+    public static double kLookAhead = 15.0; // inches
+    public static double kMinLookAhead = 12.0; // inches
+    public static double kMinLookAheadSpeed = 35.0; // inches per second
+    public static double kMaxLookAhead = 60.0; // inches
+    public static double kMaxLookAheadSpeed = 120.0; // inches per second
+    public static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
+    public static double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;
+    
     public static double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain * our speed
                                                      // in inches per sec
     public static double kSegmentCompletionTolerance = 1.0; //inches
