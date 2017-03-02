@@ -260,5 +260,6 @@ public class Robot extends IterativeRobot {
     public void allPeriodic() {
         mRobotState.outputToSmartDashboard();
         mSubsystemManager.outputToSmartDashboard();
+        mEnabledLooper.outputToSmartDashboard();
     }
 }

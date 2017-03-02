@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.MotorSafety;
 public class CANTalonFactory {
 
     public static class Configuration {
-        public int MOTION_CONTROL_FRAME_PERIOD_MS = 5;
         public boolean LIMIT_SWITCH_NORMALLY_OPEN = true;
         public double MAX_OUTPUT_VOLTAGE = 12;
         public double NOMINAL_VOLTAGE = 0;
@@ -29,6 +28,8 @@ public class CANTalonFactory {
         public double REVERSE_SOFT_LIMIT = 0;
         public boolean SAFETY_ENABLED = false;
 
+        public int CONTROL_FRAME_PERIOD_MS = 5;
+        public int MOTION_CONTROL_FRAME_PERIOD_MS = 100;
         public int GENERAL_STATUS_FRAME_RATE_MS = 10;
         public int FEEDBACK_STATUS_FRAME_RATE_MS = 20;
         public int QUAD_ENCODER_STATUS_FRAME_RATE_MS = 100;
@@ -46,12 +47,13 @@ public class CANTalonFactory {
     private static final Configuration kSlaveConfiguration = new Configuration();
 
     static {
-        kSlaveConfiguration.MOTION_CONTROL_FRAME_PERIOD_MS = 20;
-        kSlaveConfiguration.GENERAL_STATUS_FRAME_RATE_MS = 150;
-        kSlaveConfiguration.FEEDBACK_STATUS_FRAME_RATE_MS = 150;
-        kSlaveConfiguration.QUAD_ENCODER_STATUS_FRAME_RATE_MS = 150;
-        kSlaveConfiguration.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 150;
-        kSlaveConfiguration.PULSE_WIDTH_STATUS_FRAME_RATE_MS = 150;
+        kSlaveConfiguration.CONTROL_FRAME_PERIOD_MS = 500;
+        kSlaveConfiguration.MOTION_CONTROL_FRAME_PERIOD_MS = 500;
+        kSlaveConfiguration.GENERAL_STATUS_FRAME_RATE_MS = 500;
+        kSlaveConfiguration.FEEDBACK_STATUS_FRAME_RATE_MS = 500;
+        kSlaveConfiguration.QUAD_ENCODER_STATUS_FRAME_RATE_MS = 500;
+        kSlaveConfiguration.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 500;
+        kSlaveConfiguration.PULSE_WIDTH_STATUS_FRAME_RATE_MS = 500;
     }
 
     // Create a CANTalon with the default (out of the box) configuration.
@@ -67,7 +69,7 @@ public class CANTalonFactory {
     }
 
     public static CANTalon createTalon(int id, Configuration config) {
-        CANTalon talon = new LazyCANTalon(id);
+        CANTalon talon = new LazyCANTalon(id, config.CONTROL_FRAME_PERIOD_MS);
         talon.changeControlMode(CANTalon.TalonControlMode.Voltage);
         talon.changeMotionControlFramePeriod(config.MOTION_CONTROL_FRAME_PERIOD_MS);
         talon.clearIAccum();
@@ -101,18 +103,17 @@ public class CANTalonFactory {
         talon.setPulseWidthPosition(0);
         talon.setReverseSoftLimit(config.REVERSE_SOFT_LIMIT);
         talon.setSafetyEnabled(config.SAFETY_ENABLED);
-
+        talon.SetVelocityMeasurementPeriod(config.VELOCITY_MEASUREMENT_PERIOD);
+        talon.SetVelocityMeasurementWindow(config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW);
+        talon.setVoltageCompensationRampRate(config.VOLTAGE_COMPENSATION_RAMP_RATE);
+        talon.setVoltageRampRate(config.VOLTAGE_RAMP_RATE);
+        
         talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, config.GENERAL_STATUS_FRAME_RATE_MS);
         talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, config.FEEDBACK_STATUS_FRAME_RATE_MS);
         talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, config.QUAD_ENCODER_STATUS_FRAME_RATE_MS);
         talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.AnalogTempVbat,
                 config.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS);
         talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.PulseWidth, config.PULSE_WIDTH_STATUS_FRAME_RATE_MS);
-
-        talon.SetVelocityMeasurementPeriod(config.VELOCITY_MEASUREMENT_PERIOD);
-        talon.SetVelocityMeasurementWindow(config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW);
-        talon.setVoltageCompensationRampRate(config.VOLTAGE_COMPENSATION_RAMP_RATE);
-        talon.setVoltageRampRate(config.VOLTAGE_RAMP_RATE);
 
         return talon;
     }
