@@ -1,14 +1,23 @@
 package com.team254.frc2017;
 
+import java.net.URI;
+import java.util.Arrays;
+
+import org.java_websocket.drafts.Draft_10;
+
 import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.auto.AutoModeExecuter;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
-import com.team254.frc2017.subsystems.*;
+import com.team254.frc2017.subsystems.Drive;
+import com.team254.frc2017.subsystems.Feeder;
+import com.team254.frc2017.subsystems.Hopper;
+import com.team254.frc2017.subsystems.Intake;
+import com.team254.frc2017.subsystems.Shooter;
+import com.team254.frc2017.subsystems.Superstructure;
 import com.team254.frc2017.vision.VisionServer;
 import com.team254.frc2017.web.GraphServer;
-import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
@@ -17,8 +26,6 @@ import com.team254.lib.util.RigidTransform2d;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import java.util.Arrays;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -31,7 +38,7 @@ public class Robot extends IterativeRobot {
     private Superstructure mSuperstructure = Superstructure.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
-    private GraphServer mGraphServer = GraphServer.getInstance();
+    public static GraphServer mGraphServer;
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
@@ -48,8 +55,6 @@ public class Robot extends IterativeRobot {
     private ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private Looper mEnabledLooper = new Looper();
-
-    private WebServer mHTTPServer = new WebServer();
 
     private VisionServer mVisionServer = VisionServer.getInstance();
 
@@ -83,10 +88,16 @@ public class Robot extends IterativeRobot {
 
             AutoModeSelector.initAutoModeSelector();
             
-            mGraphServer.startServer();
+            mGraphServer = new GraphServer(new URI("ws://10.2.54.2:5801"), new Draft_10());
+            mGraphServer.connect();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
-            throw t;
+            try {
+                throw t;
+            } catch (Throwable e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         zeroAllSensors();
     }

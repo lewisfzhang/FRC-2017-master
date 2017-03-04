@@ -1,26 +1,32 @@
 package com.team254.frc2017.subsystems;
 
+import java.util.Map;
+import java.util.Optional;
+
 import com.ctre.CANTalon;
 import com.kauailabs.navx.frc.AHRS;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.Kinematics;
+import com.team254.frc2017.Robot;
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import com.team254.frc2017.paths.GearToHopper;
 import com.team254.frc2017.web.GraphData;
 import com.team254.frc2017.web.GraphServer;
-import com.team254.lib.util.*;
+import com.team254.lib.util.DriveSignal;
+import com.team254.lib.util.InterpolatingDouble;
+import com.team254.lib.util.Path;
+import com.team254.lib.util.PathFollower;
+import com.team254.lib.util.RigidTransform2d;
+import com.team254.lib.util.Rotation2d;
 import com.team254.lib.util.motion.HeadingProfileFollower;
 import com.team254.lib.util.motion.MotionProfileConstraints;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import java.util.Map;
-import java.util.Optional;
 
 public class Drive extends Subsystem {
 
@@ -72,24 +78,27 @@ public class Drive extends Subsystem {
         @Override
         public void onLoop(double timestamp) {
             // Test
-            GraphServer.addData(new GraphData("Drive","Heading", getGyroAngle().getDegrees(), timestamp));
+            SmartDashboard.putBoolean("Is Connected", GraphServer.isConnected(Robot.mGraphServer));
+            if (GraphServer.isConnected(Robot.mGraphServer)) {   
+                Robot.mGraphServer.send(Robot.mGraphServer, new GraphData("Drive","Heading", getGyroAngle().getDegrees(), timestamp));
+            }
             synchronized (Drive.this) {
                 switch (mDriveControlState) {
-                    case OPEN_LOOP:
-                        return;
-                    case VELOCITY_SETPOINT:
-                        return;
-                    case PATH_FOLLOWING:
-                        if(mPathFollower != null && !mPathFollower.isFinished()) {
-                            updatePathFollower(timestamp);
-                        }
-                        return;
-                    case AIM_TO_GOAL:
-                        updateTurnToHeadingSimplePid(timestamp);
-                        return;
-                    default:
-                        System.out.println("Unexpected drive control state: " + mDriveControlState);
-                        break;
+                case OPEN_LOOP:
+                    return;
+                case VELOCITY_SETPOINT:
+                    return;
+                case PATH_FOLLOWING:
+                    if(mPathFollower != null && !mPathFollower.isFinished()) {
+                        updatePathFollower(timestamp);
+                    }
+                    return;
+                case AIM_TO_GOAL:
+                    updateTurnToHeadingSimplePid(timestamp);
+                    return;
+                default:
+                    System.out.println("Unexpected drive control state: " + mDriveControlState);
+                    break;
                 }
             }
         }
@@ -147,10 +156,10 @@ public class Drive extends Subsystem {
 
         setHighGear(true);
         setOpenLoop(DriveSignal.NEUTRAL);
-        
+
         //Path Following stuff
         mNavXBoard = new AHRS(SPI.Port.kMXP);
-        
+
         // Force a CAN message across.
         mIsBrakeMode = true;
         setBrakeMode(false);
@@ -214,7 +223,7 @@ public class Drive extends Subsystem {
         SmartDashboard.putNumber("gyro vel", getGyroVelocity());
         SmartDashboard.putNumber("gyro pos", getGyroAngle().getDegrees());
     }
-    
+
     public synchronized void resetEncoders() {
         mLeftMaster.setEncPosition(0);
         mLeftMaster.setPosition(0);
@@ -309,19 +318,19 @@ public class Drive extends Subsystem {
     public synchronized Rotation2d getGyroAngle() {
         return Rotation2d.fromDegrees(-mNavXBoard.getAngle());    
     }
-    
+
     public synchronized void setGyroAngle(Rotation2d angle) {
         mNavXBoard.reset();
         mNavXBoard.setAngleAdjustment(angle.getDegrees()); 
     }
-    
+
 
     public synchronized double getGyroVelocity() {
         return -mNavXBoard.getRawGyroZ();
     }
 
     private void updateTurnToHeading(double timestamp) {
-       /* final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
+        /* final Map.Entry<InterpolatingDouble, RigidTransform2d> latest_field_to_robot = mRobotState
                 .getLatestFieldToVehicle();
         final RigidTransform2d field_to_robot = latest_field_to_robot.getValue();
         final double t_observation = latest_field_to_robot.getKey().value;
@@ -338,7 +347,7 @@ public class Drive extends Subsystem {
                 new RigidTransform2d.Delta(0, 0, Rotation2d.fromDegrees(angular_velocity_command).getRadians()));
 
         updateVelocitySetpoint(wheel_vel.left, wheel_vel.right);
-        */
+         */
     }
 
     private void updateTurnToHeadingSimplePid(double timestamp) {
@@ -381,7 +390,7 @@ public class Drive extends Subsystem {
                 Constants.kDriveTurnKv,
                 Constants.kDriveTurnKffv,
                 Constants.kDriveTurnKffa
-        );
+                );
     }
 
     public boolean isOnTarget() {
@@ -399,10 +408,10 @@ public class Drive extends Subsystem {
             mDriveControlState = DriveControlState.AIM_TO_GOAL;
         }
     }
-    
-    
+
+
     private Path mCurrentPath = null;
-    
+
     public void setWantDrivePath(Path path, boolean reversed) {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             mPathFollower = new PathFollower(path, reversed,
@@ -416,7 +425,7 @@ public class Drive extends Subsystem {
             setVelocitySetpoint(0, 0);
         }
     }
-    
+
     public boolean isDoneWithPath() {
         if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
             return mPathFollower.isFinished();

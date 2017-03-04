@@ -173,7 +173,7 @@ public class Constants extends ConstantsBase {
                 new InterpolatingDouble(3200.));
     }
 
-
+    
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid
      * 
