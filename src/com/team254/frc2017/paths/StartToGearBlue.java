@@ -13,23 +13,23 @@ public class StartToGearBlue implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(16,234,0,0));
-        sWaypoints.add(new Waypoint(94,234,12,80));
-        sWaypoints.add(new Waypoint(110,214,0,80));
+        sWaypoints.add(new Waypoint(16,273,0,0));
+        sWaypoints.add(new Waypoint(88,273,40,60));
+        sWaypoints.add(new Waypoint(120,216,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(16, 234), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(16, 273), Rotation2d.fromDegrees(180.0)); 
     }
 
     @Override
     public boolean isReversed() {
         return true; 
     }
-    // WAYPOINT_DATA: [{"position":{"x":16,"y":89},"speed":0,"radius":0,"comment":""},{"position":{"x":80,"y":89},"speed":30,"radius":0,"comment":""},{"position":{"x":109,"y":121},"speed":30,"radius":0,"comment":""}]
+    // WAYPOINT_DATA: [{"position":{"x":16,"y":273},"speed":0,"radius":0,"comment":""},{"position":{"x":88,"y":273},"speed":60,"radius":40,"comment":""},{"position":{"x":120,"y":216},"speed":60,"radius":0,"comment":""}]
     // IS_REVERSED: true
-    // FILE_NAME: StartToGearRed
+    // FILE_NAME: StartToGearBlue
 }

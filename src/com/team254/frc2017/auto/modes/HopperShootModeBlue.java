@@ -33,7 +33,7 @@ public class HopperShootModeBlue extends AutoModeBase {
                 new ParallelAction(Arrays.asList(new Action[]{
                     new DrivePathAction(hopperPath),
                     new SeriesAction(Arrays.asList(new Action[]{
-                            new WaitForPathMarkerAction("RamWall"), new PrintDebugAction("RamWall"), new WaitAction(0.05), new ForceEndPathAction()
+                            new WaitForPathMarkerAction("RamWall"), new PrintDebugAction("RamWall"), new WaitAction(0.15), new ForceEndPathAction()
                     }))
                 }))
         ); //Drive to hopper, cancel path once the robot runs into the wall
