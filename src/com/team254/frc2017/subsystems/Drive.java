@@ -450,6 +450,7 @@ public class Drive extends Subsystem {
             updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
             mTargetHeading = getGyroAngle();
         }
+        setHighGear(false);
     }
 
     public synchronized void setWantTurnToHeading(Rotation2d heading) {
@@ -462,6 +463,7 @@ public class Drive extends Subsystem {
             mTargetHeading = heading;
             mIsOnTarget = false;
         }
+        setHighGear(false);
     }
 
     public synchronized void setWantDrivePath(Path path, boolean reversed) {
