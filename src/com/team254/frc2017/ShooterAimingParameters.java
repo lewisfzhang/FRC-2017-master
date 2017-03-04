@@ -8,12 +8,14 @@ import com.team254.lib.util.math.Rotation2d;
  */
 public class ShooterAimingParameters {
     double range;
+    double last_seen_timestamp;
     Rotation2d robot_to_goal;
 
 
-    public ShooterAimingParameters(double range, Rotation2d robot_to_goal) {
+    public ShooterAimingParameters(double range, Rotation2d robot_to_goal, double last_seen_timestamp) {
         this.range = range;
         this.robot_to_goal = robot_to_goal;
+        this.last_seen_timestamp = last_seen_timestamp;
     }
 
 
@@ -23,6 +25,10 @@ public class ShooterAimingParameters {
 
     public Rotation2d getRobotToGoal() {
         return robot_to_goal;
+    }
+    
+    public double getLastSeenTimestamp() {
+        return last_seen_timestamp;
     }
 
 }

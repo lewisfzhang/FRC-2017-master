@@ -464,7 +464,7 @@ public class Drive extends Subsystem {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             configureTalonsForSpeedControl();
             mPathFollower = new PathFollower(path, reversed,
-                    new PathFollower.Parameters(Constants.kInertiaSteeringGain,
+                    new PathFollower.Parameters(16.0, Constants.kInertiaSteeringGain,
                             Constants.kPathFollowingProfileKp, Constants.kPathFollowingProfileKi,
                             Constants.kPathFollowingProfileKv, Constants.kPathFollowingProfileKffv,
                             Constants.kPathFollowingProfileKffa, Constants.kPathFollowingMaxVel,
@@ -482,6 +482,14 @@ public class Drive extends Subsystem {
         } else {
             System.out.println("Robot is not in path following mode");
             return false;
+        }
+    }
+    
+    public synchronized void forceDoneWithPath() {
+        if(mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+            mPathFollower.forceFinish();
+        } else {
+            System.out.println("Robot is not in path following mode");
         }
     }
 
@@ -525,5 +533,9 @@ public class Drive extends Subsystem {
                 Constants.kDriveHighGearVelocityKd, Constants.kDriveHighGearVelocityKf,
                 Constants.kDriveHighGearVelocityIZone, Constants.kDriveHighGearVelocityRampRate,
                 kHighGearVelocityControlSlot);
+    }
+    
+    public synchronized double getAccelX() {
+        return mNavXBoard.getRawAccelX();
     }
 }

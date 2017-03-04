@@ -54,6 +54,7 @@ public class Robot extends IterativeRobot {
     public void zeroAllSensors() {
         mSubsystemManager.zeroSensors();
         mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
+        mDrive.zeroSensors();
     }
 
     /**
@@ -97,20 +98,24 @@ public class Robot extends IterativeRobot {
     public void autonomousInit() {
         try {
             CrashTracker.logAutoInit();
+            System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
 
             if (mAutoModeExecuter != null) {
                 mAutoModeExecuter.stop();
             }
+            
+            zeroAllSensors();
+            mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
+            
             mAutoModeExecuter = null;
 
             // Shift to high
             mDrive.setHighGear(true);
             mDrive.setBrakeMode(true);
-
+            
             mEnabledLooper.start();
             mSuperstructure.reloadConstants();
             mSuperstructure.isTeleop(false);
-            zeroAllSensors();
 
             mAutoModeExecuter = new AutoModeExecuter();
             mAutoModeExecuter.setAutoMode(AutoModeSelector.getSelectedAutoMode());
@@ -246,6 +251,7 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void disabledPeriodic() {
+        zeroAllSensors();
         allPeriodic();
     }
 

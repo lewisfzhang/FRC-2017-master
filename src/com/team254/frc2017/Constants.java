@@ -174,14 +174,14 @@ public class Constants extends ConstantsBase {
     public static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
     public static double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;
     
-    public static double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain * our speed
+    public static double kInertiaSteeringGain = 0.0005; // angular velocity command is multiplied by this gain * our speed
                                                      // in inches per sec
     public static double kSegmentCompletionTolerance = 1.0; //inches
     public static double kPathFollowingMaxAccel = 120.0; //inches per second^2
     public static double kPathFollowingMaxVel = 120.0; //inches per second
-    public static double kPathFollowingProfileKp = 2.5;
-    public static double kPathFollowingProfileKi = 0.05;
-    public static double kPathFollowingProfileKv = 0.02 ;
+    public static double kPathFollowingProfileKp = 0.3;
+    public static double kPathFollowingProfileKi = 0.01;
+    public static double kPathFollowingProfileKv = 0.01;
     public static double kPathFollowingProfileKffv = 1.0;
     public static double kPathFollowingProfileKffa = 0.0;
 

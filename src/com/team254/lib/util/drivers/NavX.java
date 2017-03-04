@@ -73,4 +73,8 @@ public class NavX {
     public double getYawRateRadiansPerSec() {
         return 180.0 / Math.PI * getYawRateDegreesPerSec();
     }
+    
+    public double getRawAccelX() {
+        return mAHRS.getRawAccelX();
+    }
 }

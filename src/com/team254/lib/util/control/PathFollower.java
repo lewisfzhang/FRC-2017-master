@@ -60,6 +60,7 @@ public class PathFollower {
     Twist2d mLastSteeringDelta;
     ProfileFollower mVelocityController;
     final double mInertiaGain;
+    boolean overrideFinished = false;
 
     double mMaxProfileVel;
     double mMaxProfileAcc;
@@ -130,7 +131,11 @@ public class PathFollower {
     }
 
     public boolean isFinished() {
-        return mSteeringController.isFinished() && mVelocityController.isFinishedProfile();
+        return mSteeringController.isFinished() && mVelocityController.isFinishedProfile() || overrideFinished;
+    }
+    
+    public void forceFinish() {
+        overrideFinished = true;
     }
 
     public boolean hasPassedMarker(String marker) {

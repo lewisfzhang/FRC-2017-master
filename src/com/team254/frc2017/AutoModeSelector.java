@@ -2,6 +2,7 @@ package com.team254.frc2017;
 
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
+import com.team254.frc2017.auto.modes.HopperShootModeBlue;
 import com.team254.frc2017.auto.modes.StandStillMode;
 import com.team254.frc2017.auto.modes.TestLineMode;
 import com.team254.frc2017.auto.modes.TestTurnInPlaceMode;
@@ -28,11 +29,12 @@ public class AutoModeSelector {
     }
 
     private static final AutoModeCreator mDefaultMode =
-            new AutoModeCreator("Gear then Hopper Shoot", ()->new GearThenHopperShootModeBlue());
+            new AutoModeCreator("Hopper Shoot Blue", ()->new HopperShootModeBlue());
     private static final AutoModeCreator[] mAllModes = {
             new AutoModeCreator("Test Line", ()->new TestLineMode()),
             new AutoModeCreator("Test Turn In Place", ()->new TestTurnInPlaceMode()),
             new AutoModeCreator("Stand Still", ()->new StandStillMode()),
+            new AutoModeCreator("Gear then Hopper Shoot", ()->new GearThenHopperShootModeBlue()),
             mDefaultMode,
     };
 

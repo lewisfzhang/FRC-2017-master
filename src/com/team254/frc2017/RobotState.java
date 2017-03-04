@@ -180,7 +180,7 @@ public class RobotState {
             Rotation2d robot_to_goal_rotation = Rotation2d
                     .fromRadians(Math.atan2(robot_to_goal.y(), robot_to_goal.x()));
 
-            ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_rotation);
+            ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_rotation, report.latest_timestamp);
             cached_shooter_aiming_params_ = params;
             cached_shooter_aiming_params_ts_ = currentTimestamp;
             return Optional.of(params);
