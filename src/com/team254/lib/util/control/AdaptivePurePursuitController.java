@@ -1,6 +1,5 @@
 package com.team254.lib.util.control;
 
-import com.team254.frc2017.Constants;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
@@ -18,7 +17,7 @@ import com.team254.lib.util.math.Twist2d;
 public class AdaptivePurePursuitController {
     private static final double kEpsilon = 1E-4;
     private static final double kReallyBigNumber = 1E6;
-
+    
     public static class Command {
         public Twist2d delta = Twist2d.identity();
         public double cross_track_error;
@@ -37,31 +36,13 @@ public class AdaptivePurePursuitController {
     }
 
     Path mPath;
-    boolean mReversed;
-    double mFixedLookahead;
+    final boolean mReversed;
+    final Lookahead mLookahead;
 
-    /**
-     * Creates a new Adaptive Pure Pursuit Controller with a fixed lookahead distance from the path object
-     * 
-     * @param path
-     *            path for the Adaptive Pure Pursuit Controller to follow
-     */
-    public AdaptivePurePursuitController(Path path, boolean reversed, double fixed_lookahead) {
+    public AdaptivePurePursuitController(Path path, boolean reversed, Lookahead lookahead) {
         mPath = path;
         mReversed = reversed;
-        mFixedLookahead = fixed_lookahead;
-    }
-    
-    /**
-     * Creates a new Adaptive Pure Pursuit Controller with an adaptive look ahead distance based on speed
-     * 
-     * @param path
-     *            path for the Adaptive Pure Pursuit Controller to follow
-     */
-    public AdaptivePurePursuitController(Path path, boolean reversed) {
-        mPath = path;
-        mReversed = reversed;
-        mFixedLookahead = -1;
+        mLookahead = lookahead;
     }
 
     /**
@@ -77,8 +58,7 @@ public class AdaptivePurePursuitController {
                     pose.getRotation().rotateBy(Rotation2d.fromRadians(Math.PI)));
         }
         
-        double lookAheadDist = (mFixedLookahead > 0) ? mFixedLookahead : getLookAheadForSpeed(mPath.getSpeed(pose.getTranslation()));
-        final Path.TargetPointReport report = mPath.getTargetPoint(pose.getTranslation(), lookAheadDist);
+        final Path.TargetPointReport report = mPath.getTargetPoint(pose.getTranslation(), mLookahead);
         if (isFinished()) {
             // Stop.
             return new Command(Twist2d.identity(), report.closest_point_distance, report.max_speed, 0.0);
@@ -98,12 +78,6 @@ public class AdaptivePurePursuitController {
                         arc.length * getDirection(pose, report.lookahead_point) * Math.abs(scale_factor) / arc.radius),
                 report.closest_point_distance, report.max_speed,
                 report.lookahead_point_speed * Math.signum(scale_factor));
-    }
-    
-    private double getLookAheadForSpeed(double speed) {
-        double scale = (speed - Constants.kMinLookAheadSpeed) / Constants.kDeltaLookAheadSpeed;
-        double lookAhead = scale * Constants.kDeltaLookAhead + Constants.kMinLookAhead; //lerp lookahead distance using kMinSpeed, kMinLookAhead, kMaxSpeed and kMaxLookAhead
-        return Math.max(Constants.kMinLookAhead, Math.min(Constants.kMaxLookAhead, lookAhead)); //clamp lookahead distance between kMinLookAhead and kMaxLookAhead
     }
 
     public boolean hasPassedMarker(String marker) {

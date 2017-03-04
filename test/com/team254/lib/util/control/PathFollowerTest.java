@@ -15,7 +15,8 @@ import com.team254.lib.util.math.Twist2d;
 
 public class PathFollowerTest {
 
-    static final PathFollower.Parameters kParameters = new PathFollower.Parameters(//16.0, // Fixed lookahead
+    static final PathFollower.Parameters kParameters = new PathFollower.Parameters(
+            new Lookahead(16.0, 16.0, 0.0, 120.0),
             0.0, // Inertia gain
             0.0, // Profile kp
             0.0, // Profile ki
@@ -88,7 +89,6 @@ public class PathFollowerTest {
         assertEquals(110, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
         assertEquals(214, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
 
-        Constants.kLookAhead = 24.0;
         container = new GearToHopperBlue();
         controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
         while (!controller.isFinished() && t < 50.0) {

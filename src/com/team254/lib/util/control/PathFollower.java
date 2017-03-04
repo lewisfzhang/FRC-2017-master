@@ -17,7 +17,7 @@ public class PathFollower {
     private static final double kReallyBigNumber = 1E6;
 
     public static class Parameters {
-        public final double fixed_lookahead;
+        public final Lookahead lookahead;
         public final double inertia_gain;
         public final double profile_kp;
         public final double profile_ki;
@@ -27,24 +27,10 @@ public class PathFollower {
         public final double profile_max_abs_vel;
         public final double profile_max_abs_acc;
 
-        public Parameters(double fixed_lookahead, double inertia_gain, double profile_kp, double profile_ki,
+        public Parameters(Lookahead lookahead, double inertia_gain, double profile_kp, double profile_ki,
                 double profile_kv, double profile_kffv, double profile_kffa, double profile_max_abs_vel,
                 double profile_max_abs_acc) {
-            this.fixed_lookahead = fixed_lookahead;
-            this.inertia_gain = inertia_gain;
-            this.profile_kp = profile_kp;
-            this.profile_ki = profile_ki;
-            this.profile_kv = profile_kv;
-            this.profile_kffv = profile_kffv;
-            this.profile_kffa = profile_kffa;
-            this.profile_max_abs_vel = profile_max_abs_vel;
-            this.profile_max_abs_acc = profile_max_abs_acc;
-        }
-        
-        public Parameters(double inertia_gain, double profile_kp, double profile_ki,
-                double profile_kv, double profile_kffv, double profile_kffa, double profile_max_abs_vel,
-                double profile_max_abs_acc) {
-            this.fixed_lookahead = -1; //use speed for lookahead
+            this.lookahead = lookahead;
             this.inertia_gain = inertia_gain;
             this.profile_kp = profile_kp;
             this.profile_ki = profile_ki;
@@ -71,7 +57,7 @@ public class PathFollower {
      * Create a new PathFollower for a given path.
      */
     public PathFollower(Path path, boolean reversed, Parameters parameters) {
-        mSteeringController = new AdaptivePurePursuitController(path, reversed, parameters.fixed_lookahead);
+        mSteeringController = new AdaptivePurePursuitController(path, reversed, parameters.lookahead);
         mLastSteeringDelta = Twist2d.identity();
         mVelocityController = new ProfileFollower(parameters.profile_kp, parameters.profile_ki, parameters.profile_kv,
                 parameters.profile_kffv, parameters.profile_kffa);

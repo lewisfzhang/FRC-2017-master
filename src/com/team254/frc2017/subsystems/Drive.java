@@ -8,6 +8,7 @@ import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.*;
+import com.team254.lib.util.control.Lookahead;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.control.PathFollower;
 import com.team254.lib.util.drivers.CANTalonFactory;
@@ -464,11 +465,13 @@ public class Drive extends Subsystem {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             configureTalonsForSpeedControl();
             mPathFollower = new PathFollower(path, reversed,
-                    new PathFollower.Parameters(16.0, Constants.kInertiaSteeringGain,
-                            Constants.kPathFollowingProfileKp, Constants.kPathFollowingProfileKi,
-                            Constants.kPathFollowingProfileKv, Constants.kPathFollowingProfileKffv,
-                            Constants.kPathFollowingProfileKffa, Constants.kPathFollowingMaxVel,
-                            Constants.kPathFollowingMaxAccel));
+                    new PathFollower.Parameters(
+                            new Lookahead(Constants.kMinLookAhead, Constants.kMaxLookAhead,
+                                    Constants.kMinLookAheadSpeed, Constants.kMaxLookAheadSpeed),
+                            Constants.kInertiaSteeringGain, Constants.kPathFollowingProfileKp,
+                            Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
+                            Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
+                            Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel));
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         } else {

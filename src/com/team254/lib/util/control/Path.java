@@ -79,6 +79,7 @@ public class Path {
      public static class TargetPointReport {
          public Translation2d closest_point;
          public double closest_point_distance;
+         public double closest_point_speed;
          public Translation2d lookahead_point;
          public double max_speed;
          public double lookahead_point_speed;
@@ -94,7 +95,7 @@ public class Path {
       *     Translation of the current robot pose.
       * @return report containing everything we might want to know about the target point.
       */
-     public TargetPointReport getTargetPoint(Translation2d robot, double fixed_lookahead_distance) {
+     public TargetPointReport getTargetPoint(Translation2d robot, Lookahead lookahead) {
          TargetPointReport rv = new TargetPointReport();
          PathSegment currentSegment = segments.get(0);
          rv.closest_point = currentSegment.getClosestPoint(robot);
@@ -110,7 +111,8 @@ public class Path {
              }
          }
          rv.remaining_segment_distance = currentSegment.getRemainingDistance(rv.closest_point);
-         double lookahead_distance = fixed_lookahead_distance + rv.closest_point_distance;
+         rv.closest_point_speed = currentSegment.getSpeedByDistance(currentSegment.getLength() - rv.remaining_segment_distance);
+         double lookahead_distance = lookahead.getLookaheadForSpeed(rv.closest_point_speed) + rv.closest_point_distance;
          if (rv.remaining_segment_distance < lookahead_distance && segments.size() > 1) {
              lookahead_distance -= rv.remaining_segment_distance;
              for (int i = 1; i < segments.size(); ++i) {
