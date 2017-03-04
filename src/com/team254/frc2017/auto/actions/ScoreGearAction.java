@@ -1,11 +1,11 @@
 package com.team254.frc2017.auto.actions;
 
-import com.team254.frc2017.subsystems.GearGrabber;
+import com.team254.frc2017.subsystems.FingerGearGrabber;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ScoreGearAction implements Action {
 
-    private GearGrabber mGearGrabber = GearGrabber.getInstance();
+    private FingerGearGrabber mFingerGearGrabber = FingerGearGrabber.getInstance();
     private double startTime = Timer.getFPGATimestamp();
 
     @Override
@@ -23,6 +23,6 @@ public class ScoreGearAction implements Action {
 
     @Override
     public void start() {
-        mGearGrabber.setWantedState(GearGrabber.WantedState.SCORE);
+        mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.SCORE);
     }
 }

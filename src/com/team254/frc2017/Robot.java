@@ -28,14 +28,14 @@ public class Robot extends IterativeRobot {
     // Subsystems
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
-    private GearGrabber mGearGrabber = GearGrabber.getInstance();
+    private FingerGearGrabber mFingerGearGrabber = FingerGearGrabber.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
             Arrays.asList(Drive.getInstance(), Superstructure.getInstance(), Shooter.getInstance(),
-                    Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(), GearGrabber.getInstance()));
+                    Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(), FingerGearGrabber.getInstance()));
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -209,13 +209,13 @@ public class Robot extends IterativeRobot {
                 
                 // Gear grabbing code
                 if (mControlBoard.getStowGearGrabberButton()) {
-                    mGearGrabber.setWantedState(GearGrabber.WantedState.STOWED);
+                    mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.STOWED);
                 } else if (mControlBoard.getGrabGearButton()) {
-                    mGearGrabber.setWantedState(GearGrabber.WantedState.DOWN_FOR_GEAR);
+                    mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.DOWN_FOR_GEAR);
                 } else if (mControlBoard.getPlaceGearButton()) {
-                    mGearGrabber.setWantedState(GearGrabber.WantedState.PLACE);
+                    mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.PLACE);
                 } else if (mControlBoard.getScoreGearButton()) {
-                    mGearGrabber.setWantedState(GearGrabber.WantedState.SCORE);
+                    mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.SCORE);
                 }
             }
 

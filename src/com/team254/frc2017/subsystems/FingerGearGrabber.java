@@ -6,12 +6,12 @@ import com.team254.frc2017.loops.Looper;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 
-public class GearGrabber extends Subsystem {
+public class FingerGearGrabber extends Subsystem {
 
-    private static GearGrabber mInstance;
-    public static GearGrabber getInstance() {
+    private static FingerGearGrabber mInstance;
+    public static FingerGearGrabber getInstance() {
         if (mInstance == null) {
-            mInstance = new GearGrabber();
+            mInstance = new FingerGearGrabber();
         }
         return mInstance;
     }
@@ -41,7 +41,7 @@ public class GearGrabber extends Subsystem {
     private WantedState mWantedState;
     private SystemState mSystemState;
 
-    private GearGrabber() {
+    private FingerGearGrabber() {
         mGearPusher = Constants.makeSolenoidForId(Constants.kGearPusherSolenoidId);
         mAngleSolenoid = Constants.makeSolenoidForId(Constants.kAngleSolenoidId);
         mAssemblyPusher = Constants.makeSolenoidForId(Constants.kAssemblyPusherSolenoidId);
@@ -83,7 +83,7 @@ public class GearGrabber extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
 
-                synchronized (GearGrabber.this) {
+                synchronized (FingerGearGrabber.this) {
                     final SystemState newState;
                     double timeInState = Timer.getFPGATimestamp() - mCurrentStateStartTime;
                     switch (mSystemState) {
