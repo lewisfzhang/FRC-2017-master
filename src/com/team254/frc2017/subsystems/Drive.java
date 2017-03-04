@@ -379,6 +379,10 @@ public class Drive extends Subsystem {
         return mNavXBoard.getYaw();
     }
 
+    public synchronized NavX getNavXBoard() {
+        return mNavXBoard;
+    }
+
     public synchronized void setGyroAngle(Rotation2d angle) {
         mNavXBoard.reset();
         mNavXBoard.setAngleAdjustment(angle);

@@ -11,9 +11,12 @@ import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
+import com.team254.lib.util.drivers.NavX;
 import com.team254.lib.util.math.RigidTransform2d;
 
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,14 +31,16 @@ public class Robot extends IterativeRobot {
     // Subsystems
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
-    private FingerGearGrabber mFingerGearGrabber = FingerGearGrabber.getInstance();
+    //private FingerGearGrabber mFingerGearGrabber = FingerGearGrabber.getInstance();
+    private MotorGearGrabber mGearGrabber = MotorGearGrabber.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
+
 
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
             Arrays.asList(Drive.getInstance(), Superstructure.getInstance(), Shooter.getInstance(),
-                    Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(), FingerGearGrabber.getInstance()));
+                    Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(), MotorGearGrabber.getInstance()));
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -184,8 +189,10 @@ public class Robot extends IterativeRobot {
                 // Exhaust has highest priority for intake.
                 if (wantsExhaust) {
                     mSuperstructure.setWantIntakeReversed();
+                    mSuperstructure.setPusherOut(false);
                 } else if (mControlBoard.getIntakeButton()) {
                     mSuperstructure.setWantIntakeOn();
+                    mSuperstructure.setPusherOut(true);
                 } else if (!mSuperstructure.isShooting()) {
                     mSuperstructure.setWantIntakeStopped();
                 }
@@ -211,8 +218,9 @@ public class Robot extends IterativeRobot {
                 } else {
                     mSuperstructure.setShooterOpenLoop(0);
                 }
+            }
                 
-                // Gear grabbing code
+             /*   // Gear grabbing code
                 if (mControlBoard.getStowGearGrabberButton()) {
                     mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.STOWED);
                 } else if (mControlBoard.getGrabGearButton()) {
@@ -222,6 +230,22 @@ public class Robot extends IterativeRobot {
                 } else if (mControlBoard.getScoreGearButton()) {
                     mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.SCORE);
                 }
+            }*/
+
+             double intakePower = 12;
+             if (mControlBoard.getGrabGearButton()) {
+                mGearGrabber.setOpenLoop(intakePower);
+             } else if (mControlBoard.getScoreGearButton()) {
+                 mGearGrabber.setOpenLoop(-intakePower);
+             } else {
+                 mGearGrabber.setOpenLoop(0);
+             }
+
+             if (mControlBoard.getStowGearGrabberButton()) {
+                 mGearGrabber.setWristDown();
+             }
+            if (mControlBoard.getPlaceGearButton()) {
+                mGearGrabber.setWristUp();
             }
 
             allPeriodic();

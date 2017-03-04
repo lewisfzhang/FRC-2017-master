@@ -148,13 +148,17 @@ public class Constants extends ConstantsBase {
     public static final int kLeftShooterSlave1Id = 13;
     public static final int kLeftShooterSlave2Id = 14;
 
+    // Grabber
+    public static final int kGearGrabberId = 15;
+
     // SOLENOIDS
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0
     public static final int kDeploySolenoidId = 1;
     public static final int kAngleSolenoidId = 3;
     public static final int kAssemblyPusherSolenoidId = 4;
     public static final int kGearPusherSolenoidId = 5;
-    
+    public static final int kGearWristSolenoid = 3;
+    public static final int kPusherSolenoidId = 7;
 
     // Analog Inputs
     // TODO add some!
