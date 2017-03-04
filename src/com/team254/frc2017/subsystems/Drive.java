@@ -488,6 +488,7 @@ public class Drive extends Subsystem {
     public synchronized void forceDoneWithPath() {
         if(mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
             mPathFollower.forceFinish();
+            setVelocitySetpoint(0, 0);
         } else {
             System.out.println("Robot is not in path following mode");
         }

@@ -8,11 +8,11 @@ import com.team254.lib.util.math.Rotation2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class TurnDirectionUntilSeesTargetAction extends TurnToHeadingAction {
+public class TurnUntilSeesTargetAction extends TurnToHeadingAction {
 
     RobotState mState = RobotState.getInstance();
     
-    public TurnDirectionUntilSeesTargetAction(Rotation2d heading) {
+    public TurnUntilSeesTargetAction(Rotation2d heading) {
         super(heading);
         // TODO Auto-generated constructor stub
     }
