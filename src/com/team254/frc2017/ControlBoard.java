@@ -41,7 +41,7 @@ public class ControlBoard {
     }
 
     public boolean getAimButton() {
-        return mButtonBoard.getRawButton(10) || mThrottleStick.getRawButton(2);
+        return mThrottleStick.getRawButton(2);
     }
 
     public boolean getDriveAimButton() {
