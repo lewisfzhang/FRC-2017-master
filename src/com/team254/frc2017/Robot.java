@@ -223,18 +223,6 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setShooterOpenLoop(0);
                 }
             }
-                
-             /*   // Gear grabbing code
-                if (mControlBoard.getStowGearGrabberButton()) {
-                    mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.STOWED);
-                } else if (mControlBoard.getGrabGearButton()) {
-                    mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.DOWN_FOR_GEAR);
-                } else if (mControlBoard.getPlaceGearButton()) {
-                    mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.PLACE);
-                } else if (mControlBoard.getScoreGearButton()) {
-                    mFingerGearGrabber.setWantedState(FingerGearGrabber.WantedState.SCORE);
-                }
-            }*/
 
              double exhaustPower = 6;
              double intakePower = -12;
