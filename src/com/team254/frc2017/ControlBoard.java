@@ -73,6 +73,10 @@ public class ControlBoard {
         // return mButtonBoard.getRawButton(2);
         return false;
     }
+
+    public boolean getFlywheelSwitch() {
+        return mButtonBoard.getRawAxis(3) < -0.1;
+    }
     
     public boolean getHangButton() {
         return mButtonBoard.getRawButton(10);
