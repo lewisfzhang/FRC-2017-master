@@ -234,13 +234,14 @@ public class Robot extends IterativeRobot {
                 }
             }*/
 
-             double intakePower = 12;
+             double exhaustPower = 6;
+             double intakePower = -12;
              if (mControlBoard.getGrabGearButton()) {
                 mGearGrabber.setOpenLoop(intakePower);
              } else if (mControlBoard.getScoreGearButton()) {
-                 mGearGrabber.setOpenLoop(-intakePower);
+                 mGearGrabber.setOpenLoop(exhaustPower);
              } else {
-                 mGearGrabber.setOpenLoop(-3.5);
+                 mGearGrabber.setOpenLoop(-2.0);
              }
 
              if (mControlBoard.getStowGearGrabberButton()) {
