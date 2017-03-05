@@ -95,7 +95,7 @@ public class Drive extends Subsystem {
                 case VELOCITY_SETPOINT:
                     return;
                 case PATH_FOLLOWING:
-                    if (mPathFollower != null && !mPathFollower.isFinished()) {
+                    if (mPathFollower != null) {
                         updatePathFollower(timestamp);
                     }
                     return;
@@ -493,14 +493,13 @@ public class Drive extends Subsystem {
             return mPathFollower.isFinished();
         } else {
             System.out.println("Robot is not in path following mode");
-            return false;
+            return true;
         }
     }
     
     public synchronized void forceDoneWithPath() {
         if(mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
             mPathFollower.forceFinish();
-            setVelocitySetpoint(0, 0);
         } else {
             System.out.println("Robot is not in path following mode");
         }

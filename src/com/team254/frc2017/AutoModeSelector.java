@@ -29,9 +29,9 @@ public class AutoModeSelector {
     }
 
     private static final AutoModeCreator mDefaultMode =
-            new AutoModeCreator("Hopper Shoot Blue", ()->new HopperShootModeBlue());
+            new AutoModeCreator("Test Line", ()->new TestLineMode());
+            //new AutoModeCreator("Hopper Shoot Blue", ()->new HopperShootModeBlue());
     private static final AutoModeCreator[] mAllModes = {
-            new AutoModeCreator("Test Line", ()->new TestLineMode()),
             new AutoModeCreator("Test Turn In Place", ()->new TestTurnInPlaceMode()),
             new AutoModeCreator("Stand Still", ()->new StandStillMode()),
             new AutoModeCreator("Gear then Hopper Shoot", ()->new GearThenHopperShootModeBlue()),

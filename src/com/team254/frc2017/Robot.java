@@ -110,6 +110,7 @@ public class Robot extends IterativeRobot {
             }
             
             zeroAllSensors();
+            mSuperstructure.setPusherOut(false);
             mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
             
             mAutoModeExecuter = null;
@@ -154,6 +155,7 @@ public class Robot extends IterativeRobot {
             zeroAllSensors();
             mSuperstructure.reloadConstants();
             mSuperstructure.isTeleop(true);
+            mSuperstructure.setPusherOut(false);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -238,7 +240,7 @@ public class Robot extends IterativeRobot {
              } else if (mControlBoard.getScoreGearButton()) {
                  mGearGrabber.setOpenLoop(-intakePower);
              } else {
-                 mGearGrabber.setOpenLoop(0);
+                 mGearGrabber.setOpenLoop(-3.5);
              }
 
              if (mControlBoard.getStowGearGrabberButton()) {
