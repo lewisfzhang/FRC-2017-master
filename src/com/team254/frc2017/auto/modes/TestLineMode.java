@@ -33,7 +33,6 @@ public class TestLineMode extends AutoModeBase {
                     })) 
                 }))
         );
-        Superstructure.getInstance().setPusherOut(true);
 //        runAction(new BeginShootingAction());
 //        runAction(new WaitAction(5));
     }

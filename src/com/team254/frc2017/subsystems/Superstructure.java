@@ -9,7 +9,6 @@ import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.drivers.RevRoboticsAirPressureSensor;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -32,7 +31,6 @@ public class Superstructure extends Subsystem {
     private final Shooter mShooter = Shooter.getInstance();
     private final Compressor mCompressor = new Compressor(0);
     private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
-    private final Solenoid mPusherSolenoid = new Solenoid(0,Constants.kPusherSolenoidId);
     private boolean mIsTeleop = false;
 
     // Superstructure doesn't own the drive, but needs to access it
@@ -359,10 +357,6 @@ public class Superstructure extends Subsystem {
 
     public void setWantIntakeOn() {
         mIntake.setOn();
-    }
-
-    public void setPusherOut(boolean out) {
-        mPusherSolenoid.set(out);
     }
 
     public void reloadConstants() {

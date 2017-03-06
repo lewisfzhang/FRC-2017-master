@@ -7,16 +7,12 @@ import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
 import com.team254.frc2017.subsystems.*;
 import com.team254.frc2017.vision.VisionServer;
-import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
-import com.team254.lib.util.drivers.NavX;
 import com.team254.lib.util.math.RigidTransform2d;
 
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -31,7 +27,6 @@ public class Robot extends IterativeRobot {
     // Subsystems
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
-    //private FingerGearGrabber mFingerGearGrabber = FingerGearGrabber.getInstance();
     private MotorGearGrabber mGearGrabber = MotorGearGrabber.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
@@ -108,7 +103,6 @@ public class Robot extends IterativeRobot {
             }
             
             zeroAllSensors();
-            mSuperstructure.setPusherOut(false);
             mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
             
             mAutoModeExecuter = null;
@@ -153,7 +147,6 @@ public class Robot extends IterativeRobot {
             zeroAllSensors();
             mSuperstructure.reloadConstants();
             mSuperstructure.isTeleop(true);
-            mSuperstructure.setPusherOut(false);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -189,10 +182,8 @@ public class Robot extends IterativeRobot {
                 // Exhaust has highest priority for intake.
                 if (wantsExhaust) {
                     mSuperstructure.setWantIntakeReversed();
-                    mSuperstructure.setPusherOut(false);
                 } else if (mControlBoard.getIntakeButton()) {
                     mSuperstructure.setWantIntakeOn();
-                    mSuperstructure.setPusherOut(true);
                 } else if (!mSuperstructure.isShooting()) {
                     mSuperstructure.setWantIntakeStopped();
                 }
