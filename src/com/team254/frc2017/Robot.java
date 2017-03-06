@@ -48,8 +48,6 @@ public class Robot extends IterativeRobot {
 
     private Looper mEnabledLooper = new Looper();
 
-    private WebServer mHTTPServer = new WebServer();
-
     private VisionServer mVisionServer = VisionServer.getInstance();
 
     public Robot() {
