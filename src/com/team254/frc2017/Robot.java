@@ -217,7 +217,7 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setShooterOpenLoop(8.0);
                 } else if (mControlBoard.getShooterClosedLoopButton()) {
                     mSuperstructure.setClosedLoopRpm(3000.0);
-                } else if (!mControlBoard.getHangButton()){
+                } else if (!mControlBoard.getHangButton()) {
                     mSuperstructure.setShooterOpenLoop(0);
                 }
             }
