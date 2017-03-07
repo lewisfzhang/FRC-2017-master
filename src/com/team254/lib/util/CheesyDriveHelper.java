@@ -50,7 +50,7 @@ public class CheesyDriveHelper {
         double negInertiaScalar;
         if (isHighGear) {
             negInertiaScalar = 4.0;
-            sensitivity = 0.75;
+            sensitivity = 0.95;
         } else {
             if (wheel * negInertia > 0) {
                 negInertiaScalar = 2.5;
