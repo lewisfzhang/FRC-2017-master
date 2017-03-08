@@ -163,9 +163,7 @@ public class Robot extends IterativeRobot {
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
 
-            if (mControlBoard.getDriveAimButton()) {
-                mDrive.setWantAimToGoal();
-            } else if (mControlBoard.getAimButton()) {
+            if (mControlBoard.getAimButton()) {
                 mDrive.setWantAimToGoal();
 
                 if (mControlBoard.getUnjamButton()) {

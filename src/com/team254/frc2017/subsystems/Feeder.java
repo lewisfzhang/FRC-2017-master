@@ -6,10 +6,8 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
+import com.team254.lib.util.drivers.IRSensor;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogTrigger;
-import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Feeder extends Subsystem {
@@ -20,17 +18,6 @@ public class Feeder extends Subsystem {
     private static final double kUnjamOutPower = -6.0 * kReversing;
     private static final double kFeedVoltage = 10.0;
     private static final double kExhaustVoltage = kFeedVoltage * kReversing;
-
-    private static final double kSharpLowerThresholdVoltage = 0.7;
-    private static final double kSharpUpperThresholdVoltage = 0.9;
-    private static final double kAutoUnjamDelay = 3;
-    
-    private static double mLeftFeederBallsPerSec = 0;
-    private static double mRightFeederBallsPerSec = 0;
-    private static double mLeftFeederBallCount = 0;
-    private static double mRightFeederBallCount = 0;
-    private static double mLeftSharpVoltage = 0;
-    private static double mRightSharpVoltage = 0;
     
     private static Feeder sInstance = null;
     public static Feeder getInstance() {
@@ -42,14 +29,7 @@ public class Feeder extends Subsystem {
 
     private final CANTalon mMasterTalon, mSlaveTalon;
     
-    private static AnalogInput mLeftSharp = new AnalogInput(0);
-    private static AnalogInput mRightSharp = new AnalogInput(1);
-    
-    private static AnalogTrigger mLeftSharpSensor = new AnalogTrigger(mLeftSharp);
-    private static AnalogTrigger mRightSharpSensor = new AnalogTrigger(mRightSharp);
-    
-    private static Counter mLeftCounter;
-    private static Counter mRightCounter;
+    private final IRSensor mLeftBallSensor, mRightBallSensor;
 
     public Feeder() {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kFeederMasterId);
@@ -72,12 +52,8 @@ public class Feeder extends Subsystem {
         mSlaveTalon.reverseOutput(true);
         mSlaveTalon.enableBrakeMode(true);
         
-        mLeftSharpSensor.setLimitsVoltage(kSharpLowerThresholdVoltage, kSharpUpperThresholdVoltage);
-        mRightSharpSensor.setLimitsVoltage(kSharpLowerThresholdVoltage, kSharpUpperThresholdVoltage);
-        mLeftCounter = new Counter(mLeftSharpSensor);
-        mRightCounter = new Counter(mRightSharpSensor);
-        mLeftCounter.setUpSourceEdge(true, false); // Rising edge
-        mRightCounter.setUpSourceEdge(true, false);
+        mLeftBallSensor = new IRSensor(Constants.kLeftBallSensorId, Constants.kBallSensorMinVoltage, Constants.kBallSensorMaxVoltage);
+        mRightBallSensor = new IRSensor(Constants.kRightBallSensorId, Constants.kBallSensorMinVoltage, Constants.kBallSensorMaxVoltage);
     }
 
     public enum SystemState {
@@ -114,8 +90,6 @@ public class Feeder extends Subsystem {
         @Override
         public void onLoop(double timestamp) {
             synchronized (Feeder.this) {
-                mLeftSharpVoltage = mLeftSharp.getVoltage();
-                mRightSharpVoltage = mRightSharp.getVoltage();
                 SystemState newState;
                 switch (mSystemState) {
                     case IDLE:
@@ -210,23 +184,8 @@ public class Feeder extends Subsystem {
     private SystemState handleFeeding() {
         if (mStateChanged) {
             mMasterTalon.changeControlMode(TalonControlMode.Speed);
-            mMasterTalon.setSetpoint(Constants.kFeederFeedSpeedRpm);
+            mMasterTalon.setSetpoint(Constants.kFeederFeedSpeedRpm * Constants.kFeederSensorGearReduction);
         }
-        
-        mLeftFeederBallsPerSec = 1 / mLeftCounter.getPeriod();
-        mRightFeederBallsPerSec = 1 / mRightCounter.getPeriod();
-        
-        mLeftFeederBallCount = mLeftCounter.get();
-        mRightFeederBallCount = mRightCounter.get();
-        
-        mLeftSharpVoltage = mLeftSharp.getVoltage();
-        mRightSharpVoltage = mRightSharp.getVoltage();
-        
-        if (mStateChanged) {
-            mMasterTalon.changeControlMode(TalonControlMode.Speed);
-            mMasterTalon.setSetpoint(Constants.kFeederFeedSpeedRpm);
-        }
-
         return defaultStateTransfer();
     }
 
@@ -249,12 +208,10 @@ public class Feeder extends Subsystem {
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("feeder_speed", mMasterTalon.getSpeed());
-        SmartDashboard.putNumber("Left Feeder Balls Per Sec", mLeftFeederBallsPerSec);
-        SmartDashboard.putNumber("Right Feeder Balls Per Sec", mRightFeederBallsPerSec);
-        SmartDashboard.putNumber("Left Feeder Ball Count", mLeftFeederBallCount);
-        SmartDashboard.putNumber("Right Feeder Ball Count", mRightFeederBallCount);
-        SmartDashboard.putNumber("Left Feeder Sensor Voltage", mLeftSharpVoltage);
-        SmartDashboard.putNumber("Right Feeder Sensor Voltage", mRightSharpVoltage);
+        SmartDashboard.putNumber("left_balls_count", mLeftBallSensor.getCount());
+        SmartDashboard.putNumber("right_balls_count", mRightBallSensor.getCount());
+        SmartDashboard.putNumber("left_ball_voltage", mLeftBallSensor.getVoltage());
+        SmartDashboard.putNumber("right_ball_voltage", mRightBallSensor.getVoltage());
     }
 
     @Override
@@ -264,12 +221,12 @@ public class Feeder extends Subsystem {
 
     @Override
     public void zeroSensors() {
-
+        mLeftBallSensor.resetCount();
+        mRightBallSensor.resetCount();
     }
     
-    public static void resetBallCount() {
-        mLeftCounter.reset();
-        mRightCounter.reset();
+    public int totalBalls() {
+        return mLeftBallSensor.getCount() + mRightBallSensor.getCount();
     }
 
     @Override

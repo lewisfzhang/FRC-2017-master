@@ -9,7 +9,8 @@ import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends Subsystem {
@@ -29,10 +30,10 @@ public class Shooter extends Subsystem {
     }
 
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
+    private final Relay mLED;
 
     private ControlMethod mControlMethod;
     // The setpoint the talon currently has
-    private double mCurTalonSetpointRpm;
     private double mSetpointRpm;
 
 
@@ -49,6 +50,8 @@ public class Shooter extends Subsystem {
         mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
         mRightMaster.SetVelocityMeasurementWindow(32);
         mRightMaster.setNominalClosedLoopVoltage(12);
+        mLED = new Relay(0);
+        mLED.set(Value.kForward);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);

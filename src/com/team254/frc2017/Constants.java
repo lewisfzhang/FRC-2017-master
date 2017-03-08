@@ -106,7 +106,10 @@ public class Constants extends ConstantsBase {
     public static double kFeederKD = 0;
     public static double kFeederKF = 0.0095;
     public static double kFeederRampRate = 90.0;
-    public static double kFeederFeedSpeedRpm = 12000.0;
+    public static double kFeederFeedSpeedRpm = 2500.0;
+    public static double kFeederSensorGearReduction = 3.0;
+    public static double kBallSensorMinVoltage = 1.5;
+    public static double kBallSensorMaxVoltage = 2.0;
     
     // Hopper gains
     public static double kHopperRampRate = 24.0;
@@ -161,7 +164,8 @@ public class Constants extends ConstantsBase {
     public static final int kPusherSolenoidId = 7;
 
     // Analog Inputs
-    // TODO add some!
+    public static int kLeftBallSensorId = 1;
+    public static int kRightBallSensorId = 0;
 
     // Camera Number
     public static int kPixyNumber = 1;
