@@ -2,6 +2,7 @@ package com.team254.frc2017.auto.modes;
 
 import java.util.Arrays;
 
+import com.team254.frc2017.Constants;
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.AutoModeEndedException;
 import com.team254.frc2017.auto.actions.Action;
@@ -37,8 +38,9 @@ public class HopperShootModeBlue extends AutoModeBase {
                     }))
                 }))
         ); //Drive to hopper, cancel path once the robot runs into the wall
-        //runAction(new SetFlywheelRPMAction(3500));
+        runAction(new SetFlywheelRPMAction(3500));
         runAction(new WaitAction(2.3)); //wait for balls
+        Constants.kSegmentCompletionTolerance = 5.0;
         runAction(new DrivePathAction(new HopperToShootPathBlue())); //drive backwards to get off the wall
         runAction(new TurnUntilSeesTargetAction(Rotation2d.fromDegrees(165))); //turn towards 165 degrees or until camera sees target
         runAction(new BeginShootingAction()); //aim + fire

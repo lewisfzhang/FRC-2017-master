@@ -174,9 +174,9 @@ public class Constants extends ConstantsBase {
     public static int kAndroidAppTcpPort = 8254;
 
     //PATH FOLLOWING
-    public static double kMinLookAhead = 16.0; // inches
+    public static double kMinLookAhead = 8.0; // inches
     public static double kMinLookAheadSpeed = 35.0; // inches per second
-    public static double kMaxLookAhead = 16.0; // inches
+    public static double kMaxLookAhead = 12.0; // inches
     public static double kMaxLookAheadSpeed = 120.0; // inches per second
     public static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
     public static double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;

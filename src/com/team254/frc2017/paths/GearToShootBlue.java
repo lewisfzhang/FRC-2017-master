@@ -13,20 +13,20 @@ public class GearToShootBlue implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(120,215,0,0));
-        sWaypoints.add(new Waypoint(90,245,0,120));
+        sWaypoints.add(new Waypoint(112,215,0,0));
+        sWaypoints.add(new Waypoint(90,245,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(120, 215), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(120, 215), Rotation2d.fromDegrees(120.0)); 
     }
 
     @Override
     public boolean isReversed() {
-        return true; 
+        return false; 
     }
     // WAYPOINT_DATA: [{"position":{"x":120,"y":215},"speed":0,"radius":0,"comment":""},{"position":{"x":90,"y":245},"speed":120,"radius":0,"comment":""}]
     // IS_REVERSED: true

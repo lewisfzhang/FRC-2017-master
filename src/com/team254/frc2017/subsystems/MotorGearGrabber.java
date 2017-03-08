@@ -8,6 +8,7 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MotorGearGrabber extends Subsystem {
 
@@ -54,10 +55,13 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kGearGrabberId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mMasterTalon.setCurrentLimit(20);
+        mMasterTalon.EnableCurrentLimit(true);
         mSystemState = SystemState.STOWED_WITH_GEAR;
     }
     @Override
     public void outputToSmartDashboard() {
+        SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
     }
 
     @Override
@@ -238,6 +242,8 @@ public class MotorGearGrabber extends Subsystem {
         mWristUp  = false;
         mWristSolenoid.set(mWristUp);
     }
+    
+
 
 
 }

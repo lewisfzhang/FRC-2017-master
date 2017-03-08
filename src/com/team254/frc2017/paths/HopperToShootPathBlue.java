@@ -14,7 +14,7 @@ public class HopperToShootPathBlue implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(95,305,0,0));
-        sWaypoints.add(new Waypoint(95,295,0,120));
+        sWaypoints.add(new Waypoint(95,285,0,120));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

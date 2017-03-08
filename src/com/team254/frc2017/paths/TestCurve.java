@@ -8,14 +8,15 @@ import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
-public class StartToGearBlue implements PathContainer {
+public class TestCurve implements PathContainer {
     
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(16,273,0,0));
-        sWaypoints.add(new Waypoint(80,273,40,60));
-        sWaypoints.add(new Waypoint(112,215,0,60));
+        sWaypoints.add(new Waypoint(96,273,20,80));
+        sWaypoints.add(new Waypoint(124,307,6,80));
+        sWaypoints.add(new Waypoint(157,307,0,80));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
@@ -29,7 +30,7 @@ public class StartToGearBlue implements PathContainer {
     public boolean isReversed() {
         return true; 
     }
-    // WAYPOINT_DATA: [{"position":{"x":16,"y":273},"speed":0,"radius":0,"comment":""},{"position":{"x":88,"y":273},"speed":60,"radius":40,"comment":""},{"position":{"x":120,"y":216},"speed":60,"radius":0,"comment":""}]
+    // WAYPOINT_DATA: [{"position":{"x":16,"y":273},"speed":0,"radius":0,"comment":""},{"position":{"x":100,"y":273},"speed":60,"radius":20,"comment":""},{"position":{"x":132,"y":307},"speed":60,"radius":8,"comment":""},{"position":{"x":157,"y":307},"speed":60,"radius":0,"comment":""}]
     // IS_REVERSED: true
-    // FILE_NAME: StartToGearBlue
+    // FILE_NAME: TestCurve
 }
