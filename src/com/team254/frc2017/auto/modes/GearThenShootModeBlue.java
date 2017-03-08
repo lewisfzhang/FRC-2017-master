@@ -10,14 +10,11 @@ import com.team254.frc2017.auto.actions.DrivePathAction;
 import com.team254.frc2017.auto.actions.EndShootingAction;
 import com.team254.frc2017.auto.actions.ResetPoseFromPathAction;
 import com.team254.frc2017.auto.actions.ScoreGearAction;
-import com.team254.frc2017.auto.actions.TurnToHeadingAction;
 import com.team254.frc2017.auto.actions.WaitAction;
 import com.team254.frc2017.paths.GearToShootBlue;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.ShootToLoadBlue;
 import com.team254.frc2017.paths.StartToGearBlue;
-import com.team254.frc2017.paths.StartToGearBlueReversed;
-import com.team254.lib.util.math.Rotation2d;
 
 public class GearThenShootModeBlue extends AutoModeBase {
 

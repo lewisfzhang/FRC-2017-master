@@ -5,8 +5,6 @@ import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
 import com.team254.frc2017.auto.modes.GearThenShootModeBlue;
 import com.team254.frc2017.auto.modes.HopperShootModeBlue;
 import com.team254.frc2017.auto.modes.StandStillMode;
-import com.team254.frc2017.auto.modes.TestLineMode;
-import com.team254.frc2017.auto.modes.TestCurveMode;
 import com.team254.frc2017.auto.modes.TestTurnInPlaceMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
