@@ -34,6 +34,7 @@ public class Shooter extends Subsystem {
 
     private ControlMethod mControlMethod;
     // The setpoint the talon currently has
+    private double mCurTalonSetpointRpm;
     private double mSetpointRpm;
 
 
