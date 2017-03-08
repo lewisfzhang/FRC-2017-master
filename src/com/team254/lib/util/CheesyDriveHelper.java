@@ -8,9 +8,27 @@ package com.team254.lib.util;
  */
 public class CheesyDriveHelper {
 
-    double mQuickStopAccumulator;
-    public static final double kThrottleDeadband = 0.02;
+    private static final double kThrottleDeadband = 0.02;
     private static final double kWheelDeadband = 0.02;
+
+    // These factor determine how fast the wheel traverses the "non linear" sine curve.
+    private static final double kHighWheelNonLinearity = 0.65;
+    private static final double kLowWheelNonLinearity = 0.5;
+
+    private static final double kHighNegInertiaScalar = 4.0;
+
+    private static final double kLowNegInertiaThreshold = 0.65;
+    private static final double kLowNegInertiaTurnScalar = 2.5;
+    private static final double kLowNegInertiaCloseScalar = 3.0;
+    private static final double kLowNegInertiaFarScalar = 5.0;
+
+    private static final double kHighSensitivity = 0.95;
+    private static final double kLowSensitiity = 0.85;
+
+    private static final double kQuickStopDeadband = 0.2;
+    private static final double kQuickStopWeight = 0.1;
+    private static final double kQuickStopScalar = 5.0;
+
     private double mOldWheel = 0.0;
     private double mQuickStopAccumlator = 0.0;
     private double mNegInertiaAccumlator = 0.0;
@@ -26,13 +44,13 @@ public class CheesyDriveHelper {
 
         double wheelNonLinearity;
         if (isHighGear) {
-            wheelNonLinearity = 0.65;
+            wheelNonLinearity = kHighWheelNonLinearity;
             final double denominator = Math.sin(Math.PI / 2.0 * wheelNonLinearity);
             // Apply a sin function that's scaled to make it feel better.
             wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
             wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
         } else {
-            wheelNonLinearity = 0.5;
+            wheelNonLinearity = kLowWheelNonLinearity;
             final double denominator = Math.sin(Math.PI / 2.0 * wheelNonLinearity);
             // Apply a sin function that's scaled to make it feel better.
             wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
@@ -49,19 +67,21 @@ public class CheesyDriveHelper {
         // Negative inertia!
         double negInertiaScalar;
         if (isHighGear) {
-            negInertiaScalar = 4.0;
-            sensitivity = 0.95;
+            negInertiaScalar = kHighNegInertiaScalar;
+            sensitivity = kHighSensitivity;
         } else {
             if (wheel * negInertia > 0) {
-                negInertiaScalar = 2.5;
+                // If we are moving away from 0.0, aka, trying to get more wheel.
+                negInertiaScalar = kLowNegInertiaTurnScalar;
             } else {
-                if (Math.abs(wheel) > 0.65) {
-                    negInertiaScalar = 5.0;
+                // Otherwise, we are attempting to go back to 0.0.
+                if (Math.abs(wheel) > kLowNegInertiaThreshold) {
+                    negInertiaScalar = kLowNegInertiaFarScalar;
                 } else {
-                    negInertiaScalar = 3.0;
+                    negInertiaScalar = kLowNegInertiaCloseScalar;
                 }
             }
-            sensitivity = .85;
+            sensitivity = kLowSensitiity;
         }
         double negInertiaPower = negInertia * negInertiaScalar;
         mNegInertiaAccumlator += negInertiaPower;
@@ -78,10 +98,10 @@ public class CheesyDriveHelper {
 
         // Quickturn!
         if (isQuickTurn) {
-            if (Math.abs(linearPower) < 0.2) {
-                double alpha = 0.1;
+            if (Math.abs(linearPower) < kQuickStopDeadband) {
+                double alpha = kQuickStopWeight;
                 mQuickStopAccumlator = (1 - alpha) * mQuickStopAccumlator
-                        + alpha * Util.limit(wheel, 1.0) * 5;
+                        + alpha * Util.limit(wheel, 1.0) * kQuickStopScalar;
             }
             overPower = 1.0;
             angularPower = wheel;
