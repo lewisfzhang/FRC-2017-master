@@ -27,7 +27,6 @@ public class GearThenShootModeBlue extends AutoModeBase {
         runAction(new DeployIntakeAction());
         runAction(new ScoreGearAction());
         Constants.kSegmentCompletionTolerance = 5.0;
-        runAction(new ResetPoseFromPathAction(new GearToShootBlue()));
         runAction(new DrivePathAction(new GearToShootBlue()));
         runAction(new BeginShootingAction());
         runAction(new WaitAction(5));
