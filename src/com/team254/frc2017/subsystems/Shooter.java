@@ -37,7 +37,6 @@ public class Shooter extends Subsystem {
     private double mCurTalonSetpointRpm;
     private double mSetpointRpm;
 
-
     private final CSVWriter mCSVWriter;
 
     private Shooter() {

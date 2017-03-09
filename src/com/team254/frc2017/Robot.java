@@ -32,7 +32,6 @@ public class Robot extends IterativeRobot {
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
 
-
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
             Arrays.asList(Drive.getInstance(), Superstructure.getInstance(), Shooter.getInstance(),
