@@ -7,9 +7,18 @@ import edu.wpi.first.wpilibj.Joystick;
  * startup, then other methods request the singleton ControlBoard instance.
  */
 public class ControlBoard {
-    private static ControlBoard mInstance = new ControlBoard();
+    private static ControlBoard mInstance = null;
+
+    private static final boolean kUseGamepad = false;
 
     public static ControlBoard getInstance() {
+        if (mInstance == null) {
+            if (kUseGamepad) {
+                mInstance = new GamepadControlBoard();
+            } else {
+                mInstance = new ControlBoard();
+            }
+        }
         return mInstance;
     }
 
@@ -17,7 +26,7 @@ public class ControlBoard {
     private final Joystick mTurnStick;
     private final Joystick mButtonBoard;
 
-    private ControlBoard() {
+    protected ControlBoard() {
         mThrottleStick = new Joystick(0);
         mTurnStick = new Joystick(1);
         mButtonBoard = new Joystick(2);
