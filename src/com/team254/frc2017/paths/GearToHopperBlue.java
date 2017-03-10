@@ -13,17 +13,19 @@ public class GearToHopperBlue implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(110,214,0,0)); //dat gear doe
-        sWaypoints.add(new Waypoint(150,250,12,100));
-        sWaypoints.add(new Waypoint(130,293,4,100, "DeployIntake"));
-        sWaypoints.add(new Waypoint(91.5,301,0,100));
+        sWaypoints.add(new Waypoint(112,215,0,0));
+        sWaypoints.add(new Waypoint(103,235,10,50));
+        sWaypoints.add(new Waypoint(138,287,28,50));
+        sWaypoints.add(new Waypoint(108,302,0,50,"DeployIntake"));
+        sWaypoints.add(new Waypoint(90,302,0,30));
+
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(110, 214), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(112, 215), Rotation2d.fromDegrees(180.0)); 
     }
 
     @Override
