@@ -46,15 +46,11 @@ public class ControlBoard {
     }
 
     public boolean getLowGear() {
-        return mThrottleStick.getRawButton(1);
-    }
-
-    public boolean getAimButton() {
         return mThrottleStick.getRawButton(2);
     }
 
-    public boolean getDriveAimButton() {
-        return mButtonBoard.getRawButton(9);
+    public boolean getAimButton() {
+        return mThrottleStick.getRawButton(1);
     }
 
     // OPERATOR CONTROLS
