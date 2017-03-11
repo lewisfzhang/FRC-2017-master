@@ -18,12 +18,12 @@ public class CheesyDriveHelper {
     private static final double kHighNegInertiaScalar = 4.0;
 
     private static final double kLowNegInertiaThreshold = 0.65;
-    private static final double kLowNegInertiaTurnScalar = 2.5;
-    private static final double kLowNegInertiaCloseScalar = 3.0;
+    private static final double kLowNegInertiaTurnScalar = 3.5;
+    private static final double kLowNegInertiaCloseScalar = 4.0;
     private static final double kLowNegInertiaFarScalar = 5.0;
 
     private static final double kHighSensitivity = 0.95;
-    private static final double kLowSensitiity = 0.85;
+    private static final double kLowSensitiity = 1.0;
 
     private static final double kQuickStopDeadband = 0.2;
     private static final double kQuickStopWeight = 0.1;
