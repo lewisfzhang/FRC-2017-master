@@ -154,7 +154,7 @@ public class Path {
       */
      public void checkSegmentDone(Translation2d robotPos) {
          PathSegment currentSegment = segments.get(0); 
-         double remainingDist = new Translation2d(robotPos, currentSegment.getEnd()).norm();//currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
+         double remainingDist = currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
          if(remainingDist < Constants.kSegmentCompletionTolerance) {
              removeCurrentSegment();
          }
