@@ -167,6 +167,9 @@ public class Constants extends ConstantsBase {
     public static int kLeftBallSensorId = 1;
     public static int kRightBallSensorId = 0;
 
+    // Relays
+    public static int kLEDRelayId = 0;
+
     // Camera Number
     public static int kPixyNumber = 1;
 

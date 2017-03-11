@@ -29,6 +29,7 @@ public class Superstructure extends Subsystem {
     private final Intake mIntake = Intake.getInstance();
     private final Hopper mHopper = Hopper.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
+    private final LED mLED = LED.getInstance();
     private final Compressor mCompressor = new Compressor(0);
     private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
     private boolean mIsTeleop = false;
@@ -137,6 +138,9 @@ public class Superstructure extends Subsystem {
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
         mCompressor.setClosedLoopControl(mIsTeleop);
+
+        mLED.setWantedState(LED.WantedState.OFF);
+
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;
@@ -160,6 +164,7 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
+        mLED.setWantedState(LED.WantedState.FIXED_ON);
         if (isOnTargetToShoot()) {
             return SystemState.SHOOTING;
         }
@@ -184,6 +189,7 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.FEED);
+        mLED.setWantedState(LED.WantedState.FIXED_ON);
         setWantIntakeOn();
         switch (mWantedState) {
         case UNJAM:
@@ -209,6 +215,7 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.UNJAM);
         mHopper.setWantedState(Hopper.WantedState.UNJAM);
+        mLED.setWantedState(LED.WantedState.FIXED_ON);
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;
@@ -228,6 +235,7 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.UNJAM);
         mHopper.setWantedState(Hopper.WantedState.UNJAM);
+        mLED.setWantedState(LED.WantedState.FIXED_ON);
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;

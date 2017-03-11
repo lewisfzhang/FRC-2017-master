@@ -30,7 +30,6 @@ public class Shooter extends Subsystem {
     }
 
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
-    private final Relay mLED;
 
     private ControlMethod mControlMethod;
     // The setpoint the talon currently has
@@ -50,8 +49,6 @@ public class Shooter extends Subsystem {
         mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
         mRightMaster.SetVelocityMeasurementWindow(32);
         mRightMaster.setNominalClosedLoopVoltage(12);
-        mLED = new Relay(0);
-        mLED.set(Value.kForward);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
