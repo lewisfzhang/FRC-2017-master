@@ -134,12 +134,11 @@ public class Superstructure extends Subsystem {
     private SystemState handleIdle(boolean stateChanged) {
         if (stateChanged) {
             stop();
+            mLED.setWantedState(LED.WantedState.BLINK);
         }
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
         mCompressor.setClosedLoopControl(mIsTeleop);
-
-        mLED.setWantedState(LED.WantedState.OFF);
 
         switch (mWantedState) {
         case UNJAM:
