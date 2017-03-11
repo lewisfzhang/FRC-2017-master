@@ -134,7 +134,7 @@ public class Superstructure extends Subsystem {
     private SystemState handleIdle(boolean stateChanged) {
         if (stateChanged) {
             stop();
-            mLED.setWantedState(LED.WantedState.BLINK);
+            mLED.setWantedState(LED.WantedState.OFF);
         }
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
