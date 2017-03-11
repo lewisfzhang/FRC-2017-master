@@ -108,6 +108,7 @@ public class Path {
                  rv.closest_point = next_segment_closest_point;
                  rv.closest_point_distance = next_segment_closest_point_distance;
                  removeCurrentSegment();
+                 currentSegment = segments.get(0);
              }
          }
          rv.remaining_segment_distance = currentSegment.getRemainingDistance(rv.closest_point);
