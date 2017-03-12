@@ -206,9 +206,9 @@ public class Constants extends ConstantsBase {
 
     // Robot state
     // Pose of the camera frame w.r.t. the robot frame
-    public static double kCameraXOffset = -3.3211;
+    public static double kCameraXOffset = -5.05;
     public static double kCameraYOffset = 0.0;
-    public static double kCameraZOffset = 20.9;
+    public static double kCameraZOffset = 21.9;
     public static double kCameraPitchAngleDegrees = 30.0;
     public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
