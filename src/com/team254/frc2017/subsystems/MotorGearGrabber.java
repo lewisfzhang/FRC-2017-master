@@ -160,7 +160,9 @@ public class MotorGearGrabber extends Subsystem {
     private SystemState handleIntake(double timeInState) {
         switch(mWantedState) {
             case IDLE:
-                return SystemState.RAISING;
+                if(mMasterTalon.getOutputCurrent() < K_INTAKE_THRESH) {
+                    return SystemState.RAISING;
+                }
             default:
                 setWristDown();
                 mMasterTalon.set(K_INTAKE_GEAR_SETPOINT);
@@ -195,7 +197,7 @@ public class MotorGearGrabber extends Subsystem {
     
     public SystemState handleStowing(double timeInState) {
         setWristUp();
-        mMasterTalon.set(K_CONTAIN_GEAR_SETPOINT);
+        mMasterTalon.set(K_INTAKE_GEAR_SETPOINT);
         if(timeInState > K_DELAY) {
             return SystemState.STOWED;
         }
