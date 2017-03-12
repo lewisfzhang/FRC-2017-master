@@ -280,5 +280,9 @@ public class MotorGearGrabber extends Subsystem {
         mWantedState = wanted;
     }
 
+    public synchronized void reset() {
+        mWantedState = WantedState.ACQUIRE;
+        mSystemState = SystemState.STOWED;
+    }
 
 }

@@ -137,7 +137,7 @@ public class Drive extends Subsystem {
         mLeftSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveId,
                 Constants.kLeftDriveMasterId);
         mLeftSlave.reverseOutput(false);
-        mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 2);
+        mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
 
         mRightMaster = CANTalonFactory.createDefaultTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
@@ -153,7 +153,7 @@ public class Drive extends Subsystem {
         mRightSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kRightDriverSlaveId,
                 Constants.kRightDriveMasterId);
         mRightSlave.reverseOutput(false);
-        mRightSlave.setStatusFrameRateMs(StatusFrameRate.Feedback, 2);
+        mRightSlave.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
