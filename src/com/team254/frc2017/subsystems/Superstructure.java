@@ -315,6 +315,7 @@ public class Superstructure extends Subsystem {
         if (aimOptional.isPresent()) {
             final ShooterAimingParameters aim = aimOptional.get();
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(aim.getRange()));
+            // mShooter.setClosedLoopRpm(Constants.kShooterTuningRpm);
         } else if (Superstructure.getInstance().isShooting()) {
             // Keep the previous setpoint.
         } else {
