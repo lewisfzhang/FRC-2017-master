@@ -48,6 +48,8 @@ public class Feeder extends Subsystem {
         mMasterTalon.setD(Constants.kFeederKD);
         mMasterTalon.setF(Constants.kFeederKF);
 
+        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 500);
+
         mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kFeederSlaveId, Constants.kFeederMasterId); 
         mSlaveTalon.reverseOutput(true);
         mSlaveTalon.enableBrakeMode(true);
@@ -207,7 +209,6 @@ public class Feeder extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("feeder_speed", mMasterTalon.getSpeed());
         SmartDashboard.putNumber("left_balls_count", mLeftBallSensor.getCount());
         SmartDashboard.putNumber("right_balls_count", mRightBallSensor.getCount());
         SmartDashboard.putNumber("left_ball_voltage", mLeftBallSensor.getVoltage());

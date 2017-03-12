@@ -47,13 +47,13 @@ public class CANTalonFactory {
     private static final Configuration kSlaveConfiguration = new Configuration();
 
     static {
-        kSlaveConfiguration.CONTROL_FRAME_PERIOD_MS = 500;
-        kSlaveConfiguration.MOTION_CONTROL_FRAME_PERIOD_MS = 500;
-        kSlaveConfiguration.GENERAL_STATUS_FRAME_RATE_MS = 500;
-        kSlaveConfiguration.FEEDBACK_STATUS_FRAME_RATE_MS = 500;
-        kSlaveConfiguration.QUAD_ENCODER_STATUS_FRAME_RATE_MS = 500;
-        kSlaveConfiguration.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 500;
-        kSlaveConfiguration.PULSE_WIDTH_STATUS_FRAME_RATE_MS = 500;
+        kSlaveConfiguration.CONTROL_FRAME_PERIOD_MS = 1000;
+        kSlaveConfiguration.MOTION_CONTROL_FRAME_PERIOD_MS = 1000;
+        kSlaveConfiguration.GENERAL_STATUS_FRAME_RATE_MS = 1000;
+        kSlaveConfiguration.FEEDBACK_STATUS_FRAME_RATE_MS = 1000;
+        kSlaveConfiguration.QUAD_ENCODER_STATUS_FRAME_RATE_MS = 1000;
+        kSlaveConfiguration.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 1000;
+        kSlaveConfiguration.PULSE_WIDTH_STATUS_FRAME_RATE_MS = 1000;
     }
 
     // Create a CANTalon with the default (out of the box) configuration.

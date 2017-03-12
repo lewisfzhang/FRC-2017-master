@@ -42,7 +42,6 @@ public class Shooter extends Subsystem {
     private Shooter() {
         mRightMaster = CANTalonFactory.createDefaultTalon(Constants.kRightShooterMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 2);
         mRightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mRightMaster.reverseSensor(true);
         mRightMaster.reverseOutput(false);
@@ -51,7 +50,7 @@ public class Shooter extends Subsystem {
         mRightMaster.SetVelocityMeasurementWindow(32);
         mRightMaster.setNominalClosedLoopVoltage(12);
 
-        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 1);
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 2);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -109,9 +108,9 @@ public class Shooter extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                mCSVWriter.addValue(0, Timer.getFPGATimestamp());
-                mCSVWriter.addValue(1, getSpeedRpm());
-                mCSVWriter.write();
+//                mCSVWriter.addValue(0, Timer.getFPGATimestamp());
+//                mCSVWriter.addValue(1, getSpeedRpm());
+//                mCSVWriter.write();
             }
 
             @Override

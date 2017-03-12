@@ -180,6 +180,7 @@ public class Hopper extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kHopperMasterId);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mMasterTalon.setVoltageRampRate(Constants.kHopperRampRate);
+        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 500);
 
         mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kHopperSlaveId, Constants.kHopperMasterId);
         mSlaveTalon.reverseOutput(true);

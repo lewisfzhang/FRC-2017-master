@@ -24,7 +24,9 @@ public class Intake extends Subsystem {
     private Intake() {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kIntakeMasterId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
+        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 500);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+
         mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kIntakeSlaveId, Constants.kIntakeMasterId);
         mSlaveTalon.reverseOutput(true);
         mDeploySolenoid = new Solenoid(Constants.kDeploySolenoidId);
