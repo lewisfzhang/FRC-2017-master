@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot {
         try {
             CrashTracker.logRobotInit();
 
-            SmartDashboardUtil.deleteAllKeys();
+            // SmartDashboardUtil.deleteAllKeys();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mEnabledLooper.register(VisionProcessor.getInstance());
