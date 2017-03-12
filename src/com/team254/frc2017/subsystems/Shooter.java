@@ -51,6 +51,8 @@ public class Shooter extends Subsystem {
         mRightMaster.SetVelocityMeasurementWindow(32);
         mRightMaster.setNominalClosedLoopVoltage(12);
 
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 1);
+
         CANTalon.FeedbackDeviceStatus sensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         if (sensorPresent != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
@@ -73,6 +75,7 @@ public class Shooter extends Subsystem {
         mRightMaster.setI(Constants.kShooterTalonKI);
         mRightMaster.setD(Constants.kShooterTalonKD);
         mRightMaster.setF(Constants.kShooterTalonKF);
+        mRightMaster.setIZone(Constants.kShooterTalonIZone);
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
 
