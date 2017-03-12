@@ -87,6 +87,9 @@ public abstract class ConstantsBase {
                     success = true;
                     if (!value.equals(current)) {
                         modifiedKeys.put(name, true);
+                        System.out.println("Constant Modified:" + field.getName());
+                    } else {
+                        System.out.println("Constant Not Modified:" + field.getName());
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     System.out.println("Could not set field: " + name);

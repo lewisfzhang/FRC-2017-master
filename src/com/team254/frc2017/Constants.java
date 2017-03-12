@@ -101,7 +101,7 @@ public class Constants extends ConstantsBase {
     public static int kShooterOpenLoopCurrentLimit = 35;
 
     public static double kShooterSetpointDeadbandRpm = 1.0;
-    public static double kShooterAllowableErrorRpm = 150.0;
+    public static double kShooterAllowableErrorRpm = 15.0;
 
     // Feeder gains
     public static double kFeederKP = 0.02;
