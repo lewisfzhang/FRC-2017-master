@@ -125,6 +125,8 @@ public class Shooter extends Subsystem {
         if (mControlMethod == ControlMethod.CLOSED_LOOP) {
             mControlMethod = ControlMethod.OPEN_LOOP;
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
+            mRightMaster.setCurrentLimit(Constants.kShooterOpenLoopCurrentLimit);
+            mRightMaster.EnableCurrentLimit(true);
         }
         mRightMaster.set(voltage);
     }
@@ -133,6 +135,7 @@ public class Shooter extends Subsystem {
         if (mControlMethod == ControlMethod.OPEN_LOOP) {
             mControlMethod = ControlMethod.CLOSED_LOOP;
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+            mRightMaster.EnableCurrentLimit(false);
             mCurTalonSetpointRpm = Double.MIN_VALUE;
         }
 
