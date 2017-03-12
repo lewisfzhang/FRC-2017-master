@@ -6,12 +6,12 @@ import edu.wpi.first.wpilibj.Joystick;
  * A basic framework for the control board Like the drive code, one instance of the ControlBoard object is created upon
  * startup, then other methods request the singleton ControlBoard instance.
  */
-public class ControlBoard {
-    private static ControlBoard mInstance = null;
+public class ControlBoard implements ControlBoardInterface {
+    private static ControlBoardInterface mInstance = null;
 
     private static final boolean kUseGamepad = false;
 
-    public static ControlBoard getInstance() {
+    public static ControlBoardInterface getInstance() {
         if (mInstance == null) {
             if (kUseGamepad) {
                 mInstance = new GamepadControlBoard();
@@ -33,65 +33,65 @@ public class ControlBoard {
     }
 
     // DRIVER CONTROLS
-    public double getThrottle() {
+    @Override public double getThrottle() {
         return -mThrottleStick.getRawAxis(1);
     }
 
-    public double getTurn() {
+    @Override public double getTurn() {
         return mTurnStick.getX();
     }
 
-    public boolean getQuickTurn() {
+    @Override public boolean getQuickTurn() {
         return mTurnStick.getRawButton(1);
     }
 
-    public boolean getLowGear() {
+    @Override public boolean getLowGear() {
         return mThrottleStick.getRawButton(2);
     }
 
-    public boolean getAimButton() {
+    @Override public boolean getAimButton() {
         return mThrottleStick.getRawButton(1);
     }
 
     // OPERATOR CONTROLS
-    public boolean getFeedButton() {
+    @Override public boolean getFeedButton() {
         return mButtonBoard.getRawAxis(1) < -0.1;
     }
 
-    public boolean getIntakeButton() {
+    @Override public boolean getIntakeButton() {
         return mButtonBoard.getRawAxis(2) < -0.1 || mTurnStick.getRawButton(2);
     }
 
-    public boolean getShooterOpenLoopButton() {
+    @Override public boolean getShooterOpenLoopButton() {
         return mButtonBoard.getRawButton(8);
     }
 
-    public boolean getExhaustButton() {
+    @Override public boolean getExhaustButton() {
         return mButtonBoard.getRawAxis(0) < -0.1;
     }
 
-    public boolean getUnjamButton() {
+    @Override public boolean getUnjamButton() {
         return mButtonBoard.getRawButton(4);
     }
 
-    public boolean getShooterClosedLoopButton() {
+    @Override public boolean getShooterClosedLoopButton() {
         // return mButtonBoard.getRawButton(2);
         return false;
     }
 
-    public boolean getFlywheelSwitch() {
+    @Override public boolean getFlywheelSwitch() {
         return mButtonBoard.getRawAxis(3) < -0.1;
     }
     
-    public boolean getHangButton() {
+    @Override public boolean getHangButton() {
         return mButtonBoard.getRawButton(10);
     }
     
-    public boolean getGrabGearButton() {
+    @Override public boolean getGrabGearButton() {
         return mButtonBoard.getRawButton(2);
     }
     
-    public boolean getScoreGearButton() {
+    @Override public boolean getScoreGearButton() {
         return mButtonBoard.getRawButton(1);
     }
 }

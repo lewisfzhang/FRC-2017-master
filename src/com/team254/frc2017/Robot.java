@@ -40,7 +40,7 @@ public class Robot extends IterativeRobot {
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
-    private ControlBoard mControlBoard = ControlBoard.getInstance();
+    private ControlBoardInterface mControlBoard = ControlBoard.getInstance();
 
     private Looper mEnabledLooper = new Looper();
 
