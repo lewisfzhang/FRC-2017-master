@@ -11,6 +11,7 @@ import com.team254.lib.util.drivers.CANTalonFactory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends Subsystem {
@@ -105,14 +106,14 @@ public class Shooter extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                // mCSVWriter.addValue(0, Timer.getFPGATimestamp());
-                // mCSVWriter.addValue(1, getSpeedRpm());
-                // mCSVWriter.write();
+                mCSVWriter.addValue(0, Timer.getFPGATimestamp());
+                mCSVWriter.addValue(1, getSpeedRpm());
+                mCSVWriter.write();
             }
 
             @Override
             public void onStop(double timestamp) {
-                // mCSVWriter.flush();
+                mCSVWriter.flush();
             }
         });
     }
