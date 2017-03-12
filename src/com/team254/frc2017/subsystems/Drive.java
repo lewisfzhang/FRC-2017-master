@@ -1,6 +1,7 @@
 package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.StatusFrameRate;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.Kinematics;
 import com.team254.frc2017.RobotState;
@@ -136,6 +137,7 @@ public class Drive extends Subsystem {
         mLeftSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveId,
                 Constants.kLeftDriveMasterId);
         mLeftSlave.reverseOutput(false);
+        mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 2);
 
         mRightMaster = CANTalonFactory.createDefaultTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
@@ -151,6 +153,7 @@ public class Drive extends Subsystem {
         mRightSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kRightDriverSlaveId,
                 Constants.kRightDriveMasterId);
         mRightSlave.reverseOutput(false);
+        mRightSlave.setStatusFrameRateMs(StatusFrameRate.Feedback, 2);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 

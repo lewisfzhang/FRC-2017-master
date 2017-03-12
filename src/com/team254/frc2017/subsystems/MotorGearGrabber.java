@@ -12,16 +12,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MotorGearGrabber extends Subsystem {
 
-    public static boolean K_WRIST_DOWN = false;
-    public static boolean K_WRIST_UP = !K_WRIST_DOWN;
-    public static double K_CONTAIN_GEAR_SETPOINT = -3;
-    public static double K_SCORE_GEAR_SETPOINT = 12;
-    public static double K_INTAKE_GEAR_SETPOINT = -12;
-    public static double K_DELAY = 0.5;
-    public static double K_EXHAUST_DELAY = 0.1;
-    public static double K_INTAKE_THRESH = 25;
-    public static double K_CONTAIN_THRESH = 0.0;
-    public static double K_THRESH_TIME = 0.15;
+    public static boolean kWristDown = false;
+    public static boolean kWristUp = !kWristDown;
+    public static double kContainGearSetpoint = -3;
+    public static double kScoreGearSetpoint = 12;
+    public static double kIntakeGearSetpoint = -12;
+    public static double kTransitionDelay = 0.5;
+    public static double kExhaustDelay = 0.1;
+    public static double kIntakeThreshold = 25;
+    public static double kContainThreshold = 0.0;
+    public static double kThresholdTime = 0.15;
     
     private static MotorGearGrabber mInstance;
     public static MotorGearGrabber getInstance() {
@@ -61,10 +61,9 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kGearGrabberId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        //mMasterTalon.setCurrentLimit(20);
         mMasterTalon.EnableCurrentLimit(true);
-        mSystemState = SystemState.IDLE;
-        mWantedState = WantedState.IDLE;
+        mSystemState = SystemState.STOWED;
+        mWantedState = WantedState.ACQUIRE;
     }
     @Override
     public void outputToSmartDashboard() {
@@ -160,20 +159,20 @@ public class MotorGearGrabber extends Subsystem {
     private SystemState handleIntake(double timeInState) {
         switch(mWantedState) {
             case IDLE:
-                if(mMasterTalon.getOutputCurrent() < K_INTAKE_THRESH) {
+                if(mMasterTalon.getOutputCurrent() < kIntakeThreshold) {
                     return SystemState.RAISING;
                 }
             default:
                 setWristDown();
-                mMasterTalon.set(K_INTAKE_GEAR_SETPOINT);
-                if(mMasterTalon.getOutputCurrent() > K_INTAKE_THRESH) {
+                mMasterTalon.set(kIntakeGearSetpoint);
+                if(mMasterTalon.getOutputCurrent() > kIntakeThreshold) {
                     if(startTimeInThreshold == 0.0) {
                         startTimeInThreshold = timeInState;
                     }
                 } else {
                     startTimeInThreshold = 0.0;
                 }
-                if(timeInState - startTimeInThreshold > K_THRESH_TIME && startTimeInThreshold != 0) {
+                if(timeInState - startTimeInThreshold > kThresholdTime && startTimeInThreshold != 0) {
                     LED.getInstance().setWantedState(LED.WantedState.BLINK);
                     return SystemState.STOWING;
                 } else {
@@ -186,7 +185,7 @@ public class MotorGearGrabber extends Subsystem {
         switch(mWantedState) {
             case SCORE:
                 setWristDown();
-                mMasterTalon.set(K_SCORE_GEAR_SETPOINT);
+                mMasterTalon.set(kScoreGearSetpoint);
                 return SystemState.EXHAUST;
             case ACQUIRE:
                 return SystemState.INTAKE;
@@ -197,8 +196,8 @@ public class MotorGearGrabber extends Subsystem {
     
     public SystemState handleStowing(double timeInState) {
         setWristUp();
-        mMasterTalon.set(K_INTAKE_GEAR_SETPOINT);
-        if(timeInState > K_DELAY) {
+        mMasterTalon.set(kIntakeGearSetpoint);
+        if(timeInState > kTransitionDelay) {
             return SystemState.STOWED;
         }
         return SystemState.STOWING;
@@ -206,8 +205,8 @@ public class MotorGearGrabber extends Subsystem {
     
     public SystemState handleLowering(double timeInState) {
         setWristDown();
-        mMasterTalon.set(K_INTAKE_GEAR_SETPOINT);
-        if(timeInState > K_DELAY) {
+        mMasterTalon.set(kIntakeGearSetpoint);
+        if(timeInState > kTransitionDelay) {
             return SystemState.INTAKE;
         }
         return SystemState.LOWERING;
@@ -216,7 +215,7 @@ public class MotorGearGrabber extends Subsystem {
     public SystemState handleRaising(double timeInState) {
         setWristUp();
         mMasterTalon.set(0);
-        if(timeInState > K_DELAY) {
+        if(timeInState > kTransitionDelay) {
             return SystemState.IDLE;
         }
         return SystemState.RAISING;
@@ -239,19 +238,19 @@ public class MotorGearGrabber extends Subsystem {
 //                    return SystemState.IDLE;
 //                }
                 setWristUp();
-                mMasterTalon.set(K_CONTAIN_GEAR_SETPOINT);
+                mMasterTalon.set(kContainGearSetpoint);
                 return SystemState.STOWED;
         }
     }
     
     private SystemState handleExhausting(double timeInState) {
         setWristDown();
-        if(timeInState > K_EXHAUST_DELAY) {
-            mMasterTalon.set(K_SCORE_GEAR_SETPOINT);
+        if(timeInState > kExhaustDelay) {
+            mMasterTalon.set(kScoreGearSetpoint);
         } else {
-            mMasterTalon.set(K_CONTAIN_GEAR_SETPOINT);
+            mMasterTalon.set(kContainGearSetpoint);
         }
-        if(timeInState > K_DELAY) {
+        if(timeInState > kTransitionDelay) {
             return SystemState.EXHAUST;
         }
         return SystemState.EXHAUSTING;
