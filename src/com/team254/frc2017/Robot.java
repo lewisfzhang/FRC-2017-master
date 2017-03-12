@@ -8,6 +8,7 @@ import com.team254.frc2017.loops.VisionProcessor;
 import com.team254.frc2017.subsystems.*;
 import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
 import com.team254.frc2017.vision.VisionServer;
+import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
@@ -79,6 +80,7 @@ public class Robot extends IterativeRobot {
             mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
 
             AutoModeSelector.initAutoModeSelector();
+            WebServer.startServer();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
