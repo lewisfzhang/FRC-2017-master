@@ -6,6 +6,7 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
 import com.team254.frc2017.subsystems.*;
+import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
 import com.team254.frc2017.vision.VisionServer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
@@ -116,7 +117,6 @@ public class Robot extends IterativeRobot {
             mEnabledLooper.start();
             mSuperstructure.reloadConstants();
             mSuperstructure.isTeleop(false);
-
             mAutoModeExecuter = new AutoModeExecuter();
             mAutoModeExecuter.setAutoMode(AutoModeSelector.getSelectedAutoMode());
             mAutoModeExecuter.start();
@@ -213,23 +213,12 @@ public class Robot extends IterativeRobot {
                 }
             }
 
-            double exhaustPower = 6;
-            double intakePower = -12;
-            if (mControlBoard.getGrabGearButton()) {
-                mGearGrabber.setOpenLoop(intakePower);
-            } else if (mControlBoard.getScoreGearButton()) {
-                mGearGrabber.setOpenLoop(exhaustPower);
-            } else {
-                mGearGrabber.setOpenLoop(-2.0);
-            }
-
-            if (mControlBoard.getStowGearGrabberButton()) {
-                mGearGrabber.setWristDown();
-            }
-            if (mControlBoard.getPlaceGearButton()) {
-                mGearGrabber.setWristUp();
-            }
-
+            if(mControlBoard.getScoreGearButton())
+                mGearGrabber.setWantedState(WantedState.SCORE);
+            else if(mControlBoard.getGrabGearButton())
+                mGearGrabber.setWantedState(WantedState.ACQUIRE);
+            else
+                mGearGrabber.setWantedState(WantedState.IDLE);
             allPeriodic();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);

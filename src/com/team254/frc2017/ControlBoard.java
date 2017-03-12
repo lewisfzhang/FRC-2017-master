@@ -87,19 +87,11 @@ public class ControlBoard {
         return mButtonBoard.getRawButton(10);
     }
     
-    public boolean getStowGearGrabberButton() {
-        return mButtonBoard.getRawButton(1);
-    }
-    
     public boolean getGrabGearButton() {
-        return mButtonBoard.getRawButton(3);
+        return mButtonBoard.getRawButton(2);
     }
     
     public boolean getScoreGearButton() {
-        return mButtonBoard.getRawButton(2);
-    }
-
-    public boolean getPlaceGearButton() {
-        return mButtonBoard.getRawButton(5);
+        return mButtonBoard.getRawButton(1);
     }
 }

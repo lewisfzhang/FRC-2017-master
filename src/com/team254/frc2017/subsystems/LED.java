@@ -6,13 +6,13 @@ import com.team254.frc2017.loops.Looper;
 import edu.wpi.first.wpilibj.Relay;
 
 public class LED extends Subsystem {
-    private static final int kDefaultBlinkCount = 3;
-    private static final double kBlinkDuration = 0.1; // seconds for full cycle
+    private static final int kDefaultBlinkCount = 4;
+    private static final double kBlinkDuration = 0.2; // seconds for full cycle
     private static final double kTotalBlinkDuration = kDefaultBlinkCount * kBlinkDuration;
 
     private static LED mInstance = null;
 
-    public static LED getInstance() {
+    public static LED getInstance() { 
         if (mInstance == null) {
             mInstance = new LED();
         }
@@ -69,7 +69,7 @@ public class LED extends Subsystem {
                         newState = handleFixedOn();
                         break;
                     default:
-                        System.out.println("Fell through on LED states!!1");
+                        System.out.println("Fell through on LED states!!");
                         newState = SystemState.OFF;
                 }
                 if (newState != mSystemState) {
