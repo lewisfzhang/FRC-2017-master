@@ -7,7 +7,6 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.drivers.RevRoboticsAirPressureSensor;
-
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -159,12 +158,12 @@ public class Superstructure extends Subsystem {
     }
 
     private SystemState handleWaitingForAim() {
-        autoSpinShooter();
+
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
-        mLED.setWantedState(LED.WantedState.FIXED_ON);
-        if (isOnTargetToShoot()) {
+
+        if (autoSpinShooter()) {
             return SystemState.SHOOTING;
         }
         switch (mWantedState) {
@@ -309,17 +308,34 @@ public class Superstructure extends Subsystem {
         return Constants.kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(range)).value;
     }
 
-    public synchronized void autoSpinShooter() {
+    public synchronized boolean autoSpinShooter() {
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
                 .getAimingParameters(Timer.getFPGATimestamp());
         if (aimOptional.isPresent()) {
             final ShooterAimingParameters aim = aimOptional.get();
-            mShooter.setClosedLoopRpm(getShootingSetpointRpm(aim.getRange()));
+            double range = aim.getRange();
+            mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
+
+            if (range < Constants.kFlywheelAutoAimMap.firstKey().value
+                    || range > Constants.kFlywheelAutoAimMap.lastKey().value) {
+                // We cannot make this shot
+                mLED.setWantedState(LED.WantedState.BLINK);
+                return false;
+            }
+
+            mLED.setWantedState(LED.WantedState.FIXED_ON);
             // mShooter.setClosedLoopRpm(Constants.kShooterTuningRpm);
+
+            return isOnTargetToShoot();
+
         } else if (Superstructure.getInstance().isShooting()) {
             // Keep the previous setpoint.
+            mLED.setWantedState(LED.WantedState.BLINK);
+            return false;
         } else {
+            mLED.setWantedState(LED.WantedState.BLINK);
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
+            return false;
         }
     }
 
