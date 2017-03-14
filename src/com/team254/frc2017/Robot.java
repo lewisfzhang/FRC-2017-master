@@ -12,7 +12,6 @@ import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
-import com.team254.lib.util.SmartDashboardUtil;
 import com.team254.lib.util.math.RigidTransform2d;
 
 import edu.wpi.first.wpilibj.IterativeRobot;

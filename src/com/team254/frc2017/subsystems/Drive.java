@@ -1,7 +1,6 @@
 package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
-import com.ctre.CANTalon.StatusFrameRate;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.Kinematics;
 import com.team254.frc2017.RobotState;
