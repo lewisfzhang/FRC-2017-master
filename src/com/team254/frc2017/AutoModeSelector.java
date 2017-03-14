@@ -32,6 +32,7 @@ public class AutoModeSelector {
     private static final AutoModeCreator mDefaultMode =
             new AutoModeCreator("Actuate Hopper then Shoot Red", ()->new BoilerHopperShootModeRed());
     private static final AutoModeCreator[] mAllModes = {
+            new AutoModeCreator("Actuate Hopper then Shoot Blue", ()->new BoilerHopperShootModeRed());
             new AutoModeCreator("Center Gear then Shoot Blue", ()->new CenterGearThenShootModeBlue()),
             new AutoModeCreator("Test Turn In Place", ()->new TestTurnInPlaceMode()),
             new AutoModeCreator("Stand Still", ()->new StandStillMode()),
