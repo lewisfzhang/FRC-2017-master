@@ -62,8 +62,6 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
 
-        mSystemState = SystemState.INTAKE;
-        mWantedState = WantedState.ACQUIRE;
     }
     @Override
     public void outputToSmartDashboard() {
@@ -71,9 +69,8 @@ public class MotorGearGrabber extends Subsystem {
     }
 
     @Override
-    public synchronized void stop() {
-        mSystemState = SystemState.STOWED;
-        mWantedState = WantedState.IDLE;
+    public void stop() {
+        setWantedState(WantedState.IDLE);
     }
 
     @Override
@@ -88,10 +85,13 @@ public class MotorGearGrabber extends Subsystem {
 
             @Override
             public void onStart(double timestamp) {
+                synchronized (MotorGearGrabber.this) {
+                    mSystemState = SystemState.INTAKE;
+                    mWantedState = WantedState.ACQUIRE;
+                }
                 mCurrentStateStartTime = Timer.getFPGATimestamp();
-                mSystemState = SystemState.INTAKE;
-                mWantedState = WantedState.ACQUIRE;
             }
+
 
             @Override
             public void onLoop(double timestamp) {
