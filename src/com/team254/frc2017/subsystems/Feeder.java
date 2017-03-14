@@ -85,9 +85,11 @@ public class Feeder extends Subsystem {
         @Override
         public void onStart(double timestamp) {
             stop();
-            mSystemState = SystemState.IDLE;
-            mCurrentStateStartTime = timestamp;
-            mStateChanged = true;
+            synchronized (Feeder.this) {
+                mSystemState = SystemState.IDLE;
+                mStateChanged = true;
+                mCurrentStateStartTime = timestamp;
+            }
         }
 
         @Override
