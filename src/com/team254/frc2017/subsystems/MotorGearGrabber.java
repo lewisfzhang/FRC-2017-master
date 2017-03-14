@@ -71,8 +71,9 @@ public class MotorGearGrabber extends Subsystem {
     }
 
     @Override
-    public void stop() {
-        mMasterTalon.set(0);
+    public synchronized void stop() {
+        mSystemState = SystemState.STOWED;
+        mWantedState = WantedState.IDLE;
     }
 
     @Override
@@ -145,6 +146,7 @@ public class MotorGearGrabber extends Subsystem {
                 mWantedState = WantedState.IDLE;
                 mSystemState = SystemState.IDLE;
                 // Set the states to what the robot falls into when disabled.
+                stop();
             }
         };
         enabledLooper.register(loop);

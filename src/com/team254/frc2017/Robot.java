@@ -253,6 +253,9 @@ public class Robot extends IterativeRobot {
 
             mEnabledLooper.stop();
 
+            // Call stop on all our Subsystems.
+            mSubsystemManager.stop();
+
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
