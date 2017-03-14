@@ -29,7 +29,7 @@ public class Intake extends Subsystem {
 
         mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kIntakeSlaveId, Constants.kIntakeMasterId);
         mSlaveTalon.reverseOutput(true);
-        mDeploySolenoid = new Solenoid(Constants.kDeploySolenoidId);
+        mDeploySolenoid = new Solenoid(Constants.kIntakeDeploySolenoidId);
     }
 
     @Override
