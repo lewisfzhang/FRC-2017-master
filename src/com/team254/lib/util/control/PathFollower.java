@@ -89,7 +89,7 @@ public class PathFollower {
                 mLastSteeringDelta = steering_command.delta;
                 mVelocityController.setGoalAndConstraints(
                         new MotionProfileGoal(displacement + steering_command.delta.dx,
-                                Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ACCEL),
+                                Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ABS_VEL),
                         new MotionProfileConstraints(Math.min(mMaxProfileVel, steering_command.max_velocity),
                                 mMaxProfileAcc));
             }

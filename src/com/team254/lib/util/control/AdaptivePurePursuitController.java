@@ -66,7 +66,7 @@ public class AdaptivePurePursuitController {
 
         final Arc arc = new Arc(pose, report.lookahead_point);
         double scale_factor = 1.0;
-        if (report.lookahead_point_speed < kEpsilon) {
+        if (report.remaining_segment_distance < arc.length) {
             scale_factor = report.remaining_segment_distance / arc.length;
         }
         if (mReversed) {

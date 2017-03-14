@@ -64,7 +64,7 @@ public class Constants extends ConstantsBase {
     public static double kDriveHighGearVelocityKf = .15;
     public static int kDriveHighGearVelocityIZone = 0;
     public static double kDriveHighGearVelocityRampRate = 240.0;
-    public static double kDriveHighGearNominalOutput = 0.6;
+    public static double kDriveHighGearNominalOutput = 0.5;
     public static double kDriveHighGearMaxSetpoint = 15.0 * 12.0;  // 15 fps
 
     // Wheel position - Low gear
@@ -163,7 +163,7 @@ public class Constants extends ConstantsBase {
     public static final int kAngleSolenoidId = 3;
     public static final int kAssemblyPusherSolenoidId = 4;
     public static final int kGearPusherSolenoidId = 5;
-    public static final int kGearWristSolenoid = 3;
+    public static final int kGearWristSolenoid = 7;
     public static final int kPusherSolenoidId = 7;
 
     // Analog Inputs
@@ -180,23 +180,23 @@ public class Constants extends ConstantsBase {
     public static int kAndroidAppTcpPort = 8254;
 
     //PATH FOLLOWING
-    public static double kMinLookAhead = 8.0; // inches
+    public static double kMinLookAhead = 12.0; // inches
     public static double kMinLookAheadSpeed = 35.0; // inches per second
-    public static double kMaxLookAhead = 12.0; // inches
+    public static double kMaxLookAhead = 18.0; // inches
     public static double kMaxLookAheadSpeed = 120.0; // inches per second
     public static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
     public static double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;
     
-    public static double kInertiaSteeringGain = 0.0;//0.0005; // angular velocity command is multiplied by this gain * our speed
+    public static double kInertiaSteeringGain = 0.0; //0005; // angular velocity command is multiplied by this gain * our speed
                                                      // in inches per sec
     public static double kSegmentCompletionTolerance = 1.0; //inches
     public static double kPathFollowingMaxAccel = 120.0; //inches per second^2
     public static double kPathFollowingMaxVel = 120.0; //inches per second
-    public static double kPathFollowingProfileKp = 0.3;
-    public static double kPathFollowingProfileKi = 0.01;
-    public static double kPathFollowingProfileKv = 0.01;
+    public static double kPathFollowingProfileKp = 0.6 ;
+    public static double kPathFollowingProfileKi = 0.025;
+    public static double kPathFollowingProfileKv = 0.02;
     public static double kPathFollowingProfileKffv = 1.0;
-    public static double kPathFollowingProfileKffa = 0.0;
+    public static double kPathFollowingProfileKffa = 0.05;
 
 
     // Goal tracker constants
