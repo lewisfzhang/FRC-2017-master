@@ -57,7 +57,7 @@ public class MotorGearGrabber extends Subsystem {
     private double startTimeInThreshold;
 
     private MotorGearGrabber() {
-        mWristSolenoid = new Solenoid(Constants.kGearWristSolenoid);
+        mWristSolenoid = Constants.makeSolenoidForId(Constants.kGearWristSolenoid);
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kGearGrabberId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
