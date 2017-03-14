@@ -220,8 +220,21 @@ public class Constants extends ConstantsBase {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
 
     static {
+        // Tuned on 3/11 with flywheel
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(2850.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(96.), new InterpolatingDouble(2875.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(100.), new InterpolatingDouble(2925.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(106.), new InterpolatingDouble(2950.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(113.), new InterpolatingDouble(3050.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(122.), new InterpolatingDouble(3150.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(130.), new InterpolatingDouble(3250.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(140.), new InterpolatingDouble(3350.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(150.), new InterpolatingDouble(3475.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(160.), new InterpolatingDouble(3550.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(172.), new InterpolatingDouble(3700.));
+
         // Tuned on 3/12 with no flywheel.
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(3000.));
+        /*kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(3000.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(96.), new InterpolatingDouble(3025.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(100.), new InterpolatingDouble(3050.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(106.), new InterpolatingDouble(3075.));
@@ -232,6 +245,7 @@ public class Constants extends ConstantsBase {
         kFlywheelAutoAimMap.put(new InterpolatingDouble(150.), new InterpolatingDouble(3550.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(160.), new InterpolatingDouble(3625.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(172.), new InterpolatingDouble(3775.));
+        */
     }
 
 
