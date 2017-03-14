@@ -48,9 +48,11 @@ public class Hopper extends Subsystem {
         @Override
         public void onStart(double timestamp) {
             stop();
-            mSystemState = SystemState.IDLE;
-            mCurrentStateStartTime = timestamp;
-            mStateChanged = true;
+            synchronized (Hopper.this) {
+                mSystemState = SystemState.IDLE;
+                mCurrentStateStartTime = timestamp;
+                mStateChanged = true;
+            }
         }
 
         @Override
