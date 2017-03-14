@@ -137,7 +137,7 @@ public class Drive extends Subsystem {
         mLeftSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveId,
                 Constants.kLeftDriveMasterId);
         mLeftSlave.reverseOutput(false);
-        mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
+        //mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
 
         mRightMaster = CANTalonFactory.createDefaultTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
@@ -153,7 +153,7 @@ public class Drive extends Subsystem {
         mRightSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kRightDriverSlaveId,
                 Constants.kRightDriveMasterId);
         mRightSlave.reverseOutput(false);
-        mRightMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
+      //  mRightMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
@@ -396,7 +396,7 @@ public class Drive extends Subsystem {
     }
 
     private void updateGoalHeading(double timestamp) {
-        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
+        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, false);
         if (aim.isPresent()) {
             mTargetHeading = aim.get().getRobotToGoal();
         }
@@ -432,7 +432,7 @@ public class Drive extends Subsystem {
     private void updatePathFollower(double timestamp) {
         RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
         Twist2d command = mPathFollower.update(timestamp, robot_pose,
-                RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getMeasuredVelocity().dx);
+                RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getPredictedVelocity().dx);
         if (!mPathFollower.isFinished()) {
             Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
             updateVelocitySetpoint(setpoint.left, setpoint.right);
@@ -553,4 +553,5 @@ public class Drive extends Subsystem {
     public synchronized double getAccelX() {
         return mNavXBoard.getRawAccelX();
     }
+    
 }

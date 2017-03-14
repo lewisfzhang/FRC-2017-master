@@ -61,7 +61,6 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kGearGrabberId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mMasterTalon.EnableCurrentLimit(true);
         mSystemState = SystemState.STOWED;
         mWantedState = WantedState.ACQUIRE;
     }
@@ -126,6 +125,7 @@ public class MotorGearGrabber extends Subsystem {
                             newState = mSystemState;
                             break;
                     }
+                    
                     if (newState != mSystemState) {
                         System.out.println("Changed state: " + mSystemState + " -> " + newState);
                         mSystemState = newState;
