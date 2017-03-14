@@ -91,7 +91,12 @@ public class ControlBoard implements ControlBoardInterface {
         return mButtonBoard.getRawButton(2);
     }
     
+    
     @Override public boolean getScoreGearButton() {
         return mButtonBoard.getRawButton(1);
+    }
+    
+    @Override public boolean getActuateHopperButton() {
+        return mButtonBoard.getRawButton(3);
     }
 }

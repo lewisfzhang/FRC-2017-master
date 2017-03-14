@@ -164,7 +164,8 @@ public class Constants extends ConstantsBase {
     public static final int kAssemblyPusherSolenoidId = 4;
     public static final int kGearPusherSolenoidId = 5;
     public static final int kGearWristSolenoid = 7;
-    public static final int kPusherSolenoidId = 7;
+    //public static final int kLeftHopperSolenoidId = 0;
+    public static final int kRightHopperSolenoidId = 2;
 
     // Analog Inputs
     public static int kLeftBallSensorId = 1;

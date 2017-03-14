@@ -8,6 +8,7 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.drivers.RevRoboticsAirPressureSensor;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -29,6 +30,8 @@ public class Superstructure extends Subsystem {
     private final Hopper mHopper = Hopper.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
     private final LED mLED = LED.getInstance();
+    //private final Solenoid mLeftHopperSolenoid = new Solenoid(Constants.kLeftHopperSolenoidId);
+    private final Solenoid mRightHopperSolenoid = new Solenoid(Constants.kRightHopperSolenoidId);
     private final Compressor mCompressor = new Compressor(0);
     private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
     private boolean mIsTeleop = false;
@@ -349,6 +352,11 @@ public class Superstructure extends Subsystem {
 
     public synchronized void setClosedLoopRpm(double setpointRpm) {
         mShooter.setClosedLoopRpm(setpointRpm);
+    }
+    
+    public synchronized void setActuateHopper(boolean extended) {
+        //mLeftHopperSolenoid.set(extended);
+        mRightHopperSolenoid.set(extended);
     }
 
     @Override

@@ -95,4 +95,9 @@ public class GamepadControlBoard implements ControlBoardInterface {
     public boolean getFlywheelSwitch() {
         return false;
     }
+    
+    @Override
+    public boolean getActuateHopperButton() {
+        return false;
+    }
 }

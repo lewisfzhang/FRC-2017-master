@@ -221,6 +221,9 @@ public class Robot extends IterativeRobot {
                 mGearGrabber.setWantedState(WantedState.ACQUIRE);
             else
                 mGearGrabber.setWantedState(WantedState.IDLE);
+            
+            mSuperstructure.setActuateHopper(mControlBoard.getActuateHopperButton());
+            
             allPeriodic();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);

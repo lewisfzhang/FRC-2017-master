@@ -35,4 +35,6 @@ public interface ControlBoardInterface {
     boolean getGrabGearButton();
 
     boolean getScoreGearButton();
+    
+    boolean getActuateHopperButton();
 }
