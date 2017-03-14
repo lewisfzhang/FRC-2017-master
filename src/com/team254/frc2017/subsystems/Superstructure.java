@@ -77,10 +77,12 @@ public class Superstructure extends Subsystem {
 
         @Override
         public void onStart(double timestamp) {
-            mWantedState = WantedState.IDLE;
-            mCurrentStateStartTime = timestamp;
-            mSystemState = SystemState.IDLE;
-            mStateChanged = true;
+            synchronized (Superstructure.this) {
+                mWantedState = WantedState.IDLE;
+                mCurrentStateStartTime = timestamp;
+                mSystemState = SystemState.IDLE;
+                mStateChanged = true;
+            }
         }
 
         @Override
