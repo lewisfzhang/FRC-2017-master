@@ -538,6 +538,8 @@ public class Drive extends Subsystem {
                 kLowGearPositionControlSlot);
         mRightMaster.setMotionMagicCruiseVelocity(Constants.kDriveLowGearMaxVelocity);
         mRightMaster.setMotionMagicAcceleration(Constants.kDriveLowGearMaxAccel);
+        mLeftMaster.setVoltageCompensationRampRate(Constants.kDriveVoltageCompensationRampRate);
+        mRightMaster.setVoltageCompensationRampRate(Constants.kDriveVoltageCompensationRampRate);
 
         mLeftMaster.setPID(Constants.kDriveHighGearVelocityKp, Constants.kDriveHighGearVelocityKi,
                 Constants.kDriveHighGearVelocityKd, Constants.kDriveHighGearVelocityKf,
@@ -547,6 +549,8 @@ public class Drive extends Subsystem {
                 Constants.kDriveHighGearVelocityKd, Constants.kDriveHighGearVelocityKf,
                 Constants.kDriveHighGearVelocityIZone, Constants.kDriveHighGearVelocityRampRate,
                 kHighGearVelocityControlSlot);
+        mLeftMaster.setVoltageCompensationRampRate(Constants.kDriveVoltageCompensationRampRate);
+        mRightMaster.setVoltageCompensationRampRate(Constants.kDriveVoltageCompensationRampRate);
     }
     
     public synchronized double getAccelX() {

@@ -36,8 +36,8 @@ public class Feeder extends Subsystem {
 
         mMasterTalon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mMasterTalon.SetVelocityMeasurementWindow(64);
-        mMasterTalon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
+        mMasterTalon.SetVelocityMeasurementWindow(16);
+        mMasterTalon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms);
 
         mMasterTalon.setVoltageRampRate(Constants.kFeederRampRate);
         mMasterTalon.reverseOutput(false);
@@ -47,6 +47,7 @@ public class Feeder extends Subsystem {
         mMasterTalon.setI(Constants.kFeederKI);
         mMasterTalon.setD(Constants.kFeederKD);
         mMasterTalon.setF(Constants.kFeederKF);
+        mMasterTalon.setVoltageCompensationRampRate(Constants.kFeederVoltageCompensationRampRate);
 
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 500);
 
@@ -213,6 +214,7 @@ public class Feeder extends Subsystem {
         SmartDashboard.putNumber("right_balls_count", mRightBallSensor.getCount());
         SmartDashboard.putNumber("left_ball_voltage", mLeftBallSensor.getVoltage());
         SmartDashboard.putNumber("right_ball_voltage", mRightBallSensor.getVoltage());
+        SmartDashboard.putNumber("feeder_speed", mMasterTalon.get() / Constants.kFeederSensorGearReduction);
     }
 
     @Override

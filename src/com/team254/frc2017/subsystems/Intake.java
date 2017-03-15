@@ -70,7 +70,7 @@ public class Intake extends Subsystem {
     }
 
     private void setOpenLoop(double voltage) {
-        voltage = -voltage; // Flip so +V = intake
+        // voltage = -voltage; // Flip so +V = intake
         mMasterTalon.set(voltage);
     }
 

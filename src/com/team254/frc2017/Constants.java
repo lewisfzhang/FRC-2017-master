@@ -71,7 +71,7 @@ public class Constants extends ConstantsBase {
     // Setpoint is in rotations.
     // Error is in encoder ticks (4096 per revolution)
     // Output is +/- 1023, where 1023 corresponds to +12V
-    public static double kDriveLowGearPositionKp = 0.8;
+    public static double kDriveLowGearPositionKp = 1.0;
     public static double kDriveLowGearPositionKi = 0.002;
     public static double kDriveLowGearPositionKd = 100.0;
     public static double kDriveLowGearPositionKf = .45;
@@ -80,6 +80,8 @@ public class Constants extends ConstantsBase {
     public static double kDriveLowGearNominalOutput = 0.5;  // V
     public static double kDriveLowGearMaxVelocity = 6.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches);  // 6 fps in RPM
     public static double kDriveLowGearMaxAccel = 18.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches);  // 18 fps/s in RPM/s
+
+    public static double kDriveVoltageCompensationRampRate = 0.0;
 
     // Turn to heading
     public static double kDriveTurnKp = 3.0;
@@ -97,6 +99,7 @@ public class Constants extends ConstantsBase {
     public static double kShooterTalonKD = 0.0;
     public static double kShooterTalonKF = 0.027;
     public static double kShooterRampRate = 60.0;
+    public static double kShooterVoltageCompensationRampRate = 10.0;
     public static int kShooterTalonIZone = 1000; // == ~150 rpm
     public static int kShooterOpenLoopCurrentLimit = 35;
 
@@ -106,16 +109,17 @@ public class Constants extends ConstantsBase {
     // Feeder gains
     public static double kFeederKP = 0.02;
     public static double kFeederKI = 0.0;
-    public static double kFeederKD = 0;
-    public static double kFeederKF = 0.0095;
-    public static double kFeederRampRate = 90.0;
+    public static double kFeederKD = 0.2;
+    public static double kFeederKF = 0.009;
+    public static double kFeederRampRate = 240.0;
+    public static double kFeederVoltageCompensationRampRate = 10.0;
     public static double kFeederFeedSpeedRpm = 2500.0;
     public static double kFeederSensorGearReduction = 3.0;
     public static double kBallSensorMinVoltage = 1.5;
     public static double kBallSensorMaxVoltage = 2.0;
     
     // Hopper gains
-    public static double kHopperRampRate = 24.0;
+    public static double kHopperRampRate = 48.0;
 
     // Grabber constants
     public static double kGrabberPlaceTimeSeconds = 0.5;
@@ -221,6 +225,7 @@ public class Constants extends ConstantsBase {
 
     static {
         // Tuned on 3/11 with flywheel
+        /*
         kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(2850.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(96.), new InterpolatingDouble(2875.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(100.), new InterpolatingDouble(2925.));
@@ -232,9 +237,9 @@ public class Constants extends ConstantsBase {
         kFlywheelAutoAimMap.put(new InterpolatingDouble(150.), new InterpolatingDouble(3475.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(160.), new InterpolatingDouble(3550.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(172.), new InterpolatingDouble(3700.));
-
+*/
         // Tuned on 3/12 with no flywheel.
-        /*kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(3000.));
+        kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(3000.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(96.), new InterpolatingDouble(3025.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(100.), new InterpolatingDouble(3050.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(106.), new InterpolatingDouble(3075.));
@@ -245,7 +250,7 @@ public class Constants extends ConstantsBase {
         kFlywheelAutoAimMap.put(new InterpolatingDouble(150.), new InterpolatingDouble(3550.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(160.), new InterpolatingDouble(3625.));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(172.), new InterpolatingDouble(3775.));
-        */
+        
     }
 
 
