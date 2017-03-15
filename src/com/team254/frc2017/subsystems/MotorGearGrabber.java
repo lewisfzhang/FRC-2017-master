@@ -42,8 +42,6 @@ public class MotorGearGrabber extends Subsystem {
         IDLE,
         INTAKE,
         STOWING,
-        LOWERING,
-        RAISING,
         STOWED,
         EXHAUSTING,
         EXHAUST,
@@ -100,12 +98,6 @@ public class MotorGearGrabber extends Subsystem {
                         case IDLE:
                             newState = handleIdle();
                             break;
-                        case LOWERING:
-                            newState = handleLowering(timeInState);
-                            break;
-                        case RAISING:
-                            newState = handleRaising(timeInState);
-                            break;
                         case INTAKE:
                             newState = handleIntake(timeInState);
                             break;
@@ -149,7 +141,7 @@ public class MotorGearGrabber extends Subsystem {
     private SystemState handleIdle() {
         switch(mWantedState) {
             case ACQUIRE:
-                return SystemState.LOWERING;
+                return SystemState.INTAKE;
             default:
                 setWristUp();
                 mMasterTalon.set(0);
@@ -161,7 +153,7 @@ public class MotorGearGrabber extends Subsystem {
         switch(mWantedState) {
             case IDLE:
                 if(mMasterTalon.getOutputCurrent() < kIntakeThreshold) {
-                    return SystemState.RAISING;
+                    return SystemState.IDLE;
                 }
             default:
                 setWristDown();
@@ -191,7 +183,7 @@ public class MotorGearGrabber extends Subsystem {
             case ACQUIRE:
                 return SystemState.INTAKE;
             default:
-                return SystemState.RAISING;
+                return SystemState.IDLE;
         }
     }
     
@@ -202,24 +194,6 @@ public class MotorGearGrabber extends Subsystem {
             return SystemState.STOWED;
         }
         return SystemState.STOWING;
-    }
-    
-    public SystemState handleLowering(double timeInState) {
-        setWristDown();
-        mMasterTalon.set(kIntakeGearSetpoint);
-        if(timeInState > kTransitionDelay) {
-            return SystemState.INTAKE;
-        }
-        return SystemState.LOWERING;
-    }
-    
-    public SystemState handleRaising(double timeInState) {
-        setWristUp();
-        mMasterTalon.set(0);
-        if(timeInState > kTransitionDelay) {
-            return SystemState.IDLE;
-        }
-        return SystemState.RAISING;
     }
     
     private SystemState handleStowed(double timeInState) {

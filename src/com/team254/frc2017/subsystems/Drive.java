@@ -395,7 +395,7 @@ public class Drive extends Subsystem {
     }
 
     private void updateGoalHeading(double timestamp) {
-        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, false);
+        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
         if (aim.isPresent()) {
             mTargetHeading = aim.get().getRobotToGoal();
         }
