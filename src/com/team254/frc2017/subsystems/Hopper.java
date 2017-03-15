@@ -5,6 +5,7 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Hopper extends Subsystem {
     private static final double kUnjamInPeriod = .1;
@@ -219,5 +220,34 @@ public class Hopper extends Subsystem {
     @Override
     public void registerEnabledLoops(Looper in) {
         in.register(mLoop);
+    }
+
+    public boolean checkSystem() {
+        final double kCurrentThres = 0.5;
+
+        setWantedState(WantedState.FEED);
+
+        Timer.delay(2.0);
+
+        final double currentMaster = mMasterTalon.getOutputCurrent();
+        final double currentSlave = mSlaveTalon.getOutputCurrent();
+
+        setWantedState(WantedState.IDLE);
+
+        System.out.println("Hopper Master Current: " + currentMaster + " Slave current: " + currentSlave);
+
+        boolean failure = false;
+
+        if (currentMaster < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!! Hopper Master Current Low !!!!!!!!!!!!!!!!!");
+        }
+
+        if (currentSlave < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!! Hooper Slave Current Low !!!!!!!!!!!!!!!!!!!");
+        }
+
+        return !failure;
     }
 }

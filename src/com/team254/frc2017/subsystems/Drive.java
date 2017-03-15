@@ -21,6 +21,7 @@ import com.team254.lib.util.math.Twist2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
@@ -665,5 +666,58 @@ public class Drive extends Subsystem {
     @Override
     public void writeToLog() {
         mCSVWriter.write();
+    }
+
+    public boolean checkSystem() {
+        final double kCurrentThres = 0.5;
+        final double kRpmThres = 1000;
+
+        setOpenLoop(new DriveSignal(0.5, 0.5));
+
+        Timer.delay(4.0);
+
+        final double currentRightMaster = mRightMaster.getOutputCurrent();
+        final double currentRightSlave = mRightSlave.getOutputCurrent();
+        final double currentLeftMaster = mLeftMaster.getOutputCurrent();
+        final double currentLeftSlave = mLeftSlave.getOutputCurrent();
+
+        final double rpmRight = mRightMaster.getSpeed();
+        final double rpmLeft = mLeftMaster.getSpeed();
+
+        setOpenLoop(DriveSignal.NEUTRAL);
+
+        boolean failure = false;
+
+        if (currentRightMaster < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Right Master Current Low !!!!!!!!!!");
+        }
+
+        if (currentRightSlave < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Right Slave Current Low !!!!!!!!!!");
+        }
+
+        if (currentLeftMaster < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Left Master Current Low !!!!!!!!!!");
+        }
+
+        if (currentLeftSlave < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Left Slave Current Low !!!!!!!!!!");
+        }
+
+        if (rpmRight < kRpmThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Right RPM Low !!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (rpmLeft < kRpmThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Left RPM Low !!!!!!!!!!!!!!!!!!!");
+        }
+
+        return !failure;
     }
 }

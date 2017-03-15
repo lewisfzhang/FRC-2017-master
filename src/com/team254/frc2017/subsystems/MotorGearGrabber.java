@@ -338,4 +338,24 @@ public class MotorGearGrabber extends Subsystem {
         mSystemState = SystemState.STOWED;
     }
 
+    public boolean checkSystem() {
+        final double kCurrentThres = 0.5;
+
+        setOpenLoop(kIntakeGearSetpoint);
+
+        Timer.delay(1.0);
+
+        final double current = mMasterTalon.getOutputCurrent();
+
+        setOpenLoop(0.0);
+
+        System.out.println("MotorGearGrabber Current: " + current);
+
+        if (current < kCurrentThres) {
+            System.out.println("!!!!!!!!!!!! MotorGear Grabber Current Low !!!!!!!!!!!");
+            return false;
+        }
+        return true;
+    }
+
 }

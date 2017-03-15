@@ -7,6 +7,7 @@ import com.team254.lib.util.MovingAverage;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Intake extends Subsystem {
     private static Intake sInstance = null;
@@ -104,6 +105,35 @@ public class Intake extends Subsystem {
     private void setOpenLoop(double voltage) {
         // voltage = -voltage; // Flip so +V = intake
         mMasterTalon.set(-voltage);
+    }
+
+    public boolean checkSystem() {
+        final double kCurrentThres = 0.5;
+
+        setOn();
+
+        Timer.delay(2.0);
+
+        final double currentMaster = mMasterTalon.getOutputCurrent();
+        final double currentSlave = mSlaveTalon.getOutputCurrent();
+
+        setOff();
+
+        System.out.println("Intake Master Current: " + currentMaster + " Slave current: " + currentSlave);
+
+        boolean failure = false;
+
+        if (currentMaster < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!!! Intake Master Current Low !!!!!!!!!!!!!!");
+        }
+
+        if (currentSlave < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!!! Intake Slave Current Low !!!!!!!!!!!!!!!!");
+        }
+
+        return !failure;
     }
 
 }

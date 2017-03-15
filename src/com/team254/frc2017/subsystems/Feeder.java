@@ -6,7 +6,7 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Feeder extends Subsystem {
     private static final double kReversing = -1.0;
@@ -222,6 +222,43 @@ public class Feeder extends Subsystem {
     @Override
     public void registerEnabledLoops(Looper in) {
         in.register(mLoop);
+    }
+
+    public boolean checkSystem() {
+        final double kCurrentThres = 0.5;
+        final double kRpmThes = Constants.kFeederFeedSpeedRpm * Constants.kFeederSensorGearReduction * 0.75;
+
+        setWantedState(WantedState.FEED);
+
+        Timer.delay(2.0);
+
+        final double currentMaster = mMasterTalon.getOutputCurrent();
+        final double currentSlave = mSlaveTalon.getOutputCurrent();
+
+        final double rpm = mMasterTalon.getSpeed();
+
+        setWantedState(WantedState.IDLE);
+
+        System.out.println("Feeder Master Current: " + currentMaster + " Slave Current: " + currentSlave + " rpm: " + mMasterTalon.getSpeed());
+
+        boolean failure = false;
+
+        if (currentMaster < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!! Feeder Master Current Low !!!!!!!!!!!!!!!!");
+        }
+
+        if (currentSlave < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!! Feeder Slave Current Low !!!!!!!!!!!!!!!!!");
+        }
+
+        if (rpm < kRpmThes) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!! Feeder RPM Low !!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        return !failure;
     }
 
 }

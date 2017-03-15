@@ -269,4 +269,54 @@ public class Shooter extends Subsystem {
     public void writeToLog() {
         mCSVWriter.write();
     }
+
+    public boolean checkSystem() {
+        final double kCurrentThres = 0.5;
+        final double kRpmThres = 2000;
+
+        setOpenLoop(8.0);
+
+        Timer.delay(4.0);
+
+        final double currentRightMaster = mRightMaster.getOutputCurrent();
+        final double currentRightSlave = mRightSlave.getOutputCurrent();
+        final double currentLeftSlave1 = mLeftSlave1.getOutputCurrent();
+        final double currentLeftSlave2 = mLeftSlave2.getOutputCurrent();
+
+        final double rpm = mRightMaster.getSpeed();
+
+        setOpenLoop(0.0);
+
+        System.out.println("Shooter Right Master Current: " + currentRightMaster + " Shooter Right Slave Current: " + currentRightSlave);
+        System.out.println("Shooter Left Slave One Current: " + currentLeftSlave1 + " Shooter Left Slave Two Current: " + currentLeftSlave2);
+
+        boolean failure = false;
+
+        if (currentRightMaster < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter Right Master Current Low !!!!!!!!!!");
+        }
+
+        if (currentRightSlave < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter Right Slave Current Low !!!!!!!!!!");
+        }
+
+        if (currentLeftSlave1 < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter Left Slave One Current Low !!!!!!!!!!");
+        }
+
+        if (currentLeftSlave2 < kCurrentThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter Left Slave Two Current Low !!!!!!!!!!");
+        }
+
+        if (rpm < kRpmThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter RPM Low !!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        return !failure;
+    }
 }

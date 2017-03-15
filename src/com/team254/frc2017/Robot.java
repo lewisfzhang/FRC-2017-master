@@ -336,9 +336,22 @@ public class Robot extends IterativeRobot {
         allPeriodic();
     }
 
-    /**
-     * This function is called periodically during test mode
-     */
+    @Override
+    public void testInit() {
+        mEnabledLooper.start();
+
+        Timer.delay(0.5);
+
+        boolean results = Feeder.getInstance().checkSystem();
+        results &= Shooter.getInstance().checkSystem();
+
+        if (!results) {
+            System.out.println("CHECK ABOVE OUTPUT SOME SYSTEMS FAILED!!!");
+        }
+
+        mEnabledLooper.stop();
+    }
+
     @Override
     public void testPeriodic() {
     }
