@@ -6,10 +6,10 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.CircularBuffer;
 import com.team254.lib.util.ReflectingCSVWriter;
-import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends Subsystem {
@@ -274,9 +274,13 @@ public class Shooter extends Subsystem {
         final double kCurrentThres = 0.5;
         final double kRpmThres = 2000;
 
+        mRightSlave.set(Constants.kRightShooterMasterId);
+        mLeftSlave1.set(Constants.kRightShooterMasterId);
+        mLeftSlave2.set(Constants.kRightShooterMasterId);
+
         setOpenLoop(8.0);
 
-        Timer.delay(4.0);
+        Timer.delay(8.0);
 
         final double currentRightMaster = mRightMaster.getOutputCurrent();
         final double currentRightSlave = mRightSlave.getOutputCurrent();

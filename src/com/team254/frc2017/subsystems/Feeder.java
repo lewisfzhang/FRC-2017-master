@@ -228,9 +228,11 @@ public class Feeder extends Subsystem {
         final double kCurrentThres = 0.5;
         final double kRpmThes = Constants.kFeederFeedSpeedRpm * Constants.kFeederSensorGearReduction * 0.75;
 
+        mSlaveTalon.set(Constants.kFeederMasterId);
+
         setWantedState(WantedState.FEED);
 
-        Timer.delay(2.0);
+        Timer.delay(8.0);
 
         final double currentMaster = mMasterTalon.getOutputCurrent();
         final double currentSlave = mSlaveTalon.getOutputCurrent();
