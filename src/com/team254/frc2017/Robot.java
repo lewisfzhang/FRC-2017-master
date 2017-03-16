@@ -84,7 +84,6 @@ public class Robot extends IterativeRobot {
             mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
 
             AutoModeSelector.initAutoModeSelector();
-            WebServer.startServer();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
