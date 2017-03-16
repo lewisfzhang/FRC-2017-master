@@ -46,6 +46,7 @@ public class Robot extends IterativeRobot {
     private VisionServer mVisionServer = VisionServer.getInstance();
     
     private boolean hasGearOperatorInput = false;
+    private LatchedBoolean mWantsLEDBlink = new LatchedBoolean();
 
     private LatchedBoolean mCommitTuning = new LatchedBoolean();
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap =
@@ -232,6 +233,10 @@ public class Robot extends IterativeRobot {
                 } else if (!mControlBoard.getHangButton()) {
                     mSuperstructure.setShooterOpenLoop(0);
                 }
+
+                if (mControlBoard.getBlinkLEDButton()) {
+
+                }
             }
 
             if(mControlBoard.getScoreGearButton() || mControlBoard.getGrabGearButton()) {
@@ -248,6 +253,10 @@ public class Robot extends IterativeRobot {
             }
             
             mSuperstructure.setActuateHopper(mControlBoard.getActuateHopperButton());
+
+            if (mWantsLEDBlink.update(mControlBoard.getBlinkLEDButton())) {
+                LED.getInstance().setWantedState(LED.WantedState.BLINK);
+            }
             
             allPeriodic();
         } catch (Throwable t) {

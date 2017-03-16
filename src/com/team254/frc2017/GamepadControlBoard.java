@@ -100,4 +100,9 @@ public class GamepadControlBoard implements ControlBoardInterface {
     public boolean getActuateHopperButton() {
         return false;
     }
+
+    @Override
+    public boolean getBlinkLEDButton() {
+        return false;
+    }
 }

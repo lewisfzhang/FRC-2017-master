@@ -37,4 +37,6 @@ public interface ControlBoardInterface {
     boolean getScoreGearButton();
     
     boolean getActuateHopperButton();
+
+    boolean getBlinkLEDButton();
 }

@@ -99,4 +99,8 @@ public class ControlBoard implements ControlBoardInterface {
     @Override public boolean getActuateHopperButton() {
         return mButtonBoard.getRawButton(3);
     }
+
+    @Override public boolean getBlinkLEDButton() {
+        return mButtonBoard.getRawButton(6);
+    }
 }
