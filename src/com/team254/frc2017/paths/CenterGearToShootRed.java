@@ -8,14 +8,14 @@ import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
-public class CenterGearToShootBlue implements PathContainer {
+public class CenterGearToShootRed implements PathContainer {
     
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(86,160,0,0));
-        sWaypoints.add(new Waypoint(36,160,36,80));
-        sWaypoints.add(new Waypoint(36,220,0,80));
+        sWaypoints.add(new Waypoint(89,160,0,0));
+        sWaypoints.add(new Waypoint(40,160,36,80));
+        sWaypoints.add(new Waypoint(40,100,0,80));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
