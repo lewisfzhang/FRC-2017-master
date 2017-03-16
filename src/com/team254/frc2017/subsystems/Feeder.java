@@ -214,7 +214,7 @@ public class Feeder extends Subsystem {
         SmartDashboard.putNumber("right_balls_count", mRightBallSensor.getCount());
         SmartDashboard.putNumber("left_ball_voltage", mLeftBallSensor.getVoltage());
         SmartDashboard.putNumber("right_ball_voltage", mRightBallSensor.getVoltage());
-        SmartDashboard.putNumber("feeder_speed", mMasterTalon.get() / Constants.kFeederSensorGearReduction);
+        //SmartDashboard.putNumber("feeder_speed", mMasterTalon.get() / Constants.kFeederSensorGearReduction);
     }
 
     @Override

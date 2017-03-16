@@ -10,6 +10,7 @@ import com.team254.frc2017.auto.actions.ActuateHopperAction;
 import com.team254.frc2017.auto.actions.BeginShootingAction;
 import com.team254.frc2017.auto.actions.DeployIntakeAction;
 import com.team254.frc2017.auto.actions.DrivePathAction;
+import com.team254.frc2017.auto.actions.LowerGearAction;
 import com.team254.frc2017.auto.actions.ParallelAction;
 import com.team254.frc2017.auto.actions.PrintDebugAction;
 import com.team254.frc2017.auto.actions.ResetPoseFromPathAction;
@@ -33,7 +34,7 @@ public class BoilerHopperShootModeRed extends AutoModeBase {
         
         runAction(
                 new ParallelAction(Arrays.asList(new Action[]{
-                    new SetFlywheelRPMAction(3500.0), //spin up flywheel to save time
+                    new SetFlywheelRPMAction(3000.0), //spin up flywheel to save time
                     new DrivePathAction(hopperPath), //drive to hopper
                     new SeriesAction(Arrays.asList(new Action[]{
                             //deploy intake early to save time (need to test to see if it messes with the path)
@@ -41,7 +42,7 @@ public class BoilerHopperShootModeRed extends AutoModeBase {
                     })),
                     new SeriesAction(Arrays.asList(new Action[]{
                             //actuate hopper and begin shooting once path finishes
-                            new WaitForPathMarkerAction("PathFinished"), new ActuateHopperAction(true), new BeginShootingAction(), new PrintDebugAction("Shoot time: " + (Timer.getFPGATimestamp() - start))
+                            new WaitForPathMarkerAction("PathFinished"), new ActuateHopperAction(true), new WaitAction(0.25), new BeginShootingAction(), new WaitAction(4), new LowerGearAction()
                     }))
                 }))
         );

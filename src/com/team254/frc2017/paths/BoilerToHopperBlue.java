@@ -15,15 +15,15 @@ public class BoilerToHopperBlue implements PathContainer {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(16,274,0,0));
         sWaypoints.add(new Waypoint(42,274,16,40));
-        sWaypoints.add(new Waypoint(74,303,16,40,"DeployIntake"));
-        sWaypoints.add(new Waypoint(103,303,0,40,"PathFinished"));
+        sWaypoints.add(new Waypoint(74,303.5,16,40,"DeployIntake"));
+        sWaypoints.add(new Waypoint(103,303.5,0,40,"PathFinished"));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(16, 50), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(16, 274), Rotation2d.fromDegrees(180.0)); 
     }
 
     @Override

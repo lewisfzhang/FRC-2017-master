@@ -55,6 +55,10 @@ public class Intake extends Subsystem {
     public synchronized void deploy() {
         mDeploySolenoid.set(true);
     }
+    
+    public synchronized void reset() {  // only use this in autoInit to reset the intake
+        mDeploySolenoid.set(false);
+    }
 
     public synchronized void setOn() {
         deploy();

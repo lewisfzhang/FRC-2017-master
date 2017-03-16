@@ -45,6 +45,8 @@ public class Robot extends IterativeRobot {
     private Looper mEnabledLooper = new Looper();
 
     private VisionServer mVisionServer = VisionServer.getInstance();
+    
+    private boolean hasGearOperatorInput = false;
 
     public Robot() {
         CrashTracker.logRobotConstruction();
@@ -108,9 +110,12 @@ public class Robot extends IterativeRobot {
             
             zeroAllSensors();
             mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
+            mSuperstructure.setActuateHopper(false);
             
             mAutoModeExecuter = null;
 
+            Intake.getInstance().reset();
+            
             // Shift to high
             mDrive.setHighGear(true);
             mDrive.setBrakeMode(true);
@@ -150,6 +155,7 @@ public class Robot extends IterativeRobot {
             zeroAllSensors();
             mSuperstructure.reloadConstants();
             mSuperstructure.isTeleop(true);
+            hasGearOperatorInput = false;
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -214,12 +220,18 @@ public class Robot extends IterativeRobot {
                 }
             }
 
-            if(mControlBoard.getScoreGearButton())
-                mGearGrabber.setWantedState(WantedState.SCORE);
-            else if(mControlBoard.getGrabGearButton())
-                mGearGrabber.setWantedState(WantedState.ACQUIRE);
-            else
-                mGearGrabber.setWantedState(WantedState.IDLE);
+            if(mControlBoard.getScoreGearButton() || mControlBoard.getGrabGearButton()) {
+                hasGearOperatorInput = true;
+            }
+            
+            if(hasGearOperatorInput) {
+                if(mControlBoard.getScoreGearButton())
+                    mGearGrabber.setWantedState(WantedState.SCORE);
+                else if(mControlBoard.getGrabGearButton())
+                    mGearGrabber.setWantedState(WantedState.ACQUIRE);
+                else
+                    mGearGrabber.setWantedState(WantedState.IDLE);
+            }
             
             mSuperstructure.setActuateHopper(mControlBoard.getActuateHopperButton());
             

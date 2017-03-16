@@ -33,7 +33,7 @@ public class MotorGearGrabber extends Subsystem {
 
     public enum WantedState {
         IDLE,
-        FORCE_PREP_SCORE, // Mostly for auto mode
+        FORCE_LOWERED, // Mostly for auto mode
         ACQUIRE,
         SCORE,
     }
@@ -44,7 +44,9 @@ public class MotorGearGrabber extends Subsystem {
         STOWING,
         STOWED,
         EXHAUSTING,
+        LOWERING, // For auto only
         EXHAUST,
+        DOWN,
     }
 
     private final Solenoid mWristSolenoid;
@@ -60,7 +62,7 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
 
-        mSystemState = SystemState.STOWED;
+        mSystemState = SystemState.INTAKE;
         mWantedState = WantedState.ACQUIRE;
     }
     @Override
@@ -86,6 +88,8 @@ public class MotorGearGrabber extends Subsystem {
             @Override
             public void onStart(double timestamp) {
                 mCurrentStateStartTime = Timer.getFPGATimestamp();
+                mSystemState = SystemState.INTAKE;
+                mWantedState = WantedState.ACQUIRE;
             }
 
             @Override
@@ -110,8 +114,14 @@ public class MotorGearGrabber extends Subsystem {
                         case EXHAUSTING:
                             newState = handleExhausting(timeInState);
                             break;
+                        case LOWERING:
+                            newState = handleLowering(timeInState);
+                            break;
                         case EXHAUST:
                             newState = handleExhaust(timeInState);
+                            break;
+                        case DOWN:
+                            newState = handleLowered(timeInState);
                             break;
                         default:
                             System.out.println("Unexpected gear grabber system state: " + mSystemState);
@@ -132,6 +142,8 @@ public class MotorGearGrabber extends Subsystem {
 
             @Override
             public void onStop(double timestamp) {
+                mWantedState = WantedState.IDLE;
+                mSystemState = SystemState.IDLE;
                 // Set the states to what the robot falls into when disabled.
             }
         };
@@ -200,6 +212,8 @@ public class MotorGearGrabber extends Subsystem {
         switch(mWantedState) {
             case SCORE:
                 return SystemState.EXHAUSTING;
+            case FORCE_LOWERED:
+                return SystemState.LOWERING;
             default:
 //                if(mMasterTalon.getOutputCurrent() <= K_CONTAIN_THRESH) {
 //                    if(startTimeInThreshold == 0.0) {
@@ -230,6 +244,27 @@ public class MotorGearGrabber extends Subsystem {
         }
         return SystemState.EXHAUSTING;
     }
+    
+    private SystemState handleLowering(double timeInState) {
+        setWristDown();
+        mMasterTalon.set(kIntakeGearSetpoint);
+        if(timeInState > kTransitionDelay) {
+            return SystemState.DOWN;
+        }
+        return SystemState.LOWERING;
+    }
+    
+    private SystemState handleLowered(double timeInState) {
+        switch(mWantedState) {
+            case FORCE_LOWERED:
+                setWristDown();
+                mMasterTalon.set(kContainGearSetpoint);
+                return SystemState.DOWN;
+            default:
+                return SystemState.IDLE;
+        }
+    }
+
 
     public boolean mWristUp = false;
 

@@ -194,8 +194,8 @@ public class Constants extends ConstantsBase {
     public static double kSegmentCompletionTolerance = 1.0; //inches
     public static double kPathFollowingMaxAccel = 120.0; //inches per second^2
     public static double kPathFollowingMaxVel = 120.0; //inches per second
-    public static double kPathFollowingProfileKp = 0.6 ;
-    public static double kPathFollowingProfileKi = 0.025;
+    public static double kPathFollowingProfileKp = 0.65;
+    public static double kPathFollowingProfileKi = 0.03;
     public static double kPathFollowingProfileKv = 0.02;
     public static double kPathFollowingProfileKffv = 1.0;
     public static double kPathFollowingProfileKffa = 0.05;
