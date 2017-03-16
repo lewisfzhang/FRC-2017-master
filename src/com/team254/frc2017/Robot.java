@@ -225,11 +225,11 @@ public class Robot extends IterativeRobot {
                 }
 
                 if (mControlBoard.getFlywheelSwitch()) {
-                    mSuperstructure.setShooterOpenLoop(8.0);
+                    mSuperstructure.setClosedLoopRpm(Constants.kDefaultShootingRPM);
                 } else if (mControlBoard.getShooterOpenLoopButton()) {
-                    mSuperstructure.setShooterOpenLoop(8.0);
+                    mSuperstructure.setShooterOpenLoop(0);
                 } else if (mControlBoard.getShooterClosedLoopButton()) {
-                    mSuperstructure.setClosedLoopRpm(3750.0);
+                    mSuperstructure.setClosedLoopRpm(Constants.kDefaultShootingRPM);
                 } else if (!mControlBoard.getHangButton()) {
                     mSuperstructure.setShooterOpenLoop(0);
                 }

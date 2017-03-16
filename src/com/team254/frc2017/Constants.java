@@ -221,7 +221,8 @@ public class Constants extends ConstantsBase {
     // Flywheel PID
     // TODO give these actual values
 
-    public static double kDefaultShootingDistanceInches = 100;
+    public static double kDefaultShootingDistanceInches = 95.8;
+    public static double kDefaultShootingRPM = 2950.0;
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
 
     static {
@@ -262,6 +263,8 @@ public class Constants extends ConstantsBase {
         kFlywheelAutoAimMap.put(new InterpolatingDouble(140.42558291951616), new InterpolatingDouble(3650.0));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(145.42558291951616), new InterpolatingDouble(3700.0));
         kFlywheelAutoAimMap.put(new InterpolatingDouble(150.42558291951616), new InterpolatingDouble(3750.0));
+
+        kDefaultShootingRPM = kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(Constants.kDefaultShootingDistanceInches)).value;
 
         // Tuned on 3/12 with no flywheel.
         /*kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(3000.));

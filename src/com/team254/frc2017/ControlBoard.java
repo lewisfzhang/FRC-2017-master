@@ -63,7 +63,7 @@ public class ControlBoard implements ControlBoardInterface {
     }
 
     @Override public boolean getShooterOpenLoopButton() {
-        return mButtonBoard.getRawButton(8);
+        return false;
     }
 
     @Override public boolean getExhaustButton() {
@@ -75,8 +75,7 @@ public class ControlBoard implements ControlBoardInterface {
     }
 
     @Override public boolean getShooterClosedLoopButton() {
-        // return mButtonBoard.getRawButton(2);
-        return false;
+        return mButtonBoard.getRawButton(8);
     }
 
     @Override public boolean getFlywheelSwitch() {
