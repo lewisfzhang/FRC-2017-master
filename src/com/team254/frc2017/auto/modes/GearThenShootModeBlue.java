@@ -12,25 +12,25 @@ import com.team254.frc2017.auto.actions.ResetPoseFromPathAction;
 import com.team254.frc2017.auto.actions.ScoreGearAction;
 import com.team254.frc2017.auto.actions.WaitAction;
 import com.team254.frc2017.paths.GearToShootBlue;
+import com.team254.frc2017.paths.GearToShootRed;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.ShootToLoadBlue;
 import com.team254.frc2017.paths.StartToGearBlue;
+import com.team254.frc2017.paths.StartToGearRed;
 
 public class GearThenShootModeBlue extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        runAction(new WaitAction(5));
+        runAction(new WaitAction(2));
         PathContainer gearPath = new StartToGearBlue();
         runAction(new ResetPoseFromPathAction(gearPath));
         runAction(new DrivePathAction(gearPath));
         runAction(new DeployIntakeAction());
         runAction(new ScoreGearAction());
-        Constants.kSegmentCompletionTolerance = 5.0;
         runAction(new DrivePathAction(new GearToShootBlue()));
         runAction(new BeginShootingAction());
-        runAction(new WaitAction(5));
+        runAction(new WaitAction(15));
         runAction(new EndShootingAction());
-        //runAction(new DrivePathAction(new ShootToLoadBlue()));
     }
 }

@@ -13,16 +13,16 @@ public class StartToGearBlue implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(16,273,0,0));
-        sWaypoints.add(new Waypoint(80,273,40,60));
-        sWaypoints.add(new Waypoint(112,215,0,60));
+        sWaypoints.add(new Waypoint(16,235,0,0));
+        sWaypoints.add(new Waypoint(101,235,18,40));
+        sWaypoints.add(new Waypoint(116,209,0,40));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(16, 273), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(16, 235), Rotation2d.fromDegrees(180.0)); 
     }
 
     @Override

@@ -14,14 +14,18 @@ public class StartToGearRed implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(16,89,0,0));
-        sWaypoints.add(new Waypoint(107,89,18,40));
-        sWaypoints.add(new Waypoint(120,110,0,40));
+        sWaypoints.add(new Waypoint(97,89,18,40));
+        sWaypoints.add(new Waypoint(112,115,0,40));
 
+//        sWaypoints.add(new Waypoint(16,160,0,0));
+//        sWaypoints.add(new Waypoint(89,160,0,40));
+        
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
+//        return new RigidTransform2d(new Translation2d(16, 160), Rotation2d.fromDegrees(180.0));
         return new RigidTransform2d(new Translation2d(16, 89), Rotation2d.fromDegrees(180.0)); 
     }
 

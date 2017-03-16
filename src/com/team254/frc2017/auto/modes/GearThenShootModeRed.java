@@ -19,6 +19,7 @@ public class GearThenShootModeRed extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
+        runAction(new WaitAction(2));
         PathContainer gearPath = new StartToGearRed();
         runAction(new ResetPoseFromPathAction(gearPath));
         runAction(new DrivePathAction(gearPath));

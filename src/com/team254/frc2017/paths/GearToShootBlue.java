@@ -13,8 +13,8 @@ public class GearToShootBlue implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(112,215,0,0));
-        sWaypoints.add(new Waypoint(90,245,0,60));
+        sWaypoints.add(new Waypoint(116,209,0,0));
+        sWaypoints.add(new Waypoint(101,235,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
