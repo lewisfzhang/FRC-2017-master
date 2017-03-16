@@ -190,12 +190,13 @@ public class Robot extends IterativeRobot {
                 boolean wantsExhaust = mControlBoard.getExhaustButton();
 
                 if (Constants.kIsShooterTuning) {
+                    LED.getInstance().setWantedState(LED.WantedState.FIXED_ON);
                     if (mCommitTuning.update(mControlBoard.getLowGear())) {
                         // Commit to TuningMap.
                         double rpm = mSuperstructure.getCurrentTuningRpm();
                         double range = mSuperstructure.getCurrentRange();
                         System.out.println("Tuning range: " + range  + " = " + rpm);
-                        mTuningFlywheelMap.put(new InterpolatingDouble(rpm), new InterpolatingDouble(range));
+                        mTuningFlywheelMap.put(new InterpolatingDouble(range), new InterpolatingDouble(rpm));
                         mSuperstructure.incrementTuningRpm();
                     }
                 }
