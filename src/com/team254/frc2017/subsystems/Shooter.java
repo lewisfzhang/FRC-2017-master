@@ -147,6 +147,10 @@ public class Shooter extends Subsystem {
         }
     }
 
+    public synchronized double getLastSetpointRpm() {
+        return mSetpointRpm;
+    }
+
     private double getSpeedRpm() {
         return mRightMaster.getSpeed();
     }

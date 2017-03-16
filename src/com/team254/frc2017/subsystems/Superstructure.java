@@ -172,6 +172,9 @@ public class Superstructure extends Subsystem {
         mHopper.setWantedState(Hopper.WantedState.IDLE);
 
         if (autoSpinShooter()) {
+
+            System.out.println(Timer.getFPGATimestamp() + ": making shot: Range: " + mLastGoalRange + " setpoint: " + mShooter.getLastSetpointRpm());
+
             return SystemState.SHOOTING;
         }
         switch (mWantedState) {
@@ -324,6 +327,7 @@ public class Superstructure extends Subsystem {
             if (!Constants.kIsShooterTuning) {
                 final ShooterAimingParameters aim = aimOptional.get();
                 double range = aim.getRange();
+                mLastGoalRange = range;
                 mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
 
                 if (range < Constants.kFlywheelAutoAimMap.firstKey().value
