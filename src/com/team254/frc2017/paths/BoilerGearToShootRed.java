@@ -8,20 +8,24 @@ import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
-public class GearToShootBlue implements PathContainer {
+public class BoilerGearToShootRed implements PathContainer {
     
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(116,209,0,0));
-        sWaypoints.add(new Waypoint(101,235,0,60));
+        sWaypoints.add(new Waypoint(112,115,0,0));
+        sWaypoints.add(new Waypoint(97,89,0,60));
 
+//        sWaypoints.add(new Waypoint(89,160,0,0));
+//        sWaypoints.add(new Waypoint(40,160,36,80));
+//        sWaypoints.add(new Waypoint(40,100,0,80));
+        
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(120, 215), Rotation2d.fromDegrees(120.0)); 
+        return new RigidTransform2d(new Translation2d(120, 110), Rotation2d.fromDegrees(0.0)); 
     }
 
     @Override

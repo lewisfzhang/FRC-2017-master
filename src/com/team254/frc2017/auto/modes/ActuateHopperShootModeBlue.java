@@ -12,24 +12,19 @@ import com.team254.frc2017.auto.actions.DeployIntakeAction;
 import com.team254.frc2017.auto.actions.DrivePathAction;
 import com.team254.frc2017.auto.actions.LowerGearAction;
 import com.team254.frc2017.auto.actions.ParallelAction;
-import com.team254.frc2017.auto.actions.PrintDebugAction;
 import com.team254.frc2017.auto.actions.ResetPoseFromPathAction;
 import com.team254.frc2017.auto.actions.SeriesAction;
 import com.team254.frc2017.auto.actions.SetFlywheelRPMAction;
 import com.team254.frc2017.auto.actions.WaitAction;
 import com.team254.frc2017.auto.actions.WaitForPathMarkerAction;
-import com.team254.frc2017.paths.BoilerToHopperRed;
+import com.team254.frc2017.paths.BoilerToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
 
-import edu.wpi.first.wpilibj.Timer;
-
-public class BoilerHopperShootModeRed extends AutoModeBase {
+public class ActuateHopperShootModeBlue extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        double start = Timer.getFPGATimestamp();
-        
-        PathContainer hopperPath = new BoilerToHopperRed();
+        PathContainer hopperPath = new BoilerToHopperBlue();
         runAction(new ResetPoseFromPathAction(hopperPath));
         
         runAction(

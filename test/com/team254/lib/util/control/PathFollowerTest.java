@@ -7,8 +7,8 @@ import org.junit.Test;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.paths.GearToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
-import com.team254.frc2017.paths.StartToGearBlue;
-import com.team254.frc2017.paths.StartToGearRed;
+import com.team254.frc2017.paths.StartToBoilerGearBlue;
+import com.team254.frc2017.paths.StartToBoilerGearRed;
 import com.team254.lib.util.control.PathFollower;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Twist2d;
@@ -29,7 +29,7 @@ public class PathFollowerTest {
 
     @Test
     public void testArcPath() {
-        PathContainer container = new StartToGearRed();
+        PathContainer container = new StartToBoilerGearRed();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
 
@@ -61,7 +61,7 @@ public class PathFollowerTest {
 
     @Test
     public void testAuto() {
-        PathContainer container = new StartToGearBlue();
+        PathContainer container = new StartToBoilerGearBlue();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
         final double dt = 0.01;;

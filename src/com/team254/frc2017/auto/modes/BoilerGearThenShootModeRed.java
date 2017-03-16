@@ -10,22 +10,21 @@ import com.team254.frc2017.auto.actions.EndShootingAction;
 import com.team254.frc2017.auto.actions.ResetPoseFromPathAction;
 import com.team254.frc2017.auto.actions.ScoreGearAction;
 import com.team254.frc2017.auto.actions.WaitAction;
-import com.team254.frc2017.paths.GearToShootBlue;
-import com.team254.frc2017.paths.GearToShootRed;
+import com.team254.frc2017.paths.BoilerGearToShootRed;
 import com.team254.frc2017.paths.PathContainer;
-import com.team254.frc2017.paths.StartToGearRed;
+import com.team254.frc2017.paths.StartToBoilerGearRed;
 
-public class GearThenShootModeRed extends AutoModeBase {
+public class BoilerGearThenShootModeRed extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
         runAction(new WaitAction(2));
-        PathContainer gearPath = new StartToGearRed();
+        PathContainer gearPath = new StartToBoilerGearRed();
         runAction(new ResetPoseFromPathAction(gearPath));
         runAction(new DrivePathAction(gearPath));
         runAction(new DeployIntakeAction());
         runAction(new ScoreGearAction());
-        runAction(new DrivePathAction(new GearToShootRed()));
+        runAction(new DrivePathAction(new BoilerGearToShootRed()));
         runAction(new BeginShootingAction());
         runAction(new WaitAction(15));
         runAction(new EndShootingAction());

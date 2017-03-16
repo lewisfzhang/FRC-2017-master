@@ -23,7 +23,7 @@ import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToHopperBlue;
 import com.team254.lib.util.math.Rotation2d;
 
-public class HopperShootModeBlue extends AutoModeBase {
+public class RamHopperShootModeBlue extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {

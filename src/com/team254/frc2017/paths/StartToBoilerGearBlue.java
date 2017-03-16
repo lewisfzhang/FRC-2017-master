@@ -8,7 +8,7 @@ import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
-public class StartToGearBlue implements PathContainer {
+public class StartToBoilerGearBlue implements PathContainer {
     
     @Override
     public Path buildPath() {

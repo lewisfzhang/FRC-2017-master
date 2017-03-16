@@ -1,15 +1,13 @@
 package com.team254.frc2017;
 
 import com.team254.frc2017.auto.AutoModeBase;
-import com.team254.frc2017.auto.modes.BoilerHopperShootModeBlue;
-import com.team254.frc2017.auto.modes.BoilerHopperShootModeRed;
-import com.team254.frc2017.auto.modes.GearThenShootModeBlue;
-import com.team254.frc2017.auto.modes.GearThenShootModeRed;
+import com.team254.frc2017.auto.modes.ActuateHopperShootModeBlue;
+import com.team254.frc2017.auto.modes.ActuateHopperShootModeRed;
+import com.team254.frc2017.auto.modes.BoilerGearThenShootModeBlue;
+import com.team254.frc2017.auto.modes.BoilerGearThenShootModeRed;
 import com.team254.frc2017.auto.modes.CenterGearThenShootModeBlue;
 import com.team254.frc2017.auto.modes.CenterGearThenShootModeRed;
-import com.team254.frc2017.auto.modes.HopperShootModeBlue;
 import com.team254.frc2017.auto.modes.StandStillMode;
-import com.team254.frc2017.auto.modes.TestTurnInPlaceMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,12 +31,12 @@ public class AutoModeSelector {
     }
 
     private static final AutoModeCreator mDefaultMode =
-            new AutoModeCreator("Actuate Hopper then Shoot Red", ()->new BoilerHopperShootModeRed());
+            new AutoModeCreator("Stand Still", ()->new StandStillMode());
     private static final AutoModeCreator[] mAllModes = {
-            new AutoModeCreator("Actuate Hopper then Shoot Red", ()->new BoilerHopperShootModeRed()),
-            new AutoModeCreator("Actuate Hopper then Shoot Blue", ()->new BoilerHopperShootModeBlue()),
-            new AutoModeCreator("Boiler Gear then 10 Ball Shoot Red", ()->new GearThenShootModeRed()),
-            new AutoModeCreator("Boiler Gear then 10 Ball Shoot Blue", ()->new GearThenShootModeBlue()),
+            new AutoModeCreator("Actuate Hopper then Shoot Red", ()->new ActuateHopperShootModeRed()),
+            new AutoModeCreator("Actuate Hopper then Shoot Blue", ()->new ActuateHopperShootModeBlue()),
+            new AutoModeCreator("Boiler Gear then 10 Ball Shoot Red", ()->new BoilerGearThenShootModeRed()),
+            new AutoModeCreator("Boiler Gear then 10 Ball Shoot Blue", ()->new BoilerGearThenShootModeBlue()),
             new AutoModeCreator("Center Gear then Shoot Red", ()->new CenterGearThenShootModeRed()),
             new AutoModeCreator("Center Gear then Shoot Blue", ()->new CenterGearThenShootModeBlue()),
     };
