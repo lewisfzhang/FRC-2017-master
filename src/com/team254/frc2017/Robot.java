@@ -9,9 +9,7 @@ import com.team254.frc2017.subsystems.*;
 import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
 import com.team254.frc2017.vision.VisionServer;
 import com.team254.frc2017.web.WebServer;
-import com.team254.lib.util.CheesyDriveHelper;
-import com.team254.lib.util.CrashTracker;
-import com.team254.lib.util.DriveSignal;
+import com.team254.lib.util.*;
 import com.team254.lib.util.math.RigidTransform2d;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -19,6 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -47,6 +46,10 @@ public class Robot extends IterativeRobot {
     private VisionServer mVisionServer = VisionServer.getInstance();
     
     private boolean hasGearOperatorInput = false;
+
+    private LatchedBoolean mCommitTuning = new LatchedBoolean();
+    private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap =
+            new InterpolatingTreeMap<>();
 
     public Robot() {
         CrashTracker.logRobotConstruction();
@@ -186,6 +189,17 @@ public class Robot extends IterativeRobot {
 
                 boolean wantsExhaust = mControlBoard.getExhaustButton();
 
+                if (Constants.kIsShooterTuning) {
+                    if (mCommitTuning.update(mControlBoard.getLowGear())) {
+                        // Commit to TuningMap.
+                        double rpm = mSuperstructure.getCurrentTuningRpm();
+                        double range = mSuperstructure.getCurrentRange();
+                        System.out.println("Tuning range: " + range  + " = " + rpm);
+                        mTuningFlywheelMap.put(new InterpolatingDouble(rpm), new InterpolatingDouble(range));
+                        mSuperstructure.incrementTuningRpm();
+                    }
+                }
+
                 // Exhaust has highest priority for intake.
                 if (wantsExhaust) {
                     mSuperstructure.setWantIntakeReversed();
@@ -257,6 +271,14 @@ public class Robot extends IterativeRobot {
             mSubsystemManager.stop();
 
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
+
+            // If are tuning, dump map so far.
+            if (Constants.kIsShooterTuning) {
+                for (Map.Entry<InterpolatingDouble,InterpolatingDouble> entry : mTuningFlywheelMap.entrySet()) {
+                    System.out.println("kFlywheelAutoAimMap.put(new InterpolatingDouble(" +
+                            entry.getKey().value + "), new InterpolatingDouble(" + entry.getValue().value + "));");
+                }
+            }
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;

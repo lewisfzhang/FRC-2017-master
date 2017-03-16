@@ -25,6 +25,12 @@ public class Constants extends ConstantsBase {
     // Parts GE-17203-FLAT and GE-17371 (sheet 7)
     public static double kBoilerTargetTopHeight = 88.0;  // TODO: Verify on field
     public static double kBoilerRadius = 7.5;  // TODO: Verify on field
+
+    public static boolean kIsShooterTuning = false;
+    public static double kShooterTuningRpmFloor = 2900;
+    public static double kShooterTuningRpmCeiling = 4100;
+    public static double kShooterTuningRpmStep = 50;
+
     public static double kShooterTuningRpm = 3500.0;
 
     public enum RobotName {

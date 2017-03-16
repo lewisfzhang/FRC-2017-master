@@ -52,6 +52,9 @@ public class Superstructure extends Subsystem {
     private SystemState mSystemState = SystemState.IDLE;
     private WantedState mWantedState = WantedState.IDLE;
 
+    private double mCurrentTuningRpm = Constants.kShooterTuningRpmFloor;
+    private double mLastGoalRange = 0.0;
+
     public synchronized void isTeleop(boolean teleop) {
         mIsTeleop = teleop;
     }
@@ -317,22 +320,28 @@ public class Superstructure extends Subsystem {
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
                 .getAimingParameters(Timer.getFPGATimestamp());
         if (aimOptional.isPresent()) {
-            final ShooterAimingParameters aim = aimOptional.get();
-            double range = aim.getRange();
-            mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
 
-            if (range < Constants.kFlywheelAutoAimMap.firstKey().value
-                    || range > Constants.kFlywheelAutoAimMap.lastKey().value) {
-                // We cannot make this shot
-                mLED.setWantedState(LED.WantedState.BLINK);
-                return false;
+            if (!Constants.kIsShooterTuning) {
+                final ShooterAimingParameters aim = aimOptional.get();
+                double range = aim.getRange();
+                mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
+
+                if (range < Constants.kFlywheelAutoAimMap.firstKey().value
+                        || range > Constants.kFlywheelAutoAimMap.lastKey().value) {
+                    // We cannot make this shot
+                    mLED.setWantedState(LED.WantedState.BLINK);
+                    return false;
+                }
+
+                // mShooter.setClosedLoopRpm(Constants.kShooterTuningRpm);
+            } else {
+                // We are shooter tuning fine current RPM we are tuning for.
+                mShooter.setClosedLoopRpm(mCurrentTuningRpm);
+                mLastGoalRange = aimOptional.get().getRange();
             }
 
             mLED.setWantedState(LED.WantedState.FIXED_ON);
-            // mShooter.setClosedLoopRpm(Constants.kShooterTuningRpm);
-
             return isOnTargetToShoot();
-
         } else if (Superstructure.getInstance().isShooting()) {
             // Keep the previous setpoint.
             mLED.setWantedState(LED.WantedState.BLINK);
@@ -342,6 +351,21 @@ public class Superstructure extends Subsystem {
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             return false;
         }
+    }
+
+    public synchronized void incrementTuningRpm() {
+        if (mCurrentTuningRpm <= Constants.kShooterTuningRpmCeiling) {
+             mCurrentTuningRpm += Constants.kShooterTuningRpmStep;
+            System.out.println("Changing RPM to: " + mCurrentTuningRpm);
+        }
+    }
+
+    public synchronized double getCurrentTuningRpm() {
+        return mCurrentTuningRpm;
+    }
+
+    public synchronized double getCurrentRange() {
+        return mLastGoalRange;
     }
 
     public synchronized void setWantedState(WantedState wantedState) {
