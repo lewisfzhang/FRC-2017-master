@@ -14,9 +14,9 @@ public class MotorGearGrabber extends Subsystem {
 
     public static boolean kWristDown = false;
     public static boolean kWristUp = !kWristDown;
-    public static double kContainGearSetpoint = -3;
-    public static double kScoreGearSetpoint = 12;
-    public static double kIntakeGearSetpoint = -12;
+    public static double kContainGearSetpoint = 3;
+    public static double kScoreGearSetpoint = -12;
+    public static double kIntakeGearSetpoint = 12;
     public static double kTransitionDelay = 0.5;
     public static double kExhaustDelay = 0.1;
     public static double kIntakeThreshold = 25;
