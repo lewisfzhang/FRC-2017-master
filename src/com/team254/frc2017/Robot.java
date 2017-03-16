@@ -234,8 +234,8 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setShooterOpenLoop(0);
                 }
 
-                if (mControlBoard.getBlinkLEDButton()) {
-
+                if (mWantsLEDBlink.update(mControlBoard.getBlinkLEDButton())) {
+                    LED.getInstance().setWantedState(LED.WantedState.BLINK);
                 }
             }
 
@@ -254,10 +254,6 @@ public class Robot extends IterativeRobot {
             
             mSuperstructure.setActuateHopper(mControlBoard.getActuateHopperButton());
 
-            if (mWantsLEDBlink.update(mControlBoard.getBlinkLEDButton())) {
-                LED.getInstance().setWantedState(LED.WantedState.BLINK);
-            }
-            
             allPeriodic();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
