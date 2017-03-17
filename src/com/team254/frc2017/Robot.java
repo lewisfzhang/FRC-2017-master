@@ -280,8 +280,8 @@ public class Robot extends IterativeRobot {
             // If are tuning, dump map so far.
             if (Constants.kIsShooterTuning) {
                 for (Map.Entry<InterpolatingDouble,InterpolatingDouble> entry : mTuningFlywheelMap.entrySet()) {
-                    System.out.println("kFlywheelAutoAimMap.put(new InterpolatingDouble(" +
-                            entry.getKey().value + "), new InterpolatingDouble(" + entry.getValue().value + "));");
+                    System.out.println("{" +
+                            entry.getKey().value + ", " + entry.getValue().value + "},");
                 }
             }
         } catch (Throwable t) {
