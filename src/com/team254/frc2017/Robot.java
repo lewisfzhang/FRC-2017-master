@@ -307,5 +307,6 @@ public class Robot extends IterativeRobot {
         mRobotState.outputToSmartDashboard();
         mSubsystemManager.outputToSmartDashboard();
         mEnabledLooper.outputToSmartDashboard();
+        SmartDashboard.putBoolean("camera_connected", mVisionServer.isConnected());
     }
 }

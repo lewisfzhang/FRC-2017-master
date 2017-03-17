@@ -29,5 +29,6 @@ while True:
                 "4th option"]))
     table.putNumber("Air Pressure psi", i % 120)
     table.putString("color_box_color", "ff0000" if i % 2 == 1 else "ffff00")
+    table.putBoolean("camera_connected", i % 2 == 0)
     i += 1
     time.sleep(1)

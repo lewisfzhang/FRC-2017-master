@@ -159,6 +159,17 @@ function refreshDriverStatusElements() {
     $("#airPressureHolder").text(airPressureElement.value);
     psi_progress_bar.val = parseInt(airPressureElement.value) / 120;
   }
+
+  var cameraConnectedElement = findElementModelOrNull(TABLE, "camera_connected");
+  if (cameraConnectedElement == null) {
+    $("#cameraBox").text("UNKNOWN").css("background-color", "grey");
+  } else {
+    if (getBooleanElementValue(TABLE, "camera_connected")) {
+      $("#cameraBox").text("CONNECTED").css("background-color", "green");
+    } else {
+      $("#cameraBox").text("NOT CONNECTED").css("background-color", "red");
+    }
+  }
 }
 
 function maybeRefreshAutoOptions() {
