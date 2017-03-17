@@ -154,7 +154,7 @@ public class LED extends Subsystem {
     private void setLEDOn() {
         if (!mIsLEDOn) {
             mIsLEDOn = true;
-            mLEDRelay.set(Relay.Value.kForward);
+            mLEDRelay.set(Relay.Value.kReverse);
         }
     }
 
