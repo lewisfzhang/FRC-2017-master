@@ -220,11 +220,12 @@ public class Superstructure extends Subsystem {
     }
 
     private SystemState handleUnjammingWithShoot() {
-        autoSpinShooter();
+        // Don't auto spin anymore - just hold the last setpoint
         mCompressor.setClosedLoopControl(false);
-        mFeeder.setWantedState(Feeder.WantedState.UNJAM);
-        mHopper.setWantedState(Hopper.WantedState.UNJAM);
+        mFeeder.setWantedState(Feeder.WantedState.FEED);
+        mHopper.setWantedState(Hopper.WantedState.EXHAUST);
         mLED.setWantedState(LED.WantedState.FIXED_ON);
+        setWantIntakeOn();
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;
