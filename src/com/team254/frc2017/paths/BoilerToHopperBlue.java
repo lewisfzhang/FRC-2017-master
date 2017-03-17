@@ -13,11 +13,18 @@ public class BoilerToHopperBlue implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+//        HOME FIELD
+//        sWaypoints.add(new Waypoint(16,274,0,0));
+//        sWaypoints.add(new Waypoint(42,274,16,40));
+//        sWaypoints.add(new Waypoint(74,303.5,16,40,"DeployIntake"));
+//        sWaypoints.add(new Waypoint(103,303.5,0,40,"PathFinished"));
+
+//        SFR FIELD
         sWaypoints.add(new Waypoint(16,274,0,0));
         sWaypoints.add(new Waypoint(42,274,16,40));
-        sWaypoints.add(new Waypoint(74,303.5,16,40,"DeployIntake"));
-        sWaypoints.add(new Waypoint(103,303.5,0,40,"PathFinished"));
-
+        sWaypoints.add(new Waypoint(74,303,16,40,"DeployIntake")); //maybe change y to 303.5
+        sWaypoints.add(new Waypoint(105,303,0,40,"PathFinished")); //moved x over 2" for safety
+        
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
