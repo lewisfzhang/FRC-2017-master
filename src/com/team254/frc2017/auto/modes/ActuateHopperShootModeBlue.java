@@ -37,7 +37,7 @@ public class ActuateHopperShootModeBlue extends AutoModeBase {
                     })),
                     new SeriesAction(Arrays.asList(new Action[]{
                             //actuate hopper and begin shooting once path finishes
-                            new WaitForPathMarkerAction("PathFinished"), new ActuateHopperAction(true), new WaitAction(0.25), new BeginShootingAction(), new WaitAction(4), new LowerGearAction()
+                            new WaitForPathMarkerAction("PathFinished"), new ActuateHopperAction(true), new WaitAction(0.5), new BeginShootingAction(), new WaitAction(4), new LowerGearAction()
                     }))
                 }))
         );
