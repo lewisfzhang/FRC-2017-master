@@ -3,6 +3,8 @@ package com.team254.frc2017;
 import com.team254.lib.util.ConstantsBase;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
+import com.team254.lib.util.math.PolynomialRegression;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -223,63 +225,39 @@ public class Constants extends ConstantsBase {
 
     public static double kDefaultShootingDistanceInches = 95.8;
     public static double kDefaultShootingRPM = 2950.0;
+    public static boolean kUseFlywheelAutoAimPolynomial = false;  // Change to 'true' to use the best-fit polynomial instead.
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
+    public static PolynomialRegression kFlywheelAutoAimPolynomial;
+
+    // Tuned on 3/15 for practice bot with no flywheel.
+    public static double[][] kFlywheelDistanceRpmValues = {
+            {81.46699085594396, 2850.0},
+            {83.88142680682152, 2875.0},
+            {89.61719333080238, 2900.0},
+            {93.22916873483817, 2925.0},
+            {94.56056350772968, 2950.0},
+            {96.66179067522229, 2975.0},
+            {99.03208005457682, 3000.0},
+            {103.35956261035906, 3025.0},
+            {108.02134072590792, 3050.0},
+            {111.3409162833483, 3075.0},
+            {112.95267876239613, 3100.0},
+            {117.29327600821605, 3125.0},
+            {120.82199117377967, 3200.0},
+            {122.81412499074203, 3250.0},
+            {126.43036753326486, 3300.0},
+            {130.77566868469572, 3350.0},
+            {135.35310950774564, 3400.0},
+            {136.42558291951616, 3450.0}
+    };
 
     static {
-        // Tuned on 3/11 with flywheel
-        /*
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(2850.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(96.), new InterpolatingDouble(2875.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(100.), new InterpolatingDouble(2925.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(106.), new InterpolatingDouble(2950.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(113.), new InterpolatingDouble(3050.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(122.), new InterpolatingDouble(3150.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(130.), new InterpolatingDouble(3250.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(140.), new InterpolatingDouble(3350.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(150.), new InterpolatingDouble(3475.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(160.), new InterpolatingDouble(3550.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(172.), new InterpolatingDouble(3700.));
-*/
-
-        // Tuned on 3/15 for practice bot with no flywheel.
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(81.46699085594396), new InterpolatingDouble(2850.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(83.88142680682152), new InterpolatingDouble(2875.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(89.61719333080238), new InterpolatingDouble(2900.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(93.22916873483817), new InterpolatingDouble(2925.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(94.56056350772968), new InterpolatingDouble(2950.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(96.66179067522229), new InterpolatingDouble(2975.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(99.03208005457682), new InterpolatingDouble(3000.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(103.35956261035906), new InterpolatingDouble(3025.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(108.02134072590792), new InterpolatingDouble(3050.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(111.3409162833483), new InterpolatingDouble(3075.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(112.95267876239613), new InterpolatingDouble(3100.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(117.29327600821605), new InterpolatingDouble(3125.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(120.82199117377967), new InterpolatingDouble(3200.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(122.81412499074203), new InterpolatingDouble(3250.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(126.43036753326486), new InterpolatingDouble(3300.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(130.77566868469572), new InterpolatingDouble(3350.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(135.35310950774564), new InterpolatingDouble(3400.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(136.42558291951616), new InterpolatingDouble(3450.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(140.42558291951616), new InterpolatingDouble(3650.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(145.42558291951616), new InterpolatingDouble(3700.0));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(150.42558291951616), new InterpolatingDouble(3750.0));
-
+        for (double[] pair : kFlywheelDistanceRpmValues) {
+            kFlywheelAutoAimMap.put(new InterpolatingDouble(pair[0]), new InterpolatingDouble(pair[1]));
+        }
         kDefaultShootingRPM = kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(Constants.kDefaultShootingDistanceInches)).value;
-
-        // Tuned on 3/12 with no flywheel.
-        /*kFlywheelAutoAimMap.put(new InterpolatingDouble(89.), new InterpolatingDouble(3000.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(96.), new InterpolatingDouble(3025.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(100.), new InterpolatingDouble(3050.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(106.), new InterpolatingDouble(3075.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(113.), new InterpolatingDouble(3175.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(122.), new InterpolatingDouble(3250.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(130.), new InterpolatingDouble(3350.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(140.), new InterpolatingDouble(3425.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(150.), new InterpolatingDouble(3550.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(160.), new InterpolatingDouble(3625.));
-        kFlywheelAutoAimMap.put(new InterpolatingDouble(172.), new InterpolatingDouble(3775.));
-        */
         
+        kFlywheelAutoAimPolynomial = new PolynomialRegression(kFlywheelDistanceRpmValues, 2);
     }
 
 

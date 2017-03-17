@@ -9,9 +9,6 @@ import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Relay.Value;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends Subsystem {
@@ -65,6 +62,8 @@ public class Shooter extends Subsystem {
         refreshControllerConsts();
 
         mControlMethod = ControlMethod.OPEN_LOOP;
+
+        System.out.println("RPM Polynomial: " + Constants.kFlywheelAutoAimPolynomial);
 
         mCSVWriter = new CSVWriter("/home/lvuser/SHOOTER-LOGS.csv", new String[]{"time", "flywheel_rpm"});
     }

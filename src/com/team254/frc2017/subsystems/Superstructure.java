@@ -316,14 +316,17 @@ public class Superstructure extends Subsystem {
     }
 
     private double getShootingSetpointRpm(double range) {
-        return Constants.kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(range)).value;
+        if (Constants.kUseFlywheelAutoAimPolynomial) {
+            return Constants.kFlywheelAutoAimPolynomial.predict(range);
+        } else {
+            return Constants.kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(range)).value;
+        }
     }
 
     public synchronized boolean autoSpinShooter() {
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
                 .getAimingParameters(Timer.getFPGATimestamp());
         if (aimOptional.isPresent()) {
-
             if (!Constants.kIsShooterTuning) {
                 final ShooterAimingParameters aim = aimOptional.get();
                 double range = aim.getRange();
@@ -336,8 +339,6 @@ public class Superstructure extends Subsystem {
                     mLED.setWantedState(LED.WantedState.BLINK);
                     return false;
                 }
-
-                // mShooter.setClosedLoopRpm(Constants.kShooterTuningRpm);
             } else {
                 // We are shooter tuning fine current RPM we are tuning for.
                 mShooter.setClosedLoopRpm(mCurrentTuningRpm);

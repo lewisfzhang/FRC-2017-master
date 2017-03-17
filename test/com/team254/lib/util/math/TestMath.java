@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.team254.frc2017.Constants;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
@@ -111,16 +112,16 @@ public class TestMath {
         rot2 = Rotation2d.fromDegrees(45);
         rot3 = rot1.interpolate(rot2, .5);
         assertEquals(45, rot3.getDegrees(), kTestEpsilon);
-        
+
         // Test parallel.
         rot1 = Rotation2d.fromDegrees(45);
         rot2 = Rotation2d.fromDegrees(45);
         assertTrue(rot1.isParallel(rot2));
-        
+
         rot1 = Rotation2d.fromDegrees(45);
         rot2 = Rotation2d.fromDegrees(-45);
         assertFalse(rot1.isParallel(rot2));
-        
+
         rot1 = Rotation2d.fromDegrees(45);
         rot2 = Rotation2d.fromDegrees(-135);
         assertTrue(rot1.isParallel(rot2));
@@ -280,5 +281,20 @@ public class TestMath {
         assertEquals(new_pose.getTranslation().x(), pose.getTranslation().x(), kTestEpsilon);
         assertEquals(new_pose.getTranslation().y(), pose.getTranslation().y(), kTestEpsilon);
         assertEquals(new_pose.getRotation().getDegrees(), pose.getRotation().getDegrees(), kTestEpsilon);
+    }
+
+    @Test
+    public void testPolynomialRegression() {
+        double[] x = { 0, 1, 2, 3, 4, 5 };
+        double[] y = { 0, 2, 4, 6, 8, 10 };
+        PolynomialRegression regression = new PolynomialRegression(x, y, 1);
+
+        assertEquals(regression.degree(), 1);
+        assertEquals(regression.beta(1), 2.0, kTestEpsilon);
+        assertEquals(regression.beta(0), 0.0, kTestEpsilon);
+        assertEquals(regression.predict(2.5), 5.0, kTestEpsilon);
+
+        regression = Constants.kFlywheelAutoAimPolynomial;
+        System.out.println(regression);
     }
 }
