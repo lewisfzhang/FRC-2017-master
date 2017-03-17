@@ -194,7 +194,7 @@ public class Superstructure extends Subsystem {
     }
 
     private SystemState handleShooting() {
-        autoSpinShooter();
+        // Don't auto spin anymore - just hold the last setpoint
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.FEED);
