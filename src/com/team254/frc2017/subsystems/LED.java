@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LED extends Subsystem {
     private static final int kDefaultBlinkCount = 4;
@@ -34,18 +35,17 @@ public class LED extends Subsystem {
     private SystemState mSystemState = SystemState.OFF;
     private WantedState mWantedState = WantedState.OFF;
 
-    private boolean mIsDisabled = false;
-
     private boolean mIsLEDOn;
     private double mDesiredRangeHz;
-    private AnalogInput mCheckLightButton;
     private DigitalOutput mLED;
+    private DigitalOutput mRangeLED;
 
     public LED() {
         mLED = new DigitalOutput(9);
         mLED.set(false);
 
-        mCheckLightButton = new AnalogInput(2);
+        mRangeLED = new DigitalOutput(8);
+        setRangeLEDOff();
 
         // Force a relay change.
         mIsLEDOn = true;
@@ -71,15 +71,6 @@ public class LED extends Subsystem {
         @Override
         public void onLoop(double timestamp) {
             synchronized (LED.this) {
-
-                if (mIsDisabled) {
-                    if (mCheckLightButton.getAverageVoltage() < 0.15) {
-                        setWantedState(WantedState.FIXED_ON);
-                    } else {
-                        setWantedState(WantedState.OFF);
-                    }
-                }
-
                 SystemState newState;
                 double timeInState = timestamp - mCurrentStateStartTime;
                 switch (mSystemState) {
@@ -140,7 +131,8 @@ public class LED extends Subsystem {
         return defaultStateTransfer();
     }
 
-    public synchronized void setmDesiredRangeHz(double desiredHz) {
+    public synchronized void setDesiredRangeHz(double desiredHz) {
+        SmartDashboard.putNumber("Range HZ", desiredHz);
         mDesiredRangeHz = desiredHz;
     }
 
@@ -149,13 +141,13 @@ public class LED extends Subsystem {
         setLEDOn();
 
         // Flash the Range LED at the given Hz.
-        if (mDesiredRangeHz < 1e9)  {
+        if (mDesiredRangeHz < 1)  {
             setRangeLEDOff();
-        } else if (mDesiredRangeHz > 1e6) {
+        } else if (mDesiredRangeHz > 50) {
             setRangeLEDOn();
         } else {
-            double duration = 1.0 / mDesiredRangeHz;
-            final int cycleNum = (int) (timeInState / duration);
+
+            int cycleNum = (int)(timeInState / mDesiredRangeHz);
             if ((cycleNum % 2) == 0) {
                 setRangeLEDOn();
             } else {
@@ -221,13 +213,11 @@ public class LED extends Subsystem {
         }
     }
 
-    public synchronized void setIsDisabled(boolean isDisabled) {
-        mIsDisabled = isDisabled;
-    }
-
     private void setRangeLEDOn() {
+        mRangeLED.set(true);
     }
 
     private void setRangeLEDOff() {
+        mRangeLED.set(false);
     }
 }

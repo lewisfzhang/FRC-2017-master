@@ -13,6 +13,7 @@ import com.team254.lib.util.*;
 import com.team254.lib.util.math.RigidTransform2d;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,12 +44,14 @@ public class Robot extends IterativeRobot {
     private ControlBoardInterface mControlBoard = ControlBoard.getInstance();
 
     private Looper mEnabledLooper = new Looper();
-    private Looper mDisabledLooper = new Looper();
 
     private VisionServer mVisionServer = VisionServer.getInstance();
 
     private boolean hasGearOperatorInput = false;
     private LatchedBoolean mWantsLEDBlink = new LatchedBoolean();
+
+
+    private AnalogInput mCheckLightButton = new AnalogInput(2);
 
     private LatchedBoolean mCommitTuning = new LatchedBoolean();
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap =
@@ -79,10 +82,6 @@ public class Robot extends IterativeRobot {
             mEnabledLooper.register(RobotStateEstimator.getInstance());
             mSuperstructure.isTeleop(false);
 
-            LED.getInstance().registerEnabledLoops(mDisabledLooper);
-            LED.getInstance().setIsDisabled(true);
-            mDisabledLooper.start();
-
             // initialize robot constants
             RobotName name = Constants.getRobotName();
             SmartDashboard.putString("MAC Address", Constants.getMACAddress());
@@ -111,10 +110,6 @@ public class Robot extends IterativeRobot {
     public void autonomousInit() {
         try {
             CrashTracker.logAutoInit();
-
-            // Stop LED stuff
-            LED.getInstance().setIsDisabled(false);
-            mDisabledLooper.stop();
 
             System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
 
@@ -159,10 +154,6 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
         try {
             CrashTracker.logTeleopInit();
-
-            // Stop LED stuff
-            mDisabledLooper.stop();
-            LED.getInstance().setIsDisabled(false);
 
             // Start loopers
             mEnabledLooper.start();
@@ -210,7 +201,7 @@ public class Robot extends IterativeRobot {
                         // Commit to TuningMap.
                         double rpm = mSuperstructure.getCurrentTuningRpm();
                         double range = mSuperstructure.getCurrentRange();
-                        System.out.println("Tuning range: " + range  + " = " + rpm);
+                        System.out.println("Tuning range: " + range + " = " + rpm);
                         mTuningFlywheelMap.put(new InterpolatingDouble(range), new InterpolatingDouble(rpm));
                         mSuperstructure.incrementTuningRpm();
                     }
@@ -235,6 +226,8 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM);
                 } else if (mControlBoard.getFeedButton()) {
                     mSuperstructure.setWantedState(Superstructure.WantedState.MANUAL_FEED);
+                } else if (mControlBoard.getRangeFinderButton()) {
+                    mSuperstructure.setWantedState(Superstructure.WantedState.RANGE_FINDING);
                 } else {
                     mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
                 }
@@ -290,9 +283,6 @@ public class Robot extends IterativeRobot {
             // Call stop on all our Subsystems.
             mSubsystemManager.stop();
 
-            LED.getInstance().setIsDisabled(true);
-            mDisabledLooper.start();
-
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
 
             // If are tuning, dump map so far.
@@ -310,6 +300,12 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void disabledPeriodic() {
+        if (mCheckLightButton.getAverageVoltage() < 0.15) {
+            LED.getInstance().setLEDOn();
+        } else {
+            LED.getInstance().setLEDOff();
+        }
+
         zeroAllSensors();
         allPeriodic();
     }

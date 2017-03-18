@@ -105,4 +105,9 @@ public class GamepadControlBoard implements ControlBoardInterface {
     public boolean getBlinkLEDButton() {
         return false;
     }
+
+    @Override
+    public boolean getRangeFinderButton() {
+        return false;
+    }
 }

@@ -102,4 +102,8 @@ public class ControlBoard implements ControlBoardInterface {
     @Override public boolean getBlinkLEDButton() {
         return mButtonBoard.getRawButton(6);
     }
+
+    @Override public boolean getRangeFinderButton() {
+        return mButtonBoard.getRawButton(7);
+    }
 }

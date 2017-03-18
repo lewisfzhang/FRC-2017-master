@@ -39,4 +39,6 @@ public interface ControlBoardInterface {
     boolean getActuateHopperButton();
 
     boolean getBlinkLEDButton();
+
+    boolean getRangeFinderButton();
 }

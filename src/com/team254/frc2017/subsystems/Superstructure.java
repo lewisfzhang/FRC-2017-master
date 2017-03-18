@@ -148,19 +148,22 @@ public class Superstructure extends Subsystem {
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
                 .getAimingParameters(Timer.getFPGATimestamp());
 
-        final ShooterAimingParameters aim = aimOptional.get();
-        double range = aim.getRange();
+        if (aimOptional.isPresent()) {
+            final ShooterAimingParameters aim = aimOptional.get();
+            double range = aim.getRange();
 
-        double rangeLEDHz = 0.0;
-        double scale = 1.0;
-        double absRange = 1e7;
-        if (range < Constants.kFlywheelAutoAimMap.firstKey().value) {
-            absRange = scale * Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
-        } else if (range > Constants.kFlywheelAutoAimMap.lastKey().value) {
-            absRange = scale * Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
+            double scale = 1.0;
+            double rangeLEDHz = 1e7;
+            if (range < Constants.kFlywheelAutoAimMap.firstKey().value) {
+                rangeLEDHz = scale * 1.0 / Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
+            } else if (range > Constants.kFlywheelAutoAimMap.lastKey().value) {
+                rangeLEDHz = scale * 1.0 / Math.abs(Constants.kFlywheelAutoAimMap.lastKey().value - range);
+            }
+
+            mLED.setDesiredRangeHz(rangeLEDHz);
+        } else {
+            mLED.setDesiredRangeHz(0.0);
         }
-
-        mLED.setmDesiredRangeHz(rangeLEDHz);
 
         switch (mWantedState) {
             case UNJAM:
@@ -175,6 +178,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.EXHAUSTING;
             case HANG:
                 return SystemState.HANGING;
+            case RANGE_FINDING:
+                return SystemState.RANGE_FINDING;
             default:
                 return SystemState.IDLE;
         }
@@ -190,20 +195,22 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(mIsTeleop);
 
         switch (mWantedState) {
-        case UNJAM:
-            return SystemState.UNJAMMING;
-        case UNJAM_SHOOT:
-            return SystemState.UNJAMMING_WITH_SHOOT;
-        case SHOOT:
-            return SystemState.WAITING_FOR_AIM;
-        case MANUAL_FEED:
-            return SystemState.JUST_FEED;
-        case EXHAUST:
-            return SystemState.EXHAUSTING;
-        case HANG:
-            return SystemState.HANGING;
-        default:
-            return SystemState.IDLE;
+            case UNJAM:
+                return SystemState.UNJAMMING;
+            case UNJAM_SHOOT:
+                return SystemState.UNJAMMING_WITH_SHOOT;
+            case SHOOT:
+                return SystemState.WAITING_FOR_AIM;
+            case MANUAL_FEED:
+                return SystemState.JUST_FEED;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
+            case HANG:
+                return SystemState.HANGING;
+            case RANGE_FINDING:
+                return SystemState.RANGE_FINDING;
+            default:
+                return SystemState.IDLE;
         }
     }
 
