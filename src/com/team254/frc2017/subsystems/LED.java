@@ -24,11 +24,11 @@ public class LED extends Subsystem {
 
     // Internal state of the system
     public enum SystemState {
-        OFF, FIXED_ON, BLINKING
+        OFF, FIXED_ON, BLINKING, RANGE_FINDING
     }
 
     public enum WantedState {
-        OFF, FIXED_ON, BLINK
+        OFF, FIXED_ON, BLINK, FIND_RANGE
     }
 
     private SystemState mSystemState = SystemState.OFF;
@@ -37,6 +37,7 @@ public class LED extends Subsystem {
     private boolean mIsDisabled = false;
 
     private boolean mIsLEDOn;
+    private double mDesiredRangeHz;
     private AnalogInput mCheckLightButton;
     private DigitalOutput mLED;
 
@@ -61,6 +62,8 @@ public class LED extends Subsystem {
                 mWantedState = WantedState.OFF;
                 mLED.set(false);
             }
+
+            mDesiredRangeHz = 0.0;
 
             mCurrentStateStartTime = timestamp;
         }
@@ -89,6 +92,9 @@ public class LED extends Subsystem {
                     case FIXED_ON:
                         newState = handleFixedOn();
                         break;
+                    case RANGE_FINDING:
+                        newState =  handleRangeFinding(timeInState);
+                        break;
                     default:
                         System.out.println("Fell through on LED states!!");
                         newState = SystemState.OFF;
@@ -113,6 +119,8 @@ public class LED extends Subsystem {
                 return SystemState.OFF;
             case BLINK:
                 return SystemState.BLINKING;
+            case FIND_RANGE:
+                return SystemState.RANGE_FINDING;
             case FIXED_ON:
                 return SystemState.FIXED_ON;
             default:
@@ -122,11 +130,38 @@ public class LED extends Subsystem {
 
     private synchronized SystemState handleOff() {
         setLEDOff();
+        setRangeLEDOff();
         return defaultStateTransfer();
     }
 
     private synchronized SystemState handleFixedOn() {
         setLEDOn();
+        setRangeLEDOff();
+        return defaultStateTransfer();
+    }
+
+    public synchronized void setmDesiredRangeHz(double desiredHz) {
+        mDesiredRangeHz = desiredHz;
+    }
+
+    private synchronized SystemState handleRangeFinding(double timeInState) {
+        // Set main LED on.
+        setLEDOn();
+
+        // Flash the Range LED at the given Hz.
+        if (mDesiredRangeHz < 1e9)  {
+            setRangeLEDOff();
+        } else if (mDesiredRangeHz > 1e6) {
+            setRangeLEDOn();
+        } else {
+            double duration = 1.0 / mDesiredRangeHz;
+            final int cycleNum = (int) (timeInState / duration);
+            if ((cycleNum % 2) == 0) {
+                setRangeLEDOn();
+            } else {
+                setRangeLEDOff();
+            }
+        }
         return defaultStateTransfer();
     }
 
@@ -188,5 +223,11 @@ public class LED extends Subsystem {
 
     public synchronized void setIsDisabled(boolean isDisabled) {
         mIsDisabled = isDisabled;
+    }
+
+    private void setRangeLEDOn() {
+    }
+
+    private void setRangeLEDOff() {
     }
 }

@@ -41,12 +41,13 @@ public class Superstructure extends Subsystem {
 
     // Intenal state of the system
     public enum SystemState {
-        IDLE, WAITING_FOR_AIM, SHOOTING, UNJAMMING, UNJAMMING_WITH_SHOOT, JUST_FEED, EXHAUSTING, HANGING
+        IDLE, WAITING_FOR_AIM, SHOOTING, UNJAMMING, UNJAMMING_WITH_SHOOT, JUST_FEED, EXHAUSTING, HANGING,
+        RANGE_FINDING
     };
 
     // Desired function from user
     public enum WantedState {
-        IDLE, SHOOT, UNJAM, UNJAM_SHOOT, MANUAL_FEED, EXHAUST, HANG
+        IDLE, SHOOT, UNJAM, UNJAM_SHOOT, MANUAL_FEED, EXHAUST, HANG, RANGE_FINDING
     }
 
     private SystemState mSystemState = SystemState.IDLE;
@@ -117,6 +118,9 @@ public class Superstructure extends Subsystem {
                 case HANGING:
                     newState = handleHang();
                     break;
+                case RANGE_FINDING:
+                    newState = handleRangeFinding();
+                    break;
                 default:
                     newState = SystemState.IDLE;
                 }
@@ -137,6 +141,44 @@ public class Superstructure extends Subsystem {
             stop();
         }
     };
+
+    private SystemState handleRangeFinding() {
+        mLED.setWantedState(LED.WantedState.FIND_RANGE);
+
+        final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
+                .getAimingParameters(Timer.getFPGATimestamp());
+
+        final ShooterAimingParameters aim = aimOptional.get();
+        double range = aim.getRange();
+
+        double rangeLEDHz = 0.0;
+        double scale = 1.0;
+        double absRange = 1e7;
+        if (range < Constants.kFlywheelAutoAimMap.firstKey().value) {
+            absRange = scale * Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
+        } else if (range > Constants.kFlywheelAutoAimMap.lastKey().value) {
+            absRange = scale * Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
+        }
+
+        mLED.setmDesiredRangeHz(rangeLEDHz);
+
+        switch (mWantedState) {
+            case UNJAM:
+                return SystemState.UNJAMMING;
+            case UNJAM_SHOOT:
+                return SystemState.UNJAMMING_WITH_SHOOT;
+            case SHOOT:
+                return SystemState.WAITING_FOR_AIM;
+            case MANUAL_FEED:
+                return SystemState.JUST_FEED;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
+            case HANG:
+                return SystemState.HANGING;
+            default:
+                return SystemState.IDLE;
+        }
+    }
 
     private SystemState handleIdle(boolean stateChanged) {
         if (stateChanged) {
