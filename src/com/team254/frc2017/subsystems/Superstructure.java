@@ -152,17 +152,33 @@ public class Superstructure extends Subsystem {
             final ShooterAimingParameters aim = aimOptional.get();
             double range = aim.getRange();
 
-            double scale = 1.0;
-            double rangeLEDHz = 1e7;
-            if (range < Constants.kFlywheelAutoAimMap.firstKey().value) {
-                rangeLEDHz = scale * 1.0 / Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
-            } else if (range > Constants.kFlywheelAutoAimMap.lastKey().value) {
-                rangeLEDHz = scale * 1.0 / Math.abs(Constants.kFlywheelAutoAimMap.lastKey().value - range);
+            double scale = 5.0;
+            double rangeLEDDuration = scale / 100.0;
+            if (range < 93) {
+                rangeLEDDuration = Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
+                if (rangeLEDDuration < 1e-6) {
+                    rangeLEDDuration = 1e7;
+                } else {
+                    rangeLEDDuration = 1.0 / rangeLEDDuration;
+                }
+                mLED.setRangeBlicking(true);
+            } else if (range > 108) {
+                rangeLEDDuration = Math.abs(Constants.kFlywheelAutoAimMap.lastKey().value - range);
+                if (rangeLEDDuration < 1e-6) {
+                    rangeLEDDuration = 1e7;
+                } else {
+                    rangeLEDDuration = 1.0 / rangeLEDDuration;
+                }
+                mLED.setRangeBlicking(true);
+            } else {
+                mLED.setRangeBlicking(false);
+                mLED.setRangeLEDOn();
             }
 
-            mLED.setDesiredRangeHz(rangeLEDHz);
+           // mLED.setDesiredRangeHz(scale / rangeLEDDuration);
         } else {
-            mLED.setDesiredRangeHz(0.0);
+            mLED.setRangeBlicking(true);
+            //mLED.setDesiredRangeHz(0.0);
         }
 
         switch (mWantedState) {
@@ -376,33 +392,26 @@ public class Superstructure extends Subsystem {
     public synchronized boolean autoSpinShooter() {
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
                 .getAimingParameters(Timer.getFPGATimestamp());
+        mLED.setWantedState(LED.WantedState.FIXED_ON);
         if (aimOptional.isPresent()) {
             if (!Constants.kIsShooterTuning) {
                 final ShooterAimingParameters aim = aimOptional.get();
                 double range = aim.getRange();
                 mLastGoalRange = range;
                 mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
-
-                if (range < Constants.kFlywheelAutoAimMap.firstKey().value
-                        || range > Constants.kFlywheelAutoAimMap.lastKey().value) {
-                    // We cannot make this shot
-                    mLED.setWantedState(LED.WantedState.BLINK);
-                    return false;
-                }
             } else {
                 // We are shooter tuning fine current RPM we are tuning for.
                 mShooter.setClosedLoopRpm(mCurrentTuningRpm);
                 mLastGoalRange = aimOptional.get().getRange();
             }
 
-            mLED.setWantedState(LED.WantedState.FIXED_ON);
             return isOnTargetToShoot();
         } else if (Superstructure.getInstance().isShooting()) {
             // Keep the previous setpoint.
-            mLED.setWantedState(LED.WantedState.BLINK);
+            //mLED.setWantedState(LED.WantedState.BLINK);
             return false;
         } else {
-            mLED.setWantedState(LED.WantedState.BLINK);
+            //mLED.setWantedState(LED.WantedState.BLINK);
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             return false;
         }

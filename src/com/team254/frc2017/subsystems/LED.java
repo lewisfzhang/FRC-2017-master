@@ -39,6 +39,7 @@ public class LED extends Subsystem {
     private double mDesiredRangeHz;
     private DigitalOutput mLED;
     private DigitalOutput mRangeLED;
+    private boolean mIsBlinking = false;
 
     public LED() {
         mLED = new DigitalOutput(9);
@@ -61,6 +62,7 @@ public class LED extends Subsystem {
                 mSystemState = SystemState.OFF;
                 mWantedState = WantedState.OFF;
                 mLED.set(false);
+                mIsBlinking = false;
             }
 
             mDesiredRangeHz = 0.0;
@@ -127,27 +129,39 @@ public class LED extends Subsystem {
 
     private synchronized SystemState handleFixedOn() {
         setLEDOn();
-        setRangeLEDOff();
         return defaultStateTransfer();
     }
 
     public synchronized void setDesiredRangeHz(double desiredHz) {
-        SmartDashboard.putNumber("Range HZ", desiredHz);
+        //SmartDashboard.putNumber("Range HZ", desiredHz);
         mDesiredRangeHz = desiredHz;
+    }
+
+    public synchronized void setRangeBlicking(boolean isBlinking) {
+        mIsBlinking = isBlinking;
     }
 
     private synchronized SystemState handleRangeFinding(double timeInState) {
         // Set main LED on.
         setLEDOn();
 
-        // Flash the Range LED at the given Hz.
-        if (mDesiredRangeHz < 1)  {
-            setRangeLEDOff();
-        } else if (mDesiredRangeHz > 50) {
-            setRangeLEDOn();
-        } else {
-
-            int cycleNum = (int)(timeInState / mDesiredRangeHz);
+//        // Flash the Range LED at the given Hz.
+//        if (mDesiredRangeHz < 1)  {
+//            setRangeLEDOff();
+//        } else if (mDesiredRangeHz > 50) {
+//            setRangeLEDOn();
+//        } else {
+//
+//            double duration = 1.0 / (mDesiredRangeHz * 2);
+//            int cycleNum = (int)(timeInState / duration);
+//            if ((cycleNum % 2) == 0) {
+//                setRangeLEDOn();
+//            } else {
+//                setRangeLEDOff();
+//            }
+//        }
+        if (mIsBlinking) {
+            int cycleNum = (int) (timeInState / (kBlinkDuration / 2.0));
             if ((cycleNum % 2) == 0) {
                 setRangeLEDOn();
             } else {
@@ -213,11 +227,11 @@ public class LED extends Subsystem {
         }
     }
 
-    private void setRangeLEDOn() {
+    public synchronized void setRangeLEDOn() {
         mRangeLED.set(true);
     }
 
-    private void setRangeLEDOff() {
+    public synchronized void setRangeLEDOff() {
         mRangeLED.set(false);
     }
 }
