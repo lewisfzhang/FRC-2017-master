@@ -12,6 +12,7 @@ import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.*;
 import com.team254.lib.util.math.RigidTransform2d;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,9 +43,10 @@ public class Robot extends IterativeRobot {
     private ControlBoardInterface mControlBoard = ControlBoard.getInstance();
 
     private Looper mEnabledLooper = new Looper();
+    private Looper mDisabledLooper = new Looper();
 
     private VisionServer mVisionServer = VisionServer.getInstance();
-    
+
     private boolean hasGearOperatorInput = false;
     private LatchedBoolean mWantsLEDBlink = new LatchedBoolean();
 
@@ -77,6 +79,10 @@ public class Robot extends IterativeRobot {
             mEnabledLooper.register(RobotStateEstimator.getInstance());
             mSuperstructure.isTeleop(false);
 
+            LED.getInstance().registerEnabledLoops(mDisabledLooper);
+            LED.getInstance().setIsDisabled(true);
+            mDisabledLooper.start();
+
             // initialize robot constants
             RobotName name = Constants.getRobotName();
             SmartDashboard.putString("MAC Address", Constants.getMACAddress());
@@ -105,6 +111,11 @@ public class Robot extends IterativeRobot {
     public void autonomousInit() {
         try {
             CrashTracker.logAutoInit();
+
+            // Stop LED stuff
+            LED.getInstance().setIsDisabled(false);
+            mDisabledLooper.stop();
+
             System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
 
             if (mAutoModeExecuter != null) {
@@ -148,6 +159,10 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
         try {
             CrashTracker.logTeleopInit();
+
+            // Stop LED stuff
+            mDisabledLooper.stop();
+            LED.getInstance().setIsDisabled(false);
 
             // Start loopers
             mEnabledLooper.start();
@@ -253,7 +268,6 @@ public class Robot extends IterativeRobot {
             }
             
             mSuperstructure.setActuateHopper(mControlBoard.getActuateHopperButton());
-
             allPeriodic();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);

@@ -70,7 +70,7 @@ public class LED extends Subsystem {
             synchronized (LED.this) {
 
                 if (mIsDisabled) {
-                    if (mCheckLightButton.getAverageVoltage() < 0.1) {
+                    if (mCheckLightButton.getAverageVoltage() < 0.15) {
                         setWantedState(WantedState.FIXED_ON);
                     } else {
                         setWantedState(WantedState.OFF);
