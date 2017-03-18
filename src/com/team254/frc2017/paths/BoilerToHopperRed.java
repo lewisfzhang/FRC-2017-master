@@ -22,8 +22,8 @@ public class BoilerToHopperRed implements PathContainer {
 //        SFR FIELD
         sWaypoints.add(new Waypoint(16,50,0,0));
         sWaypoints.add(new Waypoint(42,50,16,40));
-        sWaypoints.add(new Waypoint(74,19.5,16,40,"DeployIntake"));  //may need to change to 19
-        sWaypoints.add(new Waypoint(106,19.5,0,40,"PathFinished"));  //moved x over 2" for safety
+        sWaypoints.add(new Waypoint(74,19,16,40,"DeployIntake"));  //may need to change to 19
+        sWaypoints.add(new Waypoint(106,16,0,40,"PathFinished"));  //moved x over 2" for safety
         
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
