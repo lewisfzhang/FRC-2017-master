@@ -143,43 +143,44 @@ public class Superstructure extends Subsystem {
     };
 
     private SystemState handleRangeFinding() {
-        mLED.setWantedState(LED.WantedState.FIND_RANGE);
+        autoSpinShooter();
+//        mLED.setWantedState(LED.WantedState.FIND_RANGE);
+//
+//        final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
+//                .getAimingParameters(Timer.getFPGATimestamp());
 
-        final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
-                .getAimingParameters(Timer.getFPGATimestamp());
-
-        if (aimOptional.isPresent()) {
-            final ShooterAimingParameters aim = aimOptional.get();
-            double range = aim.getRange();
-
-            double scale = 5.0;
-            double rangeLEDDuration = scale / 100.0;
-            if (range < 93) {
-                rangeLEDDuration = Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
-                if (rangeLEDDuration < 1e-6) {
-                    rangeLEDDuration = 1e7;
-                } else {
-                    rangeLEDDuration = 1.0 / rangeLEDDuration;
-                }
-                mLED.setRangeBlicking(true);
-            } else if (range > 108) {
-                rangeLEDDuration = Math.abs(Constants.kFlywheelAutoAimMap.lastKey().value - range);
-                if (rangeLEDDuration < 1e-6) {
-                    rangeLEDDuration = 1e7;
-                } else {
-                    rangeLEDDuration = 1.0 / rangeLEDDuration;
-                }
-                mLED.setRangeBlicking(true);
-            } else {
-                mLED.setRangeBlicking(false);
-                mLED.setRangeLEDOn();
-            }
-
-           // mLED.setDesiredRangeHz(scale / rangeLEDDuration);
-        } else {
-            mLED.setRangeBlicking(true);
-            //mLED.setDesiredRangeHz(0.0);
-        }
+//        if (aimOptional.isPresent()) {
+//            final ShooterAimingParameters aim = aimOptional.get();
+//            double range = aim.getRange();
+//
+//            double scale = 5.0;
+//            double rangeLEDDuration = scale / 100.0;
+//            if (range < 93) {
+//                rangeLEDDuration = Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
+//                if (rangeLEDDuration < 1e-6) {
+//                    rangeLEDDuration = 1e7;
+//                } else {
+//                    rangeLEDDuration = 1.0 / rangeLEDDuration;
+//                }
+//                mLED.setRangeBlicking(true);
+//            } else if (range > 108) {
+//                rangeLEDDuration = Math.abs(Constants.kFlywheelAutoAimMap.lastKey().value - range);
+//                if (rangeLEDDuration < 1e-6) {
+//                    rangeLEDDuration = 1e7;
+//                } else {
+//                    rangeLEDDuration = 1.0 / rangeLEDDuration;
+//                }
+//                mLED.setRangeBlicking(true);
+//            } else {
+//                mLED.setRangeBlicking(false);
+//                mLED.setRangeLEDOn();
+//            }
+//
+//           // mLED.setDesiredRangeHz(scale / rangeLEDDuration);
+//        } else {
+//            mLED.setRangeBlicking(true);
+//            //mLED.setDesiredRangeHz(0.0);
+//        }
 
         switch (mWantedState) {
             case UNJAM:
@@ -263,7 +264,7 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.FEED);
-        mLED.setWantedState(LED.WantedState.FIXED_ON);
+        mLED.setWantedState(LED.WantedState.FIND_RANGE);
         setWantIntakeOn();
         switch (mWantedState) {
         case UNJAM:
@@ -307,10 +308,11 @@ public class Superstructure extends Subsystem {
 
     private SystemState handleUnjamming() {
         mShooter.stop();
-        mCompressor.setClosedLoopControl(false);
+        mCompressor.setClosedLoopControl(false)
+        ;
         mFeeder.setWantedState(Feeder.WantedState.UNJAM);
         mHopper.setWantedState(Hopper.WantedState.UNJAM);
-        mLED.setWantedState(LED.WantedState.FIXED_ON);
+        mLED.setWantedState(LED.WantedState.FIND_RANGE);
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;
@@ -392,13 +394,22 @@ public class Superstructure extends Subsystem {
     public synchronized boolean autoSpinShooter() {
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
                 .getAimingParameters(Timer.getFPGATimestamp());
-        mLED.setWantedState(LED.WantedState.FIXED_ON);
+        mLED.setWantedState(LED.WantedState.FIND_RANGE);
         if (aimOptional.isPresent()) {
             if (!Constants.kIsShooterTuning) {
                 final ShooterAimingParameters aim = aimOptional.get();
                 double range = aim.getRange();
                 mLastGoalRange = range;
                 mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
+
+                if (range < 93) {
+                    mLED.setRangeBlicking(true);
+                } else if (range > 108) {
+                    mLED.setRangeBlicking(true);
+                } else {
+                    mLED.setRangeBlicking(false);
+                    mLED.setRangeLEDOn();
+                }
             } else {
                 // We are shooter tuning fine current RPM we are tuning for.
                 mShooter.setClosedLoopRpm(mCurrentTuningRpm);
@@ -407,10 +418,12 @@ public class Superstructure extends Subsystem {
 
             return isOnTargetToShoot();
         } else if (Superstructure.getInstance().isShooting()) {
+            mLED.setRangeBlicking(true);
             // Keep the previous setpoint.
             //mLED.setWantedState(LED.WantedState.BLINK);
             return false;
         } else {
+            mLED.setRangeBlicking(true);
             //mLED.setWantedState(LED.WantedState.BLINK);
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             return false;
