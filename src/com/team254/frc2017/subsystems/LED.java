@@ -3,6 +3,9 @@ package com.team254.frc2017.subsystems;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Relay;
 
 public class LED extends Subsystem {
@@ -31,11 +34,17 @@ public class LED extends Subsystem {
     private SystemState mSystemState = SystemState.OFF;
     private WantedState mWantedState = WantedState.OFF;
 
+    private boolean mIsDisabled = false;
+
     private boolean mIsLEDOn;
-    private Relay mLEDRelay;
+    private AnalogInput mCheckLightButton;
+    private DigitalOutput mLED;
 
     public LED() {
-        mLEDRelay = new Relay(Constants.kLEDRelayId);
+        mLED = new DigitalOutput(9);
+        mLED.set(false);
+
+        mCheckLightButton = new AnalogInput(2);
 
         // Force a relay change.
         mIsLEDOn = true;
@@ -47,8 +56,11 @@ public class LED extends Subsystem {
 
         @Override
         public void onStart(double timestamp) {
-            mSystemState = SystemState.OFF;
-            mWantedState = WantedState.OFF;
+            synchronized (LED.this) {
+                mSystemState = SystemState.OFF;
+                mWantedState = WantedState.OFF;
+                mLED.set(false);
+            }
 
             mCurrentStateStartTime = timestamp;
         }
@@ -56,6 +68,15 @@ public class LED extends Subsystem {
         @Override
         public void onLoop(double timestamp) {
             synchronized (LED.this) {
+
+                if (mIsDisabled) {
+                    if (mCheckLightButton.getAverageVoltage() < 0.1) {
+                        setWantedState(WantedState.FIXED_ON);
+                    } else {
+                        setWantedState(WantedState.OFF);
+                    }
+                }
+
                 SystemState newState;
                 double timeInState = timestamp - mCurrentStateStartTime;
                 switch (mSystemState) {
@@ -151,17 +172,21 @@ public class LED extends Subsystem {
         mWantedState = state;
     }
 
-    private void setLEDOn() {
+    public synchronized void setLEDOn() {
         if (!mIsLEDOn) {
             mIsLEDOn = true;
-            mLEDRelay.set(Relay.Value.kReverse);
+            mLED.set(true);
         }
     }
 
-    private void setLEDOff() {
+    public synchronized void setLEDOff() {
         if (mIsLEDOn) {
             mIsLEDOn = false;
-            mLEDRelay.set(Relay.Value.kOff);
+            mLED.set(false);
         }
+    }
+
+    public synchronized void setIsDisabled(boolean isDisabled) {
+        mIsDisabled = isDisabled;
     }
 }
