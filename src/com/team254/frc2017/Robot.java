@@ -279,6 +279,7 @@ public class Robot extends IterativeRobot {
     public void disabledInit() {
         try {
             CrashTracker.logDisabledInit();
+
             if (mAutoModeExecuter != null) {
                 mAutoModeExecuter.stop();
             }
@@ -288,6 +289,9 @@ public class Robot extends IterativeRobot {
 
             // Call stop on all our Subsystems.
             mSubsystemManager.stop();
+
+            LED.getInstance().setIsDisabled(true);
+            mDisabledLooper.start();
 
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
 
