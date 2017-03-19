@@ -15,7 +15,7 @@ public class CenterGearToShootRed implements PathContainer {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(89,160,0,0));
         sWaypoints.add(new Waypoint(40,160,36,80));
-        sWaypoints.add(new Waypoint(40,100,0,80));
+        sWaypoints.add(new Waypoint(40,90,0,80));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
