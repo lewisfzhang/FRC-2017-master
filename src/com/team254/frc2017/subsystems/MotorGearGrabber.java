@@ -181,7 +181,11 @@ public class MotorGearGrabber extends Subsystem {
                 }
                 if(timeInState - startTimeInThreshold > kThresholdTime && startTimeInThreshold != 0) {
                     LED.getInstance().setWantedState(LED.WantedState.BLINK);
-                    return SystemState.STOWING;
+                    if (mWantedState == WantedState.IDLE) {
+                        return SystemState.STOWING;
+                    } else {
+                        return SystemState.INTAKE;
+                    }
                 } else {
                     return SystemState.INTAKE;
                 }

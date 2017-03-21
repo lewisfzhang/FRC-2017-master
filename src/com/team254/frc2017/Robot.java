@@ -243,18 +243,14 @@ public class Robot extends IterativeRobot {
                 }
             }
 
-            final boolean hasGearOperatorInput = mControlBoard.getScoreGearButton() || mControlBoard.getGrabGearButton();
-            if(hasGearOperatorInput) {
-                if (mControlBoard.getScoreGearButton()) {
-                    mGearGrabber.setWantedState(WantedState.SCORE);
-                } else if (mControlBoard.getGrabGearButton()) {
-                    mGearGrabber.setWantedState(WantedState.ACQUIRE);
-                } else {
-                    // Never happens...?!
-                    mGearGrabber.setWantedState(WantedState.IDLE);
-                }
+            if (mControlBoard.getScoreGearButton()) {
+                mGearGrabber.setWantedState(WantedState.SCORE);
+            } else if (mControlBoard.getGrabGearButton()) {
+                mGearGrabber.setWantedState(WantedState.ACQUIRE);
+            } else {
+                mGearGrabber.setWantedState(WantedState.IDLE);
             }
-            
+
             mSuperstructure.setActuateHopper(mControlBoard.getActuateHopperButton());
             allPeriodic();
         } catch (Throwable t) {
