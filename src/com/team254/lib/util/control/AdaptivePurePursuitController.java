@@ -15,7 +15,6 @@ import com.team254.lib.util.math.Twist2d;
  */
 
 public class AdaptivePurePursuitController {
-    private static final double kEpsilon = 1E-4;
     private static final double kReallyBigNumber = 1E6;
     
     public static class Command {

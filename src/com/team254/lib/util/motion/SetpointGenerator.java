@@ -71,7 +71,7 @@ public class SetpointGenerator {
             // System.out.println("Regenerating profile: " + mProfile);
         }
 
-        // Sample the profile one dt from now.
+        // Sample the profile at time t.
         Setpoint rv = null;
         if (!mProfile.isEmpty() && mProfile.isValid()) {
             MotionState setpoint;
