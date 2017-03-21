@@ -34,7 +34,6 @@ public class Superstructure extends Subsystem {
     private final Solenoid mRightHopperSolenoid = Constants.makeSolenoidForId(Constants.kRightHopperSolenoidId);
     private final Compressor mCompressor = new Compressor(0);
     private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
-    private boolean mIsTeleop = false;
 
     // Superstructure doesn't own the drive, but needs to access it
     private final Drive mDrive = Drive.getInstance();
@@ -55,10 +54,8 @@ public class Superstructure extends Subsystem {
 
     private double mCurrentTuningRpm = Constants.kShooterTuningRpmFloor;
     private double mLastGoalRange = 0.0;
-
-    public synchronized void isTeleop(boolean teleop) {
-        mIsTeleop = teleop;
-    }
+    
+    private boolean mCompressorOverride = false;
     
     public boolean isOnTargetToShoot() {
         return (mDrive.isOnTarget() && mDrive.isAutoAiming()) && mShooter.isOnTarget();
@@ -209,7 +206,7 @@ public class Superstructure extends Subsystem {
         }
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
-        mCompressor.setClosedLoopControl(mIsTeleop);
+        mCompressor.setClosedLoopControl(!mCompressorOverride);
 
         switch (mWantedState) {
             case UNJAM:
@@ -492,6 +489,10 @@ public class Superstructure extends Subsystem {
 
     public void setWantIntakeOn() {
         mIntake.setOn();
+    }
+    
+    public void setOverrideCompressor(boolean force_off) {
+        mCompressorOverride = force_off;
     }
 
     public void reloadConstants() {

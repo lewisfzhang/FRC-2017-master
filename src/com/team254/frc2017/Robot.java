@@ -47,9 +47,7 @@ public class Robot extends IterativeRobot {
 
     private VisionServer mVisionServer = VisionServer.getInstance();
 
-    private boolean hasGearOperatorInput = false;
     private LatchedBoolean mWantsLEDBlink = new LatchedBoolean();
-
 
     private AnalogInput mCheckLightButton = new AnalogInput(2);
 
@@ -80,7 +78,6 @@ public class Robot extends IterativeRobot {
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
-            mSuperstructure.isTeleop(false);
 
             // initialize robot constants
             RobotName name = Constants.getRobotName();
@@ -120,6 +117,7 @@ public class Robot extends IterativeRobot {
             zeroAllSensors();
             mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
             mSuperstructure.setActuateHopper(false);
+            mSuperstructure.setOverrideCompressor(true);
             
             mAutoModeExecuter = null;
 
@@ -131,7 +129,6 @@ public class Robot extends IterativeRobot {
             
             mEnabledLooper.start();
             mSuperstructure.reloadConstants();
-            mSuperstructure.isTeleop(false);
             mAutoModeExecuter = new AutoModeExecuter();
             mAutoModeExecuter.setAutoMode(AutoModeSelector.getSelectedAutoMode());
             mAutoModeExecuter.start();
@@ -163,8 +160,7 @@ public class Robot extends IterativeRobot {
             mDrive.setHighGear(true);
             zeroAllSensors();
             mSuperstructure.reloadConstants();
-            mSuperstructure.isTeleop(true);
-            hasGearOperatorInput = false;
+            mSuperstructure.setOverrideCompressor(false);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -247,17 +243,16 @@ public class Robot extends IterativeRobot {
                 }
             }
 
-            if(mControlBoard.getScoreGearButton() || mControlBoard.getGrabGearButton()) {
-                hasGearOperatorInput = true;
-            }
-            
+            final boolean hasGearOperatorInput = mControlBoard.getScoreGearButton() || mControlBoard.getGrabGearButton();
             if(hasGearOperatorInput) {
-                if(mControlBoard.getScoreGearButton())
+                if (mControlBoard.getScoreGearButton()) {
                     mGearGrabber.setWantedState(WantedState.SCORE);
-                else if(mControlBoard.getGrabGearButton())
+                } else if (mControlBoard.getGrabGearButton()) {
                     mGearGrabber.setWantedState(WantedState.ACQUIRE);
-                else
+                } else {
+                    // Never happens...?!
                     mGearGrabber.setWantedState(WantedState.IDLE);
+                }
             }
             
             mSuperstructure.setActuateHopper(mControlBoard.getActuateHopperButton());
