@@ -123,8 +123,6 @@ public class Constants extends ConstantsBase {
     public static double kFeederVoltageCompensationRampRate = 10.0;
     public static double kFeederFeedSpeedRpm = 2500.0;
     public static double kFeederSensorGearReduction = 3.0;
-    public static double kBallSensorMinVoltage = 1.5;
-    public static double kBallSensorMaxVoltage = 2.0;
     
     // Hopper gains
     public static double kHopperRampRate = 48.0;

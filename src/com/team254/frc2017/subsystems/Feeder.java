@@ -28,8 +28,6 @@ public class Feeder extends Subsystem {
     }
 
     private final CANTalon mMasterTalon, mSlaveTalon;
-    
-    private final IRSensor mLeftBallSensor, mRightBallSensor;
 
     public Feeder() {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kFeederMasterId);
@@ -54,9 +52,6 @@ public class Feeder extends Subsystem {
         mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kFeederSlaveId, Constants.kFeederMasterId); 
         mSlaveTalon.reverseOutput(true);
         mSlaveTalon.enableBrakeMode(true);
-        
-        mLeftBallSensor = new IRSensor(Constants.kLeftBallSensorId, Constants.kBallSensorMinVoltage, Constants.kBallSensorMaxVoltage);
-        mRightBallSensor = new IRSensor(Constants.kRightBallSensorId, Constants.kBallSensorMinVoltage, Constants.kBallSensorMaxVoltage);
     }
 
     public enum SystemState {
@@ -212,10 +207,6 @@ public class Feeder extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("left_balls_count", mLeftBallSensor.getCount());
-        SmartDashboard.putNumber("right_balls_count", mRightBallSensor.getCount());
-        SmartDashboard.putNumber("left_ball_voltage", mLeftBallSensor.getVoltage());
-        SmartDashboard.putNumber("right_ball_voltage", mRightBallSensor.getVoltage());
         //SmartDashboard.putNumber("feeder_speed", mMasterTalon.get() / Constants.kFeederSensorGearReduction);
     }
 
@@ -226,12 +217,6 @@ public class Feeder extends Subsystem {
 
     @Override
     public void zeroSensors() {
-        mLeftBallSensor.resetCount();
-        mRightBallSensor.resetCount();
-    }
-    
-    public int totalBalls() {
-        return mLeftBallSensor.getCount() + mRightBallSensor.getCount();
     }
 
     @Override
