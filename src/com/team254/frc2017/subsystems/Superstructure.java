@@ -141,43 +141,6 @@ public class Superstructure extends Subsystem {
 
     private SystemState handleRangeFinding() {
         autoSpinShooter();
-//        mLED.setWantedState(LED.WantedState.FIND_RANGE);
-//
-//        final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
-//                .getAimingParameters(Timer.getFPGATimestamp());
-
-//        if (aimOptional.isPresent()) {
-//            final ShooterAimingParameters aim = aimOptional.get();
-//            double range = aim.getRange();
-//
-//            double scale = 5.0;
-//            double rangeLEDDuration = scale / 100.0;
-//            if (range < 93) {
-//                rangeLEDDuration = Math.abs(range - Constants.kFlywheelAutoAimMap.firstKey().value);
-//                if (rangeLEDDuration < 1e-6) {
-//                    rangeLEDDuration = 1e7;
-//                } else {
-//                    rangeLEDDuration = 1.0 / rangeLEDDuration;
-//                }
-//                mLED.setRangeBlicking(true);
-//            } else if (range > 108) {
-//                rangeLEDDuration = Math.abs(Constants.kFlywheelAutoAimMap.lastKey().value - range);
-//                if (rangeLEDDuration < 1e-6) {
-//                    rangeLEDDuration = 1e7;
-//                } else {
-//                    rangeLEDDuration = 1.0 / rangeLEDDuration;
-//                }
-//                mLED.setRangeBlicking(true);
-//            } else {
-//                mLED.setRangeBlicking(false);
-//                mLED.setRangeLEDOn();
-//            }
-//
-//           // mLED.setDesiredRangeHz(scale / rangeLEDDuration);
-//        } else {
-//            mLED.setRangeBlicking(true);
-//            //mLED.setDesiredRangeHz(0.0);
-//        }
 
         switch (mWantedState) {
             case UNJAM:
