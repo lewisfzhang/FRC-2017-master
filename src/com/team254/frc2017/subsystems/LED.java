@@ -1,5 +1,6 @@
 package com.team254.frc2017.subsystems;
 
+import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import edu.wpi.first.wpilibj.DigitalOutput;
@@ -36,10 +37,10 @@ public class LED extends Subsystem {
     private boolean mIsBlinking = false;
 
     public LED() {
-        mLED = new DigitalOutput(9);
+        mLED = new DigitalOutput(Constants.kGreenLEDId);
         mLED.set(false);
 
-        mRangeLED = new DigitalOutput(8);
+        mRangeLED = new DigitalOutput(Constants.kRangeLEDId);
         setRangeLEDOff();
 
         // Force a relay change.

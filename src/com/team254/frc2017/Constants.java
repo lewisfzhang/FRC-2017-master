@@ -173,6 +173,10 @@ public class Constants extends ConstantsBase {
     public static int kRightBallSensorId = 0;
     public static int kLEDOnId = 2;
 
+    // Digital Outputs
+    public static int kGreenLEDId = 9;
+    public static int kRangeLEDId = 8;
+
     // Relays
     public static int kLEDRelayId = 0;
 
