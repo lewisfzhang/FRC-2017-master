@@ -29,6 +29,7 @@ public class Robot extends IterativeRobot {
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
     private MotorGearGrabber mGearGrabber = MotorGearGrabber.getInstance();
+    private LED mLED = LED.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
 
@@ -190,7 +191,7 @@ public class Robot extends IterativeRobot {
                 boolean wantsExhaust = mControlBoard.getExhaustButton();
 
                 if (Constants.kIsShooterTuning) {
-                    LED.getInstance().setWantedState(LED.WantedState.FIXED_ON);
+                    mLED.setWantedState(LED.WantedState.FIXED_ON);
                     if (mCommitTuning.update(mControlBoard.getLowGear())) {
                         // Commit to TuningMap.
                         double rpm = mSuperstructure.getCurrentTuningRpm();
@@ -237,7 +238,7 @@ public class Robot extends IterativeRobot {
                 }
 
                 if (mWantsLEDBlink.update(mControlBoard.getBlinkLEDButton())) {
-                    LED.getInstance().setWantedState(LED.WantedState.BLINK);
+                    mLED.setWantedState(LED.WantedState.BLINK);
                 }
             }
 
@@ -289,10 +290,11 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void disabledPeriodic() {
-        if (mCheckLightButton.getAverageVoltage() < 0.15) {
-            LED.getInstance().setLEDOn();
+        final double kVoltageThreshold = 0.15;
+        if (mCheckLightButton.getAverageVoltage() < kVoltageThreshold) {
+            mLED.setLEDOn();
         } else {
-            LED.getInstance().setLEDOff();
+            mLED.setLEDOff();
         }
 
         zeroAllSensors();
