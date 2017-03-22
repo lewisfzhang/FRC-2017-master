@@ -227,7 +227,7 @@ public class Constants extends ConstantsBase {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
-    // Tuned on 3/15 for practice bot with no flywheel.
+    // Tuned at SFR for comp bot.
     public static double[][] kFlywheelDistanceRpmValues = {
             {81.46699085594396, 2850.0},
             {83.88142680682152, 2875.0},
