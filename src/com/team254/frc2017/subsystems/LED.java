@@ -1,13 +1,8 @@
 package com.team254.frc2017.subsystems;
 
-import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LED extends Subsystem {
     private static final int kDefaultBlinkCount = 4;
@@ -36,7 +31,6 @@ public class LED extends Subsystem {
     private WantedState mWantedState = WantedState.OFF;
 
     private boolean mIsLEDOn;
-    private double mDesiredRangeHz;
     private DigitalOutput mLED;
     private DigitalOutput mRangeLED;
     private boolean mIsBlinking = false;
@@ -64,8 +58,6 @@ public class LED extends Subsystem {
                 mLED.set(false);
                 mIsBlinking = false;
             }
-
-            mDesiredRangeHz = 0.0;
 
             mCurrentStateStartTime = timestamp;
         }
@@ -132,11 +124,6 @@ public class LED extends Subsystem {
         return defaultStateTransfer();
     }
 
-    public synchronized void setDesiredRangeHz(double desiredHz) {
-        //SmartDashboard.putNumber("Range HZ", desiredHz);
-        mDesiredRangeHz = desiredHz;
-    }
-
     public synchronized void setRangeBlicking(boolean isBlinking) {
         mIsBlinking = isBlinking;
     }
@@ -145,21 +132,6 @@ public class LED extends Subsystem {
         // Set main LED on.
         setLEDOn();
 
-//        // Flash the Range LED at the given Hz.
-//        if (mDesiredRangeHz < 1)  {
-//            setRangeLEDOff();
-//        } else if (mDesiredRangeHz > 50) {
-//            setRangeLEDOn();
-//        } else {
-//
-//            double duration = 1.0 / (mDesiredRangeHz * 2);
-//            int cycleNum = (int)(timeInState / duration);
-//            if ((cycleNum % 2) == 0) {
-//                setRangeLEDOn();
-//            } else {
-//                setRangeLEDOff();
-//            }
-//        }
         if (mIsBlinking) {
             int cycleNum = (int) (timeInState / (kBlinkDuration / 2.0));
             if ((cycleNum % 2) == 0) {
