@@ -171,6 +171,7 @@ public class Constants extends ConstantsBase {
     // Analog Inputs
     public static int kLeftBallSensorId = 1;
     public static int kRightBallSensorId = 0;
+    public static int kLEDOnId = 2;
 
     // Relays
     public static int kLEDRelayId = 0;

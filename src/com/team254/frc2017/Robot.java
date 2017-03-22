@@ -8,12 +8,10 @@ import com.team254.frc2017.loops.VisionProcessor;
 import com.team254.frc2017.subsystems.*;
 import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
 import com.team254.frc2017.vision.VisionServer;
-import com.team254.frc2017.web.WebServer;
 import com.team254.lib.util.*;
 import com.team254.lib.util.math.RigidTransform2d;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,7 +47,7 @@ public class Robot extends IterativeRobot {
 
     private LatchedBoolean mWantsLEDBlink = new LatchedBoolean();
 
-    private AnalogInput mCheckLightButton = new AnalogInput(2);
+    private AnalogInput mCheckLightButton = new AnalogInput(Constants.kLEDOnId);
 
     private LatchedBoolean mCommitTuning = new LatchedBoolean();
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap =
