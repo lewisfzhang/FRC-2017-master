@@ -30,8 +30,7 @@ public class Superstructure extends Subsystem {
     private final Hopper mHopper = Hopper.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
     private final LED mLED = LED.getInstance();
-    //private final Solenoid mLeftHopperSolenoid = new Solenoid(Constants.kLeftHopperSolenoidId);
-    private final Solenoid mRightHopperSolenoid = Constants.makeSolenoidForId(Constants.kRightHopperSolenoidId);
+    private final Solenoid mHopperSolenoid = Constants.makeSolenoidForId(Constants.kHopperSolenoidId);
     private final Compressor mCompressor = new Compressor(0);
     private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
 
@@ -418,8 +417,7 @@ public class Superstructure extends Subsystem {
     }
     
     public synchronized void setActuateHopper(boolean extended) {
-        //mLeftHopperSolenoid.set(extended);
-        mRightHopperSolenoid.set(extended);
+        mHopperSolenoid.set(extended);
     }
 
     @Override
