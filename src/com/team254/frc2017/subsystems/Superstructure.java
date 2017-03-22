@@ -361,9 +361,9 @@ public class Superstructure extends Subsystem {
                 mLastGoalRange = range;
                 mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
 
-                if (range < 93) {
+                if (range < Constants.kShooterOptimalRangeFloor) {
                     mLED.setRangeBlicking(true);
-                } else if (range > 108) {
+                } else if (range > Constants.kShooterOptimalRangeCeiling) {
                     mLED.setRangeBlicking(true);
                 } else {
                     mLED.setRangeBlicking(false);
@@ -379,11 +379,9 @@ public class Superstructure extends Subsystem {
         } else if (Superstructure.getInstance().isShooting()) {
             mLED.setRangeBlicking(true);
             // Keep the previous setpoint.
-            //mLED.setWantedState(LED.WantedState.BLINK);
             return false;
         } else {
             mLED.setRangeBlicking(true);
-            //mLED.setWantedState(LED.WantedState.BLINK);
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             return false;
         }
