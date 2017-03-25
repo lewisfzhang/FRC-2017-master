@@ -3,7 +3,8 @@ import time
 import logging
 import json
 
-sys.path.append("pynetworktables-2015.3.2-py2.7.egg")
+sys.path.append("monotonic-1.3-py2.7.egg")
+sys.path.append("pynetworktables-2017.0.8-py2.7.egg")
 from networktables import NetworkTable
 
 logging.basicConfig(level=logging.DEBUG)

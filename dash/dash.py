@@ -8,7 +8,8 @@ import urllib
 import time
 import traceback
 
-sys.path.append("pynetworktables-2015.3.2-py2.7.egg")
+sys.path.append("monotonic-1.3-py2.7.egg")
+sys.path.append("pynetworktables-2017.0.8-py2.7.egg")
 from networktables import NetworkTable
 
 sys.path.append("SimpleWebSocketServer-0.1.0-py2.7.egg")
@@ -29,14 +30,12 @@ NetworkTable.initialize()
 
 table = NetworkTable.getTable("SmartDashboard")
 
-class TableConnectionListener:
-    def connected(self, table):
-        print("Connected to", table.getRemoteAddress(), table)
+def tableConnectionListener(isConnected, connectionInfo):
+    if isConnected:
+        print("Connected to", connectionInfo.remote_ip)
+    else:
+        print("disconnectd", connectionInfo.remote_ip)
 
-    def disconnected(self, table):
-        print("Disconnected", table)
-
-tableConnectionListener = TableConnectionListener()
 table.addConnectionListener(tableConnectionListener)
 
 activeBridges = set()
