@@ -20,6 +20,7 @@ public class Intake extends Subsystem {
 
     private CANTalon mMasterTalon, mSlaveTalon;
     private Solenoid mDeploySolenoid;
+    private double mCurrentThrottle;
 
     private Intake() {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kIntakeMasterId);
@@ -30,6 +31,9 @@ public class Intake extends Subsystem {
         mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kIntakeSlaveId, Constants.kIntakeMasterId);
         mSlaveTalon.reverseOutput(true);
         mDeploySolenoid = new Solenoid(Constants.kIntakeDeploySolenoidId);
+
+        // Set current throttle to 0.0;
+        mCurrentThrottle = 0.0;
     }
 
     @Override
@@ -38,7 +42,8 @@ public class Intake extends Subsystem {
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
+        mCurrentThrottle = 0.0;
         setOff();
     }
 
@@ -52,6 +57,10 @@ public class Intake extends Subsystem {
 
     }
 
+    public synchronized void setCurrentThrottle(double currentThrottle) {
+        mCurrentThrottle = currentThrottle;
+    }
+
     public synchronized void deploy() {
         mDeploySolenoid.set(true);
     }
@@ -62,7 +71,7 @@ public class Intake extends Subsystem {
 
     public synchronized void setOn() {
         deploy();
-        setOpenLoop(Constants.kIntakeVoltage);
+        setOpenLoop(getScaledIntakeVoltage());
     }
 
     public synchronized void setOff() {
@@ -70,7 +79,16 @@ public class Intake extends Subsystem {
     }
 
     public synchronized void setReverse() {
-        setOpenLoop(-Constants.kIntakeVoltage);
+        setOpenLoop(-Constants.kIntakeVoltageMax);
+    }
+
+    private double getScaledIntakeVoltage() {
+        // Perform a linear interpolation from the Abs of throttle. Keep in mind we want to run at
+        // full throttle when in reverse.
+
+        final double scale = Math.min(0.0, mCurrentThrottle);
+
+        return Constants.kIntakeVoltageMax - scale * Constants.kIntakeVoltageDifference;
     }
 
     private void setOpenLoop(double voltage) {

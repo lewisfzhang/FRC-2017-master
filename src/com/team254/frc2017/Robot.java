@@ -188,10 +188,12 @@ public class Robot extends IterativeRobot {
                 mDrive.setHighGear(!mControlBoard.getLowGear());
                 mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(), !mControlBoard.getLowGear()));
 
+                Intake.getInstance().setCurrentThrottle(mControlBoard.getThrottle());
+
                 boolean wantsExhaust = mControlBoard.getExhaustButton();
 
                 if (Constants.kIsShooterTuning) {
-                    mLED.setWantedState(LED.WantedState.FIXED_ON);
+                    mLED.setWantedState(LED.WantedState.FIND_RANGE);
                     if (mCommitTuning.update(mControlBoard.getLowGear())) {
                         // Commit to TuningMap.
                         double rpm = mSuperstructure.getCurrentTuningRpm();

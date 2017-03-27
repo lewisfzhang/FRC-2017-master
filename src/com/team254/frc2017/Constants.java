@@ -29,7 +29,7 @@ public class Constants extends ConstantsBase {
     public static double kBoilerRadius = 7.5;  // TODO: Verify on field
 
     public static boolean kIsShooterTuning = false;
-    public static double kShooterTuningRpmFloor = 3125;
+    public static double kShooterTuningRpmFloor = 3150;
     public static double kShooterTuningRpmCeiling = 4100;
     public static double kShooterTuningRpmStep = 50;
 
@@ -58,7 +58,9 @@ public class Constants extends ConstantsBase {
     public static double kOnTargetErrorThreshold = 3.0;
 
     // Voltages
-    public static double kIntakeVoltage = 7.5;
+    public static double kIntakeVoltageMax = 7.5;
+    public static double kIntakeVoltageMin = 4.5;
+    public static final double kIntakeVoltageDifference = kIntakeVoltageMax - kIntakeVoltageMin;
 
 
     // CONTROL LOOP GAINS
@@ -102,13 +104,13 @@ public class Constants extends ConstantsBase {
 
 
     // SHOOTER GAINS
-    public static double kShooterTalonKP = 0.16;
+    public static double kShooterTalonKP = 0.04;
     public static double kShooterTalonKI = 0.00004;
     public static double kShooterTalonKD = 0.0;
-    public static double kShooterTalonKF = 0.027;
+    public static double kShooterTalonKF = 0.026;
     public static double kShooterRampRate = 60.0;
     public static double kShooterVoltageCompensationRampRate = 10.0;
-    public static int kShooterTalonIZone = 1000; // == ~150 rpm
+    public static int kShooterTalonIZone = 1500; // == ~225 rpm
     public static int kShooterOpenLoopCurrentLimit = 35;
 
     public static double kShooterSetpointDeadbandRpm = 1.0;
@@ -121,7 +123,7 @@ public class Constants extends ConstantsBase {
     public static double kFeederKF = 0.009;
     public static double kFeederRampRate = 240.0;
     public static double kFeederVoltageCompensationRampRate = 10.0;
-    public static double kFeederFeedSpeedRpm = 2500.0;
+    public static double kFeederFeedSpeedRpm = 4500.0;
     public static double kFeederSensorGearReduction = 3.0;
     
     // Hopper gains
@@ -234,8 +236,17 @@ public class Constants extends ConstantsBase {
     public static double kShooterOptimalRangeFloor = 93.0;
     public static double kShooterOptimalRangeCeiling = 108.0;
 
-    // Tuned at SFR for comp bot.
     public static double[][] kFlywheelDistanceRpmValues = {
+            // Started tuning on 3/26. Still needs work.
+//            {97.5, 2995.0},
+//            {103.5, 3050.0},
+//            {106.24, 3100.0},
+//            {109.8, 3150.0},
+//            {115.73, 3200.0},
+//            {119.0, 3250.0},
+//            {142.0, 3500.0},
+
+            // Tuned at SFR for comp bot.
             {81.46699085594396, 2850.0},
             {83.88142680682152, 2875.0},
             {89.61719333080238, 2900.0},
