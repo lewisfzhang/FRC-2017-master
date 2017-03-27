@@ -17,17 +17,18 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
     @Override
     public double getTurn() {
-        return mGamepad.getRawAxis(4);
+        return mGamepad.getRawAxis(2);
     }
 
     @Override
     public boolean getQuickTurn() {
-        return mGamepad.getRawAxis(2) > 0.1;
+        return mGamepad.getRawButton(7);
     }
+
 
     @Override
     public boolean getAimButton() {
-        return mGamepad.getRawAxis(3) > 0.1;
+        return mGamepad.getRawButton(8);
     }
 
 
@@ -40,7 +41,6 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
     @Override
     public boolean getHangButton() {
-
         // A
         return mGamepad.getRawButton(1);
     }
@@ -54,7 +54,7 @@ public class GamepadControlBoard implements ControlBoardInterface {
     @Override
     public boolean getFeedButton() {
         // X
-        return mGamepad.getRawButton(3);
+        return false;
     }
 
     @Override
@@ -76,8 +76,7 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
     @Override
     public boolean getExhaustButton() {
-        // B
-        return mGamepad.getRawButton(2);
+        return false;
     }
 
     @Override
@@ -88,7 +87,7 @@ public class GamepadControlBoard implements ControlBoardInterface {
     @Override
     public boolean getShooterClosedLoopButton() {
         // Back
-        return mGamepad.getRawButton(7);
+        return false;
     }
 
     @Override
@@ -108,6 +107,7 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
     @Override
     public boolean getRangeFinderButton() {
-        return false;
+        // B
+        return mGamepad.getRawButton(3);
     }
 }
