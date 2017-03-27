@@ -140,6 +140,7 @@ public class Superstructure extends Subsystem {
 
     private SystemState handleRangeFinding() {
         autoSpinShooter();
+        mFeeder.setWantedState(Feeder.WantedState.FEED);
 
         switch (mWantedState) {
             case UNJAM:
@@ -193,7 +194,7 @@ public class Superstructure extends Subsystem {
     private SystemState handleWaitingForAim() {
 
         mCompressor.setClosedLoopControl(false);
-        mFeeder.setWantedState(Feeder.WantedState.IDLE);
+        mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
 
         if (autoSpinShooter()) {
@@ -360,12 +361,14 @@ public class Superstructure extends Subsystem {
                 double range = aim.getRange();
                 mLastGoalRange = range;
                 mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
-
                 if (range < Constants.kShooterOptimalRangeFloor) {
+                    SmartDashboard.putBoolean("optimal range", false);
                     mLED.setRangeBlicking(true);
                 } else if (range > Constants.kShooterOptimalRangeCeiling) {
+                    SmartDashboard.putBoolean("optimal range", false);
                     mLED.setRangeBlicking(true);
                 } else {
+                    SmartDashboard.putBoolean("optimal range", true);
                     mLED.setRangeBlicking(false);
                     mLED.setRangeLEDOn();
                 }
