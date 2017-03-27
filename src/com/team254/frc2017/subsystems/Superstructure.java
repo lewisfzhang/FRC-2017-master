@@ -361,17 +361,20 @@ public class Superstructure extends Subsystem {
                 double range = aim.getRange();
                 mLastGoalRange = range;
                 mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
+
+                boolean is_optimal_range = false;
                 if (range < Constants.kShooterOptimalRangeFloor) {
-                    SmartDashboard.putBoolean("optimal range", false);
                     mLED.setRangeBlicking(true);
                 } else if (range > Constants.kShooterOptimalRangeCeiling) {
-                    SmartDashboard.putBoolean("optimal range", false);
                     mLED.setRangeBlicking(true);
                 } else {
-                    SmartDashboard.putBoolean("optimal range", true);
                     mLED.setRangeBlicking(false);
                     mLED.setRangeLEDOn();
+
+                    is_optimal_range = true;
                 }
+
+                SmartDashboard.putBoolean("optimal range", is_optimal_range);
             } else {
                 // We are shooter tuning fine current RPM we are tuning for.
                 mShooter.setClosedLoopRpm(mCurrentTuningRpm);
