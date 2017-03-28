@@ -58,6 +58,8 @@ public class Robot extends IterativeRobot {
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap =
             new InterpolatingTreeMap<>();
 
+    private final VideoStreamServiceController mVideoStreamServiceController = new VideoStreamServiceController();
+
     public Robot() {
         CrashTracker.logRobotConstruction();
     }
@@ -91,7 +93,7 @@ public class Robot extends IterativeRobot {
 
             AutoModeSelector.initAutoModeSelector();
 
-            registerWatcher();
+            mVideoStreamServiceController.registerWatcher();
 
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -100,62 +102,6 @@ public class Robot extends IterativeRobot {
         zeroAllSensors();
     }
 
-    private static void findVideoDevice() {
-        File devFolder = new File("/dev");
-        File[] videoDevices = devFolder.listFiles((dir, name) -> name.startsWith("video"));
-        if (videoDevices.length == 0) {
-            System.out.println("no video devices found");
-        } else {
-            System.out.println("Using video device " + videoDevices[0].toString());
-        }
-    }
-
-    private static void registerWatcher() {
-        System.out.println("regstering watcher");
-        FileSystem fileSystem = FileSystems.getDefault();
-
-        Path devPath = fileSystem.getPath("/dev");
-        try {
-            final WatchService watchService = fileSystem.newWatchService();
-            devPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            System.out.println("watcher registered");
-            findVideoDevice();
-            new Thread(() -> {
-                for (;;) {
-                    try {
-                        System.out.println("waiting for key");
-                        WatchKey key = watchService.take();
-                        System.out.println("got key");
-                        for (WatchEvent<?> event : key.pollEvents()) {
-                            WatchEvent.Kind<?> kind = event.kind();
-                            if (kind != StandardWatchEventKinds.ENTRY_CREATE) {
-                                System.out.println("File watcher Non create event");
-                                continue;
-                            }
-
-                            Path newFilename = devPath.resolve(((WatchEvent<Path>) event).context());
-                            if (!newFilename.getFileName().toString().startsWith("video")) {
-                                System.out.println(
-                                        "Don't care about new device: " + newFilename.toString());
-                                continue;
-                            }
-
-                            System.out.println("New video device: " + newFilename.toString());
-                        }
-                        key.reset();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        System.out.println("Exception: " + e);
-                        continue;
-                    }
-                }
-            }).run();
-        } catch (IOException e) {
-            e.printStackTrace();
-            DriverStation.reportError("Couldn't start video service: " + e.getMessage(), false);
-        }
-
-    }
 
     /**
      * This autonomous (along with the chooser code above) shows how to select between different autonomous modes using
