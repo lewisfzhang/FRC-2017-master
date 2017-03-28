@@ -93,7 +93,7 @@ public class Robot extends IterativeRobot {
 
             AutoModeSelector.initAutoModeSelector();
 
-            mVideoStreamServiceController.registerWatcher();
+            // mVideoStreamServiceController.registerWatcher();
 
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);

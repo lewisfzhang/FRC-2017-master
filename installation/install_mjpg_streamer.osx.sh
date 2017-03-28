@@ -12,4 +12,3 @@ robotpy-installer install-opkg mjpg-streamer
 
 scp mjpg-streamer admin@roborio-254-frc.local:/etc/default/mjpg-streamer 
 
-ssh admin@roborio-254-frc.local rm /etc/init.d/mjpg-streamer
