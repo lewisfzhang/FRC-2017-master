@@ -1,0 +1,18 @@
+#!/bin/sh
+
+prev_video_status=0
+video_status=0
+update_video_status() {
+    video_status=`ls -l /dev/video*`
+}
+update_video_status
+
+while true; do
+    update_video_status
+    if [[ $video_status != $prev_video_status ]] ; then
+        echo "video device changed"
+        /etc/init.d/mjpg-streamer restart
+        prev_video_status=$video_status
+    fi
+    sleep 1
+done

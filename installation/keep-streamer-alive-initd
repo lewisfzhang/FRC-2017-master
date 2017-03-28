@@ -1,0 +1,33 @@
+#!/bin/sh
+
+$PIDFILE=/var/run/keep-streamer-alive.pid
+
+startdaemon() {
+    echo -n "Starting keep streamer alive"
+    /usr/sbin/start-stop-daemon --pidfile=$PIDFILE -b -m \
+                                --exec /usr/local/bin/keep_streamer_alive --start
+    echo "."
+}
+
+stopdaemon() {
+    echo -n "Stopping keep streamer alive"
+    /usr/sbin/start-stop-daemon --pidfile=$PIDFILE --stop && rm -f $PIDFILE
+    echo "."
+}
+
+case "$1" in
+    start)
+        startdaemon
+        ;;
+    stop)
+        stopdaemon
+        ;;
+    force-reload|restart|reload)
+        stopdaemon
+        startdaemon
+        ;;
+    *)
+        echo "Usage: {start|stop|restart|reload|force-reload}" >&2
+        exit 1
+        ;;
+esac
