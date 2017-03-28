@@ -86,7 +86,7 @@ public class MotorGearGrabber extends Subsystem {
             @Override
             public void onStart(double timestamp) {
                 synchronized (MotorGearGrabber.this) {
-                    mSystemState = SystemState.INTAKE;
+                    mSystemState = SystemState.STOWING;
                     mWantedState = WantedState.ACQUIRE;
                 }
                 mCurrentStateStartTime = Timer.getFPGATimestamp();

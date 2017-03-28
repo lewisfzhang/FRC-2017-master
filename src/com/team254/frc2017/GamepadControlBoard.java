@@ -97,7 +97,7 @@ public class GamepadControlBoard implements ControlBoardInterface {
     
     @Override
     public boolean getActuateHopperButton() {
-        return false;
+        return mGamepad.getRawButton(9);
     }
 
     @Override
