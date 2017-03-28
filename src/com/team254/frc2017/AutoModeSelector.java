@@ -7,6 +7,10 @@ import com.team254.frc2017.auto.modes.BoilerGearThenShootModeBlue;
 import com.team254.frc2017.auto.modes.BoilerGearThenShootModeRed;
 import com.team254.frc2017.auto.modes.CenterGearThenShootModeBlue;
 import com.team254.frc2017.auto.modes.CenterGearThenShootModeRed;
+import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
+import com.team254.frc2017.auto.modes.GearThenHopperShootModeRed;
+import com.team254.frc2017.auto.modes.RamHopperShootModeBlue;
+import com.team254.frc2017.auto.modes.RamHopperShootModeRed;
 import com.team254.frc2017.auto.modes.StandStillMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,6 +43,10 @@ public class AutoModeSelector {
             new AutoModeCreator("Boiler Gear then 10 Ball Shoot Blue", ()->new BoilerGearThenShootModeBlue()),
             new AutoModeCreator("Center Gear then Shoot Red", ()->new CenterGearThenShootModeRed()),
             new AutoModeCreator("Center Gear then Shoot Blue", ()->new CenterGearThenShootModeBlue()),
+            new AutoModeCreator("Ram Hopper Blue", ()->new RamHopperShootModeBlue()),
+            new AutoModeCreator("Ram Hopper Red", ()->new RamHopperShootModeRed()),
+            new AutoModeCreator("Gear then Hopper Shoot Blue", ()->new GearThenHopperShootModeBlue()),
+            new AutoModeCreator("Gear then Hopper Shoot Red", ()->new GearThenHopperShootModeRed()),
     };
 
     public static void initAutoModeSelector() {
