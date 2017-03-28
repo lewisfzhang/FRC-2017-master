@@ -79,18 +79,17 @@ public class VideoStreamServiceController {
         System.out.println("Is old process alive? " + (mExistingProcess != null && mExistingProcess.isAlive()));
         if (mExistingProcess != null) {
             mExistingProcess.destroy();
+            try {
+                System.out.println("Wait for old process");
+                mExistingProcess.waitFor();
+                System.out.println("Done waiting for old process");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             mExistingProcess = null;
         }
 
         try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        /*
-        try {
-            // TODO: make this control the sysvinit daemon instead of directly opening the process
             mExistingProcess = new ProcessBuilder(
                     "/usr/local/bin/mjpg_streamer",
                     "-i",
@@ -105,6 +104,5 @@ public class VideoStreamServiceController {
             DriverStation.reportError("Didn't start mjpg-streamer: " + e.getMessage(), false);
             e.printStackTrace();
         }
-        */
     }
 }
