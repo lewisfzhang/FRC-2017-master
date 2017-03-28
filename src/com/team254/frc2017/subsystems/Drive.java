@@ -1,6 +1,7 @@
 package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.StatusFrameRate;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.Kinematics;
 import com.team254.frc2017.RobotState;
@@ -136,7 +137,7 @@ public class Drive extends Subsystem {
         mLeftSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveId,
                 Constants.kLeftDriveMasterId);
         mLeftSlave.reverseOutput(false);
-        //mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
+        mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
 
         mRightMaster = CANTalonFactory.createDefaultTalon(Constants.kRightDriveMasterId);
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
@@ -152,7 +153,7 @@ public class Drive extends Subsystem {
         mRightSlave = CANTalonFactory.createPermanentSlaveTalon(Constants.kRightDriverSlaveId,
                 Constants.kRightDriveMasterId);
         mRightSlave.reverseOutput(false);
-      //  mRightMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
+        mRightMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
@@ -475,6 +476,7 @@ public class Drive extends Subsystem {
     public synchronized void setWantDrivePath(Path path, boolean reversed) {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             configureTalonsForSpeedControl();
+            RobotState.getInstance().resetDistanceDriven();
             mPathFollower = new PathFollower(path, reversed,
                     new PathFollower.Parameters(
                             new Lookahead(Constants.kMinLookAhead, Constants.kMaxLookAhead,

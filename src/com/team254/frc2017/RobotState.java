@@ -81,6 +81,10 @@ public class RobotState {
         differential_height_ = Constants.kBoilerTargetTopHeight - Constants.kCameraZOffset;
         distance_driven_ = 0.0;
     }
+    
+    public synchronized void resetDistanceDriven() {
+        distance_driven_ = 0.0;
+    }
 
     public synchronized RigidTransform2d getFieldToVehicle(double timestamp) {
         return field_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
