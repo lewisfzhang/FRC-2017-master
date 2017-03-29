@@ -135,6 +135,7 @@ public class Robot extends IterativeRobot {
             // Shift to high
             mDrive.setHighGear(true);
             mDrive.setBrakeMode(true);
+            mDrive.setTalonRefreshRate(5);
             
             mEnabledLooper.start();
             mSuperstructure.reloadConstants();
@@ -167,6 +168,7 @@ public class Robot extends IterativeRobot {
             mDrive.setBrakeMode(false);
             // Shift to high
             mDrive.setHighGear(true);
+            mDrive.setTalonRefreshRate(100);
             zeroAllSensors();
             mSuperstructure.reloadConstants();
             mSuperstructure.setOverrideCompressor(false);

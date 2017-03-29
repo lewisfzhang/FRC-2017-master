@@ -9,6 +9,8 @@ import com.team254.frc2017.auto.modes.CenterGearThenShootModeBlue;
 import com.team254.frc2017.auto.modes.CenterGearThenShootModeRed;
 import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
 import com.team254.frc2017.auto.modes.GearThenHopperShootModeRed;
+import com.team254.frc2017.auto.modes.GearThenIntakeModeBlue;
+import com.team254.frc2017.auto.modes.GearThenIntakeModeRed;
 import com.team254.frc2017.auto.modes.RamHopperShootModeBlue;
 import com.team254.frc2017.auto.modes.RamHopperShootModeRed;
 import com.team254.frc2017.auto.modes.StandStillMode;
@@ -37,8 +39,8 @@ public class AutoModeSelector {
     private static final AutoModeCreator mDefaultMode =
             new AutoModeCreator("Stand Still", ()->new StandStillMode());
     private static final AutoModeCreator[] mAllModes = {
-            new AutoModeCreator("Actuate Hopper then Shoot Red", ()->new ActuateHopperShootModeRed()),
-            new AutoModeCreator("Actuate Hopper then Shoot Blue", ()->new ActuateHopperShootModeBlue()),
+            new AutoModeCreator("Boiler Gear then Intake Shoot Blue", ()->new GearThenIntakeModeBlue()),
+            new AutoModeCreator("Boiler Gear then Intake Shoot Red", ()->new GearThenIntakeModeRed()),
             new AutoModeCreator("Boiler Gear then 10 Ball Shoot Red", ()->new BoilerGearThenShootModeRed()),
             new AutoModeCreator("Boiler Gear then 10 Ball Shoot Blue", ()->new BoilerGearThenShootModeBlue()),
             new AutoModeCreator("Center Gear then Shoot Red", ()->new CenterGearThenShootModeRed()),
