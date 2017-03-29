@@ -1,6 +1,7 @@
 package com.team254.frc2017.auto.actions;
 
 import com.team254.frc2017.subsystems.Drive;
+import com.team254.frc2017.subsystems.Intake;
 import com.team254.frc2017.subsystems.Superstructure;
 
 public class BeginShootingAction extends RunOnceAction implements Action {
@@ -9,6 +10,7 @@ public class BeginShootingAction extends RunOnceAction implements Action {
     public void runOnce() {
         Drive.getInstance().setWantAimToGoal();
         Superstructure.getInstance().setWantedState(Superstructure.WantedState.SHOOT);
+        Intake.getInstance().setOn(); //maybe intake a few missed balls if we're lucky
     }
 
 }
