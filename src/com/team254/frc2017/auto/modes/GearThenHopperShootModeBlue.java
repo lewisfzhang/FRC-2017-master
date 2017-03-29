@@ -33,6 +33,7 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         PathContainer gearPath = new StartToBoilerGearBlue();
+        double start = Timer.getFPGATimestamp();
         runAction(new ResetPoseFromPathAction(gearPath));
         runAction(new DrivePathAction(gearPath));
         runAction(
@@ -42,8 +43,9 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
                     new ScoreGearAction(),
                     new ActuateHopperAction(true),
                 }))
-        );
+        );  
         runAction(new DrivePathAction(new BoilerGearToHopperBlue()));
+        System.out.println("Shoot Time: " + (Timer.getFPGATimestamp()-start));
         runAction(new BeginShootingAction());
         runAction(new WaitAction(15));
     }

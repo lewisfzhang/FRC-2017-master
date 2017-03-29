@@ -55,7 +55,7 @@ public class SetpointGenerator {
      *            The time to generate a setpoint for.
      * @return The new Setpoint at time t.
      */
-    public Setpoint getSetpoint(MotionProfileConstraints constraints, MotionProfileGoal goal, MotionState prev_state,
+    public synchronized Setpoint getSetpoint(MotionProfileConstraints constraints, MotionProfileGoal goal, MotionState prev_state,
             double t) {
         boolean regenerate = mConstraints == null || !mConstraints.equals(constraints) || mGoal == null
                 || !mGoal.equals(goal) || mProfile == null;
@@ -68,7 +68,7 @@ public class SetpointGenerator {
             mConstraints = constraints;
             mGoal = goal;
             mProfile = MotionProfileGenerator.generateProfile(constraints, goal, prev_state);
-            // System.out.println("Regenerating profile: " + mProfile);
+            //System.out.println("Regenerating profile: " + mProfile);
         }
 
         // Sample the profile at time t.

@@ -81,7 +81,7 @@ public class PathFollower {
      *            The current robot velocity.
      * @return The velocity command to apply
      */
-    public Twist2d update(double t, RigidTransform2d pose, double displacement, double velocity) {
+    public synchronized Twist2d update(double t, RigidTransform2d pose, double displacement, double velocity) {
         if (!mSteeringController.isFinished()) {
             final AdaptivePurePursuitController.Command steering_command = mSteeringController.update(pose);
             mCrossTrackError = steering_command.cross_track_error;
@@ -95,7 +95,7 @@ public class PathFollower {
             }
         }
 
-        final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0), t);
+        final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0), t, (mLastSteeringDelta.dx > 0));
         mAlongTrackError = mVelocityController.getPosError();
         final double curvature = mLastSteeringDelta.dtheta / mLastSteeringDelta.dx;
         double dtheta = mLastSteeringDelta.dtheta;

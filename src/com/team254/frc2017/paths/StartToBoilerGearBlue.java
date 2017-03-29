@@ -15,7 +15,7 @@ public class StartToBoilerGearBlue implements PathContainer {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(16,235,0,0));
         sWaypoints.add(new Waypoint(101,235,18,60));
-        sWaypoints.add(new Waypoint(116,209,0,60));
+        sWaypoints.add(new Waypoint(116,212,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

@@ -14,9 +14,10 @@ public class BoilerGearToHopperBlue implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(116,209,0,0));
-        sWaypoints.add(new Waypoint(108,222,8,80));
-        sWaypoints.add(new Waypoint(148,276,24,80));
-        sWaypoints.add(new Waypoint(100,303,0,80));
+        sWaypoints.add(new Waypoint(108,222,10,80));
+        sWaypoints.add(new Waypoint(150,279,30,80));
+        sWaypoints.add(new Waypoint(100,306,0,80));
+        sWaypoints.add(new Waypoint(98,306,0,80));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
