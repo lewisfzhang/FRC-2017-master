@@ -23,6 +23,8 @@ import com.team254.frc2017.paths.HopperToShootPathBlue;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToHopperBlue;
 import com.team254.frc2017.paths.StartToHopperRed;
+import com.team254.frc2017.subsystems.Drive;
+import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.math.Rotation2d;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -45,7 +47,9 @@ public class RamHopperShootModeRed extends AutoModeBase {
         ); //Drive to hopper, cancel path once the robot runs into the wall
         runAction(new SetFlywheelRPMAction(3100));
         runAction(new WaitAction(2.6)); //wait for balls
-        runAction(new OpenLoopUntilSeesTargetAction(-0.02, -0.9));
+        Drive.getInstance().setOpenLoop(new DriveSignal(-1, -1));
+        runAction(new WaitAction(0.2));
+        runAction(new TurnUntilSeesTargetAction(Rotation2d.fromDegrees(200)));
 //        Constants.kSegmentCompletionTolerance = 5.0;
 //        runAction(new DrivePathAction(new HopperToShootPathBlue())); //drive backwards to get off the wall
 //        runAction(new TurnUntilSeesTargetAction(Rotation2d.fromDegrees(165))); //turn towards 165 degrees or until camera sees target
