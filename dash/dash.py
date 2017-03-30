@@ -88,8 +88,10 @@ class DashboardWebSocket(WebSocket):
                 return
             if jsonPayload["type"] == "string":
                 table.putString(jsonPayload["key"], jsonPayload["value"])
+                self.sendBridgeValue(jsonPayload["table"], jsonPayload["key"], jsonPayload["value"])
             elif jsonPayload["type"] == "bool":
                 table.putBoolean(jsonPayload["key"], jsonPayload["value"])
+                self.sendBridgeValue(jsonPayload["table"], jsonPayload["key"], jsonPayload["value"])
         except:
             traceback.print_exc()
 
