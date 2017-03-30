@@ -6,6 +6,7 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Feeder extends Subsystem {
     private static final double kReversing = -1.0;
@@ -45,7 +46,7 @@ public class Feeder extends Subsystem {
         mMasterTalon.setVoltageCompensationRampRate(Constants.kFeederVoltageCompensationRampRate);
         mMasterTalon.setNominalClosedLoopVoltage(12.0);
 
-        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 500);
+        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 1000);
 
         mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kFeederSlaveId, Constants.kFeederMasterId); 
         mSlaveTalon.reverseOutput(true);

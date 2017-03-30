@@ -42,7 +42,7 @@ public class RamHopperShootModeBlue extends AutoModeBase {
                     }))
                 }))
         ); //Drive to hopper, cancel path once the robot runs into the wall
-        runAction(new SetFlywheelRPMAction(3500));
+        runAction(new SetFlywheelRPMAction(3100));
         runAction(new WaitAction(2.6)); //wait for balls
         runAction(new OpenLoopUntilSeesTargetAction(-0.9, -0.02));
 //        Constants.kSegmentCompletionTolerance = 5.0;
