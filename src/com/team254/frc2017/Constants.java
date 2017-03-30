@@ -241,7 +241,7 @@ public class Constants extends ConstantsBase {
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
     public static double kShooterOptimalRangeFloor = 93.0;
-    public static double kShooterOptimalRangeCeiling = 108.0;
+    public static double kShooterOptimalRangeCeiling = 125.0;
 
     public static double[][] kFlywheelDistanceRpmValues = {
             // Tuned on 3/29 pre SVR for practice bot.
