@@ -82,9 +82,11 @@ public class PathFollower {
      * @return The velocity command to apply
      */
     public synchronized Twist2d update(double t, RigidTransform2d pose, double displacement, double velocity) {
+        double speed = 0.0;
         if (!mSteeringController.isFinished()) {
             final AdaptivePurePursuitController.Command steering_command = mSteeringController.update(pose);
             mCrossTrackError = steering_command.cross_track_error;
+            speed = steering_command.max_velocity;
             if (!mSteeringController.isFinished()) {
                 mLastSteeringDelta = steering_command.delta;
                 mVelocityController.setGoalAndConstraints(
@@ -95,7 +97,7 @@ public class PathFollower {
             }
         }
 
-        final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0), t, (mLastSteeringDelta.dx > 0));
+        final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0), t, (mLastSteeringDelta.dx > 0), speed);
         mAlongTrackError = mVelocityController.getPosError();
         final double curvature = mLastSteeringDelta.dtheta / mLastSteeringDelta.dx;
         double dtheta = mLastSteeringDelta.dtheta;

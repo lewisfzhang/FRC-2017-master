@@ -44,8 +44,9 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
                     new ActuateHopperAction(true),
                 }))
         );  
+        runAction(new WaitAction(2));
         runAction(new DrivePathAction(new BoilerGearToHopperBlue()));
-        System.out.println("Shoot Time: " + (Timer.getFPGATimestamp()-start));
+        System.out.println("Shoot Time: " + (Timer.getFPGATimestamp()-start-2));
         runAction(new BeginShootingAction());
         runAction(new WaitAction(15));
     }
