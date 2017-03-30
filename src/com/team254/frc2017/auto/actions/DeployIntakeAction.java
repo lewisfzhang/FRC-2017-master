@@ -21,7 +21,7 @@ public class DeployIntakeAction implements Action {
     @Override
     public boolean isFinished() {
         if(runIntake) {
-            return Timer.getFPGATimestamp() - startTime > 1.5;
+            return Timer.getFPGATimestamp() - startTime > 0.5;
         } else  {
             return true;
         }
@@ -33,8 +33,9 @@ public class DeployIntakeAction implements Action {
 
     @Override
     public void done() {
-        if(runIntake)
-            mIntake.setOff();
+        if(runIntake) {
+//            mIntake.setOff();
+        }
     }
 
     @Override

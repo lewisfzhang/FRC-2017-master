@@ -34,9 +34,9 @@ public class RamHopperShootModeRed extends AutoModeBase {
         PathContainer hopperPath = new StartToHopperRed();
         runAction(new ResetPoseFromPathAction(hopperPath));
         double startTime = Timer.getFPGATimestamp();
+        runAction(new DeployIntakeAction(true));
         runAction(
                 new ParallelAction(Arrays.asList(new Action[]{
-                    new DeployIntakeAction(true),
                     new DrivePathAction(hopperPath),
                     new SeriesAction(Arrays.asList(new Action[]{
                             new WaitForPathMarkerAction("RamWall"), new PrintDebugAction("RamWall"), new WaitAction(0.25), new ForceEndPathAction()

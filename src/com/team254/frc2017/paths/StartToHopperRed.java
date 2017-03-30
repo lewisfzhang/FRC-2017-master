@@ -13,10 +13,10 @@ public class StartToHopperRed implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(16,90,0,0));
-        sWaypoints.add(new Waypoint(92,90,54,90));
-        sWaypoints.add(new Waypoint(92,29,0,90,"RamWall"));
-        sWaypoints.add(new Waypoint(92,24,0,40));
-        sWaypoints.add(new Waypoint(92,4,0,40));
+        sWaypoints.add(new Waypoint(97,90,54,90));
+        sWaypoints.add(new Waypoint(97,29,0,90,"RamWall"));
+        sWaypoints.add(new Waypoint(97,24,0,40));
+        sWaypoints.add(new Waypoint(97,4,0,40));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

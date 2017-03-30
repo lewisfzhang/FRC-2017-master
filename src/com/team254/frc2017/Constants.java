@@ -104,10 +104,10 @@ public class Constants extends ConstantsBase {
 
 
     // SHOOTER GAINS
-    public static double kShooterTalonKP = 0.10;
-    public static double kShooterTalonKI = 0.00024;
+    public static double kShooterTalonKP = 0.16;
+    public static double kShooterTalonKI = 0.00004;
     public static double kShooterTalonKD = 0.0;
-    public static double kShooterTalonKF = 0.025;
+    public static double kShooterTalonKF = 0.027;
 
     public static double kShooterTalonHoldKP = 0.0004;
     public static double kShooterTalonHoldKI = 0.0000;
@@ -121,7 +121,7 @@ public class Constants extends ConstantsBase {
     public static double kShooterSetpointDeadbandRpm = 1.0;
 
     // Used to determine when to switch to hold profile.
-    public static double kShooterAllowableErrorRpm = 25.0;
+    public static double kShooterAllowableErrorRpm = 15.0;
 
     // Feeder gains
     public static double kFeederKP = 0.02;
@@ -130,7 +130,7 @@ public class Constants extends ConstantsBase {
     public static double kFeederKF = 0.009;
     public static double kFeederRampRate = 240.0;
     public static double kFeederVoltageCompensationRampRate = 10.0;
-    public static double kFeederFeedSpeedRpm = 4500.0;
+    public static double kFeederFeedSpeedRpm = 2500.0;
     public static double kFeederSensorGearReduction = 3.0;
     
     // Hopper gains
@@ -228,7 +228,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraYOffset = 0.0;
     public static double kCameraZOffset = 20.9;
     public static double kCameraPitchAngleDegrees = 30.0;
-    public static double kCameraYawAngleDegrees = 0.0;
+    public static double kCameraYawAngleDegrees = 1.0;
     public static double kCameraDeadband = 0.0;
 
     // Flywheel PID
@@ -241,30 +241,30 @@ public class Constants extends ConstantsBase {
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
     public static double kShooterOptimalRangeFloor = 93.0;
-    public static double kShooterOptimalRangeCeiling = 125.0;
+    public static double kShooterOptimalRangeCeiling = 108.0;
 
     public static double[][] kFlywheelDistanceRpmValues = {
             // Tuned on 3/29 pre SVR for practice bot.
-            {87.0, 2925.0},
-            {91.0, 2950.0},
-            {93.0, 2975.0},
-            {95.0, 3000.0},
-            {97.5, 3025.0},
-            {103.5, 3050.0},
-            {106.24, 3075.0},
-            {109.8, 3125.0},
-            {115.73, 3175.0},
-            {119.0, 3275.0},
-            {123.0, 3300.0},
-            {127.2, 3320.0},
-            {132.0, 3350.0},
-            {137.0, 3400.0},
-            {142.0, 3450.0},
-            {147.0, 3500.0},
-            {152.0, 3550.0},
+//            {87.0, 2925.0},
+//            {91.0, 2950.0},
+//            {93.0, 2975.0},
+//            {95.0, 3000.0},
+//            {97.5, 3025.0},
+//            {103.5, 3050.0},
+//            {106.24, 3075.0},
+//            {109.8, 3125.0},
+//            {115.73, 3175.0},
+//            {119.0, 3275.0},
+//            {123.0, 3300.0},
+//            {127.2, 3320.0},
+//            {132.0, 3350.0},
+//            {137.0, 3400.0},
+//            {142.0, 3450.0},
+//            {147.0, 3500.0},
+//            {152.0, 3550.0},
 
             // Tuned at SFR for comp bot.
-            /*{81.46699085594396, 2850.0},
+            {81.46699085594396, 2850.0},
             {83.88142680682152, 2875.0},
             {89.61719333080238, 2900.0},
             {93.22916873483817, 2925.0},
@@ -276,7 +276,7 @@ public class Constants extends ConstantsBase {
             {108.02134072590792, 3040.0},
             {111.3409162833483, 3075.0},
             {112.95267876239613, 3100.0},
-            {117.29327600821605, 3125.0},*/
+            {117.29327600821605, 3125.0},
 //            {120.82199117377967, 3200.0},
 //            {122.81412499074203, 3250.0},
 //            {126.43036753326486, 3300.0},

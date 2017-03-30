@@ -13,6 +13,6 @@ public class SetFlywheelRPMAction extends RunOnceAction {
     
     @Override
     public synchronized void runOnce() {
-        Shooter.getInstance().setClosedLoopRpmNoHold(rpm);
+        Shooter.getInstance().setClosedLoopRpm(rpm);
     }
 }

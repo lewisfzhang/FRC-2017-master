@@ -40,11 +40,6 @@ public class Shooter extends Subsystem {
     private double mCurTalonSetpointRpm;
     private double mSetpointRpm;
 
-    private double mLastTimeRPMOff;
-    private double mLastTimeRPMIn;
-    private MovingAverage mMovingVperRpm = new MovingAverage(40);
-    private boolean switch_to_hold = false;
-
     private final CSVWriter mCSVWriter;
 
     private Shooter() {
@@ -55,11 +50,11 @@ public class Shooter extends Subsystem {
         mRightMaster.reverseOutput(false);
         mRightMaster.enableBrakeMode(false);
         mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
-        mRightMaster.SetVelocityMeasurementWindow(48);
+        mRightMaster.SetVelocityMeasurementWindow(32);
         mRightMaster.setNominalClosedLoopVoltage(12);
 
         mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 2);
-        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 10);
+        //mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 5);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -118,8 +113,6 @@ public class Shooter extends Subsystem {
             @Override
             public void onStart(double timestamp) {
                 synchronized (Shooter.this) {
-                    mLastTimeRPMOff = timestamp;
-                    mLastTimeRPMIn = -1.0;
                     mControlMethod = ControlMethod.OPEN_LOOP;
                 }
             }
@@ -131,9 +124,6 @@ public class Shooter extends Subsystem {
 //                mCSVWriter.write();
 
                 synchronized (Shooter.this) {
-                    if (switch_to_hold && mControlMethod == ControlMethod.SPIN_UP_LOOP ) {
-                        handleSpinUp(timestamp);
-                    }
                 }
             }
 
@@ -142,41 +132,6 @@ public class Shooter extends Subsystem {
                 mCSVWriter.flush();
             }
         });
-    }
-
-
-    private void handleSpinUp(double timestamp) {
-        double current_rpm = getSpeedRpm();
-        if (!Util.epsilonEquals(current_rpm, mSetpointRpm, Constants.kShooterAllowableErrorRpm)) {
-            // Out of epsilon, mark time.
-            mLastTimeRPMOff = timestamp;
-        }
-
-        if (mLastTimeRPMIn == -1 && Util.epsilonEquals(current_rpm, mSetpointRpm, Constants.kShooterAllowableErrorRpm)) {
-            mLastTimeRPMIn = timestamp;
-        }
-
-        // Convert RPM to Native Units per 100 ms.
-        if (current_rpm > 1e-6) {
-            mMovingVperRpm.addNumber(mRightMaster.getOutputVoltage() /
-                    (current_rpm / 60.0 / 10.0 * 4096.0));
-        }
-
-        // If we hold for a quarter second.  Push to hold profile.
-        if (mLastTimeRPMIn != -1.0 && timestamp - mLastTimeRPMIn > 0.75) {
-            mControlMethod = ControlMethod.HOLD_SPEED_LOOP;
-
-            // For now, assume bus is 12.0 V.
-            final double VAverage = mMovingVperRpm.getAverage();
-            final double kF = VAverage / 12.0 * 1023;
-            System.out.println("Kf: " + kF);
-
-            mRightMaster.setNominalClosedLoopVoltage(12.0);
-            mRightMaster.setPID(Constants.kShooterTalonHoldKP, Constants.kShooterTalonHoldKI,
-                    Constants.kShooterTalonHoldKD, kF, 0,
-                    Constants.kShooterVoltageCompensationRampRate, kHoldProfile);
-            mRightMaster.setProfile(kHoldProfile);
-        }
     }
 
     public synchronized void setOpenLoop(double voltage) {
@@ -189,51 +144,16 @@ public class Shooter extends Subsystem {
         mRightMaster.set(voltage);
     }
 
-    public synchronized void setClosedLoopRpmNoHold(double setpointRpm) {
-        switch_to_hold = false;
-        if (mControlMethod != ControlMethod.SPIN_UP_LOOP) {
-            mControlMethod = ControlMethod.SPIN_UP_LOOP;
-            mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
-            mRightMaster.EnableCurrentLimit(false);
-            mCurTalonSetpointRpm = Double.MIN_VALUE;
-
-            mRightMaster.DisableNominalClosedLoopVoltage();
-            mRightMaster.setProfile(kSpinUpProfile);
-
-            mMovingVperRpm.clear();
-            mLastTimeRPMOff = Timer.getFPGATimestamp();
-            mLastTimeRPMIn = -1.0;
-        }
-
-        mSetpointRpm = setpointRpm;
-
-        if (!Util.epsilonEquals(setpointRpm, mCurTalonSetpointRpm, Constants.kShooterSetpointDeadbandRpm)) {
-            // Talon speed is in rpm
-            mRightMaster.set(setpointRpm);
-            mCurTalonSetpointRpm = setpointRpm;
-        }
-    }
-
     public synchronized void setClosedLoopRpm(double setpointRpm) {
-        switch_to_hold = true;
-        if (mControlMethod == ControlMethod.HOLD_SPEED_LOOP) {
-            if (Util.epsilonEquals(setpointRpm, mCurTalonSetpointRpm, Constants.kShooterSetpointDeadbandRpm)) {
-                return;
-            }
-        }
-
         if (mControlMethod != ControlMethod.SPIN_UP_LOOP) {
             mControlMethod = ControlMethod.SPIN_UP_LOOP;
             mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
             mRightMaster.EnableCurrentLimit(false);
             mCurTalonSetpointRpm = Double.MIN_VALUE;
 
-            mRightMaster.DisableNominalClosedLoopVoltage();
             mRightMaster.setProfile(kSpinUpProfile);
 
-            mMovingVperRpm.clear();
-            mLastTimeRPMOff = Timer.getFPGATimestamp();
-            mLastTimeRPMIn = -1.0;
+            mRightMaster.setNominalClosedLoopVoltage(12);
         }
 
         mSetpointRpm = setpointRpm;
@@ -262,8 +182,8 @@ public class Shooter extends Subsystem {
 
     public synchronized boolean isOnTarget() {
         // HACKS
-        return (mControlMethod == ControlMethod.HOLD_SPEED_LOOP);
+        //return (mControlMethod == ControlMethod.HOLD_SPEED_LOOP);
         //return getSpeedRpm() > 1000;
-        //return Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, Constants.kShooterAllowableErrorRpm);
+        return Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, Constants.kShooterAllowableErrorRpm);
     }
 }

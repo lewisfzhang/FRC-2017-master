@@ -140,7 +140,6 @@ public class Superstructure extends Subsystem {
 
     private SystemState handleRangeFinding() {
         autoSpinShooter();
-        mFeeder.setWantedState(Feeder.WantedState.FEED);
 
         switch (mWantedState) {
             case UNJAM:
@@ -194,7 +193,7 @@ public class Superstructure extends Subsystem {
     private SystemState handleWaitingForAim() {
 
         mCompressor.setClosedLoopControl(false);
-        mFeeder.setWantedState(Feeder.WantedState.FEED);
+        mFeeder.setWantedState(Feeder.WantedState.IDLE);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
 
         if (autoSpinShooter()) {
@@ -390,6 +389,11 @@ public class Superstructure extends Subsystem {
             mLED.setRangeBlicking(true);
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             return false;
+
+
+            // We are shooter tuning fine current RPM we are tuning for.
+/*            mShooter.setClosedLoopRpm(mCurrentTuningRpm);
+            return isOnTargetToShoot();*/
         }
     }
 

@@ -39,7 +39,7 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
         runAction(
                 new ParallelAction(Arrays.asList(new Action[]{
                     new SetFlywheelRPMAction(2900.0), //spin up flywheel to save time
-                    new DeployIntakeAction(),
+                    new DeployIntakeAction(true),
                     new ScoreGearAction(),
                     new ActuateHopperAction(true),
                 }))

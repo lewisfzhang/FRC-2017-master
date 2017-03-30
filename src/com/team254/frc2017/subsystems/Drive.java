@@ -447,6 +447,7 @@ public class Drive extends Subsystem {
     }
 
     public synchronized boolean isOnTarget() {
+        //return true;
         return mIsOnTarget;
     }
     
