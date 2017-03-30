@@ -3,6 +3,7 @@ package com.team254.frc2017.subsystems;
 import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.MovingAverage;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.Solenoid;
@@ -22,6 +23,8 @@ public class Intake extends Subsystem {
     private Solenoid mDeploySolenoid;
     private double mCurrentThrottle;
 
+    private MovingAverage mThrottleAverage = new MovingAverage(50);
+
     private Intake() {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kIntakeMasterId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
@@ -34,6 +37,7 @@ public class Intake extends Subsystem {
 
         // Set current throttle to 0.0;
         mCurrentThrottle = 0.0;
+
     }
 
     @Override
@@ -44,6 +48,7 @@ public class Intake extends Subsystem {
     @Override
     public synchronized void stop() {
         mCurrentThrottle = 0.0;
+        mThrottleAverage.clear();
         setOff();
     }
 
@@ -59,6 +64,7 @@ public class Intake extends Subsystem {
 
     public synchronized void setCurrentThrottle(double currentThrottle) {
         mCurrentThrottle = currentThrottle;
+        mThrottleAverage.addNumber(currentThrottle);
     }
 
     public synchronized void deploy() {
@@ -86,7 +92,12 @@ public class Intake extends Subsystem {
         // Perform a linear interpolation from the Abs of throttle. Keep in mind we want to run at
         // full throttle when in reverse.
 
-        final double scale = Math.min(0.0, mCurrentThrottle);
+        double scale;
+        if (mThrottleAverage.getSize() > 0) {
+            scale =  Math.min(0.0, Math.max(0.0, mThrottleAverage.getAverage()));
+        } else {
+            scale = 0.0;
+        }
 
         return Constants.kIntakeVoltageMax - scale * Constants.kIntakeVoltageDifference;
     }
