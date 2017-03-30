@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class ControlBoard implements ControlBoardInterface {
     private static ControlBoardInterface mInstance = null;
 
-    private static final boolean kUseGamepad = true;
+    private static final boolean kUseGamepad = false;
 
     public static ControlBoardInterface getInstance() {
         if (mInstance == null) {
