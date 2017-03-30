@@ -249,7 +249,7 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.EXHAUST);
-        mLED.setWantedState(LED.WantedState.FIXED_ON);
+        mLED.setWantedState(LED.WantedState.FIND_RANGE);
         setWantIntakeOn();
         switch (mWantedState) {
         case UNJAM:

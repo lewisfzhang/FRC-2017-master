@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
+import com.team254.frc2017.subsystems.LED;
 import com.team254.lib.util.math.Rotation2d;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -14,6 +15,7 @@ public class TurnUntilSeesTargetAction extends TurnToHeadingAction {
     
     public TurnUntilSeesTargetAction(Rotation2d heading) {
         super(heading);
+        LED.getInstance().setWantedState(LED.WantedState.FIND_RANGE);
         // TODO Auto-generated constructor stub
     }
     
