@@ -88,12 +88,19 @@ class DashboardWebSocket(WebSocket):
                 return
             if jsonPayload["type"] == "string":
                 table.putString(jsonPayload["key"], jsonPayload["value"])
-                self.sendBridgeValue(jsonPayload["table"], jsonPayload["key"], jsonPayload["value"])
+                self.echoOwnValue(jsonPayload)
             elif jsonPayload["type"] == "bool":
                 table.putBoolean(jsonPayload["key"], jsonPayload["value"])
-                self.sendBridgeValue(jsonPayload["table"], jsonPayload["key"], jsonPayload["value"])
+                self.echoOwnValue(jsonPayload)
         except:
             traceback.print_exc()
+
+    def echoOwnValue(self, jsonPayload):
+        table = jsonPayload["table"]
+        key = jsonPayload["key"]
+        value = jsonPayload["value"]
+        self.sendBridgeValue(table, key, value)
+        clientInitMessages[(table, key)] = (table, key, value)
 
     def handleClose(self):
         if self.socketType is BRIDGE_TYPE:
@@ -132,7 +139,7 @@ class DashboardWebSocket(WebSocket):
 
 def valueChanged(table, key, value, isNew):
     try:
-        clientInitMessages[(table, key)] = (table.path, key, value)
+        clientInitMessages[(table.path, key)] = (table.path, key, value)
         for bridge in activeBridges:
             bridge.sendBridgeValue(table.path, key, value)
         # db = recorder.RecorderDb()
