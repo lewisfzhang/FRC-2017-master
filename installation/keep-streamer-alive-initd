@@ -1,17 +1,15 @@
 #!/bin/sh
 
-$PIDFILE=/var/run/keep-streamer-alive.pid
-
 startdaemon() {
     echo -n "Starting keep streamer alive"
-    /usr/sbin/start-stop-daemon --pidfile=$PIDFILE -b -m \
+    /usr/sbin/start-stop-daemon -b \
                                 --exec /usr/local/bin/keep_streamer_alive --start
     echo "."
 }
 
 stopdaemon() {
     echo -n "Stopping keep streamer alive"
-    /usr/sbin/start-stop-daemon --pidfile=$PIDFILE --stop && rm -f $PIDFILE
+    /usr/sbin/start-stop-daemon --exec /usr/local/bin/keep_streamer_alive --stop
     echo "."
 }
 
