@@ -152,7 +152,6 @@ public class Shooter extends Subsystem {
             mCurTalonSetpointRpm = Double.MIN_VALUE;
 
             mRightMaster.setProfile(kSpinUpProfile);
-
             mRightMaster.setNominalClosedLoopVoltage(12);
         }
 
