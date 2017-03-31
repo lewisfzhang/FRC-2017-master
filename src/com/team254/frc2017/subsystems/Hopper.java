@@ -11,7 +11,7 @@ public class Hopper extends Subsystem {
     private static final double kUnjamOutPeriod = .2;
     private static final double kUnjamInPower = .5;
     private static final double kUnjamOutPower = -.5;
-    private static final double kFeedPower = 0.75;
+    private static final double kFeedPower = 1.0;
 
     private static Hopper sInstance = null;
     public static Hopper getInstance() {

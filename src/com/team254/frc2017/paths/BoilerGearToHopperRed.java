@@ -15,9 +15,9 @@ public class BoilerGearToHopperRed implements PathContainer {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(112,115,0,0));
         sWaypoints.add(new Waypoint(104,102,10,80));
-        sWaypoints.add(new Waypoint(147,47,30,80));
-        sWaypoints.add(new Waypoint(98,10,0,100));
-        sWaypoints.add(new Waypoint(96,10,0,100));
+        sWaypoints.add(new Waypoint(146,43,30,80));
+        sWaypoints.add(new Waypoint(99,11,0,100));
+        sWaypoints.add(new Waypoint(96,11,0,100));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

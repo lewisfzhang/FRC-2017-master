@@ -14,8 +14,8 @@ public class StartToBoilerGearRed implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(16,89,0,0));
-        sWaypoints.add(new Waypoint(100,89,18,60));
-        sWaypoints.add(new Waypoint(115,114,0,60));
+        sWaypoints.add(new Waypoint(101,89,18,60));
+        sWaypoints.add(new Waypoint(116.5,114,0,60));
 
 //        sWaypoints.add(new Waypoint(16,160,0,0));
 //        sWaypoints.add(new Waypoint(89,160,0,40));

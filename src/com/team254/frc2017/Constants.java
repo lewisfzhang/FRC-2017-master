@@ -228,7 +228,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraYOffset = 0.0;
     public static double kCameraZOffset = 20.9;
     public static double kCameraPitchAngleDegrees = 30.0;
-    public static double kCameraYawAngleDegrees = 1.0;
+    public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
 
     // Flywheel PID
