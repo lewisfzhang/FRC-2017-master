@@ -30,7 +30,6 @@ public class Shooter extends Subsystem {
     private enum ControlMethod {
         OPEN_LOOP,
         SPIN_UP_LOOP,
-        HOLD_SPEED_LOOP,
     }
 
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
