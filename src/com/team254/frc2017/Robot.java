@@ -136,7 +136,7 @@ public class Robot extends IterativeRobot {
             mDrive.setHighGear(true);
             mDrive.setBrakeMode(true);
             mDrive.setTalonRefreshRate(5);
-            
+
             mEnabledLooper.start();
             mSuperstructure.reloadConstants();
             mAutoModeExecuter = new AutoModeExecuter();
@@ -251,7 +251,7 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setShooterOpenLoop(0);
                 }
 
-                if (mWantsLEDBlink.update(mControlBoard.getBlinkLEDButton())) {
+                if (mControlBoard.getBlinkLEDButton()) {
                     mLED.setWantedState(LED.WantedState.BLINK);
                 }
             }

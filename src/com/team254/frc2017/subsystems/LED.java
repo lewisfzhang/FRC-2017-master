@@ -155,8 +155,10 @@ public class LED extends Subsystem {
         int cycleNum = (int)(timeInState / (kBlinkDuration / 2.0));
         if ((cycleNum % 2) == 0) {
             setLEDOn();
+            setRangeLEDOn();
         } else {
             setLEDOff();
+            setRangeLEDOff();
         }
         return SystemState.BLINKING;
     }
