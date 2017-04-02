@@ -12,14 +12,10 @@ import com.team254.lib.util.*;
 import com.team254.lib.util.math.RigidTransform2d;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -49,8 +45,6 @@ public class Robot extends IterativeRobot {
     private Looper mEnabledLooper = new Looper();
 
     private VisionServer mVisionServer = VisionServer.getInstance();
-
-    private LatchedBoolean mWantsLEDBlink = new LatchedBoolean();
 
     private AnalogInput mCheckLightButton = new AnalogInput(Constants.kLEDOnId);
 
