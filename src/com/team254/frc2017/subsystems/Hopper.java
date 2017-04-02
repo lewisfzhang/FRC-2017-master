@@ -185,7 +185,11 @@ public class Hopper extends Subsystem {
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 500);
         mMasterTalon.reverseOutput(false);
 
-        mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kHopperSlaveId, Constants.kHopperMasterId);
+        mSlaveTalon = CANTalonFactory.createDefaultTalon(Constants.kHopperSlaveId);
+        mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mSlaveTalon.setVoltageRampRate(Constants.kHopperRampRate);
+        mSlaveTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 500);
+
         mSlaveTalon.reverseOutput(true);
     }
 
@@ -195,11 +199,11 @@ public class Hopper extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-
     }
 
     private void setOpenLoop(double openLoop) {
         mMasterTalon.set(-openLoop);
+        mSlaveTalon.set(openLoop);
     }
 
     @Override
