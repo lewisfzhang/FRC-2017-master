@@ -4,10 +4,13 @@ import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.MovingAverage;
+import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
+
+import java.util.Arrays;
 
 public class Intake extends Subsystem {
     private static Intake sInstance = null;
@@ -110,9 +113,11 @@ public class Intake extends Subsystem {
     public boolean checkSystem() {
         final double kCurrentThres = 0.5;
 
+        mSlaveTalon.set(Constants.kIntakeMasterId);
+
         setOn();
 
-        Timer.delay(2.0);
+        Timer.delay(4.0);
 
         final double currentMaster = mMasterTalon.getOutputCurrent();
         final double currentSlave = mSlaveTalon.getOutputCurrent();
@@ -131,6 +136,11 @@ public class Intake extends Subsystem {
         if (currentSlave < kCurrentThres) {
             failure = true;
             System.out.println("!!!!!!!!!!!!!!!!!!! Intake Slave Current Low !!!!!!!!!!!!!!!!");
+        }
+
+        if (!Util.allCloseTo(Arrays.asList(currentMaster, currentSlave), currentMaster, 5.0)) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!!!! Intake Currents different !!!!!!!!!!!!!!!");
         }
 
         return !failure;

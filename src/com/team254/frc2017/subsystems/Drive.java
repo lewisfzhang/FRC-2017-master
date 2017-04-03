@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class Drive extends Subsystem {
@@ -672,6 +674,9 @@ public class Drive extends Subsystem {
         final double kCurrentThres = 0.5;
         final double kRpmThres = 1000;
 
+        mRightSlave.set(Constants.kRightDriveMasterId);
+        mLeftSlave.set(Constants.kLeftDriveMasterId);
+
         setOpenLoop(new DriveSignal(0.5, 0.5));
 
         Timer.delay(4.0);
@@ -706,6 +711,18 @@ public class Drive extends Subsystem {
         if (currentLeftSlave < kCurrentThres) {
             failure = true;
             System.out.println("!!!!!!!!!!!!!!!!!! Drive Left Slave Current Low !!!!!!!!!!");
+        }
+
+        if (!Util.allCloseTo(Arrays.asList(currentRightMaster, currentRightSlave), currentRightMaster,
+                5.0)) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Right Currents Different !!!!!!!!!!");
+        }
+
+        if (!Util.allCloseTo(Arrays.asList(currentLeftMaster, currentLeftSlave), currentLeftSlave,
+                5.0)) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Left Currents Different !!!!!!!!!!!!!");
         }
 
         if (rpmRight < kRpmThres) {

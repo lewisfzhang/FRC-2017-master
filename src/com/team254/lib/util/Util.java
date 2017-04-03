@@ -35,4 +35,12 @@ public class Util {
     public static boolean epsilonEquals(double a, double b, double epsilon) {
         return (a - epsilon <= b) && (a + epsilon >= b);
     }
+
+    public static boolean allCloseTo(List<Double> list, double value, double epsilon) {
+        boolean result = true;
+        for (Double value_in : list) {
+            result &= epsilonEquals(value_in, value, epsilon);
+        }
+        return result;
+    }
 }

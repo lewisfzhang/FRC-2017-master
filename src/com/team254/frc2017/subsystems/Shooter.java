@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Shooter extends Subsystem {
     private static Shooter mInstance = null;
 
@@ -314,6 +317,12 @@ public class Shooter extends Subsystem {
         if (currentLeftSlave2 < kCurrentThres) {
             failure = true;
             System.out.println("!!!!!!!!!!!!!!!!!! Shooter Left Slave Two Current Low !!!!!!!!!!");
+        }
+
+        if (!Util.allCloseTo(Arrays.asList(currentRightMaster, currentRightSlave, currentLeftSlave1,
+                currentLeftSlave2), currentRightMaster, 5.0)) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter currents different !!!!!!!!!!!!!!!!!");
         }
 
         if (rpm < kRpmThres) {
