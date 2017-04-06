@@ -136,8 +136,7 @@ public class PathSegment {
         if(isLine) {
             return deltaStart.norm();
         } else {
-            double angle = Translation2d.getAngle(deltaStart, deltaEnd);
-            return deltaStart.norm() * angle;
+            return deltaStart.norm() * Translation2d.getAngle(deltaStart, deltaEnd).getRadians();
         }
     }
     
@@ -188,7 +187,7 @@ public class PathSegment {
         if(isLine) {
             return start.translateBy( deltaStart.scale(dist / length));
         } else {
-            double deltaAngle = Translation2d.getAngle(deltaStart, deltaEnd) * ((Translation2d.cross(deltaStart, deltaEnd) >= 0) ? 1 : -1);
+            double deltaAngle = Translation2d.getAngle(deltaStart, deltaEnd).getRadians() * ((Translation2d.cross(deltaStart, deltaEnd) >= 0) ? 1 : -1);
             deltaAngle *= dist / length;
             Translation2d t = deltaStart.rotateBy(Rotation2d.fromRadians(deltaAngle));
             return center.translateBy(t);
@@ -205,9 +204,9 @@ public class PathSegment {
             return new Translation2d(end, position).norm();
         } else {
             Translation2d deltaPosition = new Translation2d(center, position);
-            double angle = Translation2d.getAngle(deltaEnd, deltaPosition);
-            double totalAngle = Translation2d.getAngle(deltaStart, deltaEnd);
-            return angle/totalAngle * getLength();
+            double angle = Translation2d.getAngle(deltaEnd, deltaPosition).getRadians();
+            double totalAngle = Translation2d.getAngle(deltaStart, deltaEnd).getRadians();
+            return angle / totalAngle * getLength();
         }
     }
     

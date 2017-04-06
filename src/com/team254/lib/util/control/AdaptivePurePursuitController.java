@@ -66,7 +66,7 @@ public class AdaptivePurePursuitController {
         final Arc arc = new Arc(pose, report.lookahead_point);
         double scale_factor = 1.0;
         if (report.remaining_segment_distance < arc.length) {
-            scale_factor = report.remaining_segment_distance / arc.length;
+            scale_factor = Math.max(0.0, report.remaining_segment_distance / arc.length);
         }
         if (mReversed) {
             scale_factor *= -1;
@@ -150,13 +150,13 @@ public class AdaptivePurePursuitController {
         if (radius < kReallyBigNumber) {
             final Translation2d centerToPoint = new Translation2d(center, point);
             final Translation2d centerToPose = new Translation2d(center, pose.getTranslation());
-            final double angle = Translation2d.getAngle(centerToPose, centerToPoint);
-            // If the point is behind pose, we want the complement of this angle. To determine if the point is behind,
-            // check the sign of the cross-product.
+            // If the point is behind pose, we want the opposite of this angle. To determine if the point is behind,
+            // check the sign of the cross-product between the normal vector and the vector from pose to point.
             final boolean behind = Math.signum(
-                    Translation2d.cross(pose.getTranslation().translateBy(pose.getRotation().normal().toTranslation()),
+                    Translation2d.cross(pose.getRotation().normal().toTranslation(),
                             new Translation2d(pose.getTranslation(), point))) > 0.0;
-            return radius * (behind ? angle + Math.PI : angle);
+            final Rotation2d angle = Translation2d.getAngle(centerToPose, centerToPoint);
+            return radius * (behind ? 2.0 * Math.PI - Math.abs(angle.getRadians()) : Math.abs(angle.getRadians()));
         } else {
             return new Translation2d(pose.getTranslation(), point).norm();
         }

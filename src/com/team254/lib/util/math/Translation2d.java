@@ -129,12 +129,12 @@ public class Translation2d implements Interpolable<Translation2d> {
         return a.x_ * b.x_ + a.y_ * b.y_;
     }
 
-    public static double getAngle(Translation2d a, Translation2d b) {
+    public static Rotation2d getAngle(Translation2d a, Translation2d b) {
         double cos_angle = dot(a, b) / (a.norm() * b.norm());
         if (Double.isNaN(cos_angle)) {
-            return 0.0;
+            return new Rotation2d();
         }
-        return Math.acos(Math.min(1.0, Math.max(cos_angle, -1.0)));
+        return Rotation2d.fromRadians(Math.acos(Math.min(1.0, Math.max(cos_angle, -1.0))));
     }
 
     public static double cross(Translation2d a, Translation2d b) {

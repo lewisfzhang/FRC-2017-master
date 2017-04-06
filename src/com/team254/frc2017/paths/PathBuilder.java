@@ -42,6 +42,10 @@ public class PathBuilder {
         double speed;
         String marker;
         
+        public Waypoint(Waypoint other) {
+            this(other.position.x(), other.position.y(), other.radius, other.speed, other.marker);
+        }
+        
         public Waypoint(double x, double y, double r, double s) {
             position = new Translation2d(x, y);
             radius = r;

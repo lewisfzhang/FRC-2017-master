@@ -97,7 +97,7 @@ public class PathFollower {
             }
         }
 
-        final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0), t, (mLastSteeringDelta.dx > 0), speed);
+        final double velocity_command = mVelocityController.update(new MotionState(t, displacement, velocity, 0.0), t);
         mAlongTrackError = mVelocityController.getPosError();
         final double curvature = mLastSteeringDelta.dtheta / mLastSteeringDelta.dx;
         double dtheta = mLastSteeringDelta.dtheta;

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.team254.frc2017.Constants;
+import com.team254.frc2017.paths.BoilerGearToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToBoilerGearBlue;
 import com.team254.frc2017.paths.StartToBoilerGearRed;
@@ -27,7 +28,7 @@ public class PathFollowerTest {
     );
 
     @Test
-    public void testArcPath() {
+    public void testStartToBoilerGearRed() {
         PathContainer container = new StartToBoilerGearRed();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
@@ -54,12 +55,12 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(112, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance );
-        assertEquals(114, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance*3);
+        assertEquals(116.4, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance );
+        assertEquals(113, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance*3);
     }
 
     @Test
-    public void testAuto() {
+    public void testStartToBoilerGearBlue() {
         PathContainer container = new StartToBoilerGearBlue();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
@@ -87,5 +88,58 @@ public class PathFollowerTest {
         assertTrue(controller.isFinished());
         assertEquals(116, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
         assertEquals(210, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
+    }
+    
+    @Test
+    public void testTwoPaths() {
+        PathContainer container = new StartToBoilerGearBlue();
+        PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
+
+        final double dt = 0.01;;
+
+        RigidTransform2d robot_pose = container.getStartPose();
+        double t = 0;
+        double displacement = 0.0;
+        double velocity = 0.0;
+        while (!controller.isFinished() && t < 25.0) {
+            // Follow the path
+            Twist2d command = controller.update(t, robot_pose, displacement, velocity);
+            robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
+
+            t += dt;
+            final double prev_vel = velocity;
+            velocity = command.dx;
+            displacement += velocity * dt;
+
+            System.out.println("t = " + t + ", displacement " + displacement + ", lin vel " + command.dx + ", lin acc "
+                    + (velocity - prev_vel) / dt + ", ang vel " + command.dtheta + ", pose " + robot_pose + ", CTE "
+                    + controller.getCrossTrackError() + ", ATE " + controller.getAlongTrackError());
+        }
+        System.out.println(robot_pose);
+        assertTrue(controller.isFinished());
+        assertEquals(116, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
+        assertEquals(210, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
+        
+        displacement = 0.0;
+        container = new BoilerGearToHopperBlue();
+        controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
+        while (!controller.isFinished() && t < 25.0) {
+            // Follow the path
+            Twist2d command = controller.update(t, robot_pose, displacement, velocity);
+            robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
+
+            t += dt;
+            final double prev_vel = velocity;
+            velocity = command.dx;
+            displacement += velocity * dt;
+
+            System.out.println("t = " + t + ", displacement " + displacement + ", lin vel " + command.dx + ", lin acc "
+                    + (velocity - prev_vel) / dt + ", ang vel " + command.dtheta + ", pose " + robot_pose + ", CTE "
+                    + controller.getCrossTrackError() + ", ATE " + controller.getAlongTrackError());
+        }
+        System.out.println(robot_pose);
+        assertTrue(controller.isFinished());
+        assertEquals(95, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
+        assertEquals(312, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
     }
 }

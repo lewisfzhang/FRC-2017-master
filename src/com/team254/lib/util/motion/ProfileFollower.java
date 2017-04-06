@@ -158,6 +158,7 @@ public class ProfileFollower {
     }
     
     // temporary solution for the bug where goal position sometimes end up in front of start resulting in negative velocities
+    // TODO(jared): This should no longer be necessary.  Delete.
     public synchronized double update(MotionState latest_state, double t, boolean isForwards, double max_speed) {
         double output = update(latest_state, t);
         //if start position is in the wrong place, just use latest_state.pos()
