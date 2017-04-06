@@ -15,6 +15,7 @@ public class MotorGearGrabber extends Subsystem {
     public static boolean kWristDown = false;
     public static boolean kWristUp = !kWristDown;
     public static double kContainGearSetpoint = -3;
+    public static double kBallClearSetpoint = 8;
     public static double kScoreGearSetpoint = 12;
     public static double kIntakeGearSetpoint = -12;
     public static double kTransitionDelay = 0.5;
@@ -36,9 +37,11 @@ public class MotorGearGrabber extends Subsystem {
         FORCE_LOWERED, // Mostly for auto mode
         ACQUIRE,
         SCORE,
+        CLEAR_BALLS
     }
 
     private enum SystemState {
+        BALL_CLEARING,
         IDLE,
         INTAKE,
         STOWING,
@@ -103,6 +106,9 @@ public class MotorGearGrabber extends Subsystem {
                         case IDLE:
                             newState = handleIdle();
                             break;
+                        case BALL_CLEARING:
+                            newState = handleBallClearing();
+                            break;
                         case INTAKE:
                             newState = handleIntake(timeInState);
                             break;
@@ -156,20 +162,39 @@ public class MotorGearGrabber extends Subsystem {
         switch(mWantedState) {
             case ACQUIRE:
                 return SystemState.INTAKE;
+            case CLEAR_BALLS:
+                return SystemState.BALL_CLEARING;
             default:
                 setWristUp();
                 mMasterTalon.set(0);
                 return SystemState.IDLE;
         }
     }
+
+    private SystemState handleBallClearing() {
+        setWristDown();
+        mMasterTalon.set(kBallClearSetpoint);
+
+        switch(mWantedState) {
+            case ACQUIRE:
+                return SystemState.INTAKE;
+            case CLEAR_BALLS:
+                return SystemState.BALL_CLEARING;
+            default:
+                return SystemState.IDLE;
+        }
+    }
     
     private SystemState handleIntake(double timeInState) {
         switch(mWantedState) {
+            case CLEAR_BALLS:
+                return SystemState.BALL_CLEARING;
             case IDLE:
                 if(mMasterTalon.getOutputCurrent() < kIntakeThreshold) {
                     return SystemState.IDLE;
                 }
-            default:
+                // Fall through intended.
+             default:
                 setWristDown();
                 mMasterTalon.set(kIntakeGearSetpoint);
                 if(mMasterTalon.getOutputCurrent() > kIntakeThreshold) {
@@ -193,11 +218,12 @@ public class MotorGearGrabber extends Subsystem {
     }
     
     private SystemState handleExhaust(double timeInState) {
+        setWristDown();
+        mMasterTalon.set(kScoreGearSetpoint);
+
         switch(mWantedState) {
             case SCORE:
-                setWristDown();
-                mMasterTalon.set(kScoreGearSetpoint);
-                return SystemState.EXHAUST;
+               return SystemState.EXHAUST;
             case ACQUIRE:
                 return SystemState.INTAKE;
             default:

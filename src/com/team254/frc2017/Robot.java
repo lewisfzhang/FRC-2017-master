@@ -250,9 +250,14 @@ public class Robot extends IterativeRobot {
                 }
             }
 
-            if (mControlBoard.getScoreGearButton()) {
+            boolean score_gear = mControlBoard.getScoreGearButton();
+            boolean grab_gear = mControlBoard.getGrabGearButton();
+
+            if (score_gear && grab_gear) {
+                mGearGrabber.setWantedState(WantedState.CLEAR_BALLS);
+            } else if (score_gear) {
                 mGearGrabber.setWantedState(WantedState.SCORE);
-            } else if (mControlBoard.getGrabGearButton()) {
+            } else if (grab_gear) {
                 mGearGrabber.setWantedState(WantedState.ACQUIRE);
             } else {
                 mGearGrabber.setWantedState(WantedState.IDLE);
