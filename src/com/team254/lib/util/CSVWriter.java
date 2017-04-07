@@ -5,14 +5,19 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CSVWriter {
     private int mColumns;
+    private Map<String, Integer> mColumnNamesToIndices;
     private ArrayList<String> mList;
     DecimalFormat mDf = new DecimalFormat("#.000");
     PrintWriter mOutput = null;
 
+    // Note: Avoid duplicate column names!
     public CSVWriter(String fileName, String[] columnNames) {
+        mColumnNamesToIndices = new HashMap<>();
         mColumns = columnNames.length;
         mList = new ArrayList<>(mColumns);
         try {
@@ -22,14 +27,29 @@ public class CSVWriter {
         }
         for (int i = 0; i < columnNames.length; ++i) {
             addValue(i, columnNames[i]);
+            mColumnNamesToIndices.put(columnNames[i], i);
         }
         write();
+    }
+    
+    public void addValue(String columnName, double value) {
+        Integer index = mColumnNamesToIndices.get(columnName);
+        if (index != null) {
+            addValue(index.intValue(), value);
+        }
     }
 
     public void addValue(int columnIndex, double value) {
         addValue(columnIndex, mDf.format(value));
     }
-
+    
+    public void addValue(String columnName, String value) {
+        Integer index = mColumnNamesToIndices.get(columnName);
+        if (index != null) {
+            addValue(index.intValue(), value);
+        }
+    }
+    
     public void addValue(int columnIndex, String value) {
         if (columnIndex > -1 && columnIndex < mColumns) {
             mList.add(columnIndex, value);

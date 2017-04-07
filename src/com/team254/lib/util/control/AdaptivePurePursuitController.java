@@ -22,15 +22,17 @@ public class AdaptivePurePursuitController {
         public double cross_track_error;
         public double max_velocity;
         public double end_velocity;
+        public Translation2d lookahead_point;
 
         public Command() {
         }
 
-        public Command(Twist2d delta, double cross_track_error, double max_velocity, double end_velocity) {
+        public Command(Twist2d delta, double cross_track_error, double max_velocity, double end_velocity, Translation2d lookahead_point) {
             this.delta = delta;
             this.cross_track_error = cross_track_error;
             this.max_velocity = max_velocity;
             this.end_velocity = end_velocity;
+            this.lookahead_point = lookahead_point;
         }
     }
 
@@ -60,7 +62,7 @@ public class AdaptivePurePursuitController {
         final Path.TargetPointReport report = mPath.getTargetPoint(pose.getTranslation(), mLookahead);
         if (isFinished()) {
             // Stop.
-            return new Command(Twist2d.identity(), report.closest_point_distance, report.max_speed, 0.0);
+            return new Command(Twist2d.identity(), report.closest_point_distance, report.max_speed, 0.0, report.lookahead_point);
         }
 
         final Arc arc = new Arc(pose, report.lookahead_point);
@@ -76,7 +78,7 @@ public class AdaptivePurePursuitController {
                 new Twist2d(scale_factor * arc.length, 0.0,
                         arc.length * getDirection(pose, report.lookahead_point) * Math.abs(scale_factor) / arc.radius),
                 report.closest_point_distance, report.max_speed,
-                report.lookahead_point_speed * Math.signum(scale_factor));
+                report.lookahead_point_speed * Math.signum(scale_factor), report.lookahead_point);
     }
 
     public boolean hasPassedMarker(String marker) {

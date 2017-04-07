@@ -9,7 +9,9 @@ import com.team254.frc2017.paths.BoilerGearToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToBoilerGearBlue;
 import com.team254.frc2017.paths.StartToBoilerGearRed;
+import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.control.PathFollower;
+import com.team254.lib.util.control.PathFollower.DebugOutput;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Twist2d;
 
@@ -32,6 +34,7 @@ public class PathFollowerTest {
         PathContainer container = new StartToBoilerGearRed();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
+        ReflectingCSVWriter<PathFollower.DebugOutput> writer = new ReflectingCSVWriter<PathFollower.DebugOutput>("temp.csv", PathFollower.DebugOutput.class);
 
         final double dt = 0.01;
 
@@ -42,6 +45,7 @@ public class PathFollowerTest {
         while (!controller.isFinished() && t < 10.0) {
             // Follow the path
             Twist2d command = controller.update(t, robot_pose, displacement, velocity);
+            writer.writeLine(controller.getDebug());
             robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
 
             t += dt;
@@ -53,6 +57,7 @@ public class PathFollowerTest {
                     + (velocity - prev_vel) / dt + ", ang vel " + command.dtheta + ", pose " + robot_pose + ", CTE "
                     + controller.getCrossTrackError() + ", ATE " + controller.getAlongTrackError());
         }
+        writer.flush();
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
         assertEquals(116.4, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance );

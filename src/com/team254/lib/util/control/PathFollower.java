@@ -15,6 +15,22 @@ import com.team254.lib.util.motion.ProfileFollower;
  */
 public class PathFollower {
     private static final double kReallyBigNumber = 1E6;
+    
+    public static class DebugOutput {
+        public double t;
+        public double pose_x;
+        public double pose_y;
+        public double pose_theta;
+        public double linear_displacement;
+        public double linear_velocity;
+        public double velocity_command_dx;
+        public double velocity_command_dy;
+        public double velocity_command_dtheta;
+        public double cross_track_error;
+        public double along_track_error;
+        public double lookahead_point_x;
+        public double lookahead_point_y;
+    }
 
     public static class Parameters {
         public final Lookahead lookahead;
@@ -47,6 +63,7 @@ public class PathFollower {
     ProfileFollower mVelocityController;
     final double mInertiaGain;
     boolean overrideFinished = false;
+    DebugOutput mDebugOutput = new DebugOutput();
 
     double mMaxProfileVel;
     double mMaxProfileAcc;
@@ -84,6 +101,8 @@ public class PathFollower {
     public synchronized Twist2d update(double t, RigidTransform2d pose, double displacement, double velocity) {
         if (!mSteeringController.isFinished()) {
             final AdaptivePurePursuitController.Command steering_command = mSteeringController.update(pose);
+            mDebugOutput.lookahead_point_x = steering_command.lookahead_point.x();
+            mDebugOutput.lookahead_point_y = steering_command.lookahead_point.y();
             mCrossTrackError = steering_command.cross_track_error;
             if (!mSteeringController.isFinished()) {
                 mLastSteeringDelta = steering_command.delta;
@@ -105,7 +124,22 @@ public class PathFollower {
             dtheta = mLastSteeringDelta.dx * curvature * (1.0 + mInertiaGain * abs_velocity_setpoint);
         }
         final double scale = velocity_command / mLastSteeringDelta.dx;
-        return new Twist2d(mLastSteeringDelta.dx * scale, 0.0, dtheta * scale);
+        final Twist2d rv = new Twist2d(mLastSteeringDelta.dx * scale, 0.0, dtheta * scale);
+        
+        // Fill out debug.
+        mDebugOutput.t = t;
+        mDebugOutput.pose_x = pose.getTranslation().x();
+        mDebugOutput.pose_y = pose.getTranslation().y();
+        mDebugOutput.pose_theta = pose.getRotation().getRadians();
+        mDebugOutput.linear_displacement = displacement;
+        mDebugOutput.linear_velocity = velocity;
+        mDebugOutput.velocity_command_dx = rv.dx;
+        mDebugOutput.velocity_command_dy = rv.dy;
+        mDebugOutput.velocity_command_dtheta = rv.dtheta;
+        mDebugOutput.cross_track_error = mCrossTrackError;
+        mDebugOutput.along_track_error = mAlongTrackError;
+        
+        return rv;
     }
 
     public double getCrossTrackError() {
@@ -114,6 +148,10 @@ public class PathFollower {
 
     public double getAlongTrackError() {
         return mAlongTrackError;
+    }
+    
+    public DebugOutput getDebug() {
+        return mDebugOutput;
     }
 
     public boolean isFinished() {

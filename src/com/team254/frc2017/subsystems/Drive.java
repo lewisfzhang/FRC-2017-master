@@ -75,6 +75,9 @@ public class Drive extends Subsystem {
     private boolean mIsHighGear;
     private boolean mIsBrakeMode;
     private boolean mIsOnTarget = false;
+    
+    // Logging
+    private final ReflectingCSVWriter<PathFollower.DebugOutput> mCSVWriter;
 
     private final Loop mLoop = new Loop() {
         @Override
@@ -98,6 +101,7 @@ public class Drive extends Subsystem {
                 case PATH_FOLLOWING:
                     if (mPathFollower != null) {
                         updatePathFollower(timestamp);
+                        mCSVWriter.writeLine(mPathFollower.getDebug());
                     }
                     return;
                 case AIM_TO_GOAL:
@@ -118,6 +122,7 @@ public class Drive extends Subsystem {
         @Override
         public void onStop(double timestamp) {
             stop();
+            mCSVWriter.flush();
         }
     };
 
@@ -169,6 +174,8 @@ public class Drive extends Subsystem {
         // Force a CAN message across.
         mIsBrakeMode = true;
         setBrakeMode(false);
+
+        mCSVWriter = new ReflectingCSVWriter<PathFollower.DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", PathFollower.DebugOutput.class);
     }
 
     @Override
@@ -444,6 +451,8 @@ public class Drive extends Subsystem {
         } else {
             updateVelocitySetpoint(0, 0);
         }
+        
+        // Output debug
     }
 
     public synchronized boolean isOnTarget() {
