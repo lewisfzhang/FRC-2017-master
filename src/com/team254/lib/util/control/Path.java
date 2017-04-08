@@ -84,6 +84,7 @@ public class Path {
          public double max_speed;
          public double lookahead_point_speed;
          public double remaining_segment_distance;
+         public double remaining_path_distance;
          
          public TargetPointReport() {
          }
@@ -112,6 +113,10 @@ public class Path {
              }
          }
          rv.remaining_segment_distance = currentSegment.getRemainingDistance(rv.closest_point);
+         rv.remaining_path_distance = rv.remaining_segment_distance;
+         for (int i = 1; i < segments.size(); ++i) {
+             rv.remaining_path_distance += segments.get(i).getLength();
+         }
          rv.closest_point_speed = currentSegment.getSpeedByDistance(currentSegment.getLength() - rv.remaining_segment_distance);
          double lookahead_distance = lookahead.getLookaheadForSpeed(rv.closest_point_speed) + rv.closest_point_distance;
          if (rv.remaining_segment_distance < lookahead_distance && segments.size() > 1) {

@@ -26,10 +26,14 @@ public class PathFollower {
         public double velocity_command_dx;
         public double velocity_command_dy;
         public double velocity_command_dtheta;
+        public double steering_command_dx;
+        public double steering_command_dy;
+        public double steering_command_dtheta;
         public double cross_track_error;
         public double along_track_error;
         public double lookahead_point_x;
         public double lookahead_point_y;
+        public double lookahead_point_velocity;
     }
 
     public static class Parameters {
@@ -103,12 +107,16 @@ public class PathFollower {
             final AdaptivePurePursuitController.Command steering_command = mSteeringController.update(pose);
             mDebugOutput.lookahead_point_x = steering_command.lookahead_point.x();
             mDebugOutput.lookahead_point_y = steering_command.lookahead_point.y();
+            mDebugOutput.lookahead_point_velocity = steering_command.end_velocity;
+            mDebugOutput.steering_command_dx = steering_command.delta.dx;
+            mDebugOutput.steering_command_dy = steering_command.delta.dy;
+            mDebugOutput.steering_command_dtheta = steering_command.delta.dtheta;
             mCrossTrackError = steering_command.cross_track_error;
             if (!mSteeringController.isFinished()) {
                 mLastSteeringDelta = steering_command.delta;
                 mVelocityController.setGoalAndConstraints(
                         new MotionProfileGoal(displacement + steering_command.delta.dx,
-                                Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ABS_VEL),
+                                Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ACCEL),
                         new MotionProfileConstraints(Math.min(mMaxProfileVel, steering_command.max_velocity),
                                 mMaxProfileAcc));
             }

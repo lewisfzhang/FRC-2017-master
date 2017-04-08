@@ -67,8 +67,9 @@ public class AdaptivePurePursuitController {
 
         final Arc arc = new Arc(pose, report.lookahead_point);
         double scale_factor = 1.0;
-        if (report.remaining_segment_distance < arc.length) {
-            scale_factor = Math.max(0.0, report.remaining_segment_distance / arc.length);
+        // Ensure we don't overshoot the end of the path (once the lookahead speed drops to zero).
+        if (report.lookahead_point_speed < 1E-6 && report.remaining_path_distance < arc.length) {
+            scale_factor = Math.max(0.0, report.remaining_path_distance / arc.length);
         }
         if (mReversed) {
             scale_factor *= -1;
