@@ -15,6 +15,8 @@ public class ControlBoard implements ControlBoardInterface {
         if (mInstance == null) {
             if (kUseGamepad) {
                 mInstance = new GamepadControlBoard();
+            } else if (Constants.getRobotName() == Constants.RobotName.PROG_BOT) {
+                mInstance = new GamepadControlBoard();
             } else {
                 mInstance = new ControlBoard();
             }

@@ -17,12 +17,13 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
     @Override
     public double getTurn() {
-        return mGamepad.getRawAxis(2);
+        return mGamepad.getRawAxis(4);
     }
 
     @Override
     public boolean getQuickTurn() {
-        return mGamepad.getRawButton(7);
+        // R1
+        return mGamepad.getRawButton(6);
     }
 
 
@@ -34,8 +35,8 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
     @Override
     public boolean getLowGear() {
-        // R1
-        return mGamepad.getRawButton(6);
+        // L1
+        return mGamepad.getRawButton(5);
 
     }
 
@@ -59,12 +60,13 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
     @Override
     public boolean getGrabGearButton() {
-        return false;
+        // L Trigger
+        return mGamepad.getRawAxis(2) > 0.1;
     }
 
     @Override
     public boolean getScoreGearButton() {
-        return false;
+        return mGamepad.getRawAxis(3) > 0.1;
     }
 
 

@@ -133,7 +133,7 @@ public class Constants extends ConstantsBase {
     public static double kFeederKF = 0.009;
     public static double kFeederRampRate = 240.0;
     public static double kFeederVoltageCompensationRampRate = 10.0;
-    public static double kFeederFeedSpeedRpm = 2500.0;
+    public static double kFeederFeedSpeedRpm = 4500.0;
     public static double kFeederSensorGearReduction = 3.0;
     
     // Hopper gains
@@ -358,7 +358,7 @@ public class Constants extends ConstantsBase {
     static {
         kMACAddresses.put("herp", RobotName.COMP_BOT);
         kMACAddresses.put("derp", RobotName.PRAC_BOT);
-        kMACAddresses.put("00-80-2F-17-C8-2D", RobotName.PROG_BOT);
+        kMACAddresses.put("00-80-2F-25-78-B0", RobotName.PROG_BOT);
 
         new Constants().loadFromFile();
     }
