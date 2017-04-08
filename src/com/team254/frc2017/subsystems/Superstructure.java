@@ -140,6 +140,7 @@ public class Superstructure extends Subsystem {
 
     private SystemState handleRangeFinding() {
         autoSpinShooter();
+        mFeeder.setWantedState(Feeder.WantedState.FEED);
 
         switch (mWantedState) {
             case UNJAM:
@@ -193,7 +194,7 @@ public class Superstructure extends Subsystem {
     private SystemState handleWaitingForAim() {
 
         mCompressor.setClosedLoopControl(false);
-        mFeeder.setWantedState(Feeder.WantedState.IDLE);
+        mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
 
         if (autoSpinShooter()) {
