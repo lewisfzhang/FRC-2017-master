@@ -101,7 +101,7 @@ public class Drive extends Subsystem {
                 case PATH_FOLLOWING:
                     if (mPathFollower != null) {
                         updatePathFollower(timestamp);
-                        mCSVWriter.writeLine(mPathFollower.getDebug());
+                        mCSVWriter.add(mPathFollower.getDebug());
                     }
                     return;
                 case AIM_TO_GOAL:
@@ -573,5 +573,9 @@ public class Drive extends Subsystem {
     public synchronized double getAccelX() {
         return mNavXBoard.getRawAccelX();
     }
-    
+
+    @Override
+    public void writeToLog() {
+        mCSVWriter.write();
+    }
 }

@@ -4,14 +4,10 @@ import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import com.team254.lib.util.CSVWriter;
-import com.team254.lib.util.ConstantsBase;
-import com.team254.lib.util.MovingAverage;
-import com.team254.lib.util.Util;
+import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends Subsystem {
@@ -19,6 +15,12 @@ public class Shooter extends Subsystem {
     private final int kHoldProfile = 1;
 
     private static Shooter mInstance = null;
+    
+    public static class ShooterDebugOutput {
+        public double timestamp;
+        public double setpoint;
+        public double rpm;
+    }
 
     public static Shooter getInstance() {
         if (mInstance == null) {
@@ -43,8 +45,10 @@ public class Shooter extends Subsystem {
     private int mHoldKfSamples = 0;
     private boolean mOnTarget = false;
     private double mOnTargetStartTime = Double.POSITIVE_INFINITY;
+    
+    private ShooterDebugOutput mDebug = new ShooterDebugOutput();
 
-    private final CSVWriter mCSVWriter;
+    private final ReflectingCSVWriter<ShooterDebugOutput> mCSVWriter;
 
     private Shooter() {
         mRightMaster = CANTalonFactory.createDefaultTalon(Constants.kRightShooterMasterId);
@@ -76,7 +80,7 @@ public class Shooter extends Subsystem {
 
         System.out.println("RPM Polynomial: " + Constants.kFlywheelAutoAimPolynomial);
 
-        mCSVWriter = new CSVWriter("/home/lvuser/SHOOTER-LOGS.csv", new String[]{"time", "flywheel_rpm"});
+        mCSVWriter = new ReflectingCSVWriter<ShooterDebugOutput>("/home/lvuser/SHOOTER-LOGS.csv", ShooterDebugOutput.class);
     }
 
     public void refreshControllerConsts() {
@@ -137,6 +141,7 @@ public class Shooter extends Subsystem {
                 synchronized (Shooter.this) {
                     if (mControlMethod != ControlMethod.OPEN_LOOP) {
                         handleClosedLoop(timestamp);
+                        mCSVWriter.add(mDebug);
                     } else {
                         // Reset all state.
                         mHoldKf = 0.0;
@@ -145,10 +150,6 @@ public class Shooter extends Subsystem {
                         mOnTargetStartTime = Double.POSITIVE_INFINITY;
                     }
                 }
-//              mCSVWriter.addValue(0, Timer.getFPGATimestamp());
-//              mCSVWriter.addValue(1, getSpeedRpm());
-//              mCSVWriter.write();
-
             }
 
             @Override
@@ -239,6 +240,9 @@ public class Shooter extends Subsystem {
         if (mControlMethod == ControlMethod.HOLD_LOOP) {
             mRightMaster.set(mSetpointRpm);
         }
+        mDebug.timestamp = timestamp;
+        mDebug.rpm = speed;
+        mDebug.setpoint = mSetpointRpm;
     }
 
     public synchronized double getLastSetpointRpm() {
@@ -258,5 +262,10 @@ public class Shooter extends Subsystem {
 
     public synchronized boolean isOnTarget() {
         return mControlMethod == ControlMethod.HOLD_LOOP;
+    }
+    
+    @Override
+    public void writeToLog() {
+        mCSVWriter.write();
     }
 }

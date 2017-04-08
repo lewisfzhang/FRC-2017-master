@@ -324,6 +324,7 @@ public class Robot extends IterativeRobot {
     public void allPeriodic() {
         mRobotState.outputToSmartDashboard();
         mSubsystemManager.outputToSmartDashboard();
+        mSubsystemManager.writeToLog();
         mEnabledLooper.outputToSmartDashboard();
         SmartDashboard.putBoolean("camera_connected", mVisionServer.isConnected());
     }

@@ -19,6 +19,10 @@ public class SubsystemManager {
     public void outputToSmartDashboard() {
         mAllSubsystems.forEach((s)->s.outputToSmartDashboard());
     }
+    
+    public void writeToLog() {
+        mAllSubsystems.forEach((s)->s.writeToLog());
+    }
 
     public void stop() {
         mAllSubsystems.forEach((s)->s.stop());

@@ -11,8 +11,9 @@ import com.team254.frc2017.paths.StartToBoilerGearBlue;
 import com.team254.frc2017.paths.StartToBoilerGearRed;
 import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.control.PathFollower;
-import com.team254.lib.util.control.PathFollower.DebugOutput;
 import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Rotation2d;
+import com.team254.lib.util.math.Translation2d;
 import com.team254.lib.util.math.Twist2d;
 
 public class PathFollowerTest {
@@ -45,7 +46,7 @@ public class PathFollowerTest {
         while (!controller.isFinished() && t < 10.0) {
             // Follow the path
             Twist2d command = controller.update(t, robot_pose, displacement, velocity);
-            writer.writeLine(controller.getDebug());
+            writer.add(controller.getDebug());
             robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
 
             t += dt;
@@ -104,14 +105,14 @@ public class PathFollowerTest {
         
         final double dt = 0.01;
 
-        RigidTransform2d robot_pose = container.getStartPose();
+        RigidTransform2d robot_pose = container.getStartPose().transformBy(new RigidTransform2d(new Translation2d(5.0, 3.0), Rotation2d.fromDegrees(15.0)));
         double t = 0;
         double displacement = 0.0;
         double velocity = 0.0;
         while (!controller.isFinished() && t < 25.0) {
             // Follow the path
             Twist2d command = controller.update(t, robot_pose, displacement, velocity);
-            writer.writeLine(controller.getDebug());
+            writer.add(controller.getDebug());
             robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
 
             t += dt;
@@ -134,7 +135,7 @@ public class PathFollowerTest {
         while (!controller.isFinished() && t < 25.0) {
             // Follow the path
             Twist2d command = controller.update(t, robot_pose, displacement, velocity);
-            writer.writeLine(controller.getDebug());
+            writer.add(controller.getDebug());
             robot_pose = robot_pose.transformBy(RigidTransform2d.exp(command.scaled(dt)));
 
             t += dt;

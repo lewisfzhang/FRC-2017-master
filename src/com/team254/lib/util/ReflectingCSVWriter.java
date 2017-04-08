@@ -1,34 +1,71 @@
 package com.team254.lib.util;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class ReflectingCSVWriter<T> extends CSVWriter {
+public class ReflectingCSVWriter<T> {
+    ConcurrentLinkedDeque<String> mLinesToWrite = new ConcurrentLinkedDeque<>();
+    PrintWriter mOutput = null;
     Field[] mFields;
     
-    static <T> String[] getFieldNames(Class<T> typeClass) {
-        Field[] fields = typeClass.getFields();
-        String[] names = new String[fields.length];
-        for (int i = 0; i < names.length; ++i) {
-            names[i] = fields[i].getName();
-        }
-        return names;
-    }
-    
     public ReflectingCSVWriter(String fileName, Class<T> typeClass) {
-        super(fileName, getFieldNames(typeClass));
         mFields = typeClass.getFields();
+        try {
+            mOutput = new PrintWriter(fileName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        // Write field names.
+        StringBuffer line = new StringBuffer();
+        for (Field field : mFields) {
+            if (line.length() != 0) {
+                line.append(", ");
+            }
+            line.append(field.getName());
+        }
+        writeLine(line.toString());
     }
     
-    public void writeLine(T value) {
+    public void add(T value) {
+        StringBuffer line = new StringBuffer();
         for (Field field : mFields) {
+            if (line.length() != 0) {
+                line.append(", ");
+            }
             try {
-                addValue(field.getName(), field.get(value).toString());
+                line.append(field.get(value).toString());
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
-        write();
+        mLinesToWrite.add(line.toString());
+    }
+
+    protected void writeLine(String line) {
+        if (mOutput != null) {
+            mOutput.println(line);
+        }
+    }
+    
+    // Call this periodically from any thread to write to disk.
+    public void write() {
+        while (true) {
+            String val = mLinesToWrite.pollFirst();
+            if (val == null) {
+                break;
+            }
+            writeLine(val);
+        }
+    }
+
+    public void flush() {
+        if (mOutput != null) {
+            write();
+            mOutput.flush();
+        }
     }
 }
