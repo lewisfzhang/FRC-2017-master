@@ -30,14 +30,19 @@ public class Shooter extends Subsystem {
     private enum ControlMethod {
         OPEN_LOOP,
         SPIN_UP_LOOP,
+        HOLD_LOOP,
     }
 
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
 
     private ControlMethod mControlMethod;
-    // The setpoint the talon currently has
-    private double mCurTalonSetpointRpm;
     private double mSetpointRpm;
+    
+    // Used for transitioning from spin-up to hold loop.
+    private double mHoldKf = 0.0;
+    private int mHoldKfSamples = 0;
+    private boolean mOnTarget = false;
+    private double mOnTargetStartTime = Double.POSITIVE_INFINITY;
 
     private final CSVWriter mCSVWriter;
 
@@ -75,12 +80,19 @@ public class Shooter extends Subsystem {
     }
 
     public void refreshControllerConsts() {
+        mRightMaster.setProfile(kHoldProfile);
+        mRightMaster.setP(Constants.kShooterTalonHoldKP);
+        mRightMaster.setI(Constants.kShooterTalonHoldKI);
+        mRightMaster.setD(Constants.kShooterTalonHoldKD);
+        mRightMaster.setIZone(Constants.kShooterTalonIZone);
+        
         mRightMaster.setProfile(kSpinUpProfile);
         mRightMaster.setP(Constants.kShooterTalonKP);
         mRightMaster.setI(Constants.kShooterTalonKI);
         mRightMaster.setD(Constants.kShooterTalonKD);
         mRightMaster.setF(Constants.kShooterTalonKF);
         mRightMaster.setIZone(Constants.kShooterTalonIZone);
+
         mRightMaster.setVoltageCompensationRampRate(Constants.kShooterVoltageCompensationRampRate);
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
@@ -113,17 +125,30 @@ public class Shooter extends Subsystem {
             public void onStart(double timestamp) {
                 synchronized (Shooter.this) {
                     mControlMethod = ControlMethod.OPEN_LOOP;
+                    mHoldKf = 0.0;
+                    mHoldKfSamples = 0;
+                    mOnTarget = false;
+                    mOnTargetStartTime = Double.POSITIVE_INFINITY;
                 }
             }
 
             @Override
             public void onLoop(double timestamp) {
-//                mCSVWriter.addValue(0, Timer.getFPGATimestamp());
-//                mCSVWriter.addValue(1, getSpeedRpm());
-//                mCSVWriter.write();
-
                 synchronized (Shooter.this) {
+                    if (mControlMethod != ControlMethod.OPEN_LOOP) {
+                        handleClosedLoop(timestamp);
+                    } else {
+                        // Reset all state.
+                        mHoldKf = 0.0;
+                        mHoldKfSamples = 0;
+                        mOnTarget = false;
+                        mOnTargetStartTime = Double.POSITIVE_INFINITY;
+                    }
                 }
+//              mCSVWriter.addValue(0, Timer.getFPGATimestamp());
+//              mCSVWriter.addValue(1, getSpeedRpm());
+//              mCSVWriter.write();
+
             }
 
             @Override
@@ -144,22 +169,75 @@ public class Shooter extends Subsystem {
     }
 
     public synchronized void setClosedLoopRpm(double setpointRpm) {
-        if (mControlMethod != ControlMethod.SPIN_UP_LOOP) {
-            mControlMethod = ControlMethod.SPIN_UP_LOOP;
-            mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
-            mRightMaster.EnableCurrentLimit(false);
-            mCurTalonSetpointRpm = Double.MIN_VALUE;
-
-            mRightMaster.setProfile(kSpinUpProfile);
-            mRightMaster.setNominalClosedLoopVoltage(12);
+        if (mControlMethod == ControlMethod.OPEN_LOOP) {
+            configureForSpinUp();
         }
-
         mSetpointRpm = setpointRpm;
+    }
+    
+    private void configureForSpinUp() {
+        mControlMethod = ControlMethod.SPIN_UP_LOOP;
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+        mRightMaster.EnableCurrentLimit(false);
+        mRightMaster.setProfile(kSpinUpProfile);
+        mRightMaster.setNominalClosedLoopVoltage(12.0);  // TODO delete
+        // mRightMaster.DisableNominalClosedLoopVoltage();
+        
+        // TODO(jared): Tune these.
+        mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
+        mRightMaster.SetVelocityMeasurementWindow(32);
+    }
+    
+    private void configureForHold() {
+        mControlMethod = ControlMethod.HOLD_LOOP;
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+        mRightMaster.EnableCurrentLimit(false);
+        mRightMaster.setProfile(kHoldProfile);
+        mRightMaster.setNominalClosedLoopVoltage(12.0);
+        mRightMaster.setF(Constants.kShooterTalonKF);  // TODO use mHoldKf
 
-        if (!Util.epsilonEquals(setpointRpm, mCurTalonSetpointRpm, Constants.kShooterSetpointDeadbandRpm)) {
-            // Talon speed is in rpm
-            mRightMaster.set(setpointRpm);
-            mCurTalonSetpointRpm = setpointRpm;
+        // TODO(jared): Change velocity measurement params
+        // mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms);
+        // mRightMaster.SetVelocityMeasurementWindow(1);
+    }
+    
+    private void resetHold() {
+        mHoldKf = 0.0;
+        mHoldKfSamples = 0;
+        mOnTarget = false;
+        mOnTargetStartTime = Double.POSITIVE_INFINITY;
+    }
+    
+    private void handleClosedLoop(double timestamp) {
+        final double speed = getSpeedRpm();
+
+        final double abs_error = Math.abs(speed - mSetpointRpm);
+        // See if we should be spinning up or holding.
+        if (mControlMethod == ControlMethod.SPIN_UP_LOOP) {
+            final boolean on_target_now = mOnTarget ? abs_error < Constants.kShooterStopOnTargetRpm : abs_error < Constants.kShooterStartOnTargetRpm;
+            if (on_target_now && !mOnTarget) {
+                // First cycle on target.
+                mOnTargetStartTime = timestamp;
+                mOnTarget = true;
+            } else if (!on_target_now) {
+                resetHold();
+            }
+            
+            if (mOnTarget) {
+                // Update Kf.
+                // TODO(jared): Note to up the frame with bus voltage
+                final double kf = 1023.0 * (mRightMaster.getOutputVoltage() / 12.0) / (10.0 * 4096.0 * speed);
+                mHoldKf = (mHoldKf * mHoldKfSamples + kf) / (mHoldKfSamples + 1);
+                ++mHoldKfSamples;
+            }
+            if (timestamp - mOnTargetStartTime > Constants.kShooterMinOnTargetDuration) {
+                configureForHold();
+            } else {
+                mRightMaster.set(mSetpointRpm);
+            }
+        }
+        if (mControlMethod == ControlMethod.HOLD_LOOP) {
+            mRightMaster.set(mSetpointRpm);
         }
     }
 
@@ -179,9 +257,6 @@ public class Shooter extends Subsystem {
     }
 
     public synchronized boolean isOnTarget() {
-        // HACKS
-        //return (mControlMethod == ControlMethod.HOLD_SPEED_LOOP);
-        //return getSpeedRpm() > 1000;
-        return Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, Constants.kShooterAllowableErrorRpm);
+        return mControlMethod == ControlMethod.HOLD_LOOP;
     }
 }

@@ -109,8 +109,8 @@ public class Constants extends ConstantsBase {
     public static double kShooterTalonKD = 0.0;
     public static double kShooterTalonKF = 0.027;
 
-    public static double kShooterTalonHoldKP = 0.0004;
-    public static double kShooterTalonHoldKI = 0.0000;
+    public static double kShooterTalonHoldKP = 0.16;
+    public static double kShooterTalonHoldKI = 0.00004;
     public static double kShooterTalonHoldKD = 0.0;
 
     public static double kShooterRampRate = 60.0;
@@ -121,7 +121,10 @@ public class Constants extends ConstantsBase {
     public static double kShooterSetpointDeadbandRpm = 1.0;
 
     // Used to determine when to switch to hold profile.
-    public static double kShooterAllowableErrorRpm = 15.0;
+    public static double kShooterStartOnTargetRpm = 15.0;
+    public static double kShooterStopOnTargetRpm = 150.0;
+    // TODO(jared): Increase this.
+    public static double kShooterMinOnTargetDuration = 0.0;  // seconds
 
     // Feeder gains
     public static double kFeederKP = 0.02;
