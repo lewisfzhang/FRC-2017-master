@@ -5,6 +5,7 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.ReflectingCSVWriter;
+import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -140,7 +141,8 @@ public class Shooter extends Subsystem {
             public void onLoop(double timestamp) {
                 synchronized (Shooter.this) {
                     if (mControlMethod != ControlMethod.OPEN_LOOP) {
-                        handleClosedLoop(timestamp);
+                        // TODO: UNCOMMENT FOR USING HOLD_LOOP
+                        //handleClosedLoop(timestamp);
                         mCSVWriter.add(mDebug);
                     } else {
                         // Reset all state.
@@ -170,10 +172,12 @@ public class Shooter extends Subsystem {
     }
 
     public synchronized void setClosedLoopRpm(double setpointRpm) {
-        if (mControlMethod == ControlMethod.OPEN_LOOP) {
+        if (mControlMethod != ControlMethod.SPIN_UP_LOOP) {
             configureForSpinUp();
         }
         mSetpointRpm = setpointRpm;
+
+        mRightMaster.set(setpointRpm);
     }
     
     private void configureForSpinUp() {
@@ -261,7 +265,8 @@ public class Shooter extends Subsystem {
     }
 
     public synchronized boolean isOnTarget() {
-        return mControlMethod == ControlMethod.HOLD_LOOP;
+        return Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, 100);
+        //return mControlMethod == ControlMethod.HOLD_LOOP;
     }
     
     @Override

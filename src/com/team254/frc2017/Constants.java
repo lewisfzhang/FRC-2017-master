@@ -105,9 +105,9 @@ public class Constants extends ConstantsBase {
 
     // SHOOTER GAINS
     public static double kShooterTalonKP = 0.16;
-    public static double kShooterTalonKI = 0.00004;
+    public static double kShooterTalonKI = 0.0;//0.00004;
     public static double kShooterTalonKD = 0.0;
-    public static double kShooterTalonKF = 0.027;
+    public static double kShooterTalonKF = 0.035;
 
     public static double kShooterTalonHoldKP = 0.16;
     public static double kShooterTalonHoldKI = 0.00004;
@@ -231,7 +231,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraYOffset = 0.0;
     public static double kCameraZOffset = 20.9;
     public static double kCameraPitchAngleDegrees = 30.0;
-    public static double kCameraYawAngleDegrees = 0.0;
+    public static double kCameraYawAngleDegrees = 0.5;
     public static double kCameraDeadband = 0.0;
 
     // Flywheel PID
@@ -266,22 +266,25 @@ public class Constants extends ConstantsBase {
 //            {147.0, 3500.0},
 //            {152.0, 3550.0},
 
+            {104.8, 2900.0},
+            {115.3, 2975.0}
+
             // Tuned at SFR for comp bot.
-            {81.46699085594396, 2850.0},
-            {83.88142680682152, 2875.0},
-            {89.61719333080238, 2900.0},
-            {93.22916873483817, 2925.0},
-            {94.56056350772968, 2950.0},
-            {96.66179067522229, 2975.0},
-            {99.03208005457682, 3000.0},
-            {103.35956261035906, 3012.0},
-            {106.5533, 3025.0},
-            {108.02134072590792, 3040.0},
-            {111.3409162833483, 3075.0},
-            {112.95267876239613, 3100.0},
-            {117.29327600821605, 3125.0},
-            {120.82199117377967, 3150.0},
-            {124.81412499074203, 3175.0},
+//            {81.46699085594396, 2850.0},
+//            {83.88142680682152, 2875.0},
+//            {89.61719333080238, 2900.0},
+//            {93.22916873483817, 2925.0},
+//            {94.56056350772968, 2950.0},
+//            {96.66179067522229, 2975.0},
+//            {99.03208005457682, 3000.0},
+//            {103.35956261035906, 3012.0},
+//            {106.5533, 3025.0},
+//            {108.02134072590792, 3040.0},
+//            {111.3409162833483, 3075.0},
+//            {112.95267876239613, 3100.0},
+//            {117.29327600821605, 3125.0},
+//            {120.82199117377967, 3150.0},
+//            {124.81412499074203, 3175.0},
 //            {126.43036753326486, 3300.0},
 //            {130.77566868469572, 3350.0},
 //            {135.35310950774564, 3400.0},
