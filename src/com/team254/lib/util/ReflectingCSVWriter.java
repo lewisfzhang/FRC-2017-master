@@ -45,7 +45,7 @@ public class ReflectingCSVWriter<T> {
         mLinesToWrite.add(line.toString());
     }
 
-    protected void writeLine(String line) {
+    protected synchronized void writeLine(String line) {
         if (mOutput != null) {
             mOutput.println(line);
         }
@@ -62,7 +62,7 @@ public class ReflectingCSVWriter<T> {
         }
     }
 
-    public void flush() {
+    public synchronized void flush() {
         if (mOutput != null) {
             write();
             mOutput.flush();
