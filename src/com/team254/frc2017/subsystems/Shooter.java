@@ -63,7 +63,7 @@ public class Shooter extends Subsystem {
         mRightMaster.setNominalClosedLoopVoltage(12);
 
         mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 2);
-        //mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 5);
+        mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.AnalogTempVbat, 2);
 
         CANTalon.FeedbackDeviceStatus sensorPresent =
                 mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
@@ -141,8 +141,7 @@ public class Shooter extends Subsystem {
             public void onLoop(double timestamp) {
                 synchronized (Shooter.this) {
                     if (mControlMethod != ControlMethod.OPEN_LOOP) {
-                        // TODO: UNCOMMENT FOR USING HOLD_LOOP
-                        //handleClosedLoop(timestamp);
+                        handleClosedLoop(timestamp);
                         mCSVWriter.add(mDebug);
                     } else {
                         // Reset all state.
@@ -172,12 +171,10 @@ public class Shooter extends Subsystem {
     }
 
     public synchronized void setClosedLoopRpm(double setpointRpm) {
-        if (mControlMethod != ControlMethod.SPIN_UP_LOOP) {
+        if (mControlMethod == ControlMethod.OPEN_LOOP) {
             configureForSpinUp();
         }
         mSetpointRpm = setpointRpm;
-
-        mRightMaster.set(setpointRpm);
     }
     
     private void configureForSpinUp() {
@@ -185,12 +182,11 @@ public class Shooter extends Subsystem {
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
         mRightMaster.EnableCurrentLimit(false);
         mRightMaster.setProfile(kSpinUpProfile);
-        mRightMaster.setNominalClosedLoopVoltage(12.0);  // TODO delete
-        // mRightMaster.DisableNominalClosedLoopVoltage();
+        mRightMaster.DisableNominalClosedLoopVoltage();
         
-        // TODO(jared): Tune these.
         mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
         mRightMaster.SetVelocityMeasurementWindow(32);
+        mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
     
     private void configureForHold() {
@@ -199,11 +195,11 @@ public class Shooter extends Subsystem {
         mRightMaster.EnableCurrentLimit(false);
         mRightMaster.setProfile(kHoldProfile);
         mRightMaster.setNominalClosedLoopVoltage(12.0);
-        mRightMaster.setF(Constants.kShooterTalonKF);  // TODO use mHoldKf
+        mRightMaster.setF(mHoldKf);
 
-        // TODO(jared): Change velocity measurement params
-        // mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms);
-        // mRightMaster.SetVelocityMeasurementWindow(1);
+        mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms);
+        mRightMaster.SetVelocityMeasurementWindow(1);
+        mRightMaster.setVoltageRampRate(Constants.kShooterHoldRampRate);
     }
     
     private void resetHold() {
@@ -225,15 +221,16 @@ public class Shooter extends Subsystem {
                 mOnTargetStartTime = timestamp;
                 mOnTarget = true;
             } else if (!on_target_now) {
+                // System.out.println("Not on target anymore");
                 resetHold();
             }
             
             if (mOnTarget) {
                 // Update Kf.
-                // TODO(jared): Note to up the frame with bus voltage
-                final double kf = 1023.0 * (mRightMaster.getOutputVoltage() / 12.0) / (10.0 * 4096.0 * speed);
+                final double kf = 1023.0 * (mRightMaster.getOutputVoltage() / 12.0) / (4096.0 * speed / 600.0);
                 mHoldKf = (mHoldKf * mHoldKfSamples + kf) / (mHoldKfSamples + 1);
                 ++mHoldKfSamples;
+                // System.out.println("kf: " + mHoldKf);
             }
             if (timestamp - mOnTargetStartTime > Constants.kShooterMinOnTargetDuration) {
                 configureForHold();
@@ -265,8 +262,7 @@ public class Shooter extends Subsystem {
     }
 
     public synchronized boolean isOnTarget() {
-        return Util.epsilonEquals(getSpeedRpm(), mSetpointRpm, 100);
-        //return mControlMethod == ControlMethod.HOLD_LOOP;
+        return mControlMethod == ControlMethod.HOLD_LOOP;
     }
     
     @Override
