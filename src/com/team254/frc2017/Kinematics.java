@@ -27,14 +27,14 @@ public class Kinematics {
      */
     public static Twist2d forwardKinematics(double left_wheel_delta, double right_wheel_delta,
             double delta_rotation_rads) {
-        double delta_v = (right_wheel_delta - left_wheel_delta) / 2 * Constants.kTrackScrubFactor;
-        double left_wheel_fraction = Math.abs(right_wheel_delta) / (Math.abs(left_wheel_delta) + Math.abs(right_wheel_delta));
-        if (Double.isNaN(left_wheel_fraction)) left_wheel_fraction = 0.5;
         double dx = (left_wheel_delta + right_wheel_delta) / 2.0;
-        double left_wheel_adj = dx - left_wheel_fraction * delta_v;
-        double right_wheel_adj = dx + (1.0 - left_wheel_fraction) * delta_v;
-        double linear_velocity_adj = (left_wheel_adj + right_wheel_adj) / 2.0;
-        return new Twist2d(linear_velocity_adj, 0, delta_rotation_rads);
+        double curvature = delta_rotation_rads / dx;
+        if (Double.isNaN(curvature) || delta_rotation_rads < kEpsilon) {
+            return new Twist2d(dx, 0, delta_rotation_rads);
+        }
+        // TODO
+        final double kCurvatureFactor = 0.95;
+        return new Twist2d(delta_rotation_rads / (curvature * kCurvatureFactor), 0, delta_rotation_rads);
     }
 
     /**
