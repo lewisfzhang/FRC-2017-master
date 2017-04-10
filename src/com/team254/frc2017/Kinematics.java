@@ -17,10 +17,9 @@ public class Kinematics {
      * motion)
      */
     public static Twist2d forwardKinematics(double left_wheel_delta, double right_wheel_delta) {
-        double linear_velocity = (left_wheel_delta + right_wheel_delta) / 2;
-        double delta_v = (right_wheel_delta - left_wheel_delta) / 2;
-        double delta_rotation = delta_v * 2 * Constants.kTrackScrubFactor / Constants.kTrackWidthInches;
-        return new Twist2d(linear_velocity, 0, delta_rotation);
+        double delta_v = (right_wheel_delta - left_wheel_delta) / 2 * Constants.kTrackScrubFactor;
+        double delta_rotation = delta_v * 2 / Constants.kTrackWidthInches;
+        return forwardKinematics(left_wheel_delta, right_wheel_delta, delta_rotation);
     }
 
     /**
@@ -28,7 +27,14 @@ public class Kinematics {
      */
     public static Twist2d forwardKinematics(double left_wheel_delta, double right_wheel_delta,
             double delta_rotation_rads) {
-        return new Twist2d((left_wheel_delta + right_wheel_delta) / 2, 0, delta_rotation_rads);
+        double delta_v = (right_wheel_delta - left_wheel_delta) / 2 * Constants.kTrackScrubFactor;
+        double left_wheel_fraction = Math.abs(left_wheel_delta) / (Math.abs(left_wheel_delta) + Math.abs(right_wheel_delta));
+        if (Double.isNaN(left_wheel_fraction)) left_wheel_fraction = 0.5;
+        double dx = (left_wheel_delta + right_wheel_delta) / 2.0;
+        double left_wheel_adj = dx - left_wheel_fraction * delta_v;
+        double right_wheel_adj = dx + (1.0 - left_wheel_fraction) * delta_v;
+        double linear_velocity_adj = (left_wheel_adj + right_wheel_adj) / 2.0;
+        return new Twist2d(linear_velocity_adj, 0, delta_rotation_rads);
     }
 
     /**
@@ -36,7 +42,7 @@ public class Kinematics {
      */
     public static Twist2d forwardKinematics(Rotation2d prev_heading, double left_wheel_delta, double right_wheel_delta,
             Rotation2d current_heading) {
-        return new Twist2d((left_wheel_delta + right_wheel_delta) / 2, 0,
+        return forwardKinematics(left_wheel_delta, right_wheel_delta,
                 prev_heading.inverse().rotateBy(current_heading).getRadians());
     }
 
@@ -64,6 +70,7 @@ public class Kinematics {
     }
 
     public static DriveVelocity inverseKinematics(Twist2d velocity) {
+        // TODO(jared): Implement the same COR logic as above.
         if (Math.abs(velocity.dtheta) < kEpsilon) {
             return new DriveVelocity(velocity.dx, velocity.dx);
         }
