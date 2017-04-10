@@ -53,7 +53,7 @@ public class PathBuilder {
         }
         
         public Waypoint(Translation2d pos, double r, double s) {
-            position = new Translation2d(pos.x(), pos.y());
+            position = pos;
             radius = r;
             speed = s;
         }
