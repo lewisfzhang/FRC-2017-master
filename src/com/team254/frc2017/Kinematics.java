@@ -33,7 +33,7 @@ public class Kinematics {
             return new Twist2d(dx, 0, delta_rotation_rads);
         }
         // TODO
-        final double kCurvatureFactor = 0.95;
+        final double kCurvatureFactor = 0.9;
         return new Twist2d(delta_rotation_rads / (curvature * kCurvatureFactor), 0, delta_rotation_rads);
     }
 
