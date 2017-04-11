@@ -243,8 +243,10 @@ public class Constants extends ConstantsBase {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
+
+    public static double kShooterOptimalRange = 92.0;
     public static double kShooterOptimalRangeFloor = 87.0;
-    public static double kShooterOptimalRangeCeiling = 120.0;
+    public static double kShooterOptimalRangeCeiling = 115.0;
 
     public static double kShooterAbsoluteRangeFloor = 85.0;
     public static double kShooterAbsoluteRangeCeiling = 135.0;
@@ -259,49 +261,6 @@ public class Constants extends ConstantsBase {
             {121.23, 3150.0},
             {125.18, 3200.0},
             {128.23, 3250.0}
-            
-            // Tuned on 3/29 pre SVR for practice bot.
-//            {87.0, 2925.0},
-//            {91.0, 2950.0},
-//            {93.0, 2975.0},
-//            {95.0, 3000.0},
-//            {97.5, 3025.0},
-//            {103.5, 3050.0},
-//            {106.24, 3075.0},
-//            {109.8, 3125.0},
-//            {115.73, 3175.0},
-//            {119.0, 3275.0},
-//            {123.0, 3300.0},
-//            {127.2, 3320.0},
-//            {132.0, 3350.0},
-//            {137.0, 3400.0},
-//            {142.0, 3450.0},
-//            {147.0, 3500.0},
-//            {152.0, 3550.0},
-
-            /*{104.8, 2900.0},
-            {115.3, 2975.0}*/
-
-            // Tuned at SFR for comp bot.
-//            {81.46699085594396, 2850.0},
-//            {83.88142680682152, 2875.0},
-//            {89.61719333080238, 2900.0},
-//            {93.22916873483817, 2925.0},
-//            {94.56056350772968, 2950.0},
-//            {96.66179067522229, 2975.0},
-//            {99.03208005457682, 3000.0},
-//            {103.35956261035906, 3012.0},
-//            {106.5533, 3025.0},
-//            {108.02134072590792, 3040.0},
-//            {111.3409162833483, 3075.0},
-//            {112.95267876239613, 3100.0},
-//            {117.29327600821605, 3125.0},
-//            {120.82199117377967, 3150.0},
-//            {124.81412499074203, 3175.0},
-//            {126.43036753326486, 3300.0},
-//            {130.77566868469572, 3350.0},
-//            {135.35310950774564, 3400.0},
-//            {136.42558291951616, 3450.0}
     };
 
     static {

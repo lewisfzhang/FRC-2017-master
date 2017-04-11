@@ -38,7 +38,7 @@ public class Drive extends Subsystem {
 
     // The robot drivetrain's various states.
     public enum DriveControlState {
-        OPEN_LOOP, VELOCITY_SETPOINT, PATH_FOLLOWING, AIM_TO_GOAL, TURN_TO_HEADING
+        OPEN_LOOP, VELOCITY_SETPOINT, PATH_FOLLOWING, AIM_TO_GOAL, TURN_TO_HEADING, DRIVE_TOWARDS_GOAL_COARSE_ALIGN, DRIVE_TOWARDS_GOAL_APPROACH
     }
 
     protected static boolean usesTalonVelocityControl(DriveControlState state) {
@@ -49,7 +49,10 @@ public class Drive extends Subsystem {
     }
 
     protected static boolean usesTalonPositionControl(DriveControlState state) {
-        if (state == DriveControlState.AIM_TO_GOAL || state == DriveControlState.TURN_TO_HEADING) {
+        if (state == DriveControlState.AIM_TO_GOAL ||
+                state == DriveControlState.TURN_TO_HEADING ||
+                state == DriveControlState.DRIVE_TOWARDS_GOAL_COARSE_ALIGN ||
+                state == DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH) {
             return true;
         }
         return false;
@@ -111,6 +114,12 @@ public class Drive extends Subsystem {
                     // fallthrough intended
                 case TURN_TO_HEADING:
                     updateTurnToHeading(timestamp);
+                    return;
+                case DRIVE_TOWARDS_GOAL_COARSE_ALIGN:
+                    updateDriveTowardsGoalCoarseAlign(timestamp);
+                    return;
+                case DRIVE_TOWARDS_GOAL_APPROACH:
+                    updateDriveTowardsGoalApproach(timestamp);
                     return;
                 default:
                     System.out.println("Unexpected drive control state: " + mDriveControlState);
@@ -440,6 +449,33 @@ public class Drive extends Subsystem {
         updatePositionSetpoint(wheel_delta.left + getLeftDistanceInches(),
                 wheel_delta.right + getRightDistanceInches());
     }
+    
+    private void updateDriveTowardsGoalCoarseAlign(double timestamp) {
+        updateGoalHeading(timestamp);
+        updateTurnToHeading(timestamp);
+        if (mIsOnTarget) {
+            // Done coarse alignment.
+            mDriveControlState = DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH;
+            mIsOnTarget = false;
+        }
+    }
+    
+    private void updateDriveTowardsGoalApproach(double timestamp) {
+        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
+        if (aim.isPresent()) {
+            final double distance = aim.get().getRange();
+            final double error = Constants.kShooterOptimalRange - distance;
+            final double kGoalPosTolerance = 1.0; // inches
+            if (Util.epsilonEquals(error, 0.0, kGoalPosTolerance)) {
+                // We are on target.  Switch back to auto-aim.
+                mDriveControlState = DriveControlState.AIM_TO_GOAL;
+                return;
+            }
+            updatePositionSetpoint(getLeftDistanceInches() + error, getRightDistanceInches() + error);
+        } else {
+            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+        }
+    }
 
     private void updatePathFollower(double timestamp) {
         RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
@@ -451,8 +487,6 @@ public class Drive extends Subsystem {
         } else {
             updateVelocitySetpoint(0, 0);
         }
-        
-        // Output debug
     }
 
     public synchronized boolean isOnTarget() {
@@ -469,6 +503,19 @@ public class Drive extends Subsystem {
             mIsOnTarget = false;
             configureTalonsForPositionControl();
             mDriveControlState = DriveControlState.AIM_TO_GOAL;
+            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+            mTargetHeading = getGyroAngle();
+        }
+        setHighGear(false);
+    }
+    
+    public synchronized void setWantDriveTowardsGoal() {
+        if (mDriveControlState != DriveControlState.DRIVE_TOWARDS_GOAL_COARSE_ALIGN &&
+                mDriveControlState != DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH &&
+                mDriveControlState != DriveControlState.AIM_TO_GOAL) {
+            mIsOnTarget = false;
+            configureTalonsForPositionControl();
+            mDriveControlState = DriveControlState.DRIVE_TOWARDS_GOAL_COARSE_ALIGN;
             updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
             mTargetHeading = getGyroAngle();
         }
