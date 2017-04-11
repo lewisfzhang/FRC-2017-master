@@ -464,7 +464,7 @@ public class Drive extends Subsystem {
         Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
         if (aim.isPresent()) {
             final double distance = aim.get().getRange();
-            final double error = Constants.kShooterOptimalRange - distance;
+            final double error = distance - Constants.kShooterOptimalRange;
             final double kGoalPosTolerance = 1.0; // inches
             if (Util.epsilonEquals(error, 0.0, kGoalPosTolerance)) {
                 // We are on target.  Switch back to auto-aim.
