@@ -359,7 +359,7 @@ public class Superstructure extends Subsystem {
         if (aimOptional.isPresent()) {
             final ShooterAimingParameters aim = aimOptional.get();
             double range = aim.getRange();
-            final boolean range_valid = range >= Constants.kShooterAbsoluteRangeFloor && range <= Constants.kShooterAbsoluteRangeCeiling;
+            final boolean range_valid = Constants.kIsShooterTuning || (range >= Constants.kShooterAbsoluteRangeFloor && range <= Constants.kShooterAbsoluteRangeCeiling);
             if (!range_valid) {
                 range = Math.max(Constants.kShooterAbsoluteRangeFloor, Math.min(Constants.kShooterAbsoluteRangeCeiling, range));
             }
