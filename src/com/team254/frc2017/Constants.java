@@ -243,8 +243,11 @@ public class Constants extends ConstantsBase {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
-    public static double kShooterOptimalRangeFloor = 92.0;
+    public static double kShooterOptimalRangeFloor = 87.0;
     public static double kShooterOptimalRangeCeiling = 120.0;
+
+    public static double kShooterAbsoluteRangeFloor = 85.0;
+    public static double kShooterAbsoluteRangeCeiling = 135.0;
 
     public static double[][] kFlywheelDistanceRpmValues = {
             // Pre-champs 4/9

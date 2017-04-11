@@ -352,13 +352,19 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized boolean autoSpinShooter() {
+        final double timestamp = Timer.getFPGATimestamp();
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
-                .getAimingParameters(Timer.getFPGATimestamp());
+                .getAimingParameters(timestamp);
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         if (aimOptional.isPresent()) {
+            final ShooterAimingParameters aim = aimOptional.get();
+            double range = aim.getRange();
+            final boolean range_valid = range >= Constants.kShooterAbsoluteRangeFloor && range <= Constants.kShooterAbsoluteRangeCeiling;
+            if (!range_valid) {
+                range = Math.max(Constants.kShooterAbsoluteRangeFloor, Math.min(Constants.kShooterAbsoluteRangeCeiling, range));
+            }
             if (!Constants.kIsShooterTuning) {
-                final ShooterAimingParameters aim = aimOptional.get();
-                double range = aim.getRange();
+
                 mLastGoalRange = range;
                 mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
 
@@ -381,7 +387,7 @@ public class Superstructure extends Subsystem {
                 mLastGoalRange = aimOptional.get().getRange();
             }
 
-            return isOnTargetToShoot();
+            return range_valid && isOnTargetToShoot() && (timestamp - aim.getLastSeenTimestamp()) < Constants.kMaxGoalTrackAge;
         } else if (Superstructure.getInstance().isShooting()) {
             mLED.setRangeBlicking(true);
             // Keep the previous setpoint.
