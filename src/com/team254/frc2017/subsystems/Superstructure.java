@@ -238,6 +238,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.WAITING_FOR_AIM;
             }
             return SystemState.SHOOTING;
+        case RANGE_FINDING:
+            return SystemState.RANGE_FINDING;
         case MANUAL_FEED:
             return SystemState.JUST_FEED;
         case EXHAUST:
