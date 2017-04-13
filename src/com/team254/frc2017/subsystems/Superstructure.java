@@ -454,6 +454,10 @@ public class Superstructure extends Subsystem {
     public void registerEnabledLoops(Looper enabledLooper) {
         enabledLooper.register(mLoop);
     }
+    
+    public void spinUpShooter() {
+        mShooter.resetSpinUp();
+    }
 
     public void setWantIntakeReversed() {
         mIntake.setReverse();

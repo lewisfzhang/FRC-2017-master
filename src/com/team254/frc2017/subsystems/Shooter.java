@@ -177,6 +177,11 @@ public class Shooter extends Subsystem {
         mSetpointRpm = setpointRpm;
     }
     
+    public void resetSpinUp() {
+        resetHold();
+        configureForSpinUp();
+    }
+    
     private void configureForSpinUp() {
         mControlMethod = ControlMethod.SPIN_UP_LOOP;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
