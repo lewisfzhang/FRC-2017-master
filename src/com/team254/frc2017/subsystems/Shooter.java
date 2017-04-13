@@ -177,7 +177,7 @@ public class Shooter extends Subsystem {
         mSetpointRpm = setpointRpm;
     }
     
-    public void resetSpinUp() {
+    public synchronized void resetSpinUp() {
         resetHold();
         configureForSpinUp();
     }
