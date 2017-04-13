@@ -148,6 +148,8 @@ public class Superstructure extends Subsystem {
             case UNJAM_SHOOT:
                 return SystemState.UNJAMMING_WITH_SHOOT;
             case SHOOT:
+                // Reset kF on shooter.
+                resetShooterSpinUp();
                 return SystemState.WAITING_FOR_AIM;
             case MANUAL_FEED:
                 return SystemState.JUST_FEED;
@@ -382,7 +384,7 @@ public class Superstructure extends Subsystem {
 
                 SmartDashboard.putBoolean("optimal range", is_optimal_range);
             } else {
-                // We are shooter tuning fine current RPM we are tuning for.
+                // We are shooter tuning find current RPM we are tuning for.
                 mShooter.setClosedLoopRpm(mCurrentTuningRpm);
                 mLastGoalRange = aimOptional.get().getRange();
             }
@@ -455,7 +457,7 @@ public class Superstructure extends Subsystem {
         enabledLooper.register(mLoop);
     }
     
-    public void spinUpShooter() {
+    public void resetShooterSpinUp() {
         mShooter.resetSpinUp();
     }
 

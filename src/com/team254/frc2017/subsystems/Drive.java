@@ -468,7 +468,7 @@ public class Drive extends Subsystem {
             final double kGoalPosTolerance = 1.0; // inches
             if (Util.epsilonEquals(error, 0.0, kGoalPosTolerance)) {
                 // We are on target.  Switch back to auto-aim.
-                Superstructure.getInstance().spinUpShooter();
+                Superstructure.getInstance().resetShooterSpinUp();
                 mDriveControlState = DriveControlState.AIM_TO_GOAL;
                 return;
             }
