@@ -183,7 +183,12 @@ public class Robot extends IterativeRobot {
             double turn = mControlBoard.getTurn();
 
             if (mControlBoard.getAimButton()) {
-                mDrive.setWantDriveTowardsGoal();
+
+                if (Constants.kIsShooterTuning) {
+                    mDrive.setWantAimToGoal();
+                } else {
+                    mDrive.setWantDriveTowardsGoal();
+                }
 
                 if (mControlBoard.getUnjamButton()) {
                     mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM_SHOOT);
