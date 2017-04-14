@@ -28,13 +28,7 @@ public class Kinematics {
     public static Twist2d forwardKinematics(double left_wheel_delta, double right_wheel_delta,
             double delta_rotation_rads) {
         double dx = (left_wheel_delta + right_wheel_delta) / 2.0;
-        double curvature = delta_rotation_rads / dx;
-        if (Double.isNaN(curvature) || delta_rotation_rads < kEpsilon) {
-            return new Twist2d(dx, 0, delta_rotation_rads);
-        }
-        // TODO
-        final double kCurvatureFactor = 0.9;
-        return new Twist2d(delta_rotation_rads / (curvature * kCurvatureFactor), 0, delta_rotation_rads);
+        return new Twist2d(dx, 0, delta_rotation_rads);
     }
 
     /**
@@ -70,7 +64,6 @@ public class Kinematics {
     }
 
     public static DriveVelocity inverseKinematics(Twist2d velocity) {
-        // TODO(jared): Implement the same COR logic as above.
         if (Math.abs(velocity.dtheta) < kEpsilon) {
             return new DriveVelocity(velocity.dx, velocity.dx);
         }
