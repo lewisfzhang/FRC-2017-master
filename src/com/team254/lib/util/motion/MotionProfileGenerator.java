@@ -32,7 +32,8 @@ public class MotionProfileGenerator {
      *            The initial state to use.
      * @return A motion profile from prev_state to goal_state that satisfies constraints.
      */
-    public synchronized static MotionProfile generateProfile(MotionProfileConstraints constraints, MotionProfileGoal goal_state,
+    public synchronized static MotionProfile generateProfile(MotionProfileConstraints constraints,
+            MotionProfileGoal goal_state,
             MotionState prev_state) {
         double delta_pos = goal_state.pos() - prev_state.pos();
         if (delta_pos < 0.0 || (delta_pos == 0.0 && prev_state.vel() < 0.0)) {

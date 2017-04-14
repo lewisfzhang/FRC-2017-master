@@ -12,7 +12,7 @@ public class IRSensor {
     protected final AnalogInput mAnalogInput;
     protected final AnalogTrigger mAnalogTrigger;
     protected final Counter mCounter;
-    
+
     public IRSensor(int port, double min_trigger_voltage, double max_trigger_voltage) {
         mAnalogInput = new AnalogInput(port);
         mAnalogInput.setAverageBits(6);
@@ -22,20 +22,20 @@ public class IRSensor {
         mAnalogTrigger.setLimitsVoltage(min_trigger_voltage, max_trigger_voltage);
         mCounter = new Counter(mAnalogTrigger.createOutput(AnalogTriggerType.kState));
     }
-    
+
     public int getCount() {
         return mCounter.get();
     }
-    
+
     public double getVoltage() {
         return mAnalogInput.getAverageVoltage();
     }
-    
+
     public boolean seesBall() {
         return mAnalogTrigger.getTriggerState();
     }
-    
+
     public void resetCount() {
         mCounter.reset();
-    }    
+    }
 }

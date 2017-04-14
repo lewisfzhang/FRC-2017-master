@@ -26,12 +26,10 @@ public class GamepadControlBoard implements ControlBoardInterface {
         return mGamepad.getRawButton(6);
     }
 
-
     @Override
     public boolean getAimButton() {
         return mGamepad.getRawButton(8);
     }
-
 
     @Override
     public boolean getLowGear() {
@@ -69,7 +67,6 @@ public class GamepadControlBoard implements ControlBoardInterface {
         return mGamepad.getRawAxis(3) > 0.1;
     }
 
-
     @Override
     public boolean getShooterOpenLoopButton() {
         // Y
@@ -96,7 +93,7 @@ public class GamepadControlBoard implements ControlBoardInterface {
     public boolean getFlywheelSwitch() {
         return false;
     }
-    
+
     @Override
     public boolean getActuateHopperButton() {
         return mGamepad.getRawButton(9);

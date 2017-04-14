@@ -36,19 +36,18 @@ public class AutoModeSelector {
         }
     }
 
-    private static final AutoModeCreator mDefaultMode =
-            new AutoModeCreator("Stand Still", ()->new StandStillMode());
+    private static final AutoModeCreator mDefaultMode = new AutoModeCreator("Stand Still", () -> new StandStillMode());
     private static final AutoModeCreator[] mAllModes = {
-            new AutoModeCreator("Boiler Gear then Intake Shoot Blue", ()->new GearThenIntakeModeBlue()),
-            new AutoModeCreator("Boiler Gear then Intake Shoot Red", ()->new GearThenIntakeModeRed()),
-            new AutoModeCreator("Boiler Gear then 10 Ball Shoot Red", ()->new BoilerGearThenShootModeRed()),
-            new AutoModeCreator("Boiler Gear then 10 Ball Shoot Blue", ()->new BoilerGearThenShootModeBlue()),
-            new AutoModeCreator("Center Gear then Shoot Red", ()->new CenterGearThenShootModeRed()),
-            new AutoModeCreator("Center Gear then Shoot Blue", ()->new CenterGearThenShootModeBlue()),
-            new AutoModeCreator("Ram Hopper Blue", ()->new RamHopperShootModeBlue()),
-            new AutoModeCreator("Ram Hopper Red", ()->new RamHopperShootModeRed()),
-            new AutoModeCreator("Gear then Hopper Shoot Blue", ()->new GearThenHopperShootModeBlue()),
-            new AutoModeCreator("Gear then Hopper Shoot Red", ()->new GearThenHopperShootModeRed()),
+            new AutoModeCreator("Boiler Gear then Intake Shoot Blue", () -> new GearThenIntakeModeBlue()),
+            new AutoModeCreator("Boiler Gear then Intake Shoot Red", () -> new GearThenIntakeModeRed()),
+            new AutoModeCreator("Boiler Gear then 10 Ball Shoot Red", () -> new BoilerGearThenShootModeRed()),
+            new AutoModeCreator("Boiler Gear then 10 Ball Shoot Blue", () -> new BoilerGearThenShootModeBlue()),
+            new AutoModeCreator("Center Gear then Shoot Red", () -> new CenterGearThenShootModeRed()),
+            new AutoModeCreator("Center Gear then Shoot Blue", () -> new CenterGearThenShootModeBlue()),
+            new AutoModeCreator("Ram Hopper Blue", () -> new RamHopperShootModeBlue()),
+            new AutoModeCreator("Ram Hopper Red", () -> new RamHopperShootModeRed()),
+            new AutoModeCreator("Gear then Hopper Shoot Blue", () -> new GearThenHopperShootModeBlue()),
+            new AutoModeCreator("Gear then Hopper Shoot Red", () -> new GearThenHopperShootModeRed()),
     };
 
     public static void initAutoModeSelector() {

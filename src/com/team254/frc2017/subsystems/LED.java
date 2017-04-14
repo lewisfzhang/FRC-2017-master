@@ -12,7 +12,7 @@ public class LED extends Subsystem {
 
     private static LED mInstance = null;
 
-    public static LED getInstance() { 
+    public static LED getInstance() {
         if (mInstance == null) {
             mInstance = new LED();
         }
@@ -69,21 +69,21 @@ public class LED extends Subsystem {
                 SystemState newState;
                 double timeInState = timestamp - mCurrentStateStartTime;
                 switch (mSystemState) {
-                    case OFF:
-                        newState = handleOff();
-                        break;
-                    case BLINKING:
-                        newState = handleBlinking(timeInState);
-                        break;
-                    case FIXED_ON:
-                        newState = handleFixedOn();
-                        break;
-                    case RANGE_FINDING:
-                        newState =  handleRangeFinding(timeInState);
-                        break;
-                    default:
-                        System.out.println("Fell through on LED states!!");
-                        newState = SystemState.OFF;
+                case OFF:
+                    newState = handleOff();
+                    break;
+                case BLINKING:
+                    newState = handleBlinking(timeInState);
+                    break;
+                case FIXED_ON:
+                    newState = handleFixedOn();
+                    break;
+                case RANGE_FINDING:
+                    newState = handleRangeFinding(timeInState);
+                    break;
+                default:
+                    System.out.println("Fell through on LED states!!");
+                    newState = SystemState.OFF;
                 }
                 if (newState != mSystemState) {
                     System.out.println("LED state " + mSystemState + " to " + newState);
@@ -101,16 +101,16 @@ public class LED extends Subsystem {
 
     private SystemState defaultStateTransfer() {
         switch (mWantedState) {
-            case OFF:
-                return SystemState.OFF;
-            case BLINK:
-                return SystemState.BLINKING;
-            case FIND_RANGE:
-                return SystemState.RANGE_FINDING;
-            case FIXED_ON:
-                return SystemState.FIXED_ON;
-            default:
-                return SystemState.OFF;
+        case OFF:
+            return SystemState.OFF;
+        case BLINK:
+            return SystemState.BLINKING;
+        case FIND_RANGE:
+            return SystemState.RANGE_FINDING;
+        case FIXED_ON:
+            return SystemState.FIXED_ON;
+        default:
+            return SystemState.OFF;
         }
     }
 
@@ -152,7 +152,7 @@ public class LED extends Subsystem {
             return SystemState.OFF;
         }
 
-        int cycleNum = (int)(timeInState / (kBlinkDuration / 2.0));
+        int cycleNum = (int) (timeInState / (kBlinkDuration / 2.0));
         if ((cycleNum % 2) == 0) {
             setLEDOn();
             setRangeLEDOn();
@@ -162,7 +162,6 @@ public class LED extends Subsystem {
         }
         return SystemState.BLINKING;
     }
-
 
     @Override
     public void outputToSmartDashboard() {

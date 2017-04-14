@@ -36,7 +36,8 @@ public class Robot extends IterativeRobot {
     // All Subsystems
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
             Arrays.asList(Drive.getInstance(), Superstructure.getInstance(), Shooter.getInstance(),
-                    Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(), LED.getInstance(), MotorGearGrabber.getInstance()));
+                    Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(), LED.getInstance(),
+                    MotorGearGrabber.getInstance()));
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -49,8 +50,7 @@ public class Robot extends IterativeRobot {
     private AnalogInput mCheckLightButton = new AnalogInput(Constants.kLEDOnId);
 
     private LatchedBoolean mCommitTuning = new LatchedBoolean();
-    private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap =
-            new InterpolatingTreeMap<>();
+    private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap = new InterpolatingTreeMap<>();
 
     private final VideoStreamServiceController mVideoStreamServiceController = new VideoStreamServiceController();
 
@@ -96,7 +96,6 @@ public class Robot extends IterativeRobot {
         zeroAllSensors();
     }
 
-
     /**
      * This autonomous (along with the chooser code above) shows how to select between different autonomous modes using
      * the dashboard. The sendable chooser code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
@@ -116,16 +115,16 @@ public class Robot extends IterativeRobot {
             if (mAutoModeExecuter != null) {
                 mAutoModeExecuter.stop();
             }
-            
+
             zeroAllSensors();
             mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
             mSuperstructure.setActuateHopper(false);
             mSuperstructure.setOverrideCompressor(true);
-            
+
             mAutoModeExecuter = null;
 
             Intake.getInstance().reset();
-            
+
             // Shift to high
             mDrive.setHighGear(true);
             mDrive.setBrakeMode(true);
@@ -197,7 +196,8 @@ public class Robot extends IterativeRobot {
                 }
             } else {
                 mDrive.setHighGear(!mControlBoard.getLowGear());
-                mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(), !mControlBoard.getLowGear()));
+                mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
+                        !mControlBoard.getLowGear()));
 
                 Intake.getInstance().setCurrentThrottle(mControlBoard.getThrottle());
 
@@ -295,7 +295,7 @@ public class Robot extends IterativeRobot {
 
             // If are tuning, dump map so far.
             if (Constants.kIsShooterTuning) {
-                for (Map.Entry<InterpolatingDouble,InterpolatingDouble> entry : mTuningFlywheelMap.entrySet()) {
+                for (Map.Entry<InterpolatingDouble, InterpolatingDouble> entry : mTuningFlywheelMap.entrySet()) {
                     System.out.println("{" +
                             entry.getKey().value + ", " + entry.getValue().value + "},");
                 }

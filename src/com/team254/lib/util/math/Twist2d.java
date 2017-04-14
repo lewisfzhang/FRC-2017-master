@@ -1,7 +1,7 @@
 package com.team254.lib.util.math;
 
 /**
- * A movement along an arc at constant curvature and velocity.  We can use ideas from "differential calculus" to create
+ * A movement along an arc at constant curvature and velocity. We can use ideas from "differential calculus" to create
  * new RigidTransform2d's from a Twist2d and visa versa.
  * 
  * A Twist can be used to represent a difference between two poses, a velocity, an acceleration, etc.

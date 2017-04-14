@@ -88,7 +88,7 @@ public class MotionProfile {
         }
         return Optional.empty();
     }
-    
+
     /**
      * Get the interpolated MotionState at any given time, clamping to the endpoints if time is out of bounds.
      * 

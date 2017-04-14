@@ -1,6 +1,5 @@
 package com.team254.lib.util;
 
-
 import com.team254.frc2017.AutoModeSelector;
 import com.team254.frc2017.auto.modes.StandStillMode;
 import edu.wpi.first.wpilibj.HLUsageReporting;
@@ -19,13 +18,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({SmartDashboard.class, NetworkTable.class, HLUsageReporting.class})
+@PrepareForTest({ SmartDashboard.class, NetworkTable.class, HLUsageReporting.class })
 public class AutoModeSelectorTest {
 
     @Test
     public void testAutoModeSelector() {
-        PowerMockito.mockStatic(NetworkTable.class, invocationOnMock->null);
-        PowerMockito.mockStatic(HLUsageReporting.class, invocationOnMock->null);
+        PowerMockito.mockStatic(NetworkTable.class, invocationOnMock -> null);
+        PowerMockito.mockStatic(HLUsageReporting.class, invocationOnMock -> null);
         PowerMockito.mockStatic(SmartDashboard.class);
 
         PowerMockito.when(NetworkTable.getTable(Mockito.any())).thenReturn(null);
@@ -36,9 +35,9 @@ public class AutoModeSelectorTest {
                 .then(invocationOnMock -> {
                     String jsonString = invocationOnMock.getArgumentAt(1, String.class);
                     JSONParser jsonParser = new JSONParser();
-                    JSONArray array = (JSONArray)jsonParser.parse(jsonString);
+                    JSONArray array = (JSONArray) jsonParser.parse(jsonString);
                     for (Object o : array) {
-                        options.add((String)o);
+                        options.add((String) o);
                     }
                     return true;
                 });
@@ -48,6 +47,6 @@ public class AutoModeSelectorTest {
 
         AutoModeSelector.initAutoModeSelector();
         // TODO: Fix this
-        //Assert.assertTrue(AutoModeSelector.getSelectedAutoMode() instanceof StandStillMode);
+        // Assert.assertTrue(AutoModeSelector.getSelectedAutoMode() instanceof StandStillMode);
     }
 }

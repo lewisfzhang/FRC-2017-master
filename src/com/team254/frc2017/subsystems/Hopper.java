@@ -14,6 +14,7 @@ public class Hopper extends Subsystem {
     private static final double kFeedPower = 1.0;
 
     private static Hopper sInstance = null;
+
     public static Hopper getInstance() {
         if (sInstance == null) {
             sInstance = new Hopper();
@@ -60,23 +61,23 @@ public class Hopper extends Subsystem {
             synchronized (Hopper.this) {
                 SystemState newState;
                 switch (mSystemState) {
-                    case IDLE:
-                        newState = handleIdle();
-                        break;
-                    case UNJAMMING_OUT:
-                        newState = handleUnjammingOut(timestamp, mCurrentStateStartTime);
-                        break;
-                    case UNJAMMING_IN:
-                        newState = handleUnjammingIn(timestamp, mCurrentStateStartTime);
-                        break;
-                    case FEEDING:
-                        newState = handleFeeding();
-                        break;
-                    case EXHAUSTING:
-                        newState = handleExhaust();
-                        break;
-                    default:
-                        newState = SystemState.IDLE;
+                case IDLE:
+                    newState = handleIdle();
+                    break;
+                case UNJAMMING_OUT:
+                    newState = handleUnjammingOut(timestamp, mCurrentStateStartTime);
+                    break;
+                case UNJAMMING_IN:
+                    newState = handleUnjammingIn(timestamp, mCurrentStateStartTime);
+                    break;
+                case FEEDING:
+                    newState = handleFeeding();
+                    break;
+                case EXHAUSTING:
+                    newState = handleExhaust();
+                    break;
+                default:
+                    newState = SystemState.IDLE;
                 }
                 if (newState != mSystemState) {
                     System.out.println("Hopper state " + mSystemState + " to " + newState);
@@ -97,14 +98,14 @@ public class Hopper extends Subsystem {
 
     private SystemState defaultStateTransfer() {
         switch (mWantedState) {
-            case FEED:
-                return SystemState.FEEDING;
-            case UNJAM:
-                return SystemState.UNJAMMING_OUT;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return SystemState.UNJAMMING_OUT;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
@@ -113,7 +114,6 @@ public class Hopper extends Subsystem {
         return defaultStateTransfer();
     }
 
-
     private SystemState handleUnjammingOut(double now, double startStartedAt) {
         setOpenLoop(kUnjamOutPower);
         SystemState newState = SystemState.UNJAMMING_OUT;
@@ -121,14 +121,14 @@ public class Hopper extends Subsystem {
             newState = SystemState.UNJAMMING_IN;
         }
         switch (mWantedState) {
-            case FEED:
-                return SystemState.FEEDING;
-            case UNJAM:
-                return newState;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return newState;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
@@ -139,42 +139,42 @@ public class Hopper extends Subsystem {
             newState = SystemState.UNJAMMING_OUT;
         }
         switch (mWantedState) {
-            case FEED:
-                return SystemState.FEEDING;
-            case UNJAM:
-                return newState;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return newState;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
     private SystemState handleFeeding() {
         setOpenLoop(kFeedPower);
         switch (mWantedState) {
-            case FEED:
-                return SystemState.FEEDING;
-            case UNJAM:
-                return SystemState.UNJAMMING_OUT;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return SystemState.UNJAMMING_OUT;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
     private SystemState handleExhaust() {
         setOpenLoop(-kFeedPower);
         switch (mWantedState) {
-            case FEED:
-                return SystemState.FEEDING;
-            case UNJAM:
-                return SystemState.UNJAMMING_OUT;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return SystemState.UNJAMMING_OUT;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 

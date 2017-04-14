@@ -17,16 +17,16 @@ public class OpenLoopUntilSeesTargetAction implements Action {
     RobotState mState = RobotState.getInstance();
     double left;
     double right;
-    
+
     public OpenLoopUntilSeesTargetAction(double left, double right) {
         this.left = left;
         this.right = right;
     }
-    
+
     public boolean isFinished() {
         double now = Timer.getFPGATimestamp();
         Optional<ShooterAimingParameters> aimParams = mState.getAimingParameters(now);
-        if(aimParams.isPresent() && Math.abs(now - aimParams.get().getLastSeenTimestamp()) < 0.5) {
+        if (aimParams.isPresent() && Math.abs(now - aimParams.get().getLastSeenTimestamp()) < 0.5) {
             return true;
         }
         return false;
@@ -35,13 +35,13 @@ public class OpenLoopUntilSeesTargetAction implements Action {
     @Override
     public void update() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void done() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override

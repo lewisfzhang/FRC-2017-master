@@ -40,12 +40,11 @@ public class GearThenIntakeModeBlue extends AutoModeBase {
         runAction(new ResetPoseFromPathAction(gearPath));
         runAction(new DrivePathAction(gearPath));
         runAction(
-                new ParallelAction(Arrays.asList(new Action[]{
-                    new SetFlywheelRPMAction(3000.0), //spin up flywheel to save time
-                    new DeployIntakeAction(),
-                    new ScoreGearAction(),
-                }))
-        );  
+                new ParallelAction(Arrays.asList(new Action[] {
+                        new SetFlywheelRPMAction(3000.0), // spin up flywheel to save time
+                        new DeployIntakeAction(),
+                        new ScoreGearAction(),
+                })));
         Intake.getInstance().setOn();
         runAction(new DrivePathAction(new GearToIntakeRed()));
         runAction(new BeginShootingAction());

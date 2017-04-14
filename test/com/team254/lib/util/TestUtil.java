@@ -15,7 +15,7 @@ public class TestUtil {
 
             @Override
             public boolean matches(Object a) {
-                return Util.epsilonEquals((Double)a, b, epsilon);
+                return Util.epsilonEquals((Double) a, b, epsilon);
             }
 
             @Override

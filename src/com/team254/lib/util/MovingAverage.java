@@ -36,6 +36,8 @@ public class MovingAverage {
         return getSize() < maxSize;
     }
 
-    public void clear() { numbers.clear(); }
+    public void clear() {
+        numbers.clear();
+    }
 
 }

@@ -4,7 +4,7 @@ import com.ctre.CANTalon;
 
 /**
  * This class is a thin wrapper around the CANTalon that reduces CAN bus / CPU overhead by skipping duplicate set
- * commands.  (By default the Talon flushes the Tx buffer on every set call).
+ * commands. (By default the Talon flushes the Tx buffer on every set call).
  */
 public class LazyCANTalon extends CANTalon {
     protected double mLastSet = Double.NaN;

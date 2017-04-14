@@ -9,7 +9,7 @@ public class ReflectingCSVWriter<T> {
     ConcurrentLinkedDeque<String> mLinesToWrite = new ConcurrentLinkedDeque<>();
     PrintWriter mOutput = null;
     Field[] mFields;
-    
+
     public ReflectingCSVWriter(String fileName, Class<T> typeClass) {
         mFields = typeClass.getFields();
         try {
@@ -27,7 +27,7 @@ public class ReflectingCSVWriter<T> {
         }
         writeLine(line.toString());
     }
-    
+
     public void add(T value) {
         StringBuffer line = new StringBuffer();
         for (Field field : mFields) {
@@ -50,7 +50,7 @@ public class ReflectingCSVWriter<T> {
             mOutput.println(line);
         }
     }
-    
+
     // Call this periodically from any thread to write to disk.
     public void write() {
         while (true) {

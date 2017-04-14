@@ -1,6 +1,5 @@
 package com.team254.frc2017.auto.actions;
 
-
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.subsystems.Drive;

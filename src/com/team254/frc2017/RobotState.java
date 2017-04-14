@@ -81,7 +81,7 @@ public class RobotState {
         differential_height_ = Constants.kBoilerTargetTopHeight - Constants.kCameraZOffset;
         distance_driven_ = 0.0;
     }
-    
+
     public synchronized void resetDistanceDriven() {
         distance_driven_ = 0.0;
     }
@@ -184,7 +184,8 @@ public class RobotState {
             Rotation2d robot_to_goal_rotation = Rotation2d
                     .fromRadians(Math.atan2(robot_to_goal.y(), robot_to_goal.x()));
 
-            ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_rotation, report.latest_timestamp);
+            ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_rotation,
+                    report.latest_timestamp);
             cached_shooter_aiming_params_ = params;
             cached_shooter_aiming_params_ts_ = currentTimestamp;
             return Optional.of(params);

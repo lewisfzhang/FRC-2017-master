@@ -9,23 +9,23 @@ import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
 public class GearToIntakeRed implements PathContainer {
-    
+
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(114,115,0,0));
-        sWaypoints.add(new Waypoint(86,50,0,60));
+        sWaypoints.add(new Waypoint(114, 115, 0, 0));
+        sWaypoints.add(new Waypoint(86, 50, 0, 60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
-    
+
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(116, 209), Rotation2d.fromDegrees(0.0)); 
+        return new RigidTransform2d(new Translation2d(116, 209), Rotation2d.fromDegrees(0.0));
     }
 
     @Override
     public boolean isReversed() {
-        return false; 
-    }   
+        return false;
+    }
 }

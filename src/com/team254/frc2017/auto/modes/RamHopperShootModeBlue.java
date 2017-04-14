@@ -37,23 +37,24 @@ public class RamHopperShootModeBlue extends AutoModeBase {
         double startTime = Timer.getFPGATimestamp();
         runAction(new DeployIntakeAction(true));
         runAction(
-                new ParallelAction(Arrays.asList(new Action[]{
-                    new DrivePathAction(hopperPath),
-                    new SeriesAction(Arrays.asList(new Action[]{
-                            new WaitForPathMarkerAction("RamWall"), new PrintDebugAction("RamWall"), new WaitAction(0.25), new ForceEndPathAction()
-                    }))
-                }))
-        ); //Drive to hopper, cancel path once the robot runs into the wall
+                new ParallelAction(Arrays.asList(new Action[] {
+                        new DrivePathAction(hopperPath),
+                        new SeriesAction(Arrays.asList(new Action[] {
+                                new WaitForPathMarkerAction("RamWall"), new PrintDebugAction("RamWall"),
+                                new WaitAction(0.25), new ForceEndPathAction()
+                        }))
+                }))); // Drive to hopper, cancel path once the robot runs into the wall
         runAction(new SetFlywheelRPMAction(3100));
-        runAction(new WaitAction(2.6)); //wait for balls
+        runAction(new WaitAction(2.6)); // wait for balls
         Drive.getInstance().setOpenLoop(new DriveSignal(-1, -1));
         runAction(new WaitAction(0.2));
         runAction(new TurnUntilSeesTargetAction(Rotation2d.fromDegrees(160)));
-//        Constants.kSegmentCompletionTolerance = 5.0;
-//        runAction(new DrivePathAction(new HopperToShootPathBlue())); //drive backwards to get off the wall
-//        runAction(new TurnUntilSeesTargetAction(Rotation2d.fromDegrees(165))); //turn towards 165 degrees or until camera sees target
+        // Constants.kSegmentCompletionTolerance = 5.0;
+        // runAction(new DrivePathAction(new HopperToShootPathBlue())); //drive backwards to get off the wall
+        // runAction(new TurnUntilSeesTargetAction(Rotation2d.fromDegrees(165))); //turn towards 165 degrees or until
+        // camera sees target
         System.out.println("Time to shoot: " + (Timer.getFPGATimestamp() - startTime));
-        runAction(new BeginShootingAction()); //aim + fire
-        runAction(new WaitAction(20)); //keep firing until auto ends
+        runAction(new BeginShootingAction()); // aim + fire
+        runAction(new WaitAction(20)); // keep firing until auto ends
     }
 }

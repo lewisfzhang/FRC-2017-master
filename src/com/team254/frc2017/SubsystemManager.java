@@ -17,22 +17,22 @@ public class SubsystemManager {
     }
 
     public void outputToSmartDashboard() {
-        mAllSubsystems.forEach((s)->s.outputToSmartDashboard());
+        mAllSubsystems.forEach((s) -> s.outputToSmartDashboard());
     }
-    
+
     public void writeToLog() {
-        mAllSubsystems.forEach((s)->s.writeToLog());
+        mAllSubsystems.forEach((s) -> s.writeToLog());
     }
 
     public void stop() {
-        mAllSubsystems.forEach((s)->s.stop());
+        mAllSubsystems.forEach((s) -> s.stop());
     }
 
     public void zeroSensors() {
-        mAllSubsystems.forEach((s)->s.zeroSensors());
+        mAllSubsystems.forEach((s) -> s.zeroSensors());
     }
 
     public void registerEnabledLoops(Looper enabledLooper) {
-        mAllSubsystems.forEach((s)->s.registerEnabledLoops(enabledLooper));
+        mAllSubsystems.forEach((s) -> s.registerEnabledLoops(enabledLooper));
     }
 }

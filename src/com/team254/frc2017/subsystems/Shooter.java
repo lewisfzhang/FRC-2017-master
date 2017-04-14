@@ -16,7 +16,7 @@ public class Shooter extends Subsystem {
     private final int kHoldProfile = 1;
 
     private static Shooter mInstance = null;
-    
+
     public static class ShooterDebugOutput {
         public double timestamp;
         public double setpoint;
@@ -40,13 +40,13 @@ public class Shooter extends Subsystem {
 
     private ControlMethod mControlMethod;
     private double mSetpointRpm;
-    
+
     // Used for transitioning from spin-up to hold loop.
     private double mHoldKf = 0.0;
     private int mHoldKfSamples = 0;
     private boolean mOnTarget = false;
     private double mOnTargetStartTime = Double.POSITIVE_INFINITY;
-    
+
     private ShooterDebugOutput mDebug = new ShooterDebugOutput();
 
     private final ReflectingCSVWriter<ShooterDebugOutput> mCSVWriter;
@@ -65,8 +65,8 @@ public class Shooter extends Subsystem {
         mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 2);
         mRightMaster.setStatusFrameRateMs(CANTalon.StatusFrameRate.AnalogTempVbat, 2);
 
-        CANTalon.FeedbackDeviceStatus sensorPresent =
-                mRightMaster.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+        CANTalon.FeedbackDeviceStatus sensorPresent = mRightMaster
+                .isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
         if (sensorPresent != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
             DriverStation.reportError("Could not detect shooter encoder: " + sensorPresent, false);
         }
@@ -81,7 +81,8 @@ public class Shooter extends Subsystem {
 
         System.out.println("RPM Polynomial: " + Constants.kFlywheelAutoAimPolynomial);
 
-        mCSVWriter = new ReflectingCSVWriter<ShooterDebugOutput>("/home/lvuser/SHOOTER-LOGS.csv", ShooterDebugOutput.class);
+        mCSVWriter = new ReflectingCSVWriter<ShooterDebugOutput>("/home/lvuser/SHOOTER-LOGS.csv",
+                ShooterDebugOutput.class);
     }
 
     public void refreshControllerConsts() {
@@ -90,7 +91,7 @@ public class Shooter extends Subsystem {
         mRightMaster.setI(Constants.kShooterTalonHoldKI);
         mRightMaster.setD(Constants.kShooterTalonHoldKD);
         mRightMaster.setIZone(Constants.kShooterTalonIZone);
-        
+
         mRightMaster.setProfile(kSpinUpProfile);
         mRightMaster.setP(Constants.kShooterTalonKP);
         mRightMaster.setI(Constants.kShooterTalonKI);
@@ -176,24 +177,24 @@ public class Shooter extends Subsystem {
         }
         mSetpointRpm = setpointRpm;
     }
-    
+
     public synchronized void resetSpinUp() {
         resetHold();
         configureForSpinUp();
     }
-    
+
     private void configureForSpinUp() {
         mControlMethod = ControlMethod.SPIN_UP_LOOP;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
         mRightMaster.EnableCurrentLimit(false);
         mRightMaster.setProfile(kSpinUpProfile);
         mRightMaster.DisableNominalClosedLoopVoltage();
-        
+
         mRightMaster.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms);
         mRightMaster.SetVelocityMeasurementWindow(32);
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
-    
+
     private void configureForHold() {
         mControlMethod = ControlMethod.HOLD_LOOP;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
@@ -206,21 +207,22 @@ public class Shooter extends Subsystem {
         mRightMaster.SetVelocityMeasurementWindow(1);
         mRightMaster.setVoltageRampRate(Constants.kShooterHoldRampRate);
     }
-    
+
     private void resetHold() {
         mHoldKf = 0.0;
         mHoldKfSamples = 0;
         mOnTarget = false;
         mOnTargetStartTime = Double.POSITIVE_INFINITY;
     }
-    
+
     private void handleClosedLoop(double timestamp) {
         final double speed = getSpeedRpm();
 
         final double abs_error = Math.abs(speed - mSetpointRpm);
         // See if we should be spinning up or holding.
         if (mControlMethod == ControlMethod.SPIN_UP_LOOP) {
-            final boolean on_target_now = mOnTarget ? abs_error < Constants.kShooterStopOnTargetRpm : abs_error < Constants.kShooterStartOnTargetRpm;
+            final boolean on_target_now = mOnTarget ? abs_error < Constants.kShooterStopOnTargetRpm
+                    : abs_error < Constants.kShooterStartOnTargetRpm;
             if (on_target_now && !mOnTarget) {
                 // First cycle on target.
                 mOnTargetStartTime = timestamp;
@@ -229,7 +231,7 @@ public class Shooter extends Subsystem {
                 // System.out.println("Not on target anymore");
                 resetHold();
             }
-            
+
             if (mOnTarget) {
                 // Update Kf.
                 final double kf = 1023.0 * (mRightMaster.getOutputVoltage() / 12.0) / (4096.0 * speed / 600.0);
@@ -269,7 +271,7 @@ public class Shooter extends Subsystem {
     public synchronized boolean isOnTarget() {
         return mControlMethod == ControlMethod.HOLD_LOOP;
     }
-    
+
     @Override
     public void writeToLog() {
         mCSVWriter.write();

@@ -16,8 +16,9 @@ public class Feeder extends Subsystem {
     private static final double kUnjamOutPower = -6.0 * kReversing;
     private static final double kFeedVoltage = 10.0;
     private static final double kExhaustVoltage = kFeedVoltage * kReversing;
-    
+
     private static Feeder sInstance = null;
+
     public static Feeder getInstance() {
         if (sInstance == null) {
             sInstance = new Feeder();
@@ -48,7 +49,7 @@ public class Feeder extends Subsystem {
 
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 1000);
 
-        mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kFeederSlaveId, Constants.kFeederMasterId); 
+        mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kFeederSlaveId, Constants.kFeederMasterId);
         mSlaveTalon.reverseOutput(true);
         mSlaveTalon.enableBrakeMode(true);
     }
@@ -91,23 +92,23 @@ public class Feeder extends Subsystem {
             synchronized (Feeder.this) {
                 SystemState newState;
                 switch (mSystemState) {
-                    case IDLE:
-                        newState = handleIdle();
-                        break;
-                    case UNJAMMING_OUT:
-                        newState = handleUnjammingOut(timestamp, mCurrentStateStartTime);
-                        break;
-                    case UNJAMMING_IN:
-                        newState = handleUnjammingIn(timestamp, mCurrentStateStartTime);
-                        break;
-                    case FEEDING:
-                        newState = handleFeeding();
-                        break;
-                    case EXHAUSTING:
-                        newState = handleExhaust();
-                        break;
-                    default:
-                        newState = SystemState.IDLE;
+                case IDLE:
+                    newState = handleIdle();
+                    break;
+                case UNJAMMING_OUT:
+                    newState = handleUnjammingOut(timestamp, mCurrentStateStartTime);
+                    break;
+                case UNJAMMING_IN:
+                    newState = handleUnjammingIn(timestamp, mCurrentStateStartTime);
+                    break;
+                case FEEDING:
+                    newState = handleFeeding();
+                    break;
+                case EXHAUSTING:
+                    newState = handleExhaust();
+                    break;
+                default:
+                    newState = SystemState.IDLE;
                 }
                 if (newState != mSystemState) {
                     System.out.println("Feeder state " + mSystemState + " to " + newState);
@@ -128,14 +129,14 @@ public class Feeder extends Subsystem {
 
     private SystemState defaultStateTransfer() {
         switch (mWantedState) {
-            case FEED:
-                return SystemState.FEEDING;
-            case UNJAM:
-                return SystemState.UNJAMMING_OUT;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return SystemState.UNJAMMING_OUT;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
@@ -151,14 +152,14 @@ public class Feeder extends Subsystem {
             newState = SystemState.UNJAMMING_IN;
         }
         switch (mWantedState) {
-            case FEED:
-                return SystemState.FEEDING;
-            case UNJAM:
-                return newState;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return newState;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
@@ -169,14 +170,14 @@ public class Feeder extends Subsystem {
             newState = SystemState.UNJAMMING_OUT;
         }
         switch (mWantedState) {
-            case FEED:
-                return SystemState.FEEDING;
-            case UNJAM:
-                return newState;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            default:
-                return SystemState.IDLE;
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return newState;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
@@ -206,7 +207,7 @@ public class Feeder extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        //SmartDashboard.putNumber("feeder_speed", mMasterTalon.get() / Constants.kFeederSensorGearReduction);
+        // SmartDashboard.putNumber("feeder_speed", mMasterTalon.get() / Constants.kFeederSensorGearReduction);
     }
 
     @Override

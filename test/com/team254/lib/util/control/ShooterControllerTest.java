@@ -43,7 +43,6 @@ public class ShooterControllerTest {
         assertEq(0, mShooterController.calculate(0, DTIME));
     }
 
-
     @Test
     public void testStartsInSaturation() {
         mShooterController.setSetpoint(3000);

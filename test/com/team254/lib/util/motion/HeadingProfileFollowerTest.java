@@ -76,7 +76,7 @@ public class HeadingProfileFollowerTest {
         final_state = followProfile(follower, dynamics, dt, 1500);
         assertTrue(goal.atGoalState(HeadingProfileFollower.canonicalize(final_state)));
     }
-    
+
     @Test
     public void testStationaryToStationaryFeedback() {
         MotionProfileConstraints constraints = new MotionProfileConstraints(90.0, 90.0);
@@ -105,7 +105,7 @@ public class HeadingProfileFollowerTest {
 
         goal = new MotionProfileGoal(179.0);
         follower.setGoalAndConstraints(goal, constraints);
-        
+
         final_state = followProfile(follower, dynamics, dt, 2000);
         assertTrue(goal.atGoalState(HeadingProfileFollower.canonicalize(final_state)));
     }

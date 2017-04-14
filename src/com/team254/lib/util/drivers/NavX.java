@@ -16,7 +16,7 @@ public class NavX {
                 // This handles the fact that the sensor is inverted from our coordinate conventions.
                 if (mLastSensorTimestampMs != kInvalidTimestamp && mLastSensorTimestampMs < sensor_timestamp) {
                     mYawRateDegreesPerSecond = 1000.0 * (-mYawDegrees - update.yaw)
-                            / (double)(sensor_timestamp - mLastSensorTimestampMs);
+                            / (double) (sensor_timestamp - mLastSensorTimestampMs);
                 }
                 mLastSensorTimestampMs = sensor_timestamp;
                 mYawDegrees = -update.yaw;
@@ -53,7 +53,7 @@ public class NavX {
         mYawDegrees = 0.0;
         mYawRateDegreesPerSecond = 0.0;
     }
-    
+
     public synchronized void setAngleAdjustment(Rotation2d adjustment) {
         mAngleAdjustment = adjustment;
     }
@@ -73,7 +73,7 @@ public class NavX {
     public double getYawRateRadiansPerSec() {
         return 180.0 / Math.PI * getYawRateDegreesPerSec();
     }
-    
+
     public double getRawAccelX() {
         return mAHRS.getRawAccelX();
     }

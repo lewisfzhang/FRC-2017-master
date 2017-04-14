@@ -18,7 +18,6 @@ public class Intake extends Subsystem {
         return sInstance;
     }
 
-
     private CANTalon mMasterTalon, mSlaveTalon;
     private Solenoid mDeploySolenoid;
     private double mCurrentThrottle;
@@ -70,8 +69,8 @@ public class Intake extends Subsystem {
     public synchronized void deploy() {
         mDeploySolenoid.set(true);
     }
-    
-    public synchronized void reset() {  // only use this in autoInit to reset the intake
+
+    public synchronized void reset() { // only use this in autoInit to reset the intake
         mDeploySolenoid.set(false);
     }
 
@@ -94,7 +93,7 @@ public class Intake extends Subsystem {
 
         double scale;
         if (mThrottleAverage.getSize() > 0) {
-            scale =  Math.min(0.0, Math.max(0.0, mThrottleAverage.getAverage()));
+            scale = Math.min(0.0, Math.max(0.0, mThrottleAverage.getAverage()));
         } else {
             scale = 0.0;
         }

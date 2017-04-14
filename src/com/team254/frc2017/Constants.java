@@ -25,8 +25,8 @@ public class Constants extends ConstantsBase {
     // Section 3.13
     // ...and https://firstfrc.blob.core.windows.net/frc2017/Drawings/2017FieldComponents.pdf
     // Parts GE-17203-FLAT and GE-17371 (sheet 7)
-    public static double kBoilerTargetTopHeight = 88.0;  // TODO: Verify on field
-    public static double kBoilerRadius = 7.5;  // TODO: Verify on field
+    public static double kBoilerTargetTopHeight = 88.0; // TODO: Verify on field
+    public static double kBoilerRadius = 7.5; // TODO: Verify on field
 
     public static boolean kIsShooterTuning = false;
     public static double kShooterTuningRpmFloor = 2900;
@@ -44,10 +44,10 @@ public class Constants extends ConstantsBase {
 
     // ROBOT PHYSICAL CONSTANTS
     // Wheels
-    public static double kDriveWheelDiameterInches = 3.419; //calibrated on 2/15/17
+    public static double kDriveWheelDiameterInches = 3.419; // calibrated on 2/15/17
     public static double kTrackWidthInches = 26.655;
     public static double kTrackScrubFactor = 0.924;
-    
+
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
     public static double kCenterToIntakeDistance = 23.11;
@@ -62,7 +62,6 @@ public class Constants extends ConstantsBase {
     public static double kIntakeVoltageMin = 4.5;
     public static final double kIntakeVoltageDifference = kIntakeVoltageMax - kIntakeVoltageMin;
 
-
     // CONTROL LOOP GAINS
     // DRIVE GAINS
 
@@ -75,7 +74,7 @@ public class Constants extends ConstantsBase {
     public static int kDriveHighGearVelocityIZone = 0;
     public static double kDriveHighGearVelocityRampRate = 240.0;
     public static double kDriveHighGearNominalOutput = 0.5;
-    public static double kDriveHighGearMaxSetpoint = 15.0 * 12.0;  // 15 fps
+    public static double kDriveHighGearMaxSetpoint = 15.0 * 12.0; // 15 fps
 
     // Wheel position - Low gear
     // Setpoint is in rotations.
@@ -86,10 +85,12 @@ public class Constants extends ConstantsBase {
     public static double kDriveLowGearPositionKd = 100.0;
     public static double kDriveLowGearPositionKf = .45;
     public static int kDriveLowGearPositionIZone = 700;
-    public static double kDriveLowGearPositionRampRate = 240.0;  // V/s
-    public static double kDriveLowGearNominalOutput = 0.5;  // V
-    public static double kDriveLowGearMaxVelocity = 6.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches);  // 6 fps in RPM
-    public static double kDriveLowGearMaxAccel = 18.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches);  // 18 fps/s in RPM/s
+    public static double kDriveLowGearPositionRampRate = 240.0; // V/s
+    public static double kDriveLowGearNominalOutput = 0.5; // V
+    public static double kDriveLowGearMaxVelocity = 6.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches); // 6 fps
+                                                                                                               // in RPM
+    public static double kDriveLowGearMaxAccel = 18.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches); // 18 fps/s
+                                                                                                             // in RPM/s
 
     public static double kDriveVoltageCompensationRampRate = 0.0;
 
@@ -101,7 +102,6 @@ public class Constants extends ConstantsBase {
     public static double kDriveTurnKffa = 0.0;
     public static double kDriveTurnMaxVel = 360.0;
     public static double kDriveTurnMaxAcc = 720.0;
-
 
     // SHOOTER GAINS
     public static double kShooterTalonKP = 0.16;
@@ -124,7 +124,7 @@ public class Constants extends ConstantsBase {
     // Used to determine when to switch to hold profile.
     public static double kShooterStartOnTargetRpm = 30.0;
     public static double kShooterStopOnTargetRpm = 150.0;
-    public static double kShooterMinOnTargetDuration = 0.1;  // seconds
+    public static double kShooterMinOnTargetDuration = 0.1; // seconds
 
     // Feeder gains
     public static double kFeederKP = 0.02;
@@ -135,7 +135,7 @@ public class Constants extends ConstantsBase {
     public static double kFeederVoltageCompensationRampRate = 10.0;
     public static double kFeederFeedSpeedRpm = 4500.0;
     public static double kFeederSensorGearReduction = 3.0;
-    
+
     // Hopper gains
     public static double kHopperRampRate = 48.0;
 
@@ -153,7 +153,7 @@ public class Constants extends ConstantsBase {
     public static final int kRightDriveMasterId = 3;
     public static final int kRightDriverSlaveId = 4;
 
-    //Feeder
+    // Feeder
     public static final int kFeederMasterId = 8;
     public static final int kFeederSlaveId = 7;
 
@@ -198,25 +198,25 @@ public class Constants extends ConstantsBase {
     // Phone
     public static int kAndroidAppTcpPort = 8254;
 
-    //PATH FOLLOWING
+    // PATH FOLLOWING
     public static double kMinLookAhead = 12.0; // inches
     public static double kMinLookAheadSpeed = 35.0; // inches per second
     public static double kMaxLookAhead = 18.0; // inches
     public static double kMaxLookAheadSpeed = 120.0; // inches per second
     public static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
     public static double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;
-    
-    public static double kInertiaSteeringGain = 0.0; //0005; // angular velocity command is multiplied by this gain * our speed
+
+    public static double kInertiaSteeringGain = 0.0; // 0005; // angular velocity command is multiplied by this gain *
+                                                     // our speed
                                                      // in inches per sec
-    public static double kSegmentCompletionTolerance = 2.0; //inches
-    public static double kPathFollowingMaxAccel = 120.0; //inches per second^2
-    public static double kPathFollowingMaxVel = 120.0; //inches per second
+    public static double kSegmentCompletionTolerance = 2.0; // inches
+    public static double kPathFollowingMaxAccel = 120.0; // inches per second^2
+    public static double kPathFollowingMaxVel = 120.0; // inches per second
     public static double kPathFollowingProfileKp = 0.75;
     public static double kPathFollowingProfileKi = 0.03;
     public static double kPathFollowingProfileKv = 0.02;
     public static double kPathFollowingProfileKffv = 1.0;
     public static double kPathFollowingProfileKffa = 0.05;
-
 
     // Goal tracker constants
     public static double kMaxGoalTrackAge = 1.0;
@@ -239,10 +239,10 @@ public class Constants extends ConstantsBase {
 
     public static double kDefaultShootingDistanceInches = 95.8;
     public static double kDefaultShootingRPM = 2950.0;
-    public static boolean kUseFlywheelAutoAimPolynomial = true;  // Change to 'true' to use the best-fit polynomial instead.
+    public static boolean kUseFlywheelAutoAimPolynomial = true; // Change to 'true' to use the best-fit polynomial
+                                                                // instead.
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
-
 
     public static double kShooterOptimalRange = 100.0;
     public static double kShooterOptimalRangeFloor = 87.0;
@@ -253,25 +253,25 @@ public class Constants extends ConstantsBase {
 
     public static double[][] kFlywheelDistanceRpmValues = {
             // Pre-champs 4/9
-            {89.14, 2900.0},
-            {94.87, 2950.0},
-            {104.33, 3000.0},
-            {107.64, 3050.0},
-            {114.34, 3100.0},
-            {121.23, 3150.0},
-            {125.18, 3200.0},
-            {128.23, 3250.0}
+            { 89.14, 2900.0 },
+            { 94.87, 2950.0 },
+            { 104.33, 3000.0 },
+            { 107.64, 3050.0 },
+            { 114.34, 3100.0 },
+            { 121.23, 3150.0 },
+            { 125.18, 3200.0 },
+            { 128.23, 3250.0 }
     };
 
     static {
         for (double[] pair : kFlywheelDistanceRpmValues) {
             kFlywheelAutoAimMap.put(new InterpolatingDouble(pair[0]), new InterpolatingDouble(pair[1]));
         }
-        kDefaultShootingRPM = kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(Constants.kDefaultShootingDistanceInches)).value;
-        
+        kDefaultShootingRPM = kFlywheelAutoAimMap
+                .getInterpolated(new InterpolatingDouble(Constants.kDefaultShootingDistanceInches)).value;
+
         kFlywheelAutoAimPolynomial = new PolynomialRegression(kFlywheelDistanceRpmValues, 2);
     }
-
 
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the solenoid

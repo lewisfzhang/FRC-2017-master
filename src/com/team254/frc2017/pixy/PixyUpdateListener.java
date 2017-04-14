@@ -7,9 +7,9 @@ public interface PixyUpdateListener {
     /**
      * This method gets called with every new frame from the pixy.
      *
-     * @param frame – the new <code>Frame</code>, which contains a list of detected
-     *              <code>Block</code>s (objects)
+     * @param frame
+     *            – the new <code>Frame</code>, which contains a list of detected <code>Block</code>s (objects)
      */
-     void onUpdate(Frame frame);
+    void onUpdate(Frame frame);
 
 }

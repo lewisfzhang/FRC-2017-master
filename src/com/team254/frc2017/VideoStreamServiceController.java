@@ -14,7 +14,6 @@ public class VideoStreamServiceController {
 
     private Process mExistingProcess;
 
-
     public void registerWatcher() {
         System.out.println("regstering watcher");
         FileSystem fileSystem = FileSystems.getDefault();
@@ -96,10 +95,10 @@ public class VideoStreamServiceController {
                     "/usr/local/lib/mjpg-streamer/input_uvc.so --device " + newVideoDevice.toString() + " -r 160x120",
                     "-o",
                     "/usr/local/lib/mjpg-streamer/output_http.so -w /usr/local/share/mjpg-streamer/www -p 5801")
-                    .redirectError(ProcessBuilder.Redirect.INHERIT)
-                    .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-                    .start();
-                    System.out.println("New process alive: " + mExistingProcess.isAlive());
+                            .redirectError(ProcessBuilder.Redirect.INHERIT)
+                            .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                            .start();
+            System.out.println("New process alive: " + mExistingProcess.isAlive());
         } catch (IOException e) {
             DriverStation.reportError("Didn't start mjpg-streamer: " + e.getMessage(), false);
             e.printStackTrace();

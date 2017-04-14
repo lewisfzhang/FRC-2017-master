@@ -37,15 +37,14 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
         runAction(new ResetPoseFromPathAction(gearPath));
         runAction(new DrivePathAction(gearPath));
         runAction(
-                new ParallelAction(Arrays.asList(new Action[]{
-                    new SetFlywheelRPMAction(2900.0), //spin up flywheel to save time
-                    new DeployIntakeAction(true),
-                    new ScoreGearAction(),
-                    new ActuateHopperAction(true),
-                }))
-        );  
+                new ParallelAction(Arrays.asList(new Action[] {
+                        new SetFlywheelRPMAction(2900.0), // spin up flywheel to save time
+                        new DeployIntakeAction(true),
+                        new ScoreGearAction(),
+                        new ActuateHopperAction(true),
+                })));
         runAction(new DrivePathAction(new BoilerGearToHopperBlue()));
-        System.out.println("Shoot Time: " + (Timer.getFPGATimestamp()-start));
+        System.out.println("Shoot Time: " + (Timer.getFPGATimestamp() - start));
         runAction(new BeginShootingAction());
         runAction(new WaitAction(15));
     }

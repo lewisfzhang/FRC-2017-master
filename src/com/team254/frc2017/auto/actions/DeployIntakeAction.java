@@ -9,20 +9,20 @@ public class DeployIntakeAction implements Action {
     Intake mIntake = Intake.getInstance();
     double startTime;
     boolean runIntake;
-    
+
     public DeployIntakeAction() {
         runIntake = false;
     }
-    
+
     public DeployIntakeAction(boolean runIntake) {
         this.runIntake = runIntake;
     }
 
     @Override
     public boolean isFinished() {
-        if(runIntake) {
+        if (runIntake) {
             return Timer.getFPGATimestamp() - startTime > 0.5;
-        } else  {
+        } else {
             return true;
         }
     }
@@ -33,8 +33,8 @@ public class DeployIntakeAction implements Action {
 
     @Override
     public void done() {
-        if(runIntake) {
-//            mIntake.setOff();
+        if (runIntake) {
+            // mIntake.setOff();
         }
     }
 
@@ -42,7 +42,7 @@ public class DeployIntakeAction implements Action {
     public void start() {
         startTime = Timer.getFPGATimestamp();
         mIntake.deploy();
-        if(runIntake)
+        if (runIntake)
             mIntake.setOn();
     }
 }

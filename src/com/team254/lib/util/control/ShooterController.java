@@ -3,13 +3,9 @@ package com.team254.lib.util.control;
 import com.team254.lib.util.Util;
 
 /**
- * A modified bang-bang controller:
- * In normal operation, this is an integral controller.
- * When input falls below a threshold % of setpoint:
- * - maintain output value and wait for threshold time
- * - save integral state
- * - then saturate output until input > setpoint
- * - the return to integral control, using saved integral state
+ * A modified bang-bang controller: In normal operation, this is an integral controller. When input falls below a
+ * threshold % of setpoint: - maintain output value and wait for threshold time - save integral state - then saturate
+ * output until input > setpoint - the return to integral control, using saved integral state
  */
 public class ShooterController {
 
@@ -71,7 +67,7 @@ public class ShooterController {
             double kSaturationOutput) {
         mkI = kI;
         mKF = kF;
-        mkBangLowThresholdFraction = kBangLowThresholdFraction ;
+        mkBangLowThresholdFraction = kBangLowThresholdFraction;
         mkSaturationDelay = kSaturationDelay;
         mkMaxOutput = kMaxOutput;
         mkMinOutput = kMinOutput;

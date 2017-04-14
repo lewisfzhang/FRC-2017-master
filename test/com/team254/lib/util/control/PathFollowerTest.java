@@ -27,7 +27,7 @@ public class PathFollowerTest {
             1.0, // Profile kffv
             0.0, // Profile kffa
             Constants.kPathFollowingMaxVel, // Profile max abs vel
-            Constants.kPathFollowingMaxAccel  // Profile max abs accel
+            Constants.kPathFollowingMaxAccel // Profile max abs accel
     );
 
     @Test
@@ -35,7 +35,8 @@ public class PathFollowerTest {
         PathContainer container = new StartToBoilerGearRed();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
-        ReflectingCSVWriter<PathFollower.DebugOutput> writer = new ReflectingCSVWriter<PathFollower.DebugOutput>("temp.csv", PathFollower.DebugOutput.class);
+        ReflectingCSVWriter<PathFollower.DebugOutput> writer = new ReflectingCSVWriter<PathFollower.DebugOutput>(
+                "temp.csv", PathFollower.DebugOutput.class);
 
         final double dt = 0.01;
 
@@ -61,8 +62,8 @@ public class PathFollowerTest {
         writer.flush();
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(116.4, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance );
-        assertEquals(113, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance*3);
+        assertEquals(116.4, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance);
+        assertEquals(113, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
     }
 
     @Test
@@ -70,7 +71,8 @@ public class PathFollowerTest {
         PathContainer container = new StartToBoilerGearBlue();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
-        final double dt = 0.01;;
+        final double dt = 0.01;
+        ;
 
         RigidTransform2d robot_pose = container.getStartPose();
         double t = 0;
@@ -95,17 +97,19 @@ public class PathFollowerTest {
         assertEquals(116, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
         assertEquals(210, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
     }
-    
+
     @Test
     public void testTwoPaths() {
         PathContainer container = new StartToBoilerGearBlue();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
-        ReflectingCSVWriter<PathFollower.DebugOutput> writer = new ReflectingCSVWriter<PathFollower.DebugOutput>("temp.csv", PathFollower.DebugOutput.class);
-        
+        ReflectingCSVWriter<PathFollower.DebugOutput> writer = new ReflectingCSVWriter<PathFollower.DebugOutput>(
+                "temp.csv", PathFollower.DebugOutput.class);
+
         final double dt = 0.01;
 
-        RigidTransform2d robot_pose = container.getStartPose().transformBy(new RigidTransform2d(new Translation2d(5.0, 3.0), Rotation2d.fromDegrees(15.0)));
+        RigidTransform2d robot_pose = container.getStartPose()
+                .transformBy(new RigidTransform2d(new Translation2d(5.0, 3.0), Rotation2d.fromDegrees(15.0)));
         double t = 0;
         double displacement = 0.0;
         double velocity = 0.0;
@@ -128,7 +132,7 @@ public class PathFollowerTest {
         assertTrue(controller.isFinished());
         assertEquals(116, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
         assertEquals(210, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
-        
+
         displacement = 0.0;
         container = new BoilerGearToHopperBlue();
         controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);

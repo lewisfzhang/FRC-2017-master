@@ -38,7 +38,13 @@ public class Drive extends Subsystem {
 
     // The robot drivetrain's various states.
     public enum DriveControlState {
-        OPEN_LOOP, VELOCITY_SETPOINT, PATH_FOLLOWING, AIM_TO_GOAL, TURN_TO_HEADING, DRIVE_TOWARDS_GOAL_COARSE_ALIGN, DRIVE_TOWARDS_GOAL_APPROACH
+        OPEN_LOOP,
+        VELOCITY_SETPOINT,
+        PATH_FOLLOWING,
+        AIM_TO_GOAL,
+        TURN_TO_HEADING,
+        DRIVE_TOWARDS_GOAL_COARSE_ALIGN,
+        DRIVE_TOWARDS_GOAL_APPROACH
     }
 
     protected static boolean usesTalonVelocityControl(DriveControlState state) {
@@ -78,7 +84,7 @@ public class Drive extends Subsystem {
     private boolean mIsHighGear;
     private boolean mIsBrakeMode;
     private boolean mIsOnTarget = false;
-    
+
     // Logging
     private final ReflectingCSVWriter<PathFollower.DebugOutput> mCSVWriter;
 
@@ -184,14 +190,15 @@ public class Drive extends Subsystem {
         mIsBrakeMode = true;
         setBrakeMode(false);
 
-        mCSVWriter = new ReflectingCSVWriter<PathFollower.DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", PathFollower.DebugOutput.class);
+        mCSVWriter = new ReflectingCSVWriter<PathFollower.DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv",
+                PathFollower.DebugOutput.class);
     }
 
     @Override
     public void registerEnabledLoops(Looper in) {
         in.register(mLoop);
     }
-    
+
     public synchronized void setTalonRefreshRate(int millis) {
         mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, millis);
         mRightMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, millis);
@@ -449,7 +456,7 @@ public class Drive extends Subsystem {
         updatePositionSetpoint(wheel_delta.left + getLeftDistanceInches(),
                 wheel_delta.right + getRightDistanceInches());
     }
-    
+
     private void updateDriveTowardsGoalCoarseAlign(double timestamp) {
         updateGoalHeading(timestamp);
         updateTurnToHeading(timestamp);
@@ -459,7 +466,7 @@ public class Drive extends Subsystem {
             mIsOnTarget = false;
         }
     }
-    
+
     private void updateDriveTowardsGoalApproach(double timestamp) {
         Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
         if (aim.isPresent()) {
@@ -467,7 +474,7 @@ public class Drive extends Subsystem {
             final double error = distance - Constants.kShooterOptimalRange;
             final double kGoalPosTolerance = 1.0; // inches
             if (Util.epsilonEquals(error, 0.0, kGoalPosTolerance)) {
-                // We are on target.  Switch back to auto-aim.
+                // We are on target. Switch back to auto-aim.
                 Superstructure.getInstance().resetShooterSpinUp();
                 mDriveControlState = DriveControlState.AIM_TO_GOAL;
                 return;
@@ -491,10 +498,10 @@ public class Drive extends Subsystem {
     }
 
     public synchronized boolean isOnTarget() {
-        //return true;
+        // return true;
         return mIsOnTarget;
     }
-    
+
     public synchronized boolean isAutoAiming() {
         return mDriveControlState == DriveControlState.AIM_TO_GOAL;
     }
@@ -509,7 +516,7 @@ public class Drive extends Subsystem {
         }
         setHighGear(false);
     }
-    
+
     public synchronized void setWantDriveTowardsGoal() {
         if (mDriveControlState != DriveControlState.DRIVE_TOWARDS_GOAL_COARSE_ALIGN &&
                 mDriveControlState != DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH &&
@@ -563,9 +570,9 @@ public class Drive extends Subsystem {
             return true;
         }
     }
-    
+
     public synchronized void forceDoneWithPath() {
-        if(mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+        if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
             mPathFollower.forceFinish();
         } else {
             System.out.println("Robot is not in path following mode");
@@ -617,7 +624,7 @@ public class Drive extends Subsystem {
         mLeftMaster.setVoltageCompensationRampRate(Constants.kDriveVoltageCompensationRampRate);
         mRightMaster.setVoltageCompensationRampRate(Constants.kDriveVoltageCompensationRampRate);
     }
-    
+
     public synchronized double getAccelX() {
         return mNavXBoard.getRawAccelX();
     }

@@ -31,8 +31,7 @@ public class PixyCam {
     /**
      * Reads up to 10 bytes, looking for the sync word (<code>0xaa55</code>).
      *
-     * @return <code>true</code> if the sync word was encountered,
-     * <code>false</code> if not (no block available)
+     * @return <code>true</code> if the sync word was encountered, <code>false</code> if not (no block available)
      */
     private boolean waitForSync() {
         for (int n = 0; n < 10; n++) {
@@ -85,7 +84,7 @@ public class PixyCam {
         }
         // get the next Block (if available)
         Frame.Block block;
-        while((block = parseBlock()) != null) {
+        while ((block = parseBlock()) != null) {
             blocksRead.add(block);
         }
 

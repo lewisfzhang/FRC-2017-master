@@ -16,7 +16,7 @@ import com.team254.lib.util.math.Twist2d;
 
 public class AdaptivePurePursuitController {
     private static final double kReallyBigNumber = 1E6;
-    
+
     public static class Command {
         public Twist2d delta = Twist2d.identity();
         public double cross_track_error;
@@ -27,7 +27,8 @@ public class AdaptivePurePursuitController {
         public Command() {
         }
 
-        public Command(Twist2d delta, double cross_track_error, double max_velocity, double end_velocity, Translation2d lookahead_point) {
+        public Command(Twist2d delta, double cross_track_error, double max_velocity, double end_velocity,
+                Translation2d lookahead_point) {
             this.delta = delta;
             this.cross_track_error = cross_track_error;
             this.max_velocity = max_velocity;
@@ -58,11 +59,12 @@ public class AdaptivePurePursuitController {
             pose = new RigidTransform2d(pose.getTranslation(),
                     pose.getRotation().rotateBy(Rotation2d.fromRadians(Math.PI)));
         }
-        
+
         final Path.TargetPointReport report = mPath.getTargetPoint(pose.getTranslation(), mLookahead);
         if (isFinished()) {
             // Stop.
-            return new Command(Twist2d.identity(), report.closest_point_distance, report.max_speed, 0.0, report.lookahead_point);
+            return new Command(Twist2d.identity(), report.closest_point_distance, report.max_speed, 0.0,
+                    report.lookahead_point);
         }
 
         final Arc arc = new Arc(pose, report.lookahead_point);

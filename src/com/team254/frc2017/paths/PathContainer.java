@@ -5,6 +5,8 @@ import com.team254.lib.util.math.RigidTransform2d;
 
 public interface PathContainer {
     Path buildPath();
+
     RigidTransform2d getStartPose();
+
     boolean isReversed();
 }

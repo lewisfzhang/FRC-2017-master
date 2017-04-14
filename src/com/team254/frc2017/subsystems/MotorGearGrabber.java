@@ -1,6 +1,5 @@
 package com.team254.frc2017.subsystems;
 
-
 import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
@@ -23,8 +22,9 @@ public class MotorGearGrabber extends Subsystem {
     public static double kIntakeThreshold = 25;
     public static double kContainThreshold = 0.0;
     public static double kThresholdTime = 0.15;
-    
+
     private static MotorGearGrabber mInstance;
+
     public static MotorGearGrabber getInstance() {
         if (mInstance == null) {
             mInstance = new MotorGearGrabber();
@@ -66,6 +66,7 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
 
     }
+
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
@@ -95,7 +96,6 @@ public class MotorGearGrabber extends Subsystem {
                 mCurrentStateStartTime = Timer.getFPGATimestamp();
             }
 
-
             @Override
             public void onLoop(double timestamp) {
 
@@ -103,39 +103,39 @@ public class MotorGearGrabber extends Subsystem {
                     SystemState newState = mSystemState;
                     double timeInState = Timer.getFPGATimestamp() - mCurrentStateStartTime;
                     switch (mSystemState) {
-                        case IDLE:
-                            newState = handleIdle();
-                            break;
-                        case BALL_CLEARING:
-                            newState = handleBallClearing();
-                            break;
-                        case INTAKE:
-                            newState = handleIntake(timeInState);
-                            break;
-                        case STOWING:
-                            newState = handleStowing(timeInState);
-                            break;
-                        case STOWED:
-                            newState = handleStowed(timeInState);
-                            break;
-                        case EXHAUSTING:
-                            newState = handleExhausting(timeInState);
-                            break;
-                        case LOWERING:
-                            newState = handleLowering(timeInState);
-                            break;
-                        case EXHAUST:
-                            newState = handleExhaust(timeInState);
-                            break;
-                        case DOWN:
-                            newState = handleLowered(timeInState);
-                            break;
-                        default:
-                            System.out.println("Unexpected gear grabber system state: " + mSystemState);
-                            newState = mSystemState;
-                            break;
+                    case IDLE:
+                        newState = handleIdle();
+                        break;
+                    case BALL_CLEARING:
+                        newState = handleBallClearing();
+                        break;
+                    case INTAKE:
+                        newState = handleIntake(timeInState);
+                        break;
+                    case STOWING:
+                        newState = handleStowing(timeInState);
+                        break;
+                    case STOWED:
+                        newState = handleStowed(timeInState);
+                        break;
+                    case EXHAUSTING:
+                        newState = handleExhausting(timeInState);
+                        break;
+                    case LOWERING:
+                        newState = handleLowering(timeInState);
+                        break;
+                    case EXHAUST:
+                        newState = handleExhaust(timeInState);
+                        break;
+                    case DOWN:
+                        newState = handleLowered(timeInState);
+                        break;
+                    default:
+                        System.out.println("Unexpected gear grabber system state: " + mSystemState);
+                        newState = mSystemState;
+                        break;
                     }
-                    
+
                     if (newState != mSystemState) {
                         System.out.println("Changed state: " + mSystemState + " -> " + newState);
                         mSystemState = newState;
@@ -143,7 +143,6 @@ public class MotorGearGrabber extends Subsystem {
                         startTimeInThreshold = 0;
                     }
                 }
-
 
             }
 
@@ -157,17 +156,17 @@ public class MotorGearGrabber extends Subsystem {
         };
         enabledLooper.register(loop);
     }
-    
+
     private SystemState handleIdle() {
-        switch(mWantedState) {
-            case ACQUIRE:
-                return SystemState.INTAKE;
-            case CLEAR_BALLS:
-                return SystemState.BALL_CLEARING;
-            default:
-                setWristUp();
-                mMasterTalon.set(0);
-                return SystemState.IDLE;
+        switch (mWantedState) {
+        case ACQUIRE:
+            return SystemState.INTAKE;
+        case CLEAR_BALLS:
+            return SystemState.BALL_CLEARING;
+        default:
+            setWristUp();
+            mMasterTalon.set(0);
+            return SystemState.IDLE;
         }
     }
 
@@ -175,128 +174,127 @@ public class MotorGearGrabber extends Subsystem {
         setWristDown();
         mMasterTalon.set(kBallClearSetpoint);
 
-        switch(mWantedState) {
-            case ACQUIRE:
-                return SystemState.INTAKE;
-            case CLEAR_BALLS:
-                return SystemState.BALL_CLEARING;
-            default:
-                return SystemState.IDLE;
+        switch (mWantedState) {
+        case ACQUIRE:
+            return SystemState.INTAKE;
+        case CLEAR_BALLS:
+            return SystemState.BALL_CLEARING;
+        default:
+            return SystemState.IDLE;
         }
     }
-    
+
     private SystemState handleIntake(double timeInState) {
-        switch(mWantedState) {
-            case CLEAR_BALLS:
-                return SystemState.BALL_CLEARING;
-            case IDLE:
-                if(mMasterTalon.getOutputCurrent() < kIntakeThreshold) {
-                    return SystemState.IDLE;
+        switch (mWantedState) {
+        case CLEAR_BALLS:
+            return SystemState.BALL_CLEARING;
+        case IDLE:
+            if (mMasterTalon.getOutputCurrent() < kIntakeThreshold) {
+                return SystemState.IDLE;
+            }
+            // Fall through intended.
+        default:
+            setWristDown();
+            mMasterTalon.set(kIntakeGearSetpoint);
+            if (mMasterTalon.getOutputCurrent() > kIntakeThreshold) {
+                if (startTimeInThreshold == 0.0) {
+                    startTimeInThreshold = timeInState;
                 }
-                // Fall through intended.
-             default:
-                setWristDown();
-                mMasterTalon.set(kIntakeGearSetpoint);
-                if(mMasterTalon.getOutputCurrent() > kIntakeThreshold) {
-                    if(startTimeInThreshold == 0.0) {
-                        startTimeInThreshold = timeInState;
-                    }
-                } else {
-                    startTimeInThreshold = 0.0;
-                }
-                if(timeInState - startTimeInThreshold > kThresholdTime && startTimeInThreshold != 0) {
-                    LED.getInstance().setWantedState(LED.WantedState.BLINK);
-                    if (mWantedState == WantedState.IDLE) {
-                        return SystemState.STOWING;
-                    } else {
-                        return SystemState.INTAKE;
-                    }
+            } else {
+                startTimeInThreshold = 0.0;
+            }
+            if (timeInState - startTimeInThreshold > kThresholdTime && startTimeInThreshold != 0) {
+                LED.getInstance().setWantedState(LED.WantedState.BLINK);
+                if (mWantedState == WantedState.IDLE) {
+                    return SystemState.STOWING;
                 } else {
                     return SystemState.INTAKE;
                 }
+            } else {
+                return SystemState.INTAKE;
+            }
         }
     }
-    
+
     private SystemState handleExhaust(double timeInState) {
         setWristDown();
         mMasterTalon.set(kScoreGearSetpoint);
 
-        switch(mWantedState) {
-            case SCORE:
-               return SystemState.EXHAUST;
-            case ACQUIRE:
-                return SystemState.INTAKE;
-            default:
-                return SystemState.IDLE;
+        switch (mWantedState) {
+        case SCORE:
+            return SystemState.EXHAUST;
+        case ACQUIRE:
+            return SystemState.INTAKE;
+        default:
+            return SystemState.IDLE;
         }
     }
-    
+
     public SystemState handleStowing(double timeInState) {
         setWristUp();
         mMasterTalon.set(kIntakeGearSetpoint);
-        if(timeInState > kTransitionDelay) {
+        if (timeInState > kTransitionDelay) {
             return SystemState.STOWED;
         }
         return SystemState.STOWING;
     }
-    
+
     private SystemState handleStowed(double timeInState) {
-        switch(mWantedState) {
-            case SCORE:
-                return SystemState.EXHAUSTING;
-            case FORCE_LOWERED:
-                return SystemState.LOWERING;
-            default:
-//                if(mMasterTalon.getOutputCurrent() <= K_CONTAIN_THRESH) {
-//                    if(startTimeInThreshold == 0.0) {
-//                        startTimeInThreshold = timeInState;
-//                    }
-//                } else {
-//                    startTimeInThreshold = 0.0;
-//                }
-//                if(timeInState - startTimeInThreshold > K_THRESH_TIME*2 && startTimeInThreshold != 0) {
-//                    LED.getInstance().setWantedState(LED.WantedState.BLINK);
-//                    return SystemState.IDLE;
-//                }
-                setWristUp();
-                mMasterTalon.set(kContainGearSetpoint);
-                return SystemState.STOWED;
+        switch (mWantedState) {
+        case SCORE:
+            return SystemState.EXHAUSTING;
+        case FORCE_LOWERED:
+            return SystemState.LOWERING;
+        default:
+            // if(mMasterTalon.getOutputCurrent() <= K_CONTAIN_THRESH) {
+            // if(startTimeInThreshold == 0.0) {
+            // startTimeInThreshold = timeInState;
+            // }
+            // } else {
+            // startTimeInThreshold = 0.0;
+            // }
+            // if(timeInState - startTimeInThreshold > K_THRESH_TIME*2 && startTimeInThreshold != 0) {
+            // LED.getInstance().setWantedState(LED.WantedState.BLINK);
+            // return SystemState.IDLE;
+            // }
+            setWristUp();
+            mMasterTalon.set(kContainGearSetpoint);
+            return SystemState.STOWED;
         }
     }
-    
+
     private SystemState handleExhausting(double timeInState) {
         setWristDown();
-        if(timeInState > kExhaustDelay) {
+        if (timeInState > kExhaustDelay) {
             mMasterTalon.set(kScoreGearSetpoint);
         } else {
             mMasterTalon.set(kContainGearSetpoint);
         }
-        if(timeInState > kTransitionDelay) {
+        if (timeInState > kTransitionDelay) {
             return SystemState.EXHAUST;
         }
         return SystemState.EXHAUSTING;
     }
-    
+
     private SystemState handleLowering(double timeInState) {
         setWristDown();
         mMasterTalon.set(kIntakeGearSetpoint);
-        if(timeInState > kTransitionDelay) {
+        if (timeInState > kTransitionDelay) {
             return SystemState.DOWN;
         }
         return SystemState.LOWERING;
     }
-    
+
     private SystemState handleLowered(double timeInState) {
-        switch(mWantedState) {
-            case FORCE_LOWERED:
-                setWristDown();
-                mMasterTalon.set(kContainGearSetpoint);
-                return SystemState.DOWN;
-            default:
-                return SystemState.IDLE;
+        switch (mWantedState) {
+        case FORCE_LOWERED:
+            setWristDown();
+            mMasterTalon.set(kContainGearSetpoint);
+            return SystemState.DOWN;
+        default:
+            return SystemState.IDLE;
         }
     }
-
 
     public boolean mWristUp = false;
 
@@ -305,19 +303,19 @@ public class MotorGearGrabber extends Subsystem {
     }
 
     public void setWristUp() {
-        if(!mWristUp) {
-            mWristUp  = true;
+        if (!mWristUp) {
+            mWristUp = true;
             mWristSolenoid.set(mWristUp);
         }
     }
 
     public void setWristDown() {
-        if(mWristUp) {
-            mWristUp  = false;
+        if (mWristUp) {
+            mWristUp = false;
             mWristSolenoid.set(mWristUp);
         }
     }
-    
+
     public void setWantedState(WantedState wanted) {
         mWantedState = wanted;
     }

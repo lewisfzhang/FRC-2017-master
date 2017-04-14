@@ -39,7 +39,14 @@ public class Superstructure extends Subsystem {
 
     // Intenal state of the system
     public enum SystemState {
-        IDLE, WAITING_FOR_AIM, SHOOTING, UNJAMMING, UNJAMMING_WITH_SHOOT, JUST_FEED, EXHAUSTING, HANGING,
+        IDLE,
+        WAITING_FOR_AIM,
+        SHOOTING,
+        UNJAMMING,
+        UNJAMMING_WITH_SHOOT,
+        JUST_FEED,
+        EXHAUSTING,
+        HANGING,
         RANGE_FINDING
     };
 
@@ -53,9 +60,9 @@ public class Superstructure extends Subsystem {
 
     private double mCurrentTuningRpm = Constants.kShooterTuningRpmFloor;
     private double mLastGoalRange = 0.0;
-    
+
     private boolean mCompressorOverride = false;
-    
+
     public boolean isOnTargetToShoot() {
         return (mDrive.isOnTarget() && mDrive.isAutoAiming()) && mShooter.isOnTarget();
     }
@@ -122,7 +129,8 @@ public class Superstructure extends Subsystem {
                 }
 
                 if (newState != mSystemState) {
-                    System.out.println("Superstructure state " + mSystemState + " to " + newState + " Timestamp: " + Timer.getFPGATimestamp());
+                    System.out.println("Superstructure state " + mSystemState + " to " + newState + " Timestamp: "
+                            + Timer.getFPGATimestamp());
                     mSystemState = newState;
                     mCurrentStateStartTime = timestamp;
                     mStateChanged = true;
@@ -143,24 +151,24 @@ public class Superstructure extends Subsystem {
         mFeeder.setWantedState(Feeder.WantedState.FEED);
 
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                // Reset kF on shooter.
-                resetShooterSpinUp();
-                return SystemState.WAITING_FOR_AIM;
-            case MANUAL_FEED:
-                return SystemState.JUST_FEED;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            case HANG:
-                return SystemState.HANGING;
-            case RANGE_FINDING:
-                return SystemState.RANGE_FINDING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            // Reset kF on shooter.
+            resetShooterSpinUp();
+            return SystemState.WAITING_FOR_AIM;
+        case MANUAL_FEED:
+            return SystemState.JUST_FEED;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        case HANG:
+            return SystemState.HANGING;
+        case RANGE_FINDING:
+            return SystemState.RANGE_FINDING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
@@ -174,22 +182,22 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(!mCompressorOverride);
 
         switch (mWantedState) {
-            case UNJAM:
-                return SystemState.UNJAMMING;
-            case UNJAM_SHOOT:
-                return SystemState.UNJAMMING_WITH_SHOOT;
-            case SHOOT:
-                return SystemState.WAITING_FOR_AIM;
-            case MANUAL_FEED:
-                return SystemState.JUST_FEED;
-            case EXHAUST:
-                return SystemState.EXHAUSTING;
-            case HANG:
-                return SystemState.HANGING;
-            case RANGE_FINDING:
-                return SystemState.RANGE_FINDING;
-            default:
-                return SystemState.IDLE;
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            return SystemState.WAITING_FOR_AIM;
+        case MANUAL_FEED:
+            return SystemState.JUST_FEED;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        case HANG:
+            return SystemState.HANGING;
+        case RANGE_FINDING:
+            return SystemState.RANGE_FINDING;
+        default:
+            return SystemState.IDLE;
         }
     }
 
@@ -201,7 +209,8 @@ public class Superstructure extends Subsystem {
 
         if (autoSpinShooter()) {
 
-            System.out.println(Timer.getFPGATimestamp() + ": making shot: Range: " + mLastGoalRange + " setpoint: " + mShooter.getLastSetpointRpm());
+            System.out.println(Timer.getFPGATimestamp() + ": making shot: Range: " + mLastGoalRange + " setpoint: "
+                    + mShooter.getLastSetpointRpm());
 
             return SystemState.SHOOTING;
         }
@@ -272,8 +281,7 @@ public class Superstructure extends Subsystem {
 
     private SystemState handleUnjamming() {
         mShooter.stop();
-        mCompressor.setClosedLoopControl(false)
-        ;
+        mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.UNJAM);
         mHopper.setWantedState(Hopper.WantedState.UNJAM);
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
@@ -332,7 +340,7 @@ public class Superstructure extends Subsystem {
         }
 
     }
-    
+
     private SystemState handleHang() {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.IDLE);
@@ -363,9 +371,11 @@ public class Superstructure extends Subsystem {
         if (aimOptional.isPresent()) {
             final ShooterAimingParameters aim = aimOptional.get();
             double range = aim.getRange();
-            final boolean range_valid = Constants.kIsShooterTuning || (range >= Constants.kShooterAbsoluteRangeFloor && range <= Constants.kShooterAbsoluteRangeCeiling);
+            final boolean range_valid = Constants.kIsShooterTuning || (range >= Constants.kShooterAbsoluteRangeFloor
+                    && range <= Constants.kShooterAbsoluteRangeCeiling);
             if (!range_valid) {
-                range = Math.max(Constants.kShooterAbsoluteRangeFloor, Math.min(Constants.kShooterAbsoluteRangeCeiling, range));
+                range = Math.max(Constants.kShooterAbsoluteRangeFloor,
+                        Math.min(Constants.kShooterAbsoluteRangeCeiling, range));
             }
             if (!Constants.kIsShooterTuning) {
 
@@ -391,7 +401,8 @@ public class Superstructure extends Subsystem {
                 mLastGoalRange = aimOptional.get().getRange();
             }
 
-            return range_valid && isOnTargetToShoot() && (timestamp - aim.getLastSeenTimestamp()) < Constants.kMaxGoalTrackAge;
+            return range_valid && isOnTargetToShoot()
+                    && (timestamp - aim.getLastSeenTimestamp()) < Constants.kMaxGoalTrackAge;
         } else if (Superstructure.getInstance().isShooting()) {
             mLED.setRangeBlicking(true);
             // Keep the previous setpoint.
@@ -401,16 +412,16 @@ public class Superstructure extends Subsystem {
             mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             return false;
 
-
             // We are shooter tuning fine current RPM we are tuning for.
-/*            mShooter.setClosedLoopRpm(mCurrentTuningRpm);
-            return isOnTargetToShoot();*/
+            /*
+             * mShooter.setClosedLoopRpm(mCurrentTuningRpm); return isOnTargetToShoot();
+             */
         }
     }
 
     public synchronized void incrementTuningRpm() {
         if (mCurrentTuningRpm <= Constants.kShooterTuningRpmCeiling) {
-             mCurrentTuningRpm += Constants.kShooterTuningRpmStep;
+            mCurrentTuningRpm += Constants.kShooterTuningRpmStep;
             System.out.println("Changing RPM to: " + mCurrentTuningRpm);
         }
     }
@@ -434,7 +445,7 @@ public class Superstructure extends Subsystem {
     public synchronized void setClosedLoopRpm(double setpointRpm) {
         mShooter.setClosedLoopRpm(setpointRpm);
     }
-    
+
     public synchronized void setActuateHopper(boolean extended) {
         mHopperSolenoid.set(extended);
     }
@@ -458,7 +469,7 @@ public class Superstructure extends Subsystem {
     public void registerEnabledLoops(Looper enabledLooper) {
         enabledLooper.register(mLoop);
     }
-    
+
     public void resetShooterSpinUp() {
         mShooter.resetSpinUp();
     }
@@ -474,7 +485,7 @@ public class Superstructure extends Subsystem {
     public void setWantIntakeOn() {
         mIntake.setOn();
     }
-    
+
     public void setOverrideCompressor(boolean force_off) {
         mCompressorOverride = force_off;
     }

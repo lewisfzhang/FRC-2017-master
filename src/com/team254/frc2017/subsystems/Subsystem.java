@@ -13,8 +13,9 @@ import com.team254.frc2017.loops.Looper;
  * instantializing all member components at the start of the match.
  */
 public abstract class Subsystem {
-    public void writeToLog() {};
-    
+    public void writeToLog() {
+    };
+
     public abstract void outputToSmartDashboard();
 
     public abstract void stop();

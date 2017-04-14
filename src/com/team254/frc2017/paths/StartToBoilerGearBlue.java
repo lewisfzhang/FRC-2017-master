@@ -9,19 +9,19 @@ import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
 public class StartToBoilerGearBlue implements PathContainer {
-    
+
     @Override
     public Path buildPath() {
         return PathAdapter.getBlueGearPath();
     }
-    
+
     @Override
     public RigidTransform2d getStartPose() {
-        return PathAdapter.getBlueStartPose(); 
+        return PathAdapter.getBlueStartPose();
     }
 
     @Override
     public boolean isReversed() {
-        return true; 
+        return true;
     }
 }

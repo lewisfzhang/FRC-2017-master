@@ -26,7 +26,6 @@ public class PixyVisionServer {
         return _instance;
     }
 
-
     private PixyCam pixy;
     private ArrayList<PixyUpdateListener> listeners = new ArrayList<>();
 
@@ -75,11 +74,14 @@ public class PixyVisionServer {
     /**
      * Registers a new <code>VisionUpdateListener</code> to receive updates about detected objects.
      *
-     * @param listener – the listener
-     * @throws IllegalArgumentException if <code>listener</code> is <code>null</code>
+     * @param listener
+     *            – the listener
+     * @throws IllegalArgumentException
+     *             if <code>listener</code> is <code>null</code>
      */
     public void addListener(PixyUpdateListener listener) {
-        if (listener == null) throw new IllegalArgumentException("Cannot add a null listener!");
+        if (listener == null)
+            throw new IllegalArgumentException("Cannot add a null listener!");
         listeners.add(listener);
     }
 

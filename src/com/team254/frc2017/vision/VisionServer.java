@@ -16,12 +16,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * This controls all vision actions, including vision updates, capture, and
- * interfacing with the Android phone with Android Debug Bridge. It also stores
- * all VisionUpdates (from the Android phone) and contains methods to add
- * to/prune the VisionUpdate list. Much like the subsystems, outside methods get
- * the VisionServer instance (there is only one VisionServer) instead of
- * creating new VisionServer instances.
+ * This controls all vision actions, including vision updates, capture, and interfacing with the Android phone with
+ * Android Debug Bridge. It also stores all VisionUpdates (from the Android phone) and contains methods to add to/prune
+ * the VisionUpdate list. Much like the subsystems, outside methods get the VisionServer instance (there is only one
+ * VisionServer) instead of creating new VisionServer instances.
  * 
  * @see VisionUpdate.java
  */
@@ -131,8 +129,7 @@ public class VisionServer extends CrashTrackingRunnable {
     }
 
     /**
-     * Instantializes the VisionServer and connects to ADB via the specified
-     * port.
+     * Instantializes the VisionServer and connects to ADB via the specified port.
      * 
      * @param Port
      */

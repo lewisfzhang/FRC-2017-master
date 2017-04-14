@@ -15,7 +15,7 @@ import com.team254.lib.util.motion.ProfileFollower;
  */
 public class PathFollower {
     private static final double kReallyBigNumber = 1E6;
-    
+
     public static class DebugOutput {
         public double t;
         public double pose_x;
@@ -133,7 +133,7 @@ public class PathFollower {
         }
         final double scale = velocity_command / mLastSteeringDelta.dx;
         final Twist2d rv = new Twist2d(mLastSteeringDelta.dx * scale, 0.0, dtheta * scale);
-        
+
         // Fill out debug.
         mDebugOutput.t = t;
         mDebugOutput.pose_x = pose.getTranslation().x();
@@ -146,7 +146,7 @@ public class PathFollower {
         mDebugOutput.velocity_command_dtheta = rv.dtheta;
         mDebugOutput.cross_track_error = mCrossTrackError;
         mDebugOutput.along_track_error = mAlongTrackError;
-        
+
         return rv;
     }
 
@@ -157,7 +157,7 @@ public class PathFollower {
     public double getAlongTrackError() {
         return mAlongTrackError;
     }
-    
+
     public DebugOutput getDebug() {
         return mDebugOutput;
     }
@@ -165,7 +165,7 @@ public class PathFollower {
     public boolean isFinished() {
         return (mSteeringController.isFinished() && mVelocityController.isFinishedProfile()) || overrideFinished;
     }
-    
+
     public void forceFinish() {
         overrideFinished = true;
     }

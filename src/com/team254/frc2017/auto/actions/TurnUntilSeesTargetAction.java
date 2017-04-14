@@ -12,21 +12,21 @@ import edu.wpi.first.wpilibj.Timer;
 public class TurnUntilSeesTargetAction extends TurnToHeadingAction {
 
     RobotState mState = RobotState.getInstance();
-    
+
     public TurnUntilSeesTargetAction(Rotation2d heading) {
         super(heading);
         LED.getInstance().setWantedState(LED.WantedState.FIND_RANGE);
         // TODO Auto-generated constructor stub
     }
-    
+
     @Override
     public boolean isFinished() {
         double now = Timer.getFPGATimestamp();
         Optional<ShooterAimingParameters> aimParams = mState.getAimingParameters(now);
-        if(aimParams.isPresent() && Math.abs(now - aimParams.get().getLastSeenTimestamp()) < 0.5) {
+        if (aimParams.isPresent() && Math.abs(now - aimParams.get().getLastSeenTimestamp()) < 0.5) {
             return true;
         }
-        return super.isFinished(); 
+        return super.isFinished();
     }
 
 }

@@ -7,9 +7,8 @@ import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Twist2d;
 
 /**
- * Periodically estimates the state of the robot using the robot's distance
- * traveled (compares two waypoints), gyroscope orientation, and velocity, among
- * various other factors. Similar to a car's odometer.
+ * Periodically estimates the state of the robot using the robot's distance traveled (compares two waypoints), gyroscope
+ * orientation, and velocity, among various other factors. Similar to a car's odometer.
  */
 public class RobotStateEstimator implements Loop {
     static RobotStateEstimator instance_ = new RobotStateEstimator();
