@@ -59,6 +59,10 @@ public class ControlBoard implements ControlBoardInterface {
     public boolean getAimButton() {
         return mThrottleStick.getRawButton(1);
     }
+    
+    public boolean getDriveAimButton() {
+        return mTurnStick.getRawButton(2);
+    }
 
     // OPERATOR CONTROLS
     @Override
@@ -68,7 +72,7 @@ public class ControlBoard implements ControlBoardInterface {
 
     @Override
     public boolean getIntakeButton() {
-        return mButtonBoard.getRawAxis(2) < -0.1 || mTurnStick.getRawButton(2);
+        return mButtonBoard.getRawAxis(2) < -0.1;
     }
 
     @Override

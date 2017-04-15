@@ -109,4 +109,10 @@ public class GamepadControlBoard implements ControlBoardInterface {
         // B
         return mGamepad.getRawButton(3);
     }
+
+    @Override
+    public boolean getDriveAimButton() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
