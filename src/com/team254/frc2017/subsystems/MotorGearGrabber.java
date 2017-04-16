@@ -5,6 +5,9 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
+import com.team254.lib.util.drivers.UltrasonicSensor;
+
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,11 +22,12 @@ public class MotorGearGrabber extends Subsystem {
     public static double kIntakeGearSetpoint = -12;
     public static double kTransitionDelay = 0.5;
     public static double kExhaustDelay = 0.1;
-    public static double kIntakeThreshold = 25;
+    public static double kIntakeThreshold = 15;
     public static double kContainThreshold = 0.0;
     public static double kThresholdTime = 0.15;
 
     private static MotorGearGrabber mInstance;
+//    private static UltrasonicSensor mUltrasonicSensor;
 
     public static MotorGearGrabber getInstance() {
         if (mInstance == null) {
@@ -64,12 +68,14 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kGearGrabberId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
-
+//        mUltrasonicSensor = new UltrasonicSensor(Constants.kUltrasonicSensorId);
     }
 
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
+//        SmartDashboard.putNumber("ultrasonic", mUltrasonicSensor.getAverageDistance());
+        System.out.println(mMasterTalon.getOutputCurrent());
     }
 
     @Override
@@ -135,6 +141,8 @@ public class MotorGearGrabber extends Subsystem {
                         newState = mSystemState;
                         break;
                     }
+                    
+//                    mUltrasonicSensor.update();
 
                     if (newState != mSystemState) {
                         System.out.println("Changed state: " + mSystemState + " -> " + newState);
@@ -300,6 +308,10 @@ public class MotorGearGrabber extends Subsystem {
 
     public void setOpenLoop(double value) {
         mMasterTalon.set(value);
+    }
+    
+    public double getDistance() {
+        return 0;//mUltrasonicSensor.getAverageDistance();
     }
 
     public void setWristUp() {
