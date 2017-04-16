@@ -147,7 +147,9 @@ public class Superstructure extends Subsystem {
     };
 
     private SystemState handleRangeFinding() {
-        autoSpinShooter();
+        //autoSpinShooter();
+        mShooter.setOpenLoop(0);
+        mLED.setWantedState(LED.WantedState.FIND_RANGE);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
 
         switch (mWantedState) {

@@ -84,6 +84,7 @@ public class Drive extends Subsystem {
     private boolean mIsHighGear;
     private boolean mIsBrakeMode;
     private boolean mIsOnTarget = false;
+    private boolean mIsApproaching = false;
 
     // Logging
     private final ReflectingCSVWriter<PathFollower.DebugOutput> mCSVWriter;
@@ -460,6 +461,7 @@ public class Drive extends Subsystem {
     private void updateDriveTowardsGoalCoarseAlign(double timestamp) {
         updateGoalHeading(timestamp);
         updateTurnToHeading(timestamp);
+        mIsApproaching = true;
         if (mIsOnTarget) {
             // Done coarse alignment.
             mDriveControlState = DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH;
@@ -469,6 +471,7 @@ public class Drive extends Subsystem {
 
     private void updateDriveTowardsGoalApproach(double timestamp) {
         Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
+        mIsApproaching = true;
         if (aim.isPresent()) {
             final double distance = aim.get().getRange();
             final double error = distance - Constants.kShooterOptimalRange;
@@ -477,6 +480,7 @@ public class Drive extends Subsystem {
                 // We are on target. Switch back to auto-aim.
                 Superstructure.getInstance().resetShooterSpinUp();
                 mDriveControlState = DriveControlState.AIM_TO_GOAL;
+                mIsApproaching = false;
                 return;
             }
             updatePositionSetpoint(getLeftDistanceInches() + error, getRightDistanceInches() + error);
@@ -577,6 +581,10 @@ public class Drive extends Subsystem {
         } else {
             System.out.println("Robot is not in path following mode");
         }
+    }
+    
+    public boolean isApproaching() {
+        return mIsApproaching;
     }
 
     public synchronized boolean isDoneWithTurn() {

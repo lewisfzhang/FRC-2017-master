@@ -190,11 +190,17 @@ public class Robot extends IterativeRobot {
                 } else {
                     mDrive.setWantAimToGoal();
                 }
-
-                if (mControlBoard.getUnjamButton()) {
-                    mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM_SHOOT);
+                
+                if((mControlBoard.getDriveAimButton() && !mDrive.isApproaching()) || !mControlBoard.getDriveAimButton()) {
+                    System.out.println("shoot");
+                    if (mControlBoard.getUnjamButton()) {
+                        mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM_SHOOT);
+                    } else {
+                        mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
+                    }
                 } else {
-                    mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
+                    System.out.println("dont shoot");
+                    mSuperstructure.setWantedState(Superstructure.WantedState.RANGE_FINDING);
                 }
             } else {
                 mDrive.setHighGear(!mControlBoard.getLowGear());
@@ -270,7 +276,7 @@ public class Robot extends IterativeRobot {
                 mGearGrabber.setWantedState(WantedState.IDLE);
             }
 
-            mSuperstructure.setActuateHopper(mControlBoard.getActuateHopperButton());
+            mSuperstructure.setActuateHopper(!mControlBoard.getActuateHopperButton());
             allPeriodic();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
