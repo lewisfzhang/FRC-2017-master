@@ -1,0 +1,47 @@
+package com.team254.lib.util.drivers;
+
+import java.util.LinkedList;
+
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogTrigger;
+import edu.wpi.first.wpilibj.AnalogTriggerOutput.AnalogTriggerType;
+import edu.wpi.first.wpilibj.Counter;
+
+/**
+ * Driver for an analog Ultrasonic Sensor (mainly to help smooth out noise).
+ */
+public class UltrasonicSensor {
+    protected AnalogInput mAnalogInput; 
+    private LinkedList<Double> cache;
+    
+    private static final int kCacheSize = 5;
+    
+    public UltrasonicSensor(int port) {
+        mAnalogInput = new AnalogInput(port);
+        mAnalogInput.setAverageBits(8);
+        cache = new LinkedList<Double>();
+        cache.add(getRawDistance());
+    }
+    
+    public void update() {
+        cache.add(getRawDistance());
+        if(cache.size() > kCacheSize)
+            cache.removeFirst();
+    }
+    
+    public double getRawDistance() {
+        return mAnalogInput.getVoltage() * 512 / 5;
+    }
+    
+    public double getAverageDistance() {
+        double total = 0;
+        for(Double d : cache) {
+            total += d;
+        }
+        return total / cache.size();
+    }
+    
+    public double getLatestDistance() {
+        return cache.getLast();
+    }
+}

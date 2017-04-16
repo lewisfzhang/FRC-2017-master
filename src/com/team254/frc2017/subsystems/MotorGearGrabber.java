@@ -7,7 +7,6 @@ import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
 import com.team254.lib.util.drivers.UltrasonicSensor;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,7 +26,7 @@ public class MotorGearGrabber extends Subsystem {
     public static double kThresholdTime = 0.15;
 
     private static MotorGearGrabber mInstance;
-//    private static UltrasonicSensor mUltrasonicSensor;
+    private static UltrasonicSensor mUltrasonicSensor;
 
     public static MotorGearGrabber getInstance() {
         if (mInstance == null) {
@@ -68,13 +67,13 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kGearGrabberId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
-//        mUltrasonicSensor = new UltrasonicSensor(Constants.kUltrasonicSensorId);
+        mUltrasonicSensor = new UltrasonicSensor(Constants.kUltrasonicSensorId);
     }
 
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
-//        SmartDashboard.putNumber("ultrasonic", mUltrasonicSensor.getAverageDistance());
+        SmartDashboard.putNumber("Ultrasonic Distance", mUltrasonicSensor.getLatestDistance());
         System.out.println(mMasterTalon.getOutputCurrent());
     }
 
@@ -142,7 +141,7 @@ public class MotorGearGrabber extends Subsystem {
                         break;
                     }
                     
-//                    mUltrasonicSensor.update();
+                    mUltrasonicSensor.update();
 
                     if (newState != mSystemState) {
                         System.out.println("Changed state: " + mSystemState + " -> " + newState);
@@ -311,7 +310,7 @@ public class MotorGearGrabber extends Subsystem {
     }
     
     public double getDistance() {
-        return 0;//mUltrasonicSensor.getAverageDistance();
+        return mUltrasonicSensor.getLatestDistance();
     }
 
     public void setWristUp() {

@@ -173,6 +173,7 @@ public class Constants extends ConstantsBase {
 
     // Grabber
     public static final int kGearGrabberId = 15;
+    public static final int kUltrasonicSensorId = 0;
 
     // SOLENOIDS
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0
