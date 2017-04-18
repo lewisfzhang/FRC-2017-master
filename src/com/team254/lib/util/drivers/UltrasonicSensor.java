@@ -19,7 +19,6 @@ public class UltrasonicSensor {
     
     public UltrasonicSensor(int port) {
         mAnalogInput = new AnalogInput(port);
-        mAnalogInput.setAverageBits(8);
         cache = new LinkedList<Double>();
         cache.add(getRawDistance());
     }

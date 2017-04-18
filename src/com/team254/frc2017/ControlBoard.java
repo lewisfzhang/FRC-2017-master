@@ -129,4 +129,9 @@ public class ControlBoard implements ControlBoardInterface {
     public boolean getRangeFinderButton() {
         return mButtonBoard.getRawButton(7);
     }
+
+    @Override
+    public boolean getWantGearDriveLimit() {
+        return mButtonBoard.getRawButton(12);
+    }
 }

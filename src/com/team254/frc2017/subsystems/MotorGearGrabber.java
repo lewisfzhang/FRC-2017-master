@@ -6,7 +6,6 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
 import com.team254.lib.util.drivers.MB1043;
-import com.team254.lib.util.drivers.UltrasonicSensor;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -74,7 +73,7 @@ public class MotorGearGrabber extends Subsystem {
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
-        SmartDashboard.putNumber("Ultrasonic Distance", getLatestRawDistance());
+        SmartDashboard.putNumber("Ultrasonic Distance", getRawDistanceInches());
     }
 
     @Override
@@ -311,13 +310,10 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon.set(value);
     }
     
-    public double getLatestRawDistance() {
-        return mUltrasonicSensor.getLatestDistanceInches();
+    public double getRawDistanceInches() {
+        return mUltrasonicSensor.getRawDistanceInches();
     }
 
-    public double getFilteredDistance() {
-        return mUltrasonicSensor.getAverageDistance();
-    }
 
     public void setWristUp() {
         if (!mWristUp) {

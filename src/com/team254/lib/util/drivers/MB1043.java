@@ -10,7 +10,7 @@ public class MB1043 extends UltrasonicSensor {
         return getAverageDistance() * 0.0393701; // Inches per mm
     }
 
-    public double getLatestDistanceInches() {
+    public double getRawDistanceInches() {
         return super.getLatestDistance() * 0.0393701; // Inches per mm;
     }
 }

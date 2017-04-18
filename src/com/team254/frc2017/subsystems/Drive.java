@@ -32,6 +32,8 @@ public class Drive extends Subsystem {
     private static final int kLowGearPositionControlSlot = 0;
     private static final int kHighGearVelocityControlSlot = 1;
 
+    private static double kPegDistanceGoal = 16.0;
+
     public static Drive getInstance() {
         return mInstance;
     }
@@ -44,7 +46,8 @@ public class Drive extends Subsystem {
         AIM_TO_GOAL,
         TURN_TO_HEADING,
         DRIVE_TOWARDS_GOAL_COARSE_ALIGN,
-        DRIVE_TOWARDS_GOAL_APPROACH
+        DRIVE_TOWARDS_GOAL_APPROACH,
+        DRIVE_TO_PEG
     }
 
     protected static boolean usesTalonVelocityControl(DriveControlState state) {
@@ -58,7 +61,8 @@ public class Drive extends Subsystem {
         if (state == DriveControlState.AIM_TO_GOAL ||
                 state == DriveControlState.TURN_TO_HEADING ||
                 state == DriveControlState.DRIVE_TOWARDS_GOAL_COARSE_ALIGN ||
-                state == DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH) {
+                state == DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH ||
+                state == DriveControlState.DRIVE_TO_PEG) {
             return true;
         }
         return false;
@@ -127,6 +131,9 @@ public class Drive extends Subsystem {
                     return;
                 case DRIVE_TOWARDS_GOAL_APPROACH:
                     updateDriveTowardsGoalApproach(timestamp);
+                    return;
+                case DRIVE_TO_PEG:
+                    updateDriveToPeg();
                     return;
                 default:
                     System.out.println("Unexpected drive control state: " + mDriveControlState);
@@ -375,6 +382,7 @@ public class Drive extends Subsystem {
         }
     }
 
+
     private static double rotationsToInches(double rotations) {
         return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
     }
@@ -456,6 +464,17 @@ public class Drive extends Subsystem {
                 .inverseKinematics(new Twist2d(0, 0, robot_to_target.getRadians()));
         updatePositionSetpoint(wheel_delta.left + getLeftDistanceInches(),
                 wheel_delta.right + getRightDistanceInches());
+    }
+
+    private void updateDriveToPeg() {
+        double cur = MotorGearGrabber.getInstance().getRawDistanceInches();
+        double error = kPegDistanceGoal - cur; // Positive error means we are too close to wall
+        SmartDashboard.putNumber("peg_distance_error", error);
+        if (Math.abs(error) < 10) {
+            updatePositionSetpoint(getLeftDistanceInches() + error, getRightDistanceInches() + error);
+        } else {
+            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+        }
     }
 
     private void updateDriveTowardsGoalCoarseAlign(double timestamp) {
@@ -546,6 +565,18 @@ public class Drive extends Subsystem {
         }
         setHighGear(false);
     }
+
+    public synchronized void setWantDriveToPeg() {
+        if (mDriveControlState != DriveControlState.DRIVE_TO_PEG) {
+            mIsOnTarget = false;
+            configureTalonsForPositionControl();
+            mDriveControlState = DriveControlState.DRIVE_TO_PEG;
+            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+            mTargetHeading = getGyroAngle();
+        }
+        setHighGear(false);
+    }
+
 
     public synchronized void setWantDrivePath(Path path, boolean reversed) {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {

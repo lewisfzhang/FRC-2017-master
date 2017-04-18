@@ -111,6 +111,11 @@ public class GamepadControlBoard implements ControlBoardInterface {
     }
 
     @Override
+    public boolean getWantGearDriveLimit() {
+        return false;
+    }
+
+    @Override
     public boolean getDriveAimButton() {
         // TODO Auto-generated method stub
         return false;

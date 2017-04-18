@@ -43,4 +43,6 @@ public interface ControlBoardInterface {
     boolean getBlinkLEDButton();
 
     boolean getRangeFinderButton();
+
+    boolean getWantGearDriveLimit();
 }

@@ -49,10 +49,13 @@ public class Robot extends IterativeRobot {
 
     private AnalogInput mCheckLightButton = new AnalogInput(Constants.kLEDOnId);
 
+
     private LatchedBoolean mCommitTuning = new LatchedBoolean();
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap = new InterpolatingTreeMap<>();
 
     private final VideoStreamServiceController mVideoStreamServiceController = new VideoStreamServiceController();
+
+    private boolean mPegDistanceControllerDidEngage = false;
 
     public Robot() {
         CrashTracker.logRobotConstruction();
@@ -192,20 +195,28 @@ public class Robot extends IterativeRobot {
                 }
                 
                 if((mControlBoard.getDriveAimButton() && !mDrive.isApproaching()) || !mControlBoard.getDriveAimButton()) {
-                    System.out.println("shoot");
                     if (mControlBoard.getUnjamButton()) {
                         mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM_SHOOT);
                     } else {
                         mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
                     }
                 } else {
-                    System.out.println("dont shoot");
                     mSuperstructure.setWantedState(Superstructure.WantedState.RANGE_FINDING);
                 }
             } else {
-                mDrive.setHighGear(!mControlBoard.getLowGear());
-                mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
-                        !mControlBoard.getLowGear()));
+                boolean engagePegControl = mGearGrabber.getRawDistanceInches() < 20;
+                if (mControlBoard.getWantGearDriveLimit() && (mPegDistanceControllerDidEngage || engagePegControl)) {
+                    mDrive.setWantDriveToPeg();
+                    mPegDistanceControllerDidEngage = true;
+                } else {
+                    mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
+                            !mControlBoard.getLowGear()));
+                    mPegDistanceControllerDidEngage = false;
+
+                }
+                boolean wantLowGear = mControlBoard.getWantGearDriveLimit() || mControlBoard.getLowGear();
+                mDrive.setHighGear(!wantLowGear);
+
 
                 Intake.getInstance().setCurrentThrottle(mControlBoard.getThrottle());
 
