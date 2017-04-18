@@ -6,9 +6,9 @@
 # pip3 install robotpy-installer
 
 # Only needed if opkg package needs to be pulled from upstream.
-#robotpy-installer download-opkg mjpg-streamer
+#robotpy-installer download-opkg mjpg-streamer v4l-utils
 
-robotpy-installer install-opkg mjpg-streamer
+robotpy-installer install-opkg mjpg-streamer v4l-utils
 
 scp mjpg-streamer admin@roborio-254-frc.local:/etc/default/mjpg-streamer 
 
