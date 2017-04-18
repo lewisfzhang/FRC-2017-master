@@ -207,11 +207,6 @@ public class Drive extends Subsystem {
         in.register(mLoop);
     }
 
-    public synchronized void setTalonRefreshRate(int millis) {
-        mLeftMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, millis);
-        mRightMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, millis);
-    }
-
     public synchronized void setOpenLoop(DriveSignal signal) {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
