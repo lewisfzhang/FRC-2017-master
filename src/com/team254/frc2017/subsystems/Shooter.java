@@ -30,8 +30,9 @@ public class Shooter extends Subsystem {
 
     private enum ControlMethod {
         OPEN_LOOP,
-        SPIN_UP_LOOP,
-        HOLD_LOOP,
+        SPIN_UP,
+        HOLD_WHEN_READY,
+        HOLD,
     }
 
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
@@ -159,20 +160,30 @@ public class Shooter extends Subsystem {
         mRightMaster.set(voltage);
     }
 
-    public synchronized void setClosedLoopRpm(double setpointRpm) {
-        if (mControlMethod == ControlMethod.OPEN_LOOP) {
+    public synchronized void setSpinUp(double setpointRpm) {
+        if (mControlMethod != ControlMethod.SPIN_UP) {
             configureForSpinUp();
         }
         mSetpointRpm = setpointRpm;
     }
-
-    public synchronized void resetSpinUp() {
-        resetHold();
-        configureForSpinUp();
+    
+    public synchronized void setHoldWhenReady(double setpointRpm) {
+        if (mControlMethod == ControlMethod.OPEN_LOOP || mControlMethod == ControlMethod.SPIN_UP) {
+            configureForHoldWhenReady();
+        }
+        mSetpointRpm = setpointRpm;
     }
 
     private void configureForSpinUp() {
-        mControlMethod = ControlMethod.SPIN_UP_LOOP;
+        mControlMethod = ControlMethod.SPIN_UP;
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+        mRightMaster.EnableCurrentLimit(false);
+        mRightMaster.DisableNominalClosedLoopVoltage();
+        mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
+    }
+    
+    private void configureForHoldWhenReady() {
+        mControlMethod = ControlMethod.HOLD_WHEN_READY;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
         mRightMaster.EnableCurrentLimit(false);
         mRightMaster.DisableNominalClosedLoopVoltage();
@@ -180,7 +191,7 @@ public class Shooter extends Subsystem {
     }
 
     private void configureForHold() {
-        mControlMethod = ControlMethod.HOLD_LOOP;
+        mControlMethod = ControlMethod.HOLD;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mRightMaster.EnableCurrentLimit(false);
         mRightMaster.set(mKvEstimator.getAverage() * mSetpointRpm);
@@ -196,7 +207,10 @@ public class Shooter extends Subsystem {
         final double speed = getSpeedRpm();
 
         // See if we should be spinning up or holding.
-        if (mControlMethod == ControlMethod.SPIN_UP_LOOP) {
+        if (mControlMethod == ControlMethod.SPIN_UP) {
+            mRightMaster.set(mSetpointRpm);
+            resetHold();
+        } else if (mControlMethod != ControlMethod.HOLD_WHEN_READY) {
             final double abs_error = Math.abs(speed - mSetpointRpm);
             final boolean on_target_now = mOnTarget ? abs_error < Constants.kShooterStopOnTargetRpm
                     : abs_error < Constants.kShooterStartOnTargetRpm;
@@ -205,7 +219,6 @@ public class Shooter extends Subsystem {
                 mOnTargetStartTime = timestamp;
                 mOnTarget = true;
             } else if (!on_target_now) {
-                // System.out.println("Not on target anymore");
                 resetHold();
             }
 
@@ -219,7 +232,8 @@ public class Shooter extends Subsystem {
                 mRightMaster.set(mSetpointRpm);
             }
         }
-        if (mControlMethod == ControlMethod.HOLD_LOOP) {            
+        // No else because we may have changed control methods above.
+        if (mControlMethod == ControlMethod.HOLD) {            
             // Update Kv if we exceed our target velocity.  As the system heats up, drag is reduced.
             if (speed > mSetpointRpm) {
                 mKvEstimator.addValue(mRightMaster.getOutputVoltage() / speed);
@@ -247,7 +261,7 @@ public class Shooter extends Subsystem {
     }
 
     public synchronized boolean isOnTarget() {
-        return mControlMethod == ControlMethod.HOLD_LOOP;
+        return mControlMethod == ControlMethod.HOLD;
     }
 
     @Override

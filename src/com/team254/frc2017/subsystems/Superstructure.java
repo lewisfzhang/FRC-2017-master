@@ -147,8 +147,7 @@ public class Superstructure extends Subsystem {
     };
 
     private SystemState handleRangeFinding() {
-        //autoSpinShooter();
-        mShooter.setOpenLoop(0);
+        autoSpinShooter(false);
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
 
@@ -158,8 +157,6 @@ public class Superstructure extends Subsystem {
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            // Reset kF on shooter.
-            resetShooterSpinUp();
             return SystemState.WAITING_FOR_AIM;
         case MANUAL_FEED:
             return SystemState.JUST_FEED;
@@ -209,7 +206,7 @@ public class Superstructure extends Subsystem {
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.IDLE);
 
-        if (autoSpinShooter()) {
+        if (autoSpinShooter(true)) {
 
             System.out.println(Timer.getFPGATimestamp() + ": making shot: Range: " + mLastGoalRange + " setpoint: "
                     + mShooter.getLastSetpointRpm());
@@ -365,7 +362,7 @@ public class Superstructure extends Subsystem {
         }
     }
 
-    public synchronized boolean autoSpinShooter() {
+    public synchronized boolean autoSpinShooter(boolean allow_shooting) {
         final double timestamp = Timer.getFPGATimestamp();
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
                 .getAimingParameters(timestamp);
@@ -382,7 +379,12 @@ public class Superstructure extends Subsystem {
             if (!Constants.kIsShooterTuning) {
 
                 mLastGoalRange = range;
-                mShooter.setClosedLoopRpm(getShootingSetpointRpm(range));
+                final double setpoint = getShootingSetpointRpm(range);
+                if (allow_shooting) {
+                    mShooter.setHoldWhenReady(setpoint);
+                } else {
+                    mShooter.setSpinUp(setpoint);
+                }
 
                 boolean is_optimal_range = false;
                 if (range < Constants.kShooterOptimalRangeFloor) {
@@ -399,7 +401,7 @@ public class Superstructure extends Subsystem {
                 SmartDashboard.putBoolean("optimal range", is_optimal_range);
             } else {
                 // We are shooter tuning find current RPM we are tuning for.
-                mShooter.setClosedLoopRpm(mCurrentTuningRpm);
+                mShooter.setHoldWhenReady(mCurrentTuningRpm);
                 mLastGoalRange = aimOptional.get().getRange();
             }
 
@@ -411,7 +413,7 @@ public class Superstructure extends Subsystem {
             return false;
         } else {
             mLED.setRangeBlicking(true);
-            mShooter.setClosedLoopRpm(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
+            mShooter.setSpinUp(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             return false;
 
             // We are shooter tuning fine current RPM we are tuning for.
@@ -445,7 +447,7 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setClosedLoopRpm(double setpointRpm) {
-        mShooter.setClosedLoopRpm(setpointRpm);
+        mShooter.setSpinUp(setpointRpm);
     }
 
     public synchronized void setActuateHopper(boolean extended) {
@@ -470,10 +472,6 @@ public class Superstructure extends Subsystem {
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
         enabledLooper.register(mLoop);
-    }
-
-    public void resetShooterSpinUp() {
-        mShooter.resetSpinUp();
     }
 
     public void setWantIntakeReversed() {
