@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Counter;
 public class UltrasonicSensor {
     protected AnalogInput mAnalogInput; 
     private LinkedList<Double> cache;
+    protected double mScalingFactor = 512.0 / 5.0;
     
     private static final int kCacheSize = 5;
     
@@ -30,7 +31,7 @@ public class UltrasonicSensor {
     }
     
     public double getRawDistance() {
-        return mAnalogInput.getVoltage() * 512 / 5;
+        return mAnalogInput.getVoltage() * mScalingFactor;
     }
     
     public double getAverageDistance() {

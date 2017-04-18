@@ -5,6 +5,7 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
+import com.team254.lib.util.drivers.MB1043;
 import com.team254.lib.util.drivers.UltrasonicSensor;
 
 import edu.wpi.first.wpilibj.Solenoid;
@@ -26,7 +27,7 @@ public class MotorGearGrabber extends Subsystem {
     public static double kThresholdTime = 0.15;
 
     private static MotorGearGrabber mInstance;
-    private static UltrasonicSensor mUltrasonicSensor;
+    private static MB1043 mUltrasonicSensor;
 
     public static MotorGearGrabber getInstance() {
         if (mInstance == null) {
@@ -67,13 +68,13 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kGearGrabberId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mUltrasonicSensor = new UltrasonicSensor(Constants.kUltrasonicSensorId);
+        mUltrasonicSensor = new MB1043(Constants.kUltrasonicSensorId);
     }
 
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
-        SmartDashboard.putNumber("Ultrasonic Distance", mUltrasonicSensor.getLatestDistance());
+        SmartDashboard.putNumber("Ultrasonic Distance", getLatestRawDistance());
         System.out.println(mMasterTalon.getOutputCurrent());
     }
 
@@ -309,8 +310,12 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon.set(value);
     }
     
-    public double getDistance() {
-        return mUltrasonicSensor.getLatestDistance();
+    public double getLatestRawDistance() {
+        return mUltrasonicSensor.getLatestDistanceInches();
+    }
+
+    public double getFilteredDistance() {
+        return mUltrasonicSensor.getAverageDistance();
     }
 
     public void setWristUp() {
