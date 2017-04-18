@@ -75,7 +75,6 @@ public class MotorGearGrabber extends Subsystem {
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
         SmartDashboard.putNumber("Ultrasonic Distance", getLatestRawDistance());
-        System.out.println(mMasterTalon.getOutputCurrent());
     }
 
     @Override
@@ -171,6 +170,8 @@ public class MotorGearGrabber extends Subsystem {
             return SystemState.INTAKE;
         case CLEAR_BALLS:
             return SystemState.BALL_CLEARING;
+        case SCORE:
+            return SystemState.EXHAUSTING;
         default:
             setWristUp();
             mMasterTalon.set(0);
