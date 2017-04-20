@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
             Arrays.asList(Drive.getInstance(), Superstructure.getInstance(), Shooter.getInstance(),
                     Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(), LED.getInstance(),
-                    MotorGearGrabber.getInstance()));
+                    MotorGearGrabber.getInstance(), ConnectionMonitor.getInstance()));
 
     // Other parts of the robot
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -362,5 +362,7 @@ public class Robot extends IterativeRobot {
         mSubsystemManager.writeToLog();
         mEnabledLooper.outputToSmartDashboard();
         SmartDashboard.putBoolean("camera_connected", mVisionServer.isConnected());
+
+        ConnectionMonitor.getInstance().setLastPacketTime(Timer.getFPGATimestamp());
     }
 }
