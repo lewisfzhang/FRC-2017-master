@@ -447,7 +447,7 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setClosedLoopRpm(double setpointRpm) {
-        mShooter.setSpinUp(setpointRpm);
+        mShooter.setHoldWhenReady(setpointRpm);
     }
 
     public synchronized void setActuateHopper(boolean extended) {

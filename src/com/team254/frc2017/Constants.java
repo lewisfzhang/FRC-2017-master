@@ -111,6 +111,7 @@ public class Constants extends ConstantsBase {
     public static double kShooterRampRate = 60.0;
 
     public static double kShooterHoldRampRate = 360.0;
+    public static double kShooterHoldVoltageCompRate = 9000.0;
 
     public static int kShooterTalonIZone = 1000;// 73 rpm
     public static int kShooterOpenLoopCurrentLimit = 35;

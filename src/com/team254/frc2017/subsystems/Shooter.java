@@ -95,10 +95,10 @@ public class Shooter extends Subsystem {
     }
 
     @Override
-    public void outputToSmartDashboard() {
+    public synchronized void outputToSmartDashboard() {
         double current_rpm = getSpeedRpm();
         SmartDashboard.putNumber("shooter_speed_talon", current_rpm);
-        SmartDashboard.putNumber("shooter_speed_error", mRightMaster.getSetpoint() - current_rpm);
+        SmartDashboard.putNumber("shooter_speed_error", mSetpointRpm - current_rpm);
 
         SmartDashboard.putBoolean("shooter on target", isOnTarget());
         // SmartDashboard.putNumber("shooter_talon_position", mRightMaster.getPosition());
@@ -196,6 +196,7 @@ public class Shooter extends Subsystem {
         mRightMaster.EnableCurrentLimit(false);
         mRightMaster.set(mKvEstimator.getAverage() * mSetpointRpm);
         mRightMaster.setVoltageRampRate(Constants.kShooterHoldRampRate);
+        mRightMaster.setVoltageCompensationRampRate(Constants.kShooterHoldVoltageCompRate);
     }
 
     private void resetHold() {
@@ -210,7 +211,7 @@ public class Shooter extends Subsystem {
         if (mControlMethod == ControlMethod.SPIN_UP) {
             mRightMaster.set(mSetpointRpm);
             resetHold();
-        } else if (mControlMethod != ControlMethod.HOLD_WHEN_READY) {
+        } else if (mControlMethod == ControlMethod.HOLD_WHEN_READY) {
             final double abs_error = Math.abs(speed - mSetpointRpm);
             final boolean on_target_now = mOnTarget ? abs_error < Constants.kShooterStopOnTargetRpm
                     : abs_error < Constants.kShooterStartOnTargetRpm;
@@ -226,7 +227,7 @@ public class Shooter extends Subsystem {
                 // Update Kv.
                 mKvEstimator.addValue(mRightMaster.getOutputVoltage() / speed);
             }
-            if (mKvEstimator.getNumValues() > Constants.kShooterMinOnTargetSamples) {
+            if (mKvEstimator.getNumValues() >= Constants.kShooterMinOnTargetSamples) {
                 configureForHold();
             } else {
                 mRightMaster.set(mSetpointRpm);
