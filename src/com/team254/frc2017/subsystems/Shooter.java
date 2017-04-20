@@ -274,8 +274,9 @@ public class Shooter extends Subsystem {
     }
 
     public boolean checkSystem() {
+        System.out.println("Testing SHOOTER.----------------------------------------");
         final double kCurrentThres = 0.5;
-        final double kRpmThres = 1500;
+        final double kRpmThres = 1200;
 
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Voltage);
@@ -285,22 +286,31 @@ public class Shooter extends Subsystem {
         mRightMaster.set(6.0f);
         Timer.delay(4.0);
         final double currentRightMaster = mRightMaster.getOutputCurrent();
-        final double rpm = mRightMaster.getSpeed();
+        final double rpmMaster = mRightMaster.getSpeed();
         mRightMaster.set(0.0f);
+
+        Timer.delay(2.0);
 
         mRightSlave.set(6.0f);
         Timer.delay(4.0);
         final double currentRightSlave = mRightSlave.getOutputCurrent();
+        final double rpmRightSlave = mRightMaster.getSpeed();
         mRightSlave.set(0.0f);
+
+        Timer.delay(2.0);
 
         mLeftSlave1.set(-6.0f);
         Timer.delay(4.0);
         final double currentLeftSlave1 = mLeftSlave1.getOutputCurrent();
+        final double rpmLeftSlave1 = mRightMaster.getSpeed();
         mLeftSlave1.set(0.0f);
+
+        Timer.delay(2.0);
 
         mLeftSlave2.set(-6.0f);
         Timer.delay(4.0);
         final double currentLeftSlave2 = mLeftSlave2.getOutputCurrent();
+        final double rpmLeftSlave2 = mRightMaster.getSpeed();
         mLeftSlave2.set(0.0f);
 
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
@@ -313,6 +323,7 @@ public class Shooter extends Subsystem {
 
         System.out.println("Shooter Right Master Current: " + currentRightMaster + " Shooter Right Slave Current: " + currentRightSlave);
         System.out.println("Shooter Left Slave One Current: " + currentLeftSlave1 + " Shooter Left Slave Two Current: " + currentLeftSlave2);
+        System.out.println("Shooter RPM Master: " + rpmMaster + " RPM Right slave: " + rpmRightSlave + " RPM Left Slave 1: " + rpmLeftSlave1 + " RPM Left Slave 2: " + rpmLeftSlave2);
 
         boolean failure = false;
 
@@ -342,9 +353,29 @@ public class Shooter extends Subsystem {
             System.out.println("!!!!!!!!!!!!!!!!!! Shooter currents different !!!!!!!!!!!!!!!!!");
         }
 
-        if (rpm < kRpmThres) {
+        if (rpmMaster < kRpmThres) {
             failure = true;
-            System.out.println("!!!!!!!!!!!!!!!!!! Shooter RPM Low !!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter Master RPM Low !!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (rpmRightSlave < kRpmThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter Right Slave RPM Low !!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (rpmLeftSlave1 < kRpmThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter Left Slave1 RPM Low !!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (rpmLeftSlave2 < kRpmThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter Left Slave2 RPM Low !!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (!Util.allCloseTo(Arrays.asList(rpmMaster, rpmRightSlave, rpmLeftSlave1, rpmLeftSlave2), rpmMaster, 250)) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Shooter RPMs different !!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         return !failure;

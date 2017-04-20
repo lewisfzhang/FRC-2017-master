@@ -228,6 +228,7 @@ public class Feeder extends Subsystem {
     }
 
     public boolean checkSystem() {
+        System.out.println("Testing FEEDER.-----------------------------------");
         final double kCurrentThres = 0.5;
         final double kRpmThes = 2000.0;
 
@@ -240,18 +241,21 @@ public class Feeder extends Subsystem {
         mMasterTalon.set(6.0f);
         Timer.delay(4.0);
         final double currentMaster = mMasterTalon.getOutputCurrent();
-        final double rpm = mMasterTalon.getSpeed();
+        final double rpmMaster = mMasterTalon.getSpeed();
         mMasterTalon.set(0.0f);
+
+        Timer.delay(2.0);
 
         mSlaveTalon.set(-6.0f);
         Timer.delay(4.0);
         final double currentSlave = mSlaveTalon.getOutputCurrent();
+        final double rpmSlave = mMasterTalon.getSpeed();
         mSlaveTalon.set(0.0f);
 
         mSlaveTalon.changeControlMode(TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kFeederMasterId);
 
-        System.out.println("Feeder Master Current: " + currentMaster + " Slave Current: " + currentSlave + " rpm: " + mMasterTalon.getSpeed());
+        System.out.println("Feeder Master Current: " + currentMaster + " Slave Current: " + currentSlave + " rpmMaster: " + rpmMaster + " rpmSlave: " + rpmSlave);
 
         boolean failure = false;
 
@@ -265,14 +269,24 @@ public class Feeder extends Subsystem {
             System.out.println("!!!!!!!!!!!!!! Feeder Slave Current Low !!!!!!!!!!!!!!!!!");
         }
 
-        if (!Util.allCloseTo(Arrays.asList(currentMaster, currentSlave), currentMaster, 5.0)){
+        if (!Util.allCloseTo(Arrays.asList(currentMaster, currentSlave), currentMaster, 5.0)) {
             failure = true;
             System.out.println("!!!!!!!!!!!!!!! Feeder currents different!!!!!!!!!!!!!!!");
         }
 
-        if (rpm < kRpmThes) {
+        if (rpmMaster < kRpmThes) {
             failure = true;
-            System.out.println("!!!!!!!!!!!!!! Feeder RPM Low !!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println("!!!!!!!!!!!!!! Feeder Master RPM Low !!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (rpmSlave < kRpmThes) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!! Feeder Slave RPM Low !!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (!Util.allCloseTo(Arrays.asList(rpmMaster, rpmSlave), rpmMaster, 250)) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!! Feeder RPM different !!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         return !failure;

@@ -226,16 +226,29 @@ public class Hopper extends Subsystem {
     }
 
     public boolean checkSystem() {
+        System.out.println("Testing HOPPER.--------------------------------------");
         final double kCurrentThres = 0.5;
 
-        setWantedState(WantedState.FEED);
+        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
 
+        mMasterTalon.set(0.0);
+        mSlaveTalon.set(0.0);
+
+        mMasterTalon.set(-6.0f);
         Timer.delay(4.0);
-
         final double currentMaster = mMasterTalon.getOutputCurrent();
-        final double currentSlave = mSlaveTalon.getOutputCurrent();
+        mMasterTalon.set(0.0);
 
-        setWantedState(WantedState.IDLE);
+        Timer.delay(2.0);
+
+        mSlaveTalon.set(6.0f);
+        Timer.delay(4.0);
+        final double currentSlave = mSlaveTalon.getOutputCurrent();
+        mSlaveTalon.set(0.0);
+
+        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 
         System.out.println("Hopper Master Current: " + currentMaster + " Slave current: " + currentSlave);
 

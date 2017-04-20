@@ -338,18 +338,17 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void testInit() {
-        mEnabledLooper.start();
-
         Timer.delay(0.5);
 
         boolean results = Feeder.getInstance().checkSystem();
         results &= Shooter.getInstance().checkSystem();
+        results &= Hopper.getInstance().checkSystem();
 
         if (!results) {
             System.out.println("CHECK ABOVE OUTPUT SOME SYSTEMS FAILED!!!");
+        } else {
+            System.out.println("ALL SYSTEMS PASSED");
         }
-
-        mEnabledLooper.stop();
     }
 
     @Override
