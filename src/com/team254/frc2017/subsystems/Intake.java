@@ -30,17 +30,19 @@ public class Intake extends Subsystem {
 
     private Intake() {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kIntakeMasterId);
-        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
-        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 500);
+        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1000);
+        mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 1000);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
 
-        mSlaveTalon = CANTalonFactory.createPermanentSlaveTalon(Constants.kIntakeSlaveId, Constants.kIntakeMasterId);
-        mSlaveTalon.reverseOutput(true);
+        mSlaveTalon = CANTalonFactory.createDefaultTalon(Constants.kIntakeSlaveId);
+        mSlaveTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1000);
+        mSlaveTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 1000);
+        mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+
         mDeploySolenoid = new Solenoid(Constants.kIntakeDeploySolenoidId);
 
         // Set current throttle to 0.0;
         mCurrentThrottle = 0.0;
-
     }
 
     @Override
@@ -108,21 +110,26 @@ public class Intake extends Subsystem {
     private void setOpenLoop(double voltage) {
         // voltage = -voltage; // Flip so +V = intake
         mMasterTalon.set(-voltage);
+        mSlaveTalon.set(voltage);
     }
 
     public boolean checkSystem() {
         final double kCurrentThres = 0.5;
 
-        mSlaveTalon.set(Constants.kIntakeMasterId);
+        mMasterTalon.set(0.0);
+        mSlaveTalon.set(0.0);
 
-        setOn();
-
+        mMasterTalon.set(-6.0f);
         Timer.delay(4.0);
-
         final double currentMaster = mMasterTalon.getOutputCurrent();
-        final double currentSlave = mSlaveTalon.getOutputCurrent();
+        mMasterTalon.set(0.0);
 
-        setOff();
+        Timer.delay(2.0);
+
+        mSlaveTalon.set(6.0f);
+        Timer.delay(4.0);
+        final double currentSlave = mSlaveTalon.getOutputCurrent();
+        mSlaveTalon.set(0.0);
 
         System.out.println("Intake Master Current: " + currentMaster + " Slave current: " + currentSlave);
 

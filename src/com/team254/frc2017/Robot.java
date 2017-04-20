@@ -341,6 +341,7 @@ public class Robot extends IterativeRobot {
         Timer.delay(0.5);
 
         boolean results = Feeder.getInstance().checkSystem();
+        results &= Intake.getInstance().checkSystem();
         results &= MotorGearGrabber.getInstance().checkSystem();
         results &= Shooter.getInstance().checkSystem();
         results &= Hopper.getInstance().checkSystem();
