@@ -6,13 +6,13 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.CircularBuffer;
 import com.team254.lib.util.ReflectingCSVWriter;
+import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Shooter extends Subsystem {
@@ -277,20 +277,39 @@ public class Shooter extends Subsystem {
         final double kCurrentThres = 0.5;
         final double kRpmThres = 2000;
 
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mRightSlave.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mLeftSlave1.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mLeftSlave2.changeControlMode(CANTalon.TalonControlMode.Voltage);
+
+        mRightMaster.set(12.0f);
+        Timer.delay(4.0);
+        final double currentRightMaster = mRightMaster.getOutputCurrent();
+        final double rpm = mRightMaster.getSpeed();
+        mRightMaster.set(0.0f);
+
+        mRightSlave.set(12.0f);
+        Timer.delay(4.0);
+        final double currentRightSlave = mRightSlave.getOutputCurrent();
+        mRightSlave.set(0.0f);
+
+        mLeftSlave1.set(-12.0f);
+        Timer.delay(4.0);
+        final double currentLeftSlave1 = mLeftSlave1.getOutputCurrent();
+        mLeftSlave1.set(0.0f);
+
+        mLeftSlave2.set(-12.0f);
+        Timer.delay(4.0);
+        final double currentLeftSlave2 = mLeftSlave2.getOutputCurrent();
+        mLeftSlave2.set(0.0f);
+
+        mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+        mLeftSlave1.changeControlMode(CANTalon.TalonControlMode.Follower);
+        mLeftSlave2.changeControlMode(CANTalon.TalonControlMode.Follower);
+
         mRightSlave.set(Constants.kRightShooterMasterId);
         mLeftSlave1.set(Constants.kRightShooterMasterId);
         mLeftSlave2.set(Constants.kRightShooterMasterId);
-
-        setOpenLoop(8.0);
-
-        Timer.delay(8.0);
-
-        final double currentRightMaster = mRightMaster.getOutputCurrent();
-        final double currentRightSlave = mRightSlave.getOutputCurrent();
-        final double currentLeftSlave1 = mLeftSlave1.getOutputCurrent();
-        final double currentLeftSlave2 = mLeftSlave2.getOutputCurrent();
-
-        final double rpm = mRightMaster.getSpeed();
 
         setOpenLoop(0.0);
 
