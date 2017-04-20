@@ -231,18 +231,25 @@ public class Feeder extends Subsystem {
         final double kCurrentThres = 0.5;
         final double kRpmThes = Constants.kFeederFeedSpeedRpm * Constants.kFeederSensorGearReduction * 0.75;
 
-        mSlaveTalon.set(Constants.kFeederMasterId);
+        mSlaveTalon.changeControlMode(TalonControlMode.Voltage);
+        mMasterTalon.changeControlMode(TalonControlMode.Voltage);
 
-        setWantedState(WantedState.FEED);
+        mSlaveTalon.set(0.0);
+        mMasterTalon.set(0.0);
 
-        Timer.delay(8.0);
-
+        mMasterTalon.set(12.0f);
+        Timer.delay(4.0);
         final double currentMaster = mMasterTalon.getOutputCurrent();
-        final double currentSlave = mSlaveTalon.getOutputCurrent();
-
         final double rpm = mMasterTalon.getSpeed();
+        mMasterTalon.set(0.0f);
 
-        setWantedState(WantedState.IDLE);
+        mSlaveTalon.set(-12.0f);
+        Timer.delay(4.0);
+        final double currentSlave = mSlaveTalon.getOutputCurrent();
+        mSlaveTalon.set(0.0f);
+
+        mSlaveTalon.changeControlMode(TalonControlMode.Follower);
+        mSlaveTalon.set(Constants.kFeederMasterId);
 
         System.out.println("Feeder Master Current: " + currentMaster + " Slave Current: " + currentSlave + " rpm: " + mMasterTalon.getSpeed());
 
