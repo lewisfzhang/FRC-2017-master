@@ -275,30 +275,30 @@ public class Shooter extends Subsystem {
 
     public boolean checkSystem() {
         final double kCurrentThres = 0.5;
-        final double kRpmThres = 2000;
+        final double kRpmThres = 1500;
 
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mRightSlave.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mLeftSlave1.changeControlMode(CANTalon.TalonControlMode.Voltage);
         mLeftSlave2.changeControlMode(CANTalon.TalonControlMode.Voltage);
 
-        mRightMaster.set(12.0f);
+        mRightMaster.set(6.0f);
         Timer.delay(4.0);
         final double currentRightMaster = mRightMaster.getOutputCurrent();
         final double rpm = mRightMaster.getSpeed();
         mRightMaster.set(0.0f);
 
-        mRightSlave.set(12.0f);
+        mRightSlave.set(6.0f);
         Timer.delay(4.0);
         final double currentRightSlave = mRightSlave.getOutputCurrent();
         mRightSlave.set(0.0f);
 
-        mLeftSlave1.set(-12.0f);
+        mLeftSlave1.set(-6.0f);
         Timer.delay(4.0);
         final double currentLeftSlave1 = mLeftSlave1.getOutputCurrent();
         mLeftSlave1.set(0.0f);
 
-        mLeftSlave2.set(-12.0f);
+        mLeftSlave2.set(-6.0f);
         Timer.delay(4.0);
         final double currentLeftSlave2 = mLeftSlave2.getOutputCurrent();
         mLeftSlave2.set(0.0f);
@@ -310,8 +310,6 @@ public class Shooter extends Subsystem {
         mRightSlave.set(Constants.kRightShooterMasterId);
         mLeftSlave1.set(Constants.kRightShooterMasterId);
         mLeftSlave2.set(Constants.kRightShooterMasterId);
-
-        setOpenLoop(0.0);
 
         System.out.println("Shooter Right Master Current: " + currentRightMaster + " Shooter Right Slave Current: " + currentRightSlave);
         System.out.println("Shooter Left Slave One Current: " + currentLeftSlave1 + " Shooter Left Slave Two Current: " + currentLeftSlave2);
