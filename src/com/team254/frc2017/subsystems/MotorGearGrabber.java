@@ -6,6 +6,7 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
 import com.team254.lib.util.drivers.MB1043;
+import com.team254.lib.util.drivers.UltrasonicSensor;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -45,14 +46,11 @@ public class MotorGearGrabber extends Subsystem {
 
     private enum SystemState {
         BALL_CLEARING,
-        IDLE,
         INTAKE,
         STOWING,
         STOWED,
         EXHAUSTING,
-        LOWERING, // For auto only
         EXHAUST,
-        DOWN,
     }
 
     private final Solenoid mWristSolenoid;
@@ -73,7 +71,7 @@ public class MotorGearGrabber extends Subsystem {
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
-        SmartDashboard.putNumber("Ultrasonic Distance", getRawDistanceInches());
+        SmartDashboard.putNumber("Ultrasonic Distance", getLatestRawDistance());
     }
 
     @Override
@@ -107,9 +105,6 @@ public class MotorGearGrabber extends Subsystem {
                     SystemState newState = mSystemState;
                     double timeInState = Timer.getFPGATimestamp() - mCurrentStateStartTime;
                     switch (mSystemState) {
-                    case IDLE:
-                        newState = handleIdle();
-                        break;
                     case BALL_CLEARING:
                         newState = handleBallClearing();
                         break;
@@ -125,14 +120,8 @@ public class MotorGearGrabber extends Subsystem {
                     case EXHAUSTING:
                         newState = handleExhausting(timeInState);
                         break;
-                    case LOWERING:
-                        newState = handleLowering(timeInState);
-                        break;
                     case EXHAUST:
                         newState = handleExhaust(timeInState);
-                        break;
-                    case DOWN:
-                        newState = handleLowered(timeInState);
                         break;
                     default:
                         System.out.println("Unexpected gear grabber system state: " + mSystemState);
@@ -155,27 +144,12 @@ public class MotorGearGrabber extends Subsystem {
             @Override
             public void onStop(double timestamp) {
                 mWantedState = WantedState.IDLE;
-                mSystemState = SystemState.IDLE;
+                mSystemState = SystemState.STOWED;
                 // Set the states to what the robot falls into when disabled.
                 stop();
             }
         };
         enabledLooper.register(loop);
-    }
-
-    private SystemState handleIdle() {
-        switch (mWantedState) {
-        case ACQUIRE:
-            return SystemState.INTAKE;
-        case CLEAR_BALLS:
-            return SystemState.BALL_CLEARING;
-        case SCORE:
-            return SystemState.EXHAUSTING;
-        default:
-            setWristUp();
-            mMasterTalon.set(0);
-            return SystemState.IDLE;
-        }
     }
 
     private SystemState handleBallClearing() {
@@ -188,7 +162,7 @@ public class MotorGearGrabber extends Subsystem {
         case CLEAR_BALLS:
             return SystemState.BALL_CLEARING;
         default:
-            return SystemState.IDLE;
+            return SystemState.STOWED;
         }
     }
 
@@ -197,30 +171,17 @@ public class MotorGearGrabber extends Subsystem {
         case CLEAR_BALLS:
             return SystemState.BALL_CLEARING;
         case IDLE:
-            if (mMasterTalon.getOutputCurrent() < kIntakeThreshold) {
-                return SystemState.IDLE;
-            }
+            return SystemState.STOWING;
             // Fall through intended.
         default:
             setWristDown();
             mMasterTalon.set(kIntakeGearSetpoint);
             if (mMasterTalon.getOutputCurrent() > kIntakeThreshold) {
-                if (startTimeInThreshold == 0.0) {
-                    startTimeInThreshold = timeInState;
-                }
-            } else {
-                startTimeInThreshold = 0.0;
-            }
-            if (timeInState - startTimeInThreshold > kThresholdTime && startTimeInThreshold != 0) {
                 LED.getInstance().setWantedState(LED.WantedState.BLINK);
-                if (mWantedState == WantedState.IDLE) {
-                    return SystemState.STOWING;
-                } else {
-                    return SystemState.INTAKE;
-                }
             } else {
-                return SystemState.INTAKE;
+                LED.getInstance().setWantedState(LED.WantedState.OFF);
             }
+            return SystemState.INTAKE;
         }
     }
 
@@ -234,7 +195,7 @@ public class MotorGearGrabber extends Subsystem {
         case ACQUIRE:
             return SystemState.INTAKE;
         default:
-            return SystemState.IDLE;
+            return SystemState.STOWED;
         }
     }
 
@@ -251,8 +212,8 @@ public class MotorGearGrabber extends Subsystem {
         switch (mWantedState) {
         case SCORE:
             return SystemState.EXHAUSTING;
-        case FORCE_LOWERED:
-            return SystemState.LOWERING;
+        case ACQUIRE:
+            return SystemState.INTAKE;
         default:
             // if(mMasterTalon.getOutputCurrent() <= K_CONTAIN_THRESH) {
             // if(startTimeInThreshold == 0.0) {
@@ -284,49 +245,30 @@ public class MotorGearGrabber extends Subsystem {
         return SystemState.EXHAUSTING;
     }
 
-    private SystemState handleLowering(double timeInState) {
-        setWristDown();
-        mMasterTalon.set(kIntakeGearSetpoint);
-        if (timeInState > kTransitionDelay) {
-            return SystemState.DOWN;
-        }
-        return SystemState.LOWERING;
-    }
-
-    private SystemState handleLowered(double timeInState) {
-        switch (mWantedState) {
-        case FORCE_LOWERED:
-            setWristDown();
-            mMasterTalon.set(kContainGearSetpoint);
-            return SystemState.DOWN;
-        default:
-            return SystemState.IDLE;
-        }
-    }
-
     public boolean mWristUp = false;
 
     public void setOpenLoop(double value) {
         mMasterTalon.set(value);
     }
     
-    public double getRawDistanceInches() {
-        return mUltrasonicSensor.getRawDistanceInches();
+    public double getLatestRawDistance() {
+        return 0;//mUltrasonicSensor.getLatestDistanceInches();
+    }
+    
+    public double getRawDistanceInches(){return 0;}
+
+    public double getFilteredDistance() {
+        return mUltrasonicSensor.getAverageDistance();
     }
 
-
     public void setWristUp() {
-        if (!mWristUp) {
-            mWristUp = true;
-            mWristSolenoid.set(mWristUp);
-        }
+        mWristUp = true;
+        mWristSolenoid.set(mWristUp);
     }
 
     public void setWristDown() {
-        if (mWristUp) {
-            mWristUp = false;
-            mWristSolenoid.set(mWristUp);
-        }
+        mWristUp = false;
+        mWristSolenoid.set(mWristUp);
     }
 
     public void setWantedState(WantedState wanted) {
