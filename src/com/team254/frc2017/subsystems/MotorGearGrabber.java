@@ -339,15 +339,15 @@ public class MotorGearGrabber extends Subsystem {
     }
 
     public boolean checkSystem() {
+        System.out.println("Testing GearGrabber.--------------------------------");
         final double kCurrentThres = 0.5;
 
-        setOpenLoop(kIntakeGearSetpoint);
+        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
 
-        Timer.delay(1.0);
-
+        mMasterTalon.set(-6.0f);
+        Timer.delay(4.0);
         final double current = mMasterTalon.getOutputCurrent();
-
-        setOpenLoop(0.0);
+        mMasterTalon.set(0.0);
 
         System.out.println("MotorGearGrabber Current: " + current);
 
