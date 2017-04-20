@@ -11,5 +11,6 @@
 robotpy-installer install-opkg mjpg-streamer v4l-utils
 
 scp mjpg-streamer admin@roborio-254-frc.local:/etc/default/mjpg-streamer
+scp mjpg-streamer-initd admin@roborio-254-frc.local:/etc/init.d/mjpg-streamer
 
 ssh admin@roborio-254-frc.local 'v4l2-ctl -c focus_auto=0'

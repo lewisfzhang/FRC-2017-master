@@ -17,6 +17,8 @@ startdaemon() {
       INPUT="${INPUT[$i]} -f $FPS -r $RES"
       OUTPUT="${OUTPUT[$i]} -p ${PORT}"
 
+      v4l2-ctl -c focus_auto=0 -d /dev/v4l/by-id/usb-046d_HD_Pro_Webcam_C920_0297F65F-video-index0
+
       /usr/sbin/start-stop-daemon --pidfile=$PIDFILE -b -m \
         --exec ${PREFIX}/bin/mjpg_streamer --start -- \
           -i "${PLUGINS}/${INPUT}" \
