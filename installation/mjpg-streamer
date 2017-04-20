@@ -5,9 +5,9 @@
 
 PIDFILE[1]=/var/run/mjpg-streamer1.pid
 
-INPUT[1]="input_uvc.so --device /dev/v4l/by-id/usb-Sonix_Technology_Co.__Ltd._USB_2.0_Camera-video-index0"
+INPUT[1]="input_uvc.so --device /dev/v4l/by-id/usb-046d_HD_Pro_Webcam_C920_0297F65F-video-index0"
 # Frames per second
-FPS[1]=20
+FPS[1]=25
 RESOLUTION[1]="160x120"
 
 OUTPUT[1]="output_http.so -w /usr/local/share/mjpg-streamer/www"
