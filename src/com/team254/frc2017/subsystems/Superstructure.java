@@ -177,7 +177,7 @@ public class Superstructure extends Subsystem {
         if (stateChanged) {
             stop();
             mLED.setWantedState(LED.WantedState.OFF);
-             mFeeder.setWantedState(Feeder.WantedState.IDLE);
+            mFeeder.setWantedState(Feeder.WantedState.IDLE);
             mHopper.setWantedState(Hopper.WantedState.IDLE);
         }
         mCompressor.setClosedLoopControl(!mCompressorOverride);
