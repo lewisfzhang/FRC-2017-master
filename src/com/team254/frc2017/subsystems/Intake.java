@@ -84,6 +84,10 @@ public class Intake extends Subsystem {
         setOpenLoop(Constants.kIntakeVoltageMin);
     }
 
+    public synchronized void setOnForShooting() {
+        setOpenLoop(Constants.kIntakeShootingVoltage);
+    }
+
     public synchronized void setOff() {
         setOpenLoop(0.0);
     }

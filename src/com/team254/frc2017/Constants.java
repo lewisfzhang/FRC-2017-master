@@ -60,6 +60,7 @@ public class Constants extends ConstantsBase {
     // Voltages
     public static double kIntakeVoltageMax = 7.5;
     public static double kIntakeVoltageMin = 4.5;
+    public static double kIntakeShootingVoltage = kIntakeVoltageMin;
     public static final double kIntakeVoltageDifference = kIntakeVoltageMax - kIntakeVoltageMin;
 
     // CONTROL LOOP GAINS

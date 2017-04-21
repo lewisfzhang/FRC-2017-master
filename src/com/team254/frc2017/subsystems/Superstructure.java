@@ -237,7 +237,8 @@ public class Superstructure extends Subsystem {
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.FEED);
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
-        setWantIntakeOn();
+        setWantIntakeOnForShooting();
+
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;
@@ -490,6 +491,10 @@ public class Superstructure extends Subsystem {
     
     public void setWantShoot() {
         mIntake.setOnWhileShooting();
+    }
+
+    public void setWantIntakeOnForShooting() {
+        mIntake.setOnForShooting();
     }
 
     public void setOverrideCompressor(boolean force_off) {
