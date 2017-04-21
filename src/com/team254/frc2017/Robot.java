@@ -202,19 +202,10 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setWantedState(Superstructure.WantedState.RANGE_FINDING);
                 }
             } else {
-                boolean engagePegControl = mGearGrabber.getRawDistanceInches() < 20;
-                if (mControlBoard.getWantGearDriveLimit() && (mPegDistanceControllerDidEngage || engagePegControl)) {
-                    mDrive.setWantDriveToPeg();
-                    mPegDistanceControllerDidEngage = true;
-                } else {
-                    mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
-                            !mControlBoard.getLowGear()));
-                    mPegDistanceControllerDidEngage = false;
-
-                }
-                boolean wantLowGear = mControlBoard.getWantGearDriveLimit() || mControlBoard.getLowGear();
+                mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
+                    !mControlBoard.getLowGear()));
+                boolean wantLowGear = mControlBoard.getLowGear();
                 mDrive.setHighGear(!wantLowGear);
-
 
                 Intake.getInstance().setCurrentThrottle(mControlBoard.getThrottle());
 
