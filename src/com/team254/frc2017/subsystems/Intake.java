@@ -24,7 +24,6 @@ public class Intake extends Subsystem {
 
     private CANTalon mMasterTalon, mSlaveTalon;
     private Solenoid mDeploySolenoid;
-    private double mCurrentThrottle;
 
     private MovingAverage mThrottleAverage = new MovingAverage(50);
 
@@ -40,9 +39,6 @@ public class Intake extends Subsystem {
         mSlaveTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
 
         mDeploySolenoid = new Solenoid(Constants.kIntakeDeploySolenoidId);
-
-        // Set current throttle to 0.0;
-        mCurrentThrottle = 0.0;
     }
 
     @Override
@@ -52,7 +48,6 @@ public class Intake extends Subsystem {
 
     @Override
     public synchronized void stop() {
-        mCurrentThrottle = 0.0;
         mThrottleAverage.clear();
         setOff();
     }
@@ -68,7 +63,6 @@ public class Intake extends Subsystem {
     }
 
     public synchronized void setCurrentThrottle(double currentThrottle) {
-        mCurrentThrottle = currentThrottle;
         mThrottleAverage.addNumber(currentThrottle);
     }
 
@@ -83,6 +77,11 @@ public class Intake extends Subsystem {
     public synchronized void setOn() {
         deploy();
         setOpenLoop(getScaledIntakeVoltage());
+    }
+    
+    public synchronized void setOnWhileShooting() {
+        deploy();
+        setOpenLoop(Constants.kIntakeVoltageMin);
     }
 
     public synchronized void setOff() {

@@ -121,7 +121,7 @@ public class Constants extends ConstantsBase {
     // Used to determine when to switch to hold profile.
     public static double kShooterStartOnTargetRpm = 30.0;
     public static double kShooterStopOnTargetRpm = 150.0;
-    public static int kShooterKvBufferSize = 20;
+    public static int kShooterKfBufferSize = 20;
     public static int kShooterMinOnTargetSamples = 20;  // Should be <= kShooterKvBufferSize
 
     // Feeder gains
@@ -131,7 +131,7 @@ public class Constants extends ConstantsBase {
     public static double kFeederKF = 0.009;
     public static double kFeederRampRate = 240.0;
     public static double kFeederVoltageCompensationRampRate = 10.0;
-    public static double kFeederFeedSpeedRpm = 4500.0;
+    public static double kFeederFeedSpeedRpm = 5400.0;
     public static double kFeederSensorGearReduction = 3.0;
 
     // Hopper gains
@@ -230,7 +230,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraYOffset = 0.0;
     public static double kCameraZOffset = 20.9;
     public static double kCameraPitchAngleDegrees = 30.0;
-    public static double kCameraYawAngleDegrees = 0.25;
+    public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
 
     // Flywheel PID
@@ -238,20 +238,21 @@ public class Constants extends ConstantsBase {
 
     public static double kDefaultShootingDistanceInches = 95.8;
     public static double kDefaultShootingRPM = 2950.0;
-    public static boolean kUseFlywheelAutoAimPolynomial = true; // Change to 'true' to use the best-fit polynomial
+    public static boolean kUseFlywheelAutoAimPolynomial = false; // Change to 'true' to use the best-fit polynomial
                                                                 // instead.
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
     public static double kShooterOptimalRange = 100.0;
-    public static double kShooterOptimalRangeFloor = 87.0;
-    public static double kShooterOptimalRangeCeiling = 115.0;
+    public static double kShooterOptimalRangeFloor = 99.0;
+    public static double kShooterOptimalRangeCeiling = 101.0;
 
-    public static double kShooterAbsoluteRangeFloor = 85.0;
+    public static double kShooterAbsoluteRangeFloor = 96.0;
     public static double kShooterAbsoluteRangeCeiling = 135.0;
 
     public static double[][] kFlywheelDistanceRpmValues = {
             // Pre-champs 4/9
+            /*
             { 89.14, 2900.0 },
             { 94.87, 2950.0 },
             { 104.33, 3000.0 },
@@ -259,7 +260,11 @@ public class Constants extends ConstantsBase {
             { 114.34, 3100.0 },
             { 121.23, 3150.0 },
             { 125.18, 3200.0 },
-            { 128.23, 3250.0 }
+            { 128.23, 3250.0 }*/
+            { 98.4, 2950.0 },
+            { 114.5, 3000.0 },
+            { 122.4, 3050.0 },
+            { 126.3, 3150.0 },
     };
 
     static {

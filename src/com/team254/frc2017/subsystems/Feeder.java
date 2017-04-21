@@ -15,10 +15,10 @@ public class Feeder extends Subsystem {
     private static final double kReversing = -1.0;
     private static final double kUnjamInPeriod = .2 * kReversing;
     private static final double kUnjamOutPeriod = .4 * kReversing;
-    private static final double kUnjamInPower = 6.0 * kReversing;
-    private static final double kUnjamOutPower = -6.0 * kReversing;
+    private static final double kUnjamInPower = 6.0 * kReversing / 12.0;
+    private static final double kUnjamOutPower = -6.0 * kReversing / 12.0;
     private static final double kFeedVoltage = 10.0;
-    private static final double kExhaustVoltage = kFeedVoltage * kReversing;
+    private static final double kExhaustVoltage = kFeedVoltage * kReversing / 12.0;
 
     private static Feeder sInstance = null;
 
@@ -35,7 +35,7 @@ public class Feeder extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kFeederMasterId);
 
         mMasterTalon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
-        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         mMasterTalon.SetVelocityMeasurementWindow(16);
         mMasterTalon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms);
 
@@ -186,8 +186,9 @@ public class Feeder extends Subsystem {
 
     private SystemState handleFeeding() {
         if (mStateChanged) {
-            mMasterTalon.changeControlMode(TalonControlMode.Speed);
-            mMasterTalon.setSetpoint(Constants.kFeederFeedSpeedRpm * Constants.kFeederSensorGearReduction);
+            //mMasterTalon.changeControlMode(TalonControlMode.Speed);
+            //mMasterTalon.setSetpoint(Constants.kFeederFeedSpeedRpm * Constants.kFeederSensorGearReduction);
+            mMasterTalon.set(1.0);
         }
         return defaultStateTransfer();
     }
@@ -203,7 +204,7 @@ public class Feeder extends Subsystem {
 
     private void setOpenLoop(double voltage) {
         if (mStateChanged) {
-            mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
+            mMasterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         }
         mMasterTalon.set(voltage);
     }

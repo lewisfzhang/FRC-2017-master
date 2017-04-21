@@ -80,6 +80,7 @@ public class Superstructure extends Subsystem {
         // Every time we transition states, we update the current state start
         // time and the state changed boolean (for one cycle)
         private double mCurrentStateStartTime;
+        private double mWantStateChangeStartTime;
         private boolean mStateChanged;
 
         @Override
@@ -87,6 +88,7 @@ public class Superstructure extends Subsystem {
             synchronized (Superstructure.this) {
                 mWantedState = WantedState.IDLE;
                 mCurrentStateStartTime = timestamp;
+                mWantStateChangeStartTime = timestamp;
                 mSystemState = SystemState.IDLE;
                 mStateChanged = true;
             }
@@ -104,7 +106,7 @@ public class Superstructure extends Subsystem {
                     newState = handleWaitingForAim();
                     break;
                 case SHOOTING:
-                    newState = handleShooting();
+                    newState = handleShooting(timestamp);
                     break;
                 case UNJAMMING_WITH_SHOOT:
                     newState = handleUnjammingWithShoot();
@@ -229,7 +231,7 @@ public class Superstructure extends Subsystem {
         }
     }
 
-    private SystemState handleShooting() {
+    private SystemState handleShooting(double timestamp) {
         // Don't auto spin anymore - just hold the last setpoint
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
@@ -484,6 +486,10 @@ public class Superstructure extends Subsystem {
 
     public void setWantIntakeOn() {
         mIntake.setOn();
+    }
+    
+    public void setWantShoot() {
+        mIntake.setOnWhileShooting();
     }
 
     public void setOverrideCompressor(boolean force_off) {

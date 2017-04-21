@@ -23,6 +23,9 @@ public class Shooter extends Subsystem {
         public double setpoint;
         public double rpm;
     }
+    
+    public static int kSpinUpProfile = 0;
+    public static int kHoldProfile = 1;
 
     public static Shooter getInstance() {
         if (mInstance == null) {
@@ -42,7 +45,7 @@ public class Shooter extends Subsystem {
 
     private ControlMethod mControlMethod;
     private double mSetpointRpm;
-    private CircularBuffer mKvEstimator = new CircularBuffer(Constants.kShooterKvBufferSize);
+    private CircularBuffer mKfEstimator = new CircularBuffer(Constants.kShooterKfBufferSize);
 
     // Used for transitioning from spin-up to hold loop.
     private boolean mOnTarget = false;
@@ -87,13 +90,20 @@ public class Shooter extends Subsystem {
     }
 
     public void refreshControllerConsts() {
-        mRightMaster.setProfile(0);
+        mRightMaster.setProfile(kSpinUpProfile);
         mRightMaster.setP(Constants.kShooterTalonKP);
         mRightMaster.setI(Constants.kShooterTalonKI);
         mRightMaster.setD(Constants.kShooterTalonKD);
         mRightMaster.setF(Constants.kShooterTalonKF);
         mRightMaster.setIZone(Constants.kShooterTalonIZone);
-
+        
+        mRightMaster.setProfile(kHoldProfile);
+        mRightMaster.setP(0.0);
+        mRightMaster.setI(0.0);
+        mRightMaster.setD(0.0);
+        mRightMaster.setF(Constants.kShooterTalonKF);
+        mRightMaster.setIZone(0);
+        
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
 
@@ -102,6 +112,7 @@ public class Shooter extends Subsystem {
         double current_rpm = getSpeedRpm();
         SmartDashboard.putNumber("shooter_speed_talon", current_rpm);
         SmartDashboard.putNumber("shooter_speed_error", mSetpointRpm - current_rpm);
+        SmartDashboard.putNumber("shooter_output_voltage", mRightMaster.getOutputVoltage());
 
         SmartDashboard.putBoolean("shooter on target", isOnTarget());
         // SmartDashboard.putNumber("shooter_talon_position", mRightMaster.getPosition());
@@ -125,7 +136,7 @@ public class Shooter extends Subsystem {
             public void onStart(double timestamp) {
                 synchronized (Shooter.this) {
                     mControlMethod = ControlMethod.OPEN_LOOP;
-                    mKvEstimator.clear();
+                    mKfEstimator.clear();
                     mOnTarget = false;
                     mOnTargetStartTime = Double.POSITIVE_INFINITY;
                 }
@@ -139,7 +150,7 @@ public class Shooter extends Subsystem {
                         mCSVWriter.add(mDebug);
                     } else {
                         // Reset all state.
-                        mKvEstimator.clear();
+                        mKfEstimator.clear();
                         mOnTarget = false;
                         mOnTargetStartTime = Double.POSITIVE_INFINITY;
                     }
@@ -180,6 +191,7 @@ public class Shooter extends Subsystem {
     private void configureForSpinUp() {
         mControlMethod = ControlMethod.SPIN_UP;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+        mRightMaster.setProfile(kSpinUpProfile);
         mRightMaster.EnableCurrentLimit(false);
         mRightMaster.DisableNominalClosedLoopVoltage();
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
@@ -188,6 +200,7 @@ public class Shooter extends Subsystem {
     private void configureForHoldWhenReady() {
         mControlMethod = ControlMethod.HOLD_WHEN_READY;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+        mRightMaster.setProfile(kSpinUpProfile);
         mRightMaster.EnableCurrentLimit(false);
         mRightMaster.DisableNominalClosedLoopVoltage();
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
@@ -195,16 +208,23 @@ public class Shooter extends Subsystem {
 
     private void configureForHold() {
         mControlMethod = ControlMethod.HOLD;
-        mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+        mRightMaster.setProfile(kHoldProfile);
         mRightMaster.EnableCurrentLimit(false);
-        mRightMaster.set(mKvEstimator.getAverage() * mSetpointRpm);
+        mRightMaster.setNominalClosedLoopVoltage(12.0);
+        mRightMaster.setF(mKfEstimator.getAverage());
         mRightMaster.setVoltageRampRate(Constants.kShooterHoldRampRate);
-        mRightMaster.setVoltageCompensationRampRate(Constants.kShooterHoldVoltageCompRate);
     }
 
     private void resetHold() {
-        mKvEstimator.clear();
+        mKfEstimator.clear();
         mOnTarget = false;
+    }
+    
+    private double estimateKf(double rpm, double voltage) {
+        final double speed_in_ticks_per_100ms = 4096.0 / 600.0 * rpm;
+        final double output = 1023.0 / 12.0 * voltage;
+        return output / speed_in_ticks_per_100ms;
     }
 
     private void handleClosedLoop(double timestamp) {
@@ -228,9 +248,9 @@ public class Shooter extends Subsystem {
 
             if (mOnTarget) {
                 // Update Kv.
-                mKvEstimator.addValue(mRightMaster.getOutputVoltage() / speed);
+                mKfEstimator.addValue(estimateKf(speed, mRightMaster.getOutputVoltage()));
             }
-            if (mKvEstimator.getNumValues() >= Constants.kShooterMinOnTargetSamples) {
+            if (mKfEstimator.getNumValues() >= Constants.kShooterMinOnTargetSamples) {
                 configureForHold();
             } else {
                 mRightMaster.set(mSetpointRpm);
@@ -240,9 +260,10 @@ public class Shooter extends Subsystem {
         if (mControlMethod == ControlMethod.HOLD) {            
             // Update Kv if we exceed our target velocity.  As the system heats up, drag is reduced.
             if (speed > mSetpointRpm) {
-                mKvEstimator.addValue(mRightMaster.getOutputVoltage() / speed);
-                mRightMaster.set(mSetpointRpm * mKvEstimator.getAverage());
+                mKfEstimator.addValue(estimateKf(speed, mRightMaster.getOutputVoltage()));
+                mRightMaster.setF(mKfEstimator.getAverage());
             }
+            mRightMaster.set(mSetpointRpm);
         }
         mDebug.timestamp = timestamp;
         mDebug.rpm = speed;
