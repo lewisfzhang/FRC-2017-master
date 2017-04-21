@@ -489,12 +489,8 @@ public class Superstructure extends Subsystem {
         mIntake.setOn();
     }
     
-    public void setWantShoot() {
-        mIntake.setOnWhileShooting();
-    }
-
     public void setWantIntakeOnForShooting() {
-        mIntake.setOnForShooting();
+        mIntake.setOnWhileShooting();
     }
 
     public void setOverrideCompressor(boolean force_off) {
