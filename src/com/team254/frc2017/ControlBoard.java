@@ -57,11 +57,11 @@ public class ControlBoard implements ControlBoardInterface {
 
     @Override
     public boolean getDriveAimButton() {
-        return mThrottleStick.getRawButton(1);
+        return mTurnStick.getRawButton(2);
     }
     
     public boolean getAimButton() {
-        return mTurnStick.getRawButton(2);
+        return mThrottleStick.getRawButton(1);
     }
 
     // OPERATOR CONTROLS
