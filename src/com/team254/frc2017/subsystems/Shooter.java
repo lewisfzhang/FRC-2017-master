@@ -45,6 +45,8 @@ public class Shooter extends Subsystem {
 
     private ControlMethod mControlMethod;
     private double mSetpointRpm;
+    private double mLastRpmSpeed;
+
     private CircularBuffer mKfEstimator = new CircularBuffer(Constants.kShooterKfBufferSize);
 
     // Used for transitioning from spin-up to hold loop.
@@ -229,6 +231,7 @@ public class Shooter extends Subsystem {
 
     private void handleClosedLoop(double timestamp) {
         final double speed = getSpeedRpm();
+        mLastRpmSpeed = speed;
 
         // See if we should be spinning up or holding.
         if (mControlMethod == ControlMethod.SPIN_UP) {
@@ -287,6 +290,10 @@ public class Shooter extends Subsystem {
 
     public synchronized boolean isOnTarget() {
         return mControlMethod == ControlMethod.HOLD;
+    }
+
+    public synchronized double getLastSpeedRpm() {
+        return mLastRpmSpeed;
     }
 
     @Override

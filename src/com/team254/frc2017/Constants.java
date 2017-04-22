@@ -60,7 +60,7 @@ public class Constants extends ConstantsBase {
     // Voltages
     public static double kIntakeVoltageMax = 7.5;
     public static double kIntakeVoltageMin = 4.5;
-    public static double kIntakeShootingVoltage = 3.0;
+    public static double kIntakeShootingVoltage = 4.5;
     public static final double kIntakeVoltageDifference = kIntakeVoltageMax - kIntakeVoltageMin;
 
     // CONTROL LOOP GAINS
@@ -124,6 +124,12 @@ public class Constants extends ConstantsBase {
     public static double kShooterStopOnTargetRpm = 150.0;
     public static int kShooterKfBufferSize = 20;
     public static int kShooterMinOnTargetSamples = 20;  // Should be <= kShooterKvBufferSize
+
+    public static int kShooterJamBufferSize = 20;
+    public static double kShooterDisturbanceThreshold = 50;
+    public static double kShooterJamTimeout = 3.0;  // In secs
+    public static double kShooterUnjamDuration = 0.5;  // In secs
+    public static double kShooterMinShootingTime = 3.0;  // In secs
 
     // Feeder gains
     public static double kFeederKP = 0.02;
