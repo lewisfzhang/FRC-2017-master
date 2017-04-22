@@ -20,7 +20,8 @@ public class PathAdapter {
 
     static final double kBlueCenterToBoiler = 126.5;
     static final double kBlueWallToAirship = 114;
-
+    static final double kBlueCenterToHopper = 162;
+    
     // Path Variables
     static final double kRadius = 20;
     static final double kSpeed = 60;
@@ -33,6 +34,7 @@ public class PathAdapter {
     static final Rotation2d kRedPegHeading = Rotation2d.fromDegrees(240);
     static final Rotation2d kBluePegHeading = Rotation2d.fromDegrees(120);
     static final Rotation2d kRedHopperHeading = Rotation2d.fromDegrees(30);
+    static final Rotation2d kBlueHopperHeading = Rotation2d.fromDegrees(330);
     static final Rotation2d kStartHeading = Rotation2d.fromDegrees(180);
     static final double kRearDist = Constants.kCenterToRearBumperDistance + 10;
     static final double kFrontDist = Constants.kCenterToIntakeDistance;
@@ -97,6 +99,27 @@ public class PathAdapter {
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
+    
+    public static Translation2d getBlueHopperPosition() {
+        Translation2d contactPoint = new Translation2d(kHopperX, kFieldHeight/2 + kBlueCenterToHopper + kHopperOffsetYOffset);
+        Translation2d robotOffset = new Translation2d(kBlueHopperHeading.cos() * kRearDist,
+                kBlueHopperHeading.sin() * kRearDist);
+        robotOffset.translateBy(new Translation2d(kBlueHopperHeading.sin() * kSideDist,
+                kBlueHopperHeading.cos() * kSideDist));
+        return contactPoint.translateBy(robotOffset);
+    }
+    
+    public static Translation2d getBlueHopperTurnPosition() {
+        Translation2d hopperPosition = getBlueHopperPosition();
+        Translation2d turnOffset = new Translation2d(kBlueHopperHeading.cos() * kHopperTurnDistance, kBlueHopperHeading.sin() * kHopperTurnDistance);
+        return hopperPosition.translateBy(turnOffset);
+    }
+    
+    public static Translation2d getBlueGearTurnPosition() {
+        Translation2d gearPosition = getBlueGearPosition();
+        Translation2d turnOffset = new Translation2d(kBluePegHeading.cos() * kGearTurnDistance, kBluePegHeading.sin() * kGearTurnDistance);
+        return gearPosition.translateBy(turnOffset);
+    }
 
     private static Translation2d getBlueGearPosition() {
         Translation2d pegPosition = new Translation2d(kBlueWallToAirship + kPegOffsetX, kFieldHeight / 2 + kPegOffsetY);
@@ -123,6 +146,16 @@ public class PathAdapter {
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
+    
+    public static Path getBlueHopperPath() {
+        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+        sWaypoints.add(new Waypoint(getBlueGearPosition(), 0, 0));
+        sWaypoints.add(new Waypoint(getBlueGearTurnPosition(), kRadius, kSpeed));
+        sWaypoints.add(new Waypoint(getBlueHopperTurnPosition(), kRadius, kSpeed));
+        sWaypoints.add(new Waypoint(getBlueHopperPosition(), 0, kSpeed));
+
+        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+    }
 
     public static void main(String[] args) {
         System.out.println("Red:\n" + getRedStartPose().getTranslation());
@@ -136,7 +169,11 @@ public class PathAdapter {
         
         System.out.println("\nBlue:\n" + getBlueStartPose().getTranslation());
         System.out.println(getBlueCenterPosition());
+        System.out.println(getBlueGearPosition() + "\n");
         System.out.println(getBlueGearPosition());
+        System.out.println(getBlueGearTurnPosition());
+        System.out.println(getBlueHopperTurnPosition());
+        System.out.println(getBlueHopperPosition());
     }
 
 }
