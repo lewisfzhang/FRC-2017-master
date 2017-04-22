@@ -228,7 +228,7 @@ public class Constants extends ConstantsBase {
     public static double kPathFollowingProfileKffa = 0.05;
 
     // Goal tracker constants
-    public static double kMaxGoalTrackAge = 1.0;
+    public static double kMaxGoalTrackAge = 1.5;
     public static double kMaxTrackerDistance = 18.0;
     public static double kCameraFrameRate = 30.0;
     public static double kTrackReportComparatorStablityWeight = 1.0;
@@ -239,7 +239,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraXOffset = -3.3211;
     public static double kCameraYOffset = 0.0;
     public static double kCameraZOffset = 20.9;
-    public static double kCameraPitchAngleDegrees = 30.0;
+    public static double kCameraPitchAngleDegrees = 31.0; // Measured on 4/22
     public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
 
@@ -272,6 +272,8 @@ public class Constants extends ConstantsBase {
             { 121.23, 3150.0 },
             { 125.18, 3200.0 },
             { 128.23, 3250.0 }*/
+
+
             { 95.0, 2925.0 },
             { 100.0, 3000.0 },
             { 105.0, 3050.0 },
