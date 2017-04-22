@@ -16,14 +16,12 @@ public class MotorGearGrabber extends Subsystem {
 
     public static boolean kWristDown = false;
     public static boolean kWristUp = !kWristDown;
-    public static double kContainGearSetpoint = -3;
     public static double kBallClearSetpoint = 8;
     public static double kScoreGearSetpoint = 12;
     public static double kIntakeGearSetpoint = -12;
     public static double kTransitionDelay = 0.5;
     public static double kExhaustDelay = 0.1;
     public static double kIntakeThreshold = 15;
-    public static double kContainThreshold = 0.0;
     public static double kThresholdTime = 0.15;
 
     private static MotorGearGrabber mInstance;
@@ -58,7 +56,6 @@ public class MotorGearGrabber extends Subsystem {
 
     private WantedState mWantedState;
     private SystemState mSystemState;
-    private double startTimeInThreshold;
 
     private MotorGearGrabber() {
         mWristSolenoid = Constants.makeSolenoidForId(Constants.kGearWristSolenoid);
@@ -135,7 +132,6 @@ public class MotorGearGrabber extends Subsystem {
                         System.out.println("Changed state: " + mSystemState + " -> " + newState);
                         mSystemState = newState;
                         mCurrentStateStartTime = Timer.getFPGATimestamp();
-                        startTimeInThreshold = 0;
                     }
                 }
 
@@ -215,22 +211,13 @@ public class MotorGearGrabber extends Subsystem {
         case ACQUIRE:
             return SystemState.INTAKE;
         default:
-            // if(mMasterTalon.getOutputCurrent() <= K_CONTAIN_THRESH) {
-            // if(startTimeInThreshold == 0.0) {
-            // startTimeInThreshold = timeInState;
-            // }
-            // } else {
-            // startTimeInThreshold = 0.0;
-            // }
-            // if(timeInState - startTimeInThreshold > K_THRESH_TIME*2 && startTimeInThreshold != 0) {
-            // LED.getInstance().setWantedState(LED.WantedState.BLINK);
-            // return SystemState.IDLE;
-            // }
             setWristUp();
             if (Superstructure.getInstance().isShooting()) {
                 mMasterTalon.set(0.0);
+            } else if(timeInState < 1) {
+                mMasterTalon.set(kIntakeGearSetpoint);
             } else {
-                mMasterTalon.set(kContainGearSetpoint);
+                mMasterTalon.set(0.0);
             }
             return SystemState.STOWED;
         }
@@ -241,7 +228,7 @@ public class MotorGearGrabber extends Subsystem {
         if (timeInState > kExhaustDelay) {
             mMasterTalon.set(kScoreGearSetpoint);
         } else {
-            mMasterTalon.set(kContainGearSetpoint);
+            mMasterTalon.set(0);
         }
         if (timeInState > kTransitionDelay) {
             return SystemState.EXHAUST;
