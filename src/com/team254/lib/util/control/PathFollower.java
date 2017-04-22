@@ -23,6 +23,7 @@ public class PathFollower {
         public double pose_theta;
         public double linear_displacement;
         public double linear_velocity;
+        public double profile_velocity;
         public double velocity_command_dx;
         public double velocity_command_dy;
         public double velocity_command_dtheta;
@@ -141,6 +142,7 @@ public class PathFollower {
         mDebugOutput.pose_theta = pose.getRotation().getRadians();
         mDebugOutput.linear_displacement = displacement;
         mDebugOutput.linear_velocity = velocity;
+        mDebugOutput.profile_velocity = mVelocityController.getSetpoint().vel();
         mDebugOutput.velocity_command_dx = rv.dx;
         mDebugOutput.velocity_command_dy = rv.dy;
         mDebugOutput.velocity_command_dtheta = rv.dtheta;

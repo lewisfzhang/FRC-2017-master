@@ -62,8 +62,8 @@ public class PathFollowerTest {
         writer.flush();
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(116.4, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance);
-        assertEquals(113, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
+        assertTrue(controller.getAlongTrackError() < 1.0);
+        assertTrue(controller.getCrossTrackError() < 1.0);
     }
 
     @Test
@@ -94,8 +94,8 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(116, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
-        assertEquals(210, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
+        assertTrue(controller.getAlongTrackError() < 1.0);
+        assertTrue(controller.getCrossTrackError() < 1.0);
     }
 
     @Test
@@ -130,8 +130,8 @@ public class PathFollowerTest {
         }
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(116, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
-        assertEquals(210, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
+        assertTrue(controller.getAlongTrackError() < 1.0);
+        assertTrue(controller.getCrossTrackError() < 1.0);
 
         displacement = 0.0;
         container = new BoilerGearToHopperBlue();
@@ -154,7 +154,7 @@ public class PathFollowerTest {
         writer.flush();
         System.out.println(robot_pose);
         assertTrue(controller.isFinished());
-        assertEquals(95, robot_pose.getTranslation().x(), Constants.kSegmentCompletionTolerance * 3);
-        assertEquals(312, robot_pose.getTranslation().y(), Constants.kSegmentCompletionTolerance * 3);
+        assertTrue(controller.getAlongTrackError() < 1.0);
+        assertTrue(controller.getCrossTrackError() < 1.0);
     }
 }
