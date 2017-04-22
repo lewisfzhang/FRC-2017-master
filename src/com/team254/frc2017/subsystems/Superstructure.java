@@ -266,7 +266,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.WAITING_FOR_AIM;
             }
             if (timestamp - mLastDisturbanceShooterTime > Constants.kShooterJamTimeout) {
-                System.out.println("Want to unjam.");
+                //System.out.println("Want to unjam.");
                 // We have jammed, move to unjamming.
                 //return SystemState.UNJAMMING_WITH_SHOOT;
             }
