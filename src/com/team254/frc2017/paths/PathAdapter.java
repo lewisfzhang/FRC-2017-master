@@ -16,22 +16,51 @@ public class PathAdapter {
     // Values to measure on the field
     static final double kRedCenterToBoiler = 126.5;
     static final double kRedWallToAirship = 114;
+    static final double kRedCenterToHopper = 162;
 
     static final double kBlueCenterToBoiler = 126.5;
     static final double kBlueWallToAirship = 114;
 
     // Path Variables
-    static final double kRadius = 48;
+    static final double kRadius = 20;
     static final double kSpeed = 60;
 
     // Don't mess with these
     static final double kPegOffsetX = 17.77; // center of airship to boiler peg
     static final double kPegOffsetY = 30.66; // front of airship to boiler peg
+    static final double kHopperX = 116.5; // x position of hopper
+    static final double kHopperOffsetYOffset = 3; //how many inches into the hopper you want to go
     static final Rotation2d kRedPegHeading = Rotation2d.fromDegrees(240);
     static final Rotation2d kBluePegHeading = Rotation2d.fromDegrees(120);
+    static final Rotation2d kRedHopperHeading = Rotation2d.fromDegrees(30);
     static final Rotation2d kStartHeading = Rotation2d.fromDegrees(180);
     static final double kRearDist = Constants.kCenterToRearBumperDistance + 10;
+    static final double kFrontDist = Constants.kCenterToIntakeDistance;
+    static final double kSideDist = Constants.kCenterToSideBumperDistance;
+    static final double kHopperTurnDistance = 24; 
+    static final double kGearTurnDistance = 24; 
     static final double kFieldHeight = 324;
+    
+    public static Translation2d getRedHopperPosition() {
+        Translation2d contactPoint = new Translation2d(kHopperX, kFieldHeight/2 - kRedCenterToHopper - kHopperOffsetYOffset);
+        Translation2d robotOffset = new Translation2d(kRedHopperHeading.cos() * kRearDist,
+                kRedHopperHeading.sin() * kRearDist);
+        robotOffset.translateBy(new Translation2d(kRedHopperHeading.sin() * kSideDist,
+                kRedHopperHeading.cos() * kSideDist));
+        return contactPoint.translateBy(robotOffset);
+    }
+    
+    public static Translation2d getRedHopperTurnPosition() {
+        Translation2d hopperPosition = getRedHopperPosition();
+        Translation2d turnOffset = new Translation2d(kRedHopperHeading.cos() * kHopperTurnDistance, kRedHopperHeading.sin() * kHopperTurnDistance);
+        return hopperPosition.translateBy(turnOffset);
+    }
+    
+    public static Translation2d getRedGearTurnPosition() {
+        Translation2d gearPosition = getRedGearPosition();
+        Translation2d turnOffset = new Translation2d(kRedPegHeading.cos() * kGearTurnDistance, kRedPegHeading.sin() * kGearTurnDistance);
+        return gearPosition.translateBy(turnOffset);
+    }
 
     private static Translation2d getRedGearPosition() {
         Translation2d pegPosition = new Translation2d(kRedWallToAirship + kPegOffsetX, kFieldHeight / 2 - kPegOffsetY);
@@ -55,6 +84,16 @@ public class PathAdapter {
         sWaypoints.add(new Waypoint(getRedStartPose().getTranslation(), 0, 0));
         sWaypoints.add(new Waypoint(getRedCenterPosition(), kRadius, kSpeed));
         sWaypoints.add(new Waypoint(getRedGearPosition(), 0, kSpeed));
+
+        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+    }
+    
+    public static Path getRedHopperPath() {
+        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+        sWaypoints.add(new Waypoint(getRedGearPosition(), 0, 0));
+        sWaypoints.add(new Waypoint(getRedGearTurnPosition(), kRadius, kSpeed));
+        sWaypoints.add(new Waypoint(getRedHopperTurnPosition(), kRadius, kSpeed));
+        sWaypoints.add(new Waypoint(getRedHopperPosition(), 0, kSpeed));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
@@ -88,7 +127,13 @@ public class PathAdapter {
     public static void main(String[] args) {
         System.out.println("Red:\n" + getRedStartPose().getTranslation());
         System.out.println(getRedCenterPosition());
+        System.out.println(getRedGearPosition() + "\n");
         System.out.println(getRedGearPosition());
+        System.out.println(getRedGearTurnPosition());
+        System.out.println(getRedHopperTurnPosition());
+        System.out.println(getRedHopperPosition());
+
+        
         System.out.println("\nBlue:\n" + getBlueStartPose().getTranslation());
         System.out.println(getBlueCenterPosition());
         System.out.println(getBlueGearPosition());
