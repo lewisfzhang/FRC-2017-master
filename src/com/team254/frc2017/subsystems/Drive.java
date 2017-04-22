@@ -498,6 +498,7 @@ public class Drive extends Subsystem {
                 // We are on target. Switch back to auto-aim.
                 mDriveControlState = DriveControlState.AIM_TO_GOAL;
                 mIsApproaching = false;
+                updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
                 return;
             }
             updatePositionSetpoint(getLeftDistanceInches() + error, getRightDistanceInches() + error);
