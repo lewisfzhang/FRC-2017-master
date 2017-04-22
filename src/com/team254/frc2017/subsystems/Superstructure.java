@@ -5,7 +5,9 @@ import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
+import com.team254.lib.util.CircularBuffer;
 import com.team254.lib.util.InterpolatingDouble;
+import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.RevRoboticsAirPressureSensor;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -63,6 +65,10 @@ public class Superstructure extends Subsystem {
 
     private boolean mCompressorOverride = false;
 
+    private CircularBuffer mShooterRpmBuffer = new CircularBuffer(Constants.kShooterJamBufferSize);
+    private double mLastDisturbanceShooterTime;
+    private double mUnjammingEnterTime;
+
     public boolean isOnTargetToShoot() {
         return (mDrive.isOnTarget() && mDrive.isAutoAiming()) && mShooter.isOnTarget();
     }
@@ -89,6 +95,7 @@ public class Superstructure extends Subsystem {
                 mWantedState = WantedState.IDLE;
                 mCurrentStateStartTime = timestamp;
                 mWantStateChangeStartTime = timestamp;
+                mLastDisturbanceShooterTime = timestamp;
                 mSystemState = SystemState.IDLE;
                 mStateChanged = true;
             }
@@ -109,7 +116,7 @@ public class Superstructure extends Subsystem {
                     newState = handleShooting(timestamp);
                     break;
                 case UNJAMMING_WITH_SHOOT:
-                    newState = handleUnjammingWithShoot();
+                    newState = handleUnjammingWithShoot(mStateChanged, timestamp);
                     break;
                 case UNJAMMING:
                     newState = handleUnjamming();
@@ -239,6 +246,16 @@ public class Superstructure extends Subsystem {
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         setWantIntakeOnForShooting();
 
+        // Pump circular buffer with last rpm from talon.
+        final double rpm = mShooter.getLastSpeedRpm();
+
+        // Find time of last shooter disturbance.
+        if (mShooterRpmBuffer.isFull() && Math.abs(mShooterRpmBuffer.getAverage() - rpm) > Constants.kShooterDisturbanceThreshold) {
+            mLastDisturbanceShooterTime = timestamp;
+        }
+
+        mShooterRpmBuffer.addValue(rpm);
+
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;
@@ -247,6 +264,11 @@ public class Superstructure extends Subsystem {
         case SHOOT:
             if (!isOnTargetToKeepShooting()) {
                 return SystemState.WAITING_FOR_AIM;
+            }
+            if (timestamp - mLastDisturbanceShooterTime > Constants.kShooterJamTimeout) {
+                System.out.println("Want to unjam.");
+                // We have jammed, move to unjamming.
+                //return SystemState.UNJAMMING_WITH_SHOOT;
             }
             return SystemState.SHOOTING;
         case RANGE_FINDING:
@@ -260,20 +282,29 @@ public class Superstructure extends Subsystem {
         }
     }
 
-    private SystemState handleUnjammingWithShoot() {
+    private SystemState handleUnjammingWithShoot(boolean state_changed, double timestamp) {
         // Don't auto spin anymore - just hold the last setpoint
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.EXHAUST);
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
-        setWantIntakeOn();
+        setWantIntakeOnForShooting();
+
+        if (state_changed) {
+            // Mark beginning of unjamming.
+            mUnjammingEnterTime = timestamp;
+        }
+
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            return SystemState.WAITING_FOR_AIM;
+            if (timestamp - mUnjammingEnterTime > Constants.kShooterUnjamDuration) {
+                return SystemState.SHOOTING;
+            }
+            return SystemState.UNJAMMING_WITH_SHOOT;
         case EXHAUST:
             return SystemState.EXHAUSTING;
         default:
