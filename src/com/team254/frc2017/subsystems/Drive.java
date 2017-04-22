@@ -127,9 +127,7 @@ public class Drive extends Subsystem {
                     }
                     // fallthrough intended
                 case TURN_TO_HEADING:
-                    if (!Superstructure.getInstance().isShooting()) {
-                        updateTurnToHeading(timestamp);
-                    }
+                    updateTurnToHeading(timestamp);
                     return;
                 case DRIVE_TOWARDS_GOAL_COARSE_ALIGN:
                     updateDriveTowardsGoalCoarseAlign(timestamp);

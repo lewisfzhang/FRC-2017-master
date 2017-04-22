@@ -111,8 +111,11 @@ public class Constants extends ConstantsBase {
     public static double kShooterTalonKF = 0.035;
     public static double kShooterRampRate = 60.0;
 
-    public static double kShooterHoldRampRate = 360.0;
-    public static double kShooterHoldVoltageCompRate = 9000.0;
+    public static double kShooterTalonHoldKP = 0.0;
+    public static double kShooterTalonHoldKI = 0.0;
+    public static double kShooterTalonHoldKD = 0.0;
+
+    public static double kShooterHoldRampRate = 720.0;
 
     public static int kShooterTalonIZone = 1000;// 73 rpm
     public static int kShooterOpenLoopCurrentLimit = 35;
@@ -245,18 +248,19 @@ public class Constants extends ConstantsBase {
 
     public static double kDefaultShootingDistanceInches = 95.8;
     public static double kDefaultShootingRPM = 2950.0;
-    public static boolean kUseFlywheelAutoAimPolynomial = false; // Change to 'true' to use the best-fit polynomial
+    public static boolean kUseFlywheelAutoAimPolynomial = true; // Change to 'true' to use the best-fit polynomial
                                                                 // instead.
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
-    public static double kShooterOptimalRange = 100.0;
-    public static double kShooterOptimalRangeFloor = 99.0;
-    public static double kShooterOptimalRangeCeiling = 101.0;
+    public static double kShooterOptimalRange = 100.0;  // TUNE ME
+    public static double kShooterOptimalRangeFloor = 99.0;  // TUNE ME
+    public static double kShooterOptimalRangeCeiling = 101.0;  // TUNE ME
 
-    public static double kShooterAbsoluteRangeFloor = 96.0;
-    public static double kShooterAbsoluteRangeCeiling = 135.0;
+    public static double kShooterAbsoluteRangeFloor = 95.0;  // TUNE ME
+    public static double kShooterAbsoluteRangeCeiling = 105.0;  // TUNE ME
 
+    // TUNE ME
     public static double[][] kFlywheelDistanceRpmValues = {
             // Pre-champs 4/9
             /*
@@ -268,10 +272,11 @@ public class Constants extends ConstantsBase {
             { 121.23, 3150.0 },
             { 125.18, 3200.0 },
             { 128.23, 3250.0 }*/
-            { 98.4, 2950.0 },
-            { 114.5, 3000.0 },
-            { 122.4, 3050.0 },
-            { 126.3, 3150.0 },
+            { 95.0, 2925.0 },
+            { 100.0, 3000.0 },
+            { 105.0, 3050.0 },
+           /* { 122.4, 3050.0 },
+            { 126.3, 3150.0 },*/
     };
 
     static {

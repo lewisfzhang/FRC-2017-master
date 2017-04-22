@@ -266,7 +266,6 @@ public class Shooter extends Subsystem {
                 mKfEstimator.addValue(estimateKf(speed, mRightMaster.getOutputVoltage()));
                 mRightMaster.setF(mKfEstimator.getAverage());
             }
-            mRightMaster.set(mSetpointRpm);
         }
         mDebug.timestamp = timestamp;
         mDebug.rpm = speed;

@@ -227,7 +227,11 @@ public class MotorGearGrabber extends Subsystem {
             // return SystemState.IDLE;
             // }
             setWristUp();
-            mMasterTalon.set(kContainGearSetpoint);
+            if (Superstructure.getInstance().isShooting()) {
+                mMasterTalon.set(0.0);
+            } else {
+                mMasterTalon.set(kContainGearSetpoint);
+            }
             return SystemState.STOWED;
         }
     }
