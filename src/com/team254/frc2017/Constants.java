@@ -60,7 +60,7 @@ public class Constants extends ConstantsBase {
     // Voltages
     public static double kIntakeVoltageMax = 7.5;
     public static double kIntakeVoltageMin = 4.5;
-    public static double kIntakeShootingVoltage = 4.5;
+    public static double kIntakeShootingVoltage = 3.75;
     public static final double kIntakeVoltageDifference = kIntakeVoltageMax - kIntakeVoltageMin;
 
     // CONTROL LOOP GAINS
@@ -254,11 +254,11 @@ public class Constants extends ConstantsBase {
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
     public static double kShooterOptimalRange = 100.0;  // TUNE ME
-    public static double kShooterOptimalRangeFloor = 99.0;  // TUNE ME
-    public static double kShooterOptimalRangeCeiling = 101.0;  // TUNE ME
+    public static double kShooterOptimalRangeFloor = 97.0;  // TUNE ME
+    public static double kShooterOptimalRangeCeiling = 103.0;  // TUNE ME
 
-    public static double kShooterAbsoluteRangeFloor = 95.0;  // TUNE ME
-    public static double kShooterAbsoluteRangeCeiling = 105.0;  // TUNE ME
+    public static double kShooterAbsoluteRangeFloor = 90.0;  // TUNE ME
+    public static double kShooterAbsoluteRangeCeiling = 130.0;  // TUNE ME
 
     // TUNE ME
     public static double[][] kFlywheelDistanceRpmValues = {
