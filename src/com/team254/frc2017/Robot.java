@@ -92,6 +92,8 @@ public class Robot extends IterativeRobot {
             AutoModeSelector.initAutoModeSelector();
 
             mDelayedAimButton = new DelayedBoolean(Timer.getFPGATimestamp(), 0.25);
+            // Force an true update now to prevent robot from running at start.
+            mDelayedAimButton.update(Timer.getFPGATimestamp(), true);
 
             // mVideoStreamServiceController.registerWatcher();
 
@@ -187,7 +189,7 @@ public class Robot extends IterativeRobot {
             double turn = mControlBoard.getTurn();
 
             boolean wants_aim_button = mControlBoard.getAimButton();
-            wants_aim_button = mDelayedAimButton.update(timestamp, wants_aim_button);
+            wants_aim_button = !mDelayedAimButton.update(timestamp, !wants_aim_button);
 
             if (wants_aim_button || mControlBoard.getDriveAimButton()) {
 
