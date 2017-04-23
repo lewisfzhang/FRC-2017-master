@@ -91,7 +91,7 @@ public class Robot extends IterativeRobot {
 
             AutoModeSelector.initAutoModeSelector();
 
-            mDelayedAimButton = new DelayedBoolean(Timer.getFPGATimestamp(), 0.25);
+            mDelayedAimButton = new DelayedBoolean(Timer.getFPGATimestamp(), 0.1);
             // Force an true update now to prevent robot from running at start.
             mDelayedAimButton.update(Timer.getFPGATimestamp(), true);
 
