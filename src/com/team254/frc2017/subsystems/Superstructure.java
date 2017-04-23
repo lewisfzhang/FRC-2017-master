@@ -216,7 +216,8 @@ public class Superstructure extends Subsystem {
 
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
-        mHopper.setWantedState(Hopper.WantedState.IDLE);
+        mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
+        setWantIntakeOnForShooting();
 
         if (autoSpinShooter(true)) {
 
@@ -297,7 +298,7 @@ public class Superstructure extends Subsystem {
         mFeeder.setWantedState(Feeder.WantedState.FEED);
 
         // Make sure to reverse the floor.
-        mHopper.setWantedState(Hopper.WantedState.EXHAUST);
+        mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         setWantIntakeOnForShooting();
 
