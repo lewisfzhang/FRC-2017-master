@@ -134,6 +134,8 @@ public class Constants extends ConstantsBase {
     public static double kShooterUnjamDuration = 0.5;  // In secs
     public static double kShooterMinShootingTime = 1.0;  // In secs
 
+    public static double kShooterSpinDownTime = 0.25;
+
     // Feeder gains
     public static double kFeederKP = 0.02;
     public static double kFeederKI = 0.0;

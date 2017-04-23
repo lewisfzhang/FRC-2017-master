@@ -326,7 +326,7 @@ public class Superstructure extends Subsystem {
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         setWantIntakeOnForShooting();
 
-        if (timestamp - mCurrentStateStartTime > 0.25) {
+        if (timestamp - mCurrentStateStartTime > Constants.kShooterSpinDownTime) {
             switch (mWantedState) {
                 case UNJAM:
                     return SystemState.UNJAMMING;
