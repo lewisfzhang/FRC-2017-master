@@ -115,6 +115,7 @@ public class Shooter extends Subsystem {
         SmartDashboard.putNumber("shooter_speed_talon", current_rpm);
         SmartDashboard.putNumber("shooter_speed_error", mSetpointRpm - current_rpm);
         SmartDashboard.putNumber("shooter_output_voltage", mRightMaster.getOutputVoltage());
+        SmartDashboard.putNumber("shooter_setpoint", mSetpointRpm);
 
         SmartDashboard.putBoolean("shooter on target", isOnTarget());
         // SmartDashboard.putNumber("shooter_talon_position", mRightMaster.getPosition());

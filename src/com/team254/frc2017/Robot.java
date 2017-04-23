@@ -211,10 +211,14 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setWantedState(Superstructure.WantedState.RANGE_FINDING);
                 }
             } else {
-                mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
-                    !mControlBoard.getLowGear()));
-                boolean wantLowGear = mControlBoard.getLowGear();
-                mDrive.setHighGear(!wantLowGear);
+
+                // Make sure not to interrupt shooting spindown.
+                if (!mSuperstructure.isShooting()) {
+                    mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
+                            !mControlBoard.getLowGear()));
+                    boolean wantLowGear = mControlBoard.getLowGear();
+                    mDrive.setHighGear(!wantLowGear);
+                }
 
                 Intake.getInstance().setCurrentThrottle(mControlBoard.getThrottle());
 
@@ -263,7 +267,8 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setShooterOpenLoop(0);
                 } else if (mControlBoard.getShooterClosedLoopButton()) {
                     mSuperstructure.setClosedLoopRpm(Constants.kDefaultShootingRPM);
-                } else if (!mControlBoard.getHangButton() && !mControlBoard.getRangeFinderButton()) {
+                } else if (!mControlBoard.getHangButton() && !mControlBoard.getRangeFinderButton() &&
+                        !mSuperstructure.isShooting()) {
                     mSuperstructure.setShooterOpenLoop(0);
                 }
 

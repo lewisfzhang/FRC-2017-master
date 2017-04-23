@@ -80,7 +80,7 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized boolean isShooting() {
-        return mSystemState == SystemState.SHOOTING;
+        return (mSystemState == SystemState.SHOOTING) || (mSystemState == SystemState.SHOOTING_SPIN_DOWN);
     }
 
     private Loop mLoop = new Loop() {
@@ -266,8 +266,6 @@ public class Superstructure extends Subsystem {
         mShooterRpmBuffer.addValue(rpm);
 
         switch (mWantedState) {
-        case UNJAM:
-            return SystemState.UNJAMMING;
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
@@ -291,12 +289,8 @@ public class Superstructure extends Subsystem {
             }
         case RANGE_FINDING:
             return SystemState.RANGE_FINDING;
-        case MANUAL_FEED:
-            return SystemState.JUST_FEED;
-        case EXHAUST:
-            return SystemState.EXHAUSTING;
         default:
-            return SystemState.IDLE;
+            return SystemState.SHOOTING_SPIN_DOWN;
         }
     }
 
@@ -334,7 +328,7 @@ public class Superstructure extends Subsystem {
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         setWantIntakeOnForShooting();
 
-        if (timestamp - mCurrentStateStartTime > 0.25) {
+        if (timestamp - mCurrentStateStartTime > 0.2) {
             switch (mWantedState) {
                 case UNJAM:
                     return SystemState.UNJAMMING;
