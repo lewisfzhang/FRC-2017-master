@@ -372,6 +372,9 @@ public class Superstructure extends Subsystem {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.FEED);
+
+        mIntake.setOnWhileShooting();
+
         switch (mWantedState) {
         case UNJAM:
             return SystemState.UNJAMMING;
