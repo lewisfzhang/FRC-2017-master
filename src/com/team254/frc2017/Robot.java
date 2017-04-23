@@ -49,6 +49,7 @@ public class Robot extends IterativeRobot {
 
     private AnalogInput mCheckLightButton = new AnalogInput(Constants.kLEDOnId);
 
+    private DelayedBoolean mDelayedAimButton;
 
     private LatchedBoolean mCommitTuning = new LatchedBoolean();
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap = new InterpolatingTreeMap<>();
@@ -89,6 +90,8 @@ public class Robot extends IterativeRobot {
             mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
 
             AutoModeSelector.initAutoModeSelector();
+
+            mDelayedAimButton = new DelayedBoolean(Timer.getFPGATimestamp(), 0.25);
 
             // mVideoStreamServiceController.registerWatcher();
 
@@ -178,11 +181,15 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopPeriodic() {
         try {
+            double timestamp = Timer.getFPGATimestamp();
             // Drive base
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
 
-            if (mControlBoard.getAimButton() || mControlBoard.getDriveAimButton()) {
+            boolean wants_aim_button = mControlBoard.getAimButton();
+            wants_aim_button = mDelayedAimButton.update(timestamp, wants_aim_button);
+
+            if (wants_aim_button || mControlBoard.getDriveAimButton()) {
 
                 if (Constants.kIsShooterTuning) {
                     mDrive.setWantAimToGoal();
