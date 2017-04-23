@@ -54,10 +54,6 @@ public class Robot extends IterativeRobot {
     private LatchedBoolean mCommitTuning = new LatchedBoolean();
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mTuningFlywheelMap = new InterpolatingTreeMap<>();
 
-    private final VideoStreamServiceController mVideoStreamServiceController = new VideoStreamServiceController();
-
-    private boolean mPegDistanceControllerDidEngage = false;
-
     public Robot() {
         CrashTracker.logRobotConstruction();
     }
@@ -94,8 +90,6 @@ public class Robot extends IterativeRobot {
             mDelayedAimButton = new DelayedBoolean(Timer.getFPGATimestamp(), 0.1);
             // Force an true update now to prevent robot from running at start.
             mDelayedAimButton.update(Timer.getFPGATimestamp(), true);
-
-            // mVideoStreamServiceController.registerWatcher();
 
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
