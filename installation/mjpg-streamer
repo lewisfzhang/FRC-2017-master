@@ -8,7 +8,7 @@ PIDFILE[1]=/var/run/mjpg-streamer1.pid
 INPUT[1]="input_uvc.so --device /dev/v4l/by-id/usb-046d_HD_Pro_Webcam_C920_0297F65F-video-index0"
 # Frames per second
 FPS[1]=25
-RESOLUTION[1]="160x100"
+RESOLUTION[1]="320x200"
 
 OUTPUT[1]="output_http.so -w /usr/local/share/mjpg-streamer/www"
 PORT[1]=5801
