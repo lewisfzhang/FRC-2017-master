@@ -274,12 +274,21 @@ public class Superstructure extends Subsystem {
             if (!isOnTargetToKeepShooting()) {
                 return SystemState.WAITING_FOR_AIM;
             }
+            boolean jam_detected = false;
             if (timestamp - mLastDisturbanceShooterTime > Constants.kShooterJamTimeout) {
+                jam_detected = true;
                 //System.out.println("Want to unjam.");
                 // We have jammed, move to unjamming.
                 //return SystemState.UNJAMMING_WITH_SHOOT;
             }
-            return SystemState.SHOOTING;
+            SmartDashboard.putBoolean("Jam Detected", jam_detected);
+
+            jam_detected = false;
+            if (jam_detected) {
+                return SystemState.UNJAMMING_WITH_SHOOT;
+            } else {
+                return SystemState.SHOOTING;
+            }
         case RANGE_FINDING:
             return SystemState.RANGE_FINDING;
         case MANUAL_FEED:
