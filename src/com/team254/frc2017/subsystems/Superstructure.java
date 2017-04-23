@@ -67,7 +67,8 @@ public class Superstructure extends Subsystem {
 
     private CircularBuffer mShooterRpmBuffer = new CircularBuffer(Constants.kShooterJamBufferSize);
     private double mLastDisturbanceShooterTime;
-    private double mUnjammingEnterTime;
+    private double mCurrentStateStartTime;
+    private boolean mStateChanged;
 
     public boolean isOnTargetToShoot() {
         return (mDrive.isOnTarget() && mDrive.isAutoAiming()) && mShooter.isOnTarget();
@@ -85,9 +86,7 @@ public class Superstructure extends Subsystem {
 
         // Every time we transition states, we update the current state start
         // time and the state changed boolean (for one cycle)
-        private double mCurrentStateStartTime;
         private double mWantStateChangeStartTime;
-        private boolean mStateChanged;
 
         @Override
         public void onStart(double timestamp) {
@@ -116,7 +115,7 @@ public class Superstructure extends Subsystem {
                     newState = handleShooting(timestamp);
                     break;
                 case UNJAMMING_WITH_SHOOT:
-                    newState = handleUnjammingWithShoot(mStateChanged, timestamp);
+                    newState = handleUnjammingWithShoot(timestamp);
                     break;
                 case UNJAMMING:
                     newState = handleUnjamming();
@@ -249,8 +248,14 @@ public class Superstructure extends Subsystem {
         // Pump circular buffer with last rpm from talon.
         final double rpm = mShooter.getLastSpeedRpm();
 
+        if (mStateChanged) {
+            mShooterRpmBuffer.clear();
+        }
+
         // Find time of last shooter disturbance.
-        if (mShooterRpmBuffer.isFull() && Math.abs(mShooterRpmBuffer.getAverage() - rpm) > Constants.kShooterDisturbanceThreshold) {
+        if (timestamp - mCurrentStateStartTime < Constants.kShooterMinShootingTime ||
+                !mShooterRpmBuffer.isFull() ||
+                Math.abs(mShooterRpmBuffer.getAverage() - rpm) > Constants.kShooterDisturbanceThreshold) {
             mLastDisturbanceShooterTime = timestamp;
         }
 
@@ -282,33 +287,26 @@ public class Superstructure extends Subsystem {
         }
     }
 
-    private SystemState handleUnjammingWithShoot(boolean state_changed, double timestamp) {
+    private SystemState handleUnjammingWithShoot(double timestamp) {
         // Don't auto spin anymore - just hold the last setpoint
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
+
+        // Make sure to reverse the floor.
         mHopper.setWantedState(Hopper.WantedState.EXHAUST);
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         setWantIntakeOnForShooting();
 
-        if (state_changed) {
-            // Mark beginning of unjamming.
-            mUnjammingEnterTime = timestamp;
-        }
-
         switch (mWantedState) {
-        case UNJAM:
-            return SystemState.UNJAMMING;
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            if (timestamp - mUnjammingEnterTime > Constants.kShooterUnjamDuration) {
+            if (timestamp - mCurrentStateStartTime > Constants.kShooterUnjamDuration) {
                 return SystemState.SHOOTING;
             }
             return SystemState.UNJAMMING_WITH_SHOOT;
-        case EXHAUST:
-            return SystemState.EXHAUSTING;
         default:
-            return SystemState.IDLE;
+            return SystemState.SHOOTING;
         }
     }
 
