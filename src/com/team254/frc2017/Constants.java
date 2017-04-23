@@ -130,9 +130,9 @@ public class Constants extends ConstantsBase {
 
     public static int kShooterJamBufferSize = 30;
     public static double kShooterDisturbanceThreshold = 50;
-    public static double kShooterJamTimeout = 2.0;  // In secs
+    public static double kShooterJamTimeout = 1.0;  // In secs
     public static double kShooterUnjamDuration = 0.5;  // In secs
-    public static double kShooterMinShootingTime = 2.0;  // In secs
+    public static double kShooterMinShootingTime = 1.0;  // In secs
 
     // Feeder gains
     public static double kFeederKP = 0.02;

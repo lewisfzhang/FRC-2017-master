@@ -298,7 +298,7 @@ public class Superstructure extends Subsystem {
         mFeeder.setWantedState(Feeder.WantedState.FEED);
 
         // Make sure to reverse the floor.
-        mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
+        mHopper.setWantedState(Hopper.WantedState.EXHAUST);
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         setWantIntakeOnForShooting();
 
