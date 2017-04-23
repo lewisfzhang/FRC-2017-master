@@ -169,7 +169,7 @@ public class Hopper extends Subsystem {
     }
 
     private SystemState handleExhaust() {
-        setOpenLoop(-kFeedPower);
+        setOpenLoop(-kFeedPower * 0.5);
         switch (mWantedState) {
         case FEED:
             return SystemState.FEEDING;
