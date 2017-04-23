@@ -257,9 +257,9 @@ public class Superstructure extends Subsystem {
         }
 
         // Find time of last shooter disturbance.
-        if (timestamp - mCurrentStateStartTime < Constants.kShooterMinShootingTime ||
+        if ((timestamp - mCurrentStateStartTime < Constants.kShooterMinShootingTime) ||
                 !mShooterRpmBuffer.isFull() ||
-                Math.abs(mShooterRpmBuffer.getAverage() - rpm) > Constants.kShooterDisturbanceThreshold) {
+                (Math.abs(mShooterRpmBuffer.getAverage() - rpm) > Constants.kShooterDisturbanceThreshold)) {
             mLastDisturbanceShooterTime = timestamp;
         }
 
@@ -274,14 +274,11 @@ public class Superstructure extends Subsystem {
             }
             boolean jam_detected = false;
             if (timestamp - mLastDisturbanceShooterTime > Constants.kShooterJamTimeout) {
-                jam_detected = true;
-                //System.out.println("Want to unjam.");
                 // We have jammed, move to unjamming.
-                //return SystemState.UNJAMMING_WITH_SHOOT;
+                jam_detected = true;
             }
             SmartDashboard.putBoolean("Jam Detected", jam_detected);
 
-            jam_detected = false;
             if (jam_detected) {
                 return SystemState.UNJAMMING_WITH_SHOOT;
             } else {

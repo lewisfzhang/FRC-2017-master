@@ -128,11 +128,11 @@ public class Constants extends ConstantsBase {
     public static int kShooterKfBufferSize = 20;
     public static int kShooterMinOnTargetSamples = 20;  // Should be <= kShooterKvBufferSize
 
-    public static int kShooterJamBufferSize = 20;
+    public static int kShooterJamBufferSize = 30;
     public static double kShooterDisturbanceThreshold = 50;
-    public static double kShooterJamTimeout = 3.0;  // In secs
+    public static double kShooterJamTimeout = 2.0;  // In secs
     public static double kShooterUnjamDuration = 0.5;  // In secs
-    public static double kShooterMinShootingTime = 3.0;  // In secs
+    public static double kShooterMinShootingTime = 2.0;  // In secs
 
     // Feeder gains
     public static double kFeederKP = 0.02;
@@ -254,8 +254,8 @@ public class Constants extends ConstantsBase {
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
     public static double kShooterOptimalRange = 100.0;  // TUNE ME
-    public static double kShooterOptimalRangeFloor = 97.0;  // TUNE ME
-    public static double kShooterOptimalRangeCeiling = 103.0;  // TUNE ME
+    public static double kShooterOptimalRangeFloor = 95.0;  // TUNE ME
+    public static double kShooterOptimalRangeCeiling = 105.0;  // TUNE ME
 
     public static double kShooterAbsoluteRangeFloor = 90.0;  // TUNE ME
     public static double kShooterAbsoluteRangeCeiling = 130.0;  // TUNE ME
