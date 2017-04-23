@@ -255,7 +255,7 @@ public class Constants extends ConstantsBase {
 
     public static double kShooterOptimalRange = 100.0;  // TUNE ME
     public static double kShooterOptimalRangeFloor = 95.0;  // TUNE ME
-    public static double kShooterOptimalRangeCeiling = 105.0;  // TUNE ME
+    public static double kShooterOptimalRangeCeiling = 110.0;  // TUNE ME
 
     public static double kShooterAbsoluteRangeFloor = 90.0;  // TUNE ME
     public static double kShooterAbsoluteRangeCeiling = 130.0;  // TUNE ME
@@ -273,10 +273,15 @@ public class Constants extends ConstantsBase {
             { 125.18, 3200.0 },
             { 128.23, 3250.0 }*/
 
-
-            { 95.0, 2925.0 },
+            { 90.0, 2900.0 },
+            { 95.0, 2950.0 },
             { 100.0, 3000.0 },
             { 105.0, 3050.0 },
+            { 110.0, 3100.0 },
+            { 115.0, 3150.0 },
+            { 120.0, 3200.0 },
+            { 125.0, 3250.0 },
+            { 130.0, 3300.0 },
            /* { 122.4, 3050.0 },
             { 126.3, 3150.0 },*/
     };
