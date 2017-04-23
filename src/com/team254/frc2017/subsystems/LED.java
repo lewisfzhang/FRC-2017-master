@@ -6,9 +6,9 @@ import com.team254.frc2017.loops.Looper;
 import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class LED extends Subsystem {
-    private static final int kDefaultBlinkCount = 4;
-    private static final double kBlinkDuration = 0.2; // seconds for full cycle
-    private static final double kTotalBlinkDuration = kDefaultBlinkCount * kBlinkDuration;
+    public static final int kDefaultBlinkCount = 4;
+    public static final double kDefaultBlinkDuration = 0.2; // seconds for full cycle
+    private static final double kDefaultTotalBlinkDuration = kDefaultBlinkCount * kDefaultBlinkDuration;
 
     private static LED mInstance = null;
 
@@ -36,6 +36,10 @@ public class LED extends Subsystem {
     private DigitalOutput mRangeLED;
     private boolean mIsBlinking = false;
 
+    private double mBlinkDuration;
+    private int mBlinkCount;
+    private double mTotalBlinkDuration;
+
     public LED() {
         mLED = new DigitalOutput(Constants.kGreenLEDId);
         mLED.set(false);
@@ -46,6 +50,10 @@ public class LED extends Subsystem {
         // Force a relay change.
         mIsLEDOn = true;
         setLEDOff();
+
+        mBlinkDuration = kDefaultBlinkDuration;
+        mBlinkCount = kDefaultBlinkCount;
+        mTotalBlinkDuration = kDefaultTotalBlinkDuration;
     }
 
     private Loop mLoop = new Loop() {
@@ -134,7 +142,7 @@ public class LED extends Subsystem {
         setLEDOn();
 
         if (mIsBlinking) {
-            int cycleNum = (int) (timeInState / (kBlinkDuration / 2.0));
+            int cycleNum = (int) (timeInState / (mBlinkDuration / 2.0));
             if ((cycleNum % 2) == 0) {
                 setRangeLEDOn();
             } else {
@@ -145,14 +153,14 @@ public class LED extends Subsystem {
     }
 
     private synchronized SystemState handleBlinking(double timeInState) {
-        if (timeInState > kTotalBlinkDuration) {
+        if (timeInState > mTotalBlinkDuration) {
             setLEDOff();
             // Transition to OFF state and clear wanted state.
             mWantedState = WantedState.OFF;
             return SystemState.OFF;
         }
 
-        int cycleNum = (int) (timeInState / (kBlinkDuration / 2.0));
+        int cycleNum = (int) (timeInState / (mBlinkDuration / 2.0));
         if ((cycleNum % 2) == 0) {
             setLEDOn();
             setRangeLEDOn();
