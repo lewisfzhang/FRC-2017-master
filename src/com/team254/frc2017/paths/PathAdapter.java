@@ -40,7 +40,8 @@ public class PathAdapter {
     static final double kFrontDist = Constants.kCenterToIntakeDistance;
     static final double kSideDist = Constants.kCenterToSideBumperDistance;
     static final double kHopperTurnDistance = 24; 
-    static final double kGearTurnDistance = 24; 
+    static final double kGearTurnDistance = 24;
+    static final double kEndHopperPathY = 94;
     static final double kFieldHeight = 324;
     
     public static Translation2d getRedHopperPosition() {
@@ -96,6 +97,10 @@ public class PathAdapter {
         sWaypoints.add(new Waypoint(getRedGearTurnPosition(), kRadius, kSpeed));
         sWaypoints.add(new Waypoint(getRedHopperTurnPosition(), kRadius, kSpeed));
         sWaypoints.add(new Waypoint(getRedHopperPosition(), 0, kSpeed));
+
+        Translation2d redHopperEndPosition = getRedHopperPosition();
+        redHopperEndPosition.setY(kEndHopperPathY); //move y position to desired place
+        sWaypoints.add(new Waypoint(redHopperEndPosition, 0, kSpeed));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
