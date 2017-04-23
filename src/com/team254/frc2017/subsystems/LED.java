@@ -216,4 +216,10 @@ public class LED extends Subsystem {
     public synchronized void setRangeLEDOff() {
         mRangeLED.set(false);
     }
+
+    public synchronized void configureBlink(int blinkCount, double blinkDuration) {
+        mBlinkDuration = blinkDuration;
+        mBlinkCount = blinkCount;
+        mTotalBlinkDuration = mBlinkCount * mBlinkDuration;
+    }
 }
