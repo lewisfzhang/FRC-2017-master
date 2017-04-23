@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.paths.BoilerGearToHopperBlue;
+import com.team254.frc2017.paths.BoilerGearToHopperRed;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToBoilerGearBlue;
 import com.team254.frc2017.paths.StartToBoilerGearRed;
@@ -21,13 +22,15 @@ public class PathFollowerTest {
     static final PathFollower.Parameters kParameters = new PathFollower.Parameters(
             new Lookahead(16.0, 16.0, 0.0, 120.0),
             0.0, // Inertia gain
-            0.0, // Profile kp
-            0.0, // Profile ki
-            0.0, // Profile kv
+            0.75, // Profile kp
+            0.03, // Profile ki
+            0.02, // Profile kv
             1.0, // Profile kffv
             0.0, // Profile kffa
             Constants.kPathFollowingMaxVel, // Profile max abs vel
-            Constants.kPathFollowingMaxAccel // Profile max abs accel
+            Constants.kPathFollowingMaxAccel, // Profile max abs accel
+            Constants.kPathFollowingGoalPosTolerance,
+            Constants.kPathFollowingGoalVelTolerance
     );
 
     @Test
@@ -100,7 +103,7 @@ public class PathFollowerTest {
 
     @Test
     public void testTwoPaths() {
-        PathContainer container = new StartToBoilerGearBlue();
+        PathContainer container = new StartToBoilerGearRed();
         PathFollower controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
 
         ReflectingCSVWriter<PathFollower.DebugOutput> writer = new ReflectingCSVWriter<PathFollower.DebugOutput>(
@@ -134,9 +137,20 @@ public class PathFollowerTest {
         assertTrue(controller.getCrossTrackError() < 1.0);
 
         displacement = 0.0;
-        container = new BoilerGearToHopperBlue();
+        container = new BoilerGearToHopperRed();
         controller = new PathFollower(container.buildPath(), container.isReversed(), kParameters);
+        boolean has_tweaked = false;
         while (!controller.isFinished() && t < 25.0) {
+            if (t > 4.2 && !has_tweaked) {
+                has_tweaked = true;
+                displacement -= 2.0;
+                System.out.println("Tweak!");
+            }
+            
+            if (t > 5.6) {
+                System.out.println("What");
+            }
+            
             // Follow the path
             Twist2d command = controller.update(t, robot_pose, displacement, velocity);
             writer.add(controller.getDebug());
@@ -146,7 +160,7 @@ public class PathFollowerTest {
             final double prev_vel = velocity;
             velocity = command.dx;
             displacement += velocity * dt;
-
+            
             System.out.println("t = " + t + ", displacement " + displacement + ", lin vel " + command.dx + ", lin acc "
                     + (velocity - prev_vel) / dt + ", ang vel " + command.dtheta + ", pose " + robot_pose + ", CTE "
                     + controller.getCrossTrackError() + ", ATE " + controller.getAlongTrackError());

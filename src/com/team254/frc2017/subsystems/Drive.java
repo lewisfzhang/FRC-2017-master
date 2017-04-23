@@ -380,7 +380,6 @@ public class Drive extends Subsystem {
         }
     }
 
-
     private static double rotationsToInches(double rotations) {
         return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
     }
@@ -592,7 +591,6 @@ public class Drive extends Subsystem {
         setHighGear(false);
     }
 
-
     public synchronized void setWantDrivePath(Path path, boolean reversed) {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             configureTalonsForSpeedControl();
@@ -604,7 +602,8 @@ public class Drive extends Subsystem {
                             Constants.kInertiaSteeringGain, Constants.kPathFollowingProfileKp,
                             Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
                             Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
-                            Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel));
+                            Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel,
+                            Constants.kPathFollowingGoalPosTolerance, Constants.kPathFollowingGoalVelTolerance));
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         } else {
@@ -628,7 +627,7 @@ public class Drive extends Subsystem {
             System.out.println("Robot is not in path following mode");
         }
     }
-    
+
     public boolean isApproaching() {
         return mIsApproaching;
     }

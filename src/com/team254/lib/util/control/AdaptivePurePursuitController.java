@@ -38,6 +38,7 @@ public class AdaptivePurePursuitController {
     }
 
     Path mPath;
+    boolean mAtEndOfPath = false;
     final boolean mReversed;
     final Lookahead mLookahead;
 
@@ -72,6 +73,9 @@ public class AdaptivePurePursuitController {
         // Ensure we don't overshoot the end of the path (once the lookahead speed drops to zero).
         if (report.lookahead_point_speed < 1E-6 && report.remaining_path_distance < arc.length) {
             scale_factor = Math.max(0.0, report.remaining_path_distance / arc.length);
+            mAtEndOfPath = true;
+        } else {
+            mAtEndOfPath = false;
         }
         if (mReversed) {
             scale_factor *= -1;
@@ -187,6 +191,6 @@ public class AdaptivePurePursuitController {
      * @return has the robot reached the end of the path
      */
     public boolean isFinished() {
-        return mPath.segments.size() == 0;
+        return mAtEndOfPath;
     }
 }

@@ -226,6 +226,8 @@ public class Constants extends ConstantsBase {
     public static double kPathFollowingProfileKv = 0.02;
     public static double kPathFollowingProfileKffv = 1.0;
     public static double kPathFollowingProfileKffa = 0.05;
+    public static double kPathFollowingGoalPosTolerance = 0.75;
+    public static double kPathFollowingGoalVelTolerance = 12.0;
 
     // Goal tracker constants
     public static double kMaxGoalTrackAge = 1.5;

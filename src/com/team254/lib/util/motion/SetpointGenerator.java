@@ -85,7 +85,7 @@ public class SetpointGenerator {
             }
             // Shorten the profile and return the new setpoint.
             mProfile.trimBeforeTime(t);
-            rv = new Setpoint(setpoint, mProfile.isEmpty());
+            rv = new Setpoint(setpoint, mProfile.isEmpty() || mGoal.atGoalState(setpoint));
         }
 
         // Invalid or empty profile - just output the same state again.

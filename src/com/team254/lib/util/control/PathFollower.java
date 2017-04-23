@@ -23,6 +23,7 @@ public class PathFollower {
         public double pose_theta;
         public double linear_displacement;
         public double linear_velocity;
+        public double profile_displacement;
         public double profile_velocity;
         public double velocity_command_dx;
         public double velocity_command_dy;
@@ -47,10 +48,12 @@ public class PathFollower {
         public final double profile_kffa;
         public final double profile_max_abs_vel;
         public final double profile_max_abs_acc;
+        public final double goal_pos_tolerance;
+        public final double goal_vel_tolerance;
 
         public Parameters(Lookahead lookahead, double inertia_gain, double profile_kp, double profile_ki,
                 double profile_kv, double profile_kffv, double profile_kffa, double profile_max_abs_vel,
-                double profile_max_abs_acc) {
+                double profile_max_abs_acc, double goal_pos_tolerance, double goal_vel_tolerance) {
             this.lookahead = lookahead;
             this.inertia_gain = inertia_gain;
             this.profile_kp = profile_kp;
@@ -60,6 +63,8 @@ public class PathFollower {
             this.profile_kffa = profile_kffa;
             this.profile_max_abs_vel = profile_max_abs_vel;
             this.profile_max_abs_acc = profile_max_abs_acc;
+            this.goal_pos_tolerance = goal_pos_tolerance;
+            this.goal_vel_tolerance = goal_vel_tolerance;
         }
     }
 
@@ -72,6 +77,8 @@ public class PathFollower {
 
     double mMaxProfileVel;
     double mMaxProfileAcc;
+    final double mGoalPosTolerance;
+    final double mGoalVelTolerance;
     double mCrossTrackError = 0.0;
     double mAlongTrackError = 0.0;
 
@@ -87,6 +94,8 @@ public class PathFollower {
                 new MotionProfileConstraints(parameters.profile_max_abs_vel, parameters.profile_max_abs_acc));
         mMaxProfileVel = parameters.profile_max_abs_vel;
         mMaxProfileAcc = parameters.profile_max_abs_acc;
+        mGoalPosTolerance = parameters.goal_pos_tolerance;
+        mGoalVelTolerance = parameters.goal_vel_tolerance;
         mInertiaGain = parameters.inertia_gain;
     }
 
@@ -117,7 +126,8 @@ public class PathFollower {
                 mLastSteeringDelta = steering_command.delta;
                 mVelocityController.setGoalAndConstraints(
                         new MotionProfileGoal(displacement + steering_command.delta.dx,
-                                Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ACCEL),
+                                Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ACCEL,
+                                mGoalPosTolerance, mGoalVelTolerance),
                         new MotionProfileConstraints(Math.min(mMaxProfileVel, steering_command.max_velocity),
                                 mMaxProfileAcc));
             }
@@ -142,6 +152,7 @@ public class PathFollower {
         mDebugOutput.pose_theta = pose.getRotation().getRadians();
         mDebugOutput.linear_displacement = displacement;
         mDebugOutput.linear_velocity = velocity;
+        mDebugOutput.profile_displacement = mVelocityController.getSetpoint().pos();
         mDebugOutput.profile_velocity = mVelocityController.getSetpoint().vel();
         mDebugOutput.velocity_command_dx = rv.dx;
         mDebugOutput.velocity_command_dy = rv.dy;
@@ -165,7 +176,8 @@ public class PathFollower {
     }
 
     public boolean isFinished() {
-        return (mSteeringController.isFinished() && mVelocityController.isFinishedProfile()) || overrideFinished;
+        return (mSteeringController.isFinished() && mVelocityController.isFinishedProfile()
+                && mVelocityController.onTarget()) || overrideFinished;
     }
 
     public void forceFinish() {

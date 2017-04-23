@@ -107,7 +107,8 @@ public class MotionProfileGoal {
     }
 
     public boolean atGoalState(MotionState state) {
-        return atGoalPos(state.pos()) && Math.abs(state.vel()) < (max_abs_vel + vel_tolerance);
+        return atGoalPos(state.pos()) && (Math.abs(state.vel()) < (max_abs_vel + vel_tolerance)
+                || completion_behavior == CompletionBehavior.VIOLATE_MAX_ABS_VEL);
     }
 
     public boolean atGoalPos(double pos) {
