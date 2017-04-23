@@ -44,6 +44,7 @@ public class Superstructure extends Subsystem {
         IDLE,
         WAITING_FOR_AIM,
         SHOOTING,
+        SHOOTING_SPIN_DOWN,
         UNJAMMING,
         UNJAMMING_WITH_SHOOT,
         JUST_FEED,
@@ -131,6 +132,9 @@ public class Superstructure extends Subsystem {
                     break;
                 case RANGE_FINDING:
                     newState = handleRangeFinding();
+                    break;
+                case SHOOTING_SPIN_DOWN:
+                    newState = handleShootingSpinDown(timestamp);
                     break;
                 default:
                     newState = SystemState.IDLE;
@@ -308,6 +312,40 @@ public class Superstructure extends Subsystem {
         default:
             return SystemState.SHOOTING;
         }
+    }
+
+    private SystemState handleShootingSpinDown(double timestamp) {
+        // Don't auto spin anymore - just hold the last setpoint
+        mCompressor.setClosedLoopControl(false);
+        mFeeder.setWantedState(Feeder.WantedState.FEED);
+
+        // Turn off the floor.
+        mHopper.setWantedState(Hopper.WantedState.IDLE);
+
+        mLED.setWantedState(LED.WantedState.FIND_RANGE);
+        setWantIntakeOnForShooting();
+
+        if (timestamp - mCurrentStateStartTime > 0.25) {
+            switch (mWantedState) {
+                case UNJAM:
+                    return SystemState.UNJAMMING;
+                case UNJAM_SHOOT:
+                    return SystemState.UNJAMMING_WITH_SHOOT;
+                case SHOOT:
+                    return SystemState.WAITING_FOR_AIM;
+                case MANUAL_FEED:
+                    return SystemState.JUST_FEED;
+                case EXHAUST:
+                    return SystemState.EXHAUSTING;
+                case HANG:
+                    return SystemState.HANGING;
+                case RANGE_FINDING:
+                    return SystemState.RANGE_FINDING;
+                default:
+                    return SystemState.IDLE;
+            }
+        }
+        return SystemState.SHOOTING_SPIN_DOWN;
     }
 
     private SystemState handleUnjamming() {
