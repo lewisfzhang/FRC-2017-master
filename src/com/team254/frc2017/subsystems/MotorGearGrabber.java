@@ -56,6 +56,7 @@ public class MotorGearGrabber extends Subsystem {
 
     private WantedState mWantedState;
     private SystemState mSystemState;
+    private double mThresholdStart;
 
     private MotorGearGrabber() {
         mWristSolenoid = Constants.makeSolenoidForId(Constants.kGearWristSolenoid);
@@ -173,8 +174,15 @@ public class MotorGearGrabber extends Subsystem {
             setWristDown();
             mMasterTalon.set(kIntakeGearSetpoint);
             if (mMasterTalon.getOutputCurrent() > kIntakeThreshold) {
-                LED.getInstance().setWantedState(LED.WantedState.BLINK);
+                if(timeInState - mThresholdStart > kThresholdTime) {
+                    LED.getInstance().setWantedState(LED.WantedState.BLINK);
+                } else {
+                    if(mThresholdStart == Double.POSITIVE_INFINITY) {
+                        mThresholdStart = timeInState;
+                    }
+                }
             } else {
+                mThresholdStart = Double.POSITIVE_INFINITY;
                 LED.getInstance().setWantedState(LED.WantedState.OFF);
             }
             return SystemState.INTAKE;
