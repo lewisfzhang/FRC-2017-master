@@ -34,6 +34,7 @@ public class Hopper extends Subsystem {
         UNJAMMING_OUT,
         IDLE,
         EXHAUSTING,
+        SLOW_REVERSE,
         OPEN_LOOP_OVERRIDE,
     }
 
@@ -41,6 +42,7 @@ public class Hopper extends Subsystem {
         IDLE,
         UNJAM,
         EXHAUST,
+        SLOW_REVERSE,
         FEED,
     }
 
@@ -80,6 +82,9 @@ public class Hopper extends Subsystem {
                 case EXHAUSTING:
                     newState = handleExhaust();
                     break;
+                case SLOW_REVERSE:
+                    newState = handleSlowReverse();
+                    break;
                 default:
                     newState = SystemState.IDLE;
                 }
@@ -108,6 +113,8 @@ public class Hopper extends Subsystem {
             return SystemState.UNJAMMING_OUT;
         case EXHAUST:
             return SystemState.EXHAUSTING;
+        case SLOW_REVERSE:
+            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
@@ -131,6 +138,8 @@ public class Hopper extends Subsystem {
             return newState;
         case EXHAUST:
             return SystemState.EXHAUSTING;
+        case SLOW_REVERSE:
+            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
@@ -149,6 +158,8 @@ public class Hopper extends Subsystem {
             return newState;
         case EXHAUST:
             return SystemState.EXHAUSTING;
+        case SLOW_REVERSE:
+            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
@@ -163,13 +174,15 @@ public class Hopper extends Subsystem {
             return SystemState.UNJAMMING_OUT;
         case EXHAUST:
             return SystemState.EXHAUSTING;
+        case SLOW_REVERSE:
+            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
     }
 
     private SystemState handleExhaust() {
-        setOpenLoop(-kFeedPower * 0.5);
+        setOpenLoop(-kFeedPower);
         switch (mWantedState) {
         case FEED:
             return SystemState.FEEDING;
@@ -177,6 +190,24 @@ public class Hopper extends Subsystem {
             return SystemState.UNJAMMING_OUT;
         case EXHAUST:
             return SystemState.EXHAUSTING;
+        case SLOW_REVERSE:
+            return SystemState.SLOW_REVERSE;
+        default:
+            return SystemState.IDLE;
+        }
+    }
+
+    private SystemState handleSlowReverse() {
+        setOpenLoop(-kFeedPower * 0.25);
+        switch (mWantedState) {
+        case FEED:
+            return SystemState.FEEDING;
+        case UNJAM:
+            return SystemState.UNJAMMING_OUT;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        case SLOW_REVERSE:
+            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
