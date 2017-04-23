@@ -482,6 +482,22 @@ public class Drive extends Subsystem {
         mIsApproaching = true;
         if (mIsOnTarget) {
             // Done coarse alignment.
+
+            Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
+            if (aim.isPresent()) {
+                final double distance = aim.get().getRange();
+
+                if (distance < Constants.kShooterOptimalRangeCeiling &&
+                        distance > Constants.kShooterOptimalRangeFloor) {
+                    // Don't drive, just shoot.
+                    mDriveControlState = DriveControlState.AIM_TO_GOAL;
+                    mIsApproaching = false;
+                    mIsOnTarget = false;
+                    updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+                    return;
+                }
+            }
+
             mDriveControlState = DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH;
             mIsOnTarget = false;
         }
