@@ -9,20 +9,27 @@ import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
 public class BoilerGearToHopperBlue implements PathContainer {
-
+    
     @Override
     public Path buildPath() {
-        return PathAdapter.getBlueHopperPath();
-    }
+        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+        sWaypoints.add(new Waypoint(116,209,0,0));
+        sWaypoints.add(new Waypoint(108,222,10,80));
+        sWaypoints.add(new Waypoint(150,282,30,80));
+        sWaypoints.add(new Waypoint(99,312,0,80));
+        sWaypoints.add(new Waypoint(95,312,0,80));
 
+        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+    }
+    
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(116, 209), Rotation2d.fromDegrees(0.0));
+        return new RigidTransform2d(new Translation2d(116, 209), Rotation2d.fromDegrees(0.0)); 
     }
 
     @Override
     public boolean isReversed() {
-        return false;
+        return false; 
     }
-
+    
 }
