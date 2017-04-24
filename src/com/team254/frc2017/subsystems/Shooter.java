@@ -123,8 +123,9 @@ public class Shooter extends Subsystem {
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         setOpenLoop(0.0);
+        mSetpointRpm = 0.0;
     }
 
     @Override
@@ -273,7 +274,7 @@ public class Shooter extends Subsystem {
         mDebug.setpoint = mSetpointRpm;
     }
 
-    public synchronized double getLastSetpointRpm() {
+    public synchronized double getSetpointRpm() {
         return mSetpointRpm;
     }
 

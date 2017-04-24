@@ -42,7 +42,8 @@ public class Superstructure extends Subsystem {
     // Intenal state of the system
     public enum SystemState {
         IDLE,
-        WAITING_FOR_AIM,
+        WAITING_FOR_ALIGNMENT,
+        WAITING_FOR_FLYWHEEL,
         SHOOTING,
         SHOOTING_SPIN_DOWN,
         UNJAMMING,
@@ -109,8 +110,11 @@ public class Superstructure extends Subsystem {
                 case IDLE:
                     newState = handleIdle(mStateChanged);
                     break;
-                case WAITING_FOR_AIM:
-                    newState = handleWaitingForAim();
+                case WAITING_FOR_ALIGNMENT:
+                    newState = handleWaitingForAlignment();
+                    break;
+                case WAITING_FOR_FLYWHEEL:
+                    newState = handleWaitingForFlywheel();
                     break;
                 case SHOOTING:
                     newState = handleShooting(timestamp);
@@ -169,7 +173,7 @@ public class Superstructure extends Subsystem {
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            return SystemState.WAITING_FOR_AIM;
+            return SystemState.WAITING_FOR_ALIGNMENT;
         case MANUAL_FEED:
             return SystemState.JUST_FEED;
         case EXHAUST:
@@ -198,7 +202,7 @@ public class Superstructure extends Subsystem {
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            return SystemState.WAITING_FOR_AIM;
+            return SystemState.WAITING_FOR_ALIGNMENT;
         case MANUAL_FEED:
             return SystemState.JUST_FEED;
         case EXHAUST:
@@ -212,17 +216,41 @@ public class Superstructure extends Subsystem {
         }
     }
 
-    private SystemState handleWaitingForAim() {
-
+    private SystemState handleWaitingForAlignment() {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
         setWantIntakeOnForShooting();
 
         if (autoSpinShooter(true)) {
+            RobotState.getInstance().resetVision();
+            return SystemState.WAITING_FOR_FLYWHEEL;
+        }
+        switch (mWantedState) {
+        case UNJAM:
+            return SystemState.UNJAMMING;
+        case UNJAM_SHOOT:
+            return SystemState.UNJAMMING_WITH_SHOOT;
+        case SHOOT:
+            return SystemState.WAITING_FOR_ALIGNMENT;
+        case MANUAL_FEED:
+            return SystemState.JUST_FEED;
+        case EXHAUST:
+            return SystemState.EXHAUSTING;
+        default:
+            return SystemState.IDLE;
+        }
+    }
+    
+    private SystemState handleWaitingForFlywheel() {
+        mCompressor.setClosedLoopControl(false);
+        mFeeder.setWantedState(Feeder.WantedState.FEED);
+        mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
+        setWantIntakeOnForShooting();
 
+        if (autoSpinShooter(true)) {
             System.out.println(Timer.getFPGATimestamp() + ": making shot: Range: " + mLastGoalRange + " setpoint: "
-                    + mShooter.getLastSetpointRpm());
+                    + mShooter.getSetpointRpm());
 
             return SystemState.SHOOTING;
         }
@@ -232,7 +260,7 @@ public class Superstructure extends Subsystem {
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            return SystemState.WAITING_FOR_AIM;
+            return SystemState.WAITING_FOR_FLYWHEEL;
         case MANUAL_FEED:
             return SystemState.JUST_FEED;
         case EXHAUST:
@@ -271,7 +299,7 @@ public class Superstructure extends Subsystem {
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
             if (!isOnTargetToKeepShooting()) {
-                return SystemState.WAITING_FOR_AIM;
+                return SystemState.WAITING_FOR_ALIGNMENT;
             }
             boolean jam_detected = false;
             if (timestamp - mLastDisturbanceShooterTime > Constants.kShooterJamTimeout) {
@@ -333,7 +361,7 @@ public class Superstructure extends Subsystem {
                 case UNJAM_SHOOT:
                     return SystemState.UNJAMMING_WITH_SHOOT;
                 case SHOOT:
-                    return SystemState.WAITING_FOR_AIM;
+                    return SystemState.WAITING_FOR_ALIGNMENT;
                 case MANUAL_FEED:
                     return SystemState.JUST_FEED;
                 case EXHAUST:
@@ -361,7 +389,7 @@ public class Superstructure extends Subsystem {
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            return SystemState.WAITING_FOR_AIM;
+            return SystemState.WAITING_FOR_ALIGNMENT;
         case EXHAUST:
             return SystemState.EXHAUSTING;
         default:
@@ -382,7 +410,7 @@ public class Superstructure extends Subsystem {
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            return SystemState.WAITING_FOR_AIM;
+            return SystemState.WAITING_FOR_ALIGNMENT;
         case MANUAL_FEED:
             return SystemState.JUST_FEED;
         case EXHAUST:
@@ -403,7 +431,7 @@ public class Superstructure extends Subsystem {
         case UNJAM_SHOOT:
             return SystemState.UNJAMMING_WITH_SHOOT;
         case SHOOT:
-            return SystemState.WAITING_FOR_AIM;
+            return SystemState.WAITING_FOR_ALIGNMENT;
         case MANUAL_FEED:
             return SystemState.JUST_FEED;
         case EXHAUST:
@@ -487,7 +515,10 @@ public class Superstructure extends Subsystem {
             return false;
         } else {
             mLED.setRangeBlicking(true);
-            mShooter.setSpinUp(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
+            if (mShooter.getSetpointRpm() < Constants.kShooterTuningRpmFloor) {
+                // Hold setpoint if we were already spinning, since it's our best guess as to the range once the goal re-appears.
+                mShooter.setSpinUp(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
+            }
             return false;
 
             // We are shooter tuning fine current RPM we are tuning for.

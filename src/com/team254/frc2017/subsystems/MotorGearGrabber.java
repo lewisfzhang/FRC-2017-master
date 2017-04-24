@@ -220,9 +220,7 @@ public class MotorGearGrabber extends Subsystem {
             return SystemState.INTAKE;
         default:
             setWristUp();
-            if (Superstructure.getInstance().isShooting()) {
-                mMasterTalon.set(0.0);
-            } else if(timeInState < 1) {
+            if(timeInState < 1) {
                 mMasterTalon.set(kIntakeGearSetpoint);
             } else {
                 mMasterTalon.set(0.0);
