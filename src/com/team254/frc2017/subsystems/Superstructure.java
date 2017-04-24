@@ -72,8 +72,12 @@ public class Superstructure extends Subsystem {
     private double mCurrentStateStartTime;
     private boolean mStateChanged;
 
+    public boolean isDriveOnTarget() {
+        return mDrive.isOnTarget() && mDrive.isAutoAiming();
+    }
+    
     public boolean isOnTargetToShoot() {
-        return (mDrive.isOnTarget() && mDrive.isAutoAiming()) && mShooter.isOnTarget();
+        return isDriveOnTarget() && mShooter.isOnTarget();
     }
 
     public boolean isOnTargetToKeepShooting() {
@@ -221,8 +225,10 @@ public class Superstructure extends Subsystem {
         mFeeder.setWantedState(Feeder.WantedState.FEED);
         mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
         setWantIntakeOnForShooting();
-
-        if (autoSpinShooter(true)) {
+        
+        // Don't care about this return value - check the drive directly.
+        autoSpinShooter(false);
+        if (isDriveOnTarget()) {
             RobotState.getInstance().resetVision();
             return SystemState.WAITING_FOR_FLYWHEEL;
         }
@@ -463,7 +469,7 @@ public class Superstructure extends Subsystem {
             return Constants.kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(range)).value;
         }
     }
-
+    
     public synchronized boolean autoSpinShooter(boolean allow_shooting) {
         final double timestamp = Timer.getFPGATimestamp();
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
@@ -520,11 +526,6 @@ public class Superstructure extends Subsystem {
                 mShooter.setSpinUp(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             }
             return false;
-
-            // We are shooter tuning fine current RPM we are tuning for.
-            /*
-             * mShooter.setClosedLoopRpm(mCurrentTuningRpm); return isOnTargetToShoot();
-             */
         }
     }
 
