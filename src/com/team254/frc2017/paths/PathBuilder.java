@@ -26,7 +26,7 @@ public class PathBuilder {
         new Line(w.get(w.size() - 2), w.get(w.size() - 1)).addToPath(p, 0);
         p.extrapolateLast();
         p.verifySpeeds();
-        System.out.println(p);
+        // System.out.println(p);
         return p;
     }
 

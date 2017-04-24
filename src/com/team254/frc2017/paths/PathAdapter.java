@@ -23,9 +23,9 @@ public class PathAdapter {
 
     // Correction for actual robot driving.
     // Difference between actual robot position and optimal at the gear peg (in local robot coords at the gear peg).
-    static final double kRedBoilerGearXCorrection = 3.0;
+    static final double kRedBoilerGearXCorrection = 2.5;
     static final double kRedBoilerGearYCorrection = 7.0;
-    static final double kBlueBoilerGearXCorrection = 3.0;
+    static final double kBlueBoilerGearXCorrection = 2.5;
     static final double kBlueBoilerGearYCorrection = -7.0;
 
     // Path Variables
@@ -36,7 +36,7 @@ public class PathAdapter {
     // Don't mess with these
     static final double kPegOffsetX = 17.77; // center of airship to boiler peg
     static final double kPegOffsetY = 30.66; // front of airship to boiler peg
-    static final double kHopperX = 116.5; // x position of hopper
+    static final double kHopperX = 110.5; // x position of hopper TODO: WHAT IS THIS?
     static final double kHopperOffsetYOffset = 1.5; //how many inches into the hopper you want to go
     static final Rotation2d kRedPegHeading = Rotation2d.fromDegrees(240);
     static final Rotation2d kBluePegHeading = Rotation2d.fromDegrees(120);
@@ -46,9 +46,9 @@ public class PathAdapter {
     static final double kGearPlacementDist = Constants.kCenterToRearBumperDistance + 10; //distance away from the airship wall to place the gear at
     static final double kFrontDist = Constants.kCenterToIntakeDistance;
     static final double kSideDist = Constants.kCenterToSideBumperDistance;
-    static final double kHopperTurnDistance = 24; // how long the third segment in the hopper path should be
-    static final double kGearTurnDistance = 24; // how long the first segment in the hopper path should be
-    static final double kEndHopperPathY = 96; // Y position we want the hopper path to end at
+    static final double kHopperTurnDistance = 36; // how long the third segment in the hopper path should be
+    static final double kGearTurnDistance = 36; // how long the first segment in the hopper path should be
+    static final double kEndHopperPathX = 96; // X position we want the hopper path to end at
     static final double kFieldHeight = 324; // total height of the field in inches (doesn't really have to be accurate, everything is relative)
     
     public static Translation2d getRedHopperPosition() {
@@ -77,7 +77,7 @@ public class PathAdapter {
     public static Translation2d getRedGearCorrection() {
         return RigidTransform2d.fromRotation(kRedPegHeading)
                 .transformBy(RigidTransform2d
-                        .fromTranslation((new Translation2d(kRedBoilerGearXCorrection, kRedBoilerGearYCorrection))))
+                        .fromTranslation((new Translation2d(-kRedBoilerGearXCorrection, -kRedBoilerGearYCorrection))))
                 .getTranslation();
     }
 
@@ -86,7 +86,11 @@ public class PathAdapter {
         Translation2d pegPosition = new Translation2d(kRedWallToAirship + kPegOffsetX, kFieldHeight / 2 - kPegOffsetY);
         Translation2d robotOffset = new Translation2d(kRedPegHeading.cos() * kGearPlacementDist,
                 kRedPegHeading.sin() * kGearPlacementDist);
-        return pegPosition.translateBy(robotOffset).translateBy(getRedGearCorrection().inverse());
+        return pegPosition.translateBy(robotOffset);
+    }
+    
+    private static Translation2d getRedGearPositionCorrected() {
+        return getRedGearPosition().translateBy(getRedGearCorrection());
     }
 
     //first position in the gear path
@@ -97,7 +101,7 @@ public class PathAdapter {
 
     //second position in the gear path
     private static Translation2d getRedCenterPosition() {
-        RigidTransform2d end = new RigidTransform2d(getRedGearPosition(), kRedPegHeading);
+        RigidTransform2d end = new RigidTransform2d(getRedGearPositionCorrected(), kRedPegHeading);
         return getRedStartPose().intersection(end);
     }
 
@@ -105,7 +109,7 @@ public class PathAdapter {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(getRedStartPose().getTranslation(), 0, 0));
         sWaypoints.add(new Waypoint(getRedCenterPosition(), kLargeRadius, kSpeed));
-        sWaypoints.add(new Waypoint(getRedGearPosition(), 0, kSpeed));
+        sWaypoints.add(new Waypoint(getRedGearPositionCorrected(), 0, kSpeed));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
@@ -117,8 +121,8 @@ public class PathAdapter {
         sWaypoints.add(new Waypoint(getRedHopperTurnPosition(), kRadius, kSpeed));
         sWaypoints.add(new Waypoint(getRedHopperPosition(), 0, kSpeed));
 
-        Translation2d redHopperEndPosition = getRedHopperPosition();
-        redHopperEndPosition.setY(kEndHopperPathY); //move y position to desired place
+        Translation2d redHopperEndPosition = new Translation2d(getRedHopperPosition());
+        redHopperEndPosition.setX(kEndHopperPathX); //move y position to desired place
         sWaypoints.add(new Waypoint(redHopperEndPosition, 0, kSpeed));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
@@ -148,7 +152,7 @@ public class PathAdapter {
     public static Translation2d getBlueGearCorrection() {
         return RigidTransform2d.fromRotation(kBluePegHeading)
                 .transformBy(RigidTransform2d
-                        .fromTranslation((new Translation2d(kBlueBoilerGearXCorrection, kBlueBoilerGearYCorrection))))
+                        .fromTranslation((new Translation2d(-kBlueBoilerGearXCorrection, -kBlueBoilerGearYCorrection))))
                 .getTranslation();
     }
 
@@ -156,7 +160,11 @@ public class PathAdapter {
         Translation2d pegPosition = new Translation2d(kBlueWallToAirship + kPegOffsetX, kFieldHeight / 2 + kPegOffsetY);
         Translation2d robotOffset = new Translation2d(kBluePegHeading.cos() * kGearPlacementDist,
                 kBluePegHeading.sin() * kGearPlacementDist);
-        return pegPosition.translateBy(robotOffset).translateBy(getBlueGearCorrection().inverse());
+        return pegPosition.translateBy(robotOffset).translateBy(getBlueGearCorrection());
+    }
+
+    private static Translation2d getBlueGearPositionCorrected() {
+        return getBlueGearPosition().translateBy(getBlueGearCorrection().inverse());
     }
 
     public static RigidTransform2d getBlueStartPose() {
@@ -165,7 +173,7 @@ public class PathAdapter {
     }
 
     private static Translation2d getBlueCenterPosition() {
-        RigidTransform2d end = new RigidTransform2d(getBlueGearPosition(), kBluePegHeading);
+        RigidTransform2d end = new RigidTransform2d(getBlueGearPositionCorrected(), kBluePegHeading);
         return getBlueStartPose().intersection(end);
     }
 
@@ -173,7 +181,7 @@ public class PathAdapter {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(getBlueStartPose().getTranslation(), 0, 0));
         sWaypoints.add(new Waypoint(getBlueCenterPosition(), kLargeRadius, kSpeed));
-        sWaypoints.add(new Waypoint(getBlueGearPosition(), 0, kSpeed));
+        sWaypoints.add(new Waypoint(getBlueGearPositionCorrected(), 0, kSpeed));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
@@ -185,8 +193,8 @@ public class PathAdapter {
         sWaypoints.add(new Waypoint(getBlueHopperTurnPosition(), kRadius, kSpeed));
         sWaypoints.add(new Waypoint(getBlueHopperPosition(), 0, kSpeed));
         
-        Translation2d blueHopperEndPosition = getBlueHopperPosition();
-        blueHopperEndPosition.setY(kEndHopperPathY); //move y position to desired place
+        Translation2d blueHopperEndPosition = new Translation2d(getBlueHopperPosition());
+        blueHopperEndPosition.setX(kEndHopperPathX); //move x position to desired place
         sWaypoints.add(new Waypoint(blueHopperEndPosition, 0, kSpeed));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
@@ -194,19 +202,21 @@ public class PathAdapter {
 
     public static void main(String[] args) {
         System.out.println("Red:\n" + getRedStartPose().getTranslation());
-        System.out.println(getRedCenterPosition());
-        System.out.println(getRedGearPosition() + "\n");
-        System.out.println(getRedGearPosition());
-        System.out.println(getRedGearTurnPosition());
-        System.out.println(getRedHopperTurnPosition());
-        System.out.println(getRedHopperPosition());
+        System.out.println("Center: " + getRedCenterPosition());
+        System.out.println("Gear: " + getRedGearPosition());
+        System.out.println("Gear turn: " + getRedGearTurnPosition());
+        System.out.println("Hopper turn: " + getRedHopperTurnPosition());
+        System.out.println("Hopper: " + getRedHopperPosition());
+        System.out.println("Start to boiler gear path:\n" + getRedGearPath());
+        System.out.println("Boiler gear to hopper path:\n" + getRedHopperPath());
         System.out.println("\nBlue:\n" + getBlueStartPose().getTranslation());
-        System.out.println(getBlueCenterPosition());
-        System.out.println(getBlueGearPosition() + "\n");
-        System.out.println(getBlueGearPosition());
-        System.out.println(getBlueGearTurnPosition());
-        System.out.println(getBlueHopperTurnPosition());
-        System.out.println(getBlueHopperPosition());
+        System.out.println("Center: " + getBlueCenterPosition());
+        System.out.println("Gear: " + getBlueGearPosition());
+        System.out.println("Gear turn: " + getBlueGearTurnPosition());
+        System.out.println("Hopper turn: " + getBlueHopperTurnPosition());
+        System.out.println("Hopper: " + getBlueHopperPosition());
+        System.out.println("Start to boiler gear path:\n" + getBlueGearPath());
+        System.out.println("Boiler gear to hopper path:\n" + getBlueHopperPath());
     }
 
 }
