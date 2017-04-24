@@ -8,6 +8,7 @@ import com.team254.frc2017.auto.AutoModeEndedException;
 import com.team254.frc2017.auto.actions.Action;
 import com.team254.frc2017.auto.actions.ActuateHopperAction;
 import com.team254.frc2017.auto.actions.BeginShootingAction;
+import com.team254.frc2017.auto.actions.CorrectPoseAction;
 import com.team254.frc2017.auto.actions.DeployIntakeAction;
 import com.team254.frc2017.auto.actions.DrivePathAction;
 import com.team254.frc2017.auto.actions.EndShootingAction;
@@ -23,8 +24,10 @@ import com.team254.frc2017.auto.actions.WaitAction;
 import com.team254.frc2017.auto.actions.WaitForPathMarkerAction;
 import com.team254.frc2017.paths.BoilerGearToHopperBlue;
 import com.team254.frc2017.paths.BoilerGearToShootBlue;
+import com.team254.frc2017.paths.PathAdapter;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToBoilerGearBlue;
+import com.team254.lib.util.math.RigidTransform2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -43,6 +46,7 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
                         new ScoreGearAction(),
                         new ActuateHopperAction(true),
                 })));
+        runAction(new CorrectPoseAction(RigidTransform2d.fromTranslation(PathAdapter.getBlueGearCorrection())));
         runAction(new DrivePathAction(new BoilerGearToHopperBlue()));
         System.out.println("Shoot Time: " + (Timer.getFPGATimestamp() - start));
         runAction(new BeginShootingAction());

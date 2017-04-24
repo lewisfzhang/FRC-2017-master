@@ -26,7 +26,7 @@ public class PathAdapter {
     static final double kRedBoilerGearXCorrection = 3.0;
     static final double kRedBoilerGearYCorrection = 7.0;
     static final double kBlueBoilerGearXCorrection = 3.0;
-    static final double kBlueBoilerGearYCorrection = 7.0;
+    static final double kBlueBoilerGearYCorrection = -7.0;
 
     // Path Variables
     static final double kLargeRadius = 40;
@@ -73,13 +73,20 @@ public class PathAdapter {
                 kRedPegHeading.sin() * kGearTurnDistance);
         return gearPosition.translateBy(turnOffset);
     }
-    
+
+    public static Translation2d getRedGearCorrection() {
+        return RigidTransform2d.fromRotation(kRedPegHeading)
+                .transformBy(RigidTransform2d
+                        .fromTranslation((new Translation2d(kRedBoilerGearXCorrection, kRedBoilerGearYCorrection))))
+                .getTranslation();
+    }
+
     //final position in the gear path, first position in the hopper path
     private static Translation2d getRedGearPosition() {
         Translation2d pegPosition = new Translation2d(kRedWallToAirship + kPegOffsetX, kFieldHeight / 2 - kPegOffsetY);
         Translation2d robotOffset = new Translation2d(kRedPegHeading.cos() * kGearPlacementDist,
                 kRedPegHeading.sin() * kGearPlacementDist);
-        return pegPosition.translateBy(robotOffset); // TODO error offset
+        return pegPosition.translateBy(robotOffset).translateBy(getRedGearCorrection().inverse());
     }
 
     //first position in the gear path
@@ -137,12 +144,19 @@ public class PathAdapter {
                 kBluePegHeading.sin() * kGearTurnDistance);
         return gearPosition.translateBy(turnOffset);
     }
+    
+    public static Translation2d getBlueGearCorrection() {
+        return RigidTransform2d.fromRotation(kBluePegHeading)
+                .transformBy(RigidTransform2d
+                        .fromTranslation((new Translation2d(kBlueBoilerGearXCorrection, kBlueBoilerGearYCorrection))))
+                .getTranslation();
+    }
 
     private static Translation2d getBlueGearPosition() {
         Translation2d pegPosition = new Translation2d(kBlueWallToAirship + kPegOffsetX, kFieldHeight / 2 + kPegOffsetY);
         Translation2d robotOffset = new Translation2d(kBluePegHeading.cos() * kGearPlacementDist,
                 kBluePegHeading.sin() * kGearPlacementDist);
-        return pegPosition.translateBy(robotOffset);  // TODO correction
+        return pegPosition.translateBy(robotOffset).translateBy(getBlueGearCorrection().inverse());
     }
 
     public static RigidTransform2d getBlueStartPose() {
