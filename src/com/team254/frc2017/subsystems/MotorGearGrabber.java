@@ -194,6 +194,11 @@ public class MotorGearGrabber extends Subsystem {
             mMasterTalon.set(0);
         }
 
+        // Trap system in exhaust state for a little while.
+        if (timeInState < kTransitionDelay) {
+            return SystemState.EXHAUST;
+        }
+
         switch (mWantedState) {
         case SCORE:
             return SystemState.EXHAUST;
