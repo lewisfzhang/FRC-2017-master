@@ -68,9 +68,9 @@ public class Constants extends ConstantsBase {
 
     // Wheel velocity - High gear
     // Setpoint, error, and output are in inches per second.
-    public static double kDriveHighGearVelocityKp = 0.5;
+    public static double kDriveHighGearVelocityKp = 1.5;
     public static double kDriveHighGearVelocityKi = 0.0;
-    public static double kDriveHighGearVelocityKd = 4.0;
+    public static double kDriveHighGearVelocityKd = 12.0;
     public static double kDriveHighGearVelocityKf = .15;
     public static int kDriveHighGearVelocityIZone = 0;
     public static double kDriveHighGearVelocityRampRate = 240.0;
@@ -211,7 +211,7 @@ public class Constants extends ConstantsBase {
 
     // PATH FOLLOWING
     public static double kMinLookAhead = 12.0; // inches
-    public static double kMinLookAheadSpeed = 35.0; // inches per second
+    public static double kMinLookAheadSpeed = 9.0; // inches per second
     public static double kMaxLookAhead = 18.0; // inches
     public static double kMaxLookAheadSpeed = 120.0; // inches per second
     public static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
@@ -223,7 +223,7 @@ public class Constants extends ConstantsBase {
     public static double kSegmentCompletionTolerance = 0.1; // inches
     public static double kPathFollowingMaxAccel = 120.0; // inches per second^2
     public static double kPathFollowingMaxVel = 120.0; // inches per second
-    public static double kPathFollowingProfileKp = 0.75;
+    public static double kPathFollowingProfileKp = 10.00;
     public static double kPathFollowingProfileKi = 0.03;
     public static double kPathFollowingProfileKv = 0.02;
     public static double kPathFollowingProfileKffv = 1.0;
@@ -243,7 +243,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraXOffset = -3.3211;
     public static double kCameraYOffset = 0.0;
     public static double kCameraZOffset = 20.9;
-    public static double kCameraPitchAngleDegrees = 31.0; // Measured on 4/22
+    public static double kCameraPitchAngleDegrees = 31.3; // Measured on 4/23
     public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
 
@@ -259,7 +259,7 @@ public class Constants extends ConstantsBase {
 
     public static double kShooterOptimalRange = 100.0;  // TUNE ME
     public static double kShooterOptimalRangeFloor = 95.0;  // TUNE ME
-    public static double kShooterOptimalRangeCeiling = 110.0;  // TUNE ME
+    public static double kShooterOptimalRangeCeiling = 105.0;  // TUNE ME
 
     public static double kShooterAbsoluteRangeFloor = 90.0;  // TUNE ME
     public static double kShooterAbsoluteRangeCeiling = 130.0;  // TUNE ME

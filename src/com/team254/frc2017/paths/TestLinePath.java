@@ -14,7 +14,7 @@ public class TestLinePath implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(0, 0, 0, 0));
-        sWaypoints.add(new Waypoint(150, 0, 0, 120));
+        sWaypoints.add(new Waypoint(150, 0, 0, 80));
         // sWaypoints.add(new Waypoint(100,100,0,90));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);

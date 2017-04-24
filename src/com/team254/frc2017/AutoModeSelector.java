@@ -14,6 +14,7 @@ import com.team254.frc2017.auto.modes.GearThenIntakeModeRed;
 import com.team254.frc2017.auto.modes.RamHopperShootModeBlue;
 import com.team254.frc2017.auto.modes.RamHopperShootModeRed;
 import com.team254.frc2017.auto.modes.StandStillMode;
+import com.team254.frc2017.auto.modes.TestLineMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -48,6 +49,7 @@ public class AutoModeSelector {
             new AutoModeCreator("Ram Hopper Red", () -> new RamHopperShootModeRed()),
             new AutoModeCreator("Gear then Hopper Shoot Blue", () -> new GearThenHopperShootModeBlue()),
             new AutoModeCreator("Gear then Hopper Shoot Red", () -> new GearThenHopperShootModeRed()),
+            new AutoModeCreator("TEST Straight line", () -> new TestLineMode()),
     };
 
     public static void initAutoModeSelector() {

@@ -2,6 +2,7 @@ package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.StatusFrameRate;
+import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.Kinematics;
 import com.team254.frc2017.RobotState;
@@ -185,6 +186,11 @@ public class Drive extends Subsystem {
                 Constants.kRightDriveMasterId);
         mRightSlave.reverseOutput(false);
         mRightMaster.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
+
+        mLeftMaster.SetVelocityMeasurementPeriod(VelocityMeasurementPeriod.Period_10Ms);
+        mLeftMaster.SetVelocityMeasurementWindow(32);
+        mRightMaster.SetVelocityMeasurementPeriod(VelocityMeasurementPeriod.Period_10Ms);
+        mRightMaster.SetVelocityMeasurementWindow(32);
 
         mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
@@ -507,11 +513,17 @@ public class Drive extends Subsystem {
         mIsApproaching = true;
         if (aim.isPresent()) {
             final double distance = aim.get().getRange();
-            final double error = distance - Constants.kShooterOptimalRange;
+            double error = 0.0;
+            if (distance < Constants.kShooterOptimalRangeFloor) {
+                error = distance - Constants.kShooterOptimalRangeFloor;
+            } else if (distance > Constants.kShooterOptimalRangeCeiling) {
+                error = distance - Constants.kShooterOptimalRangeCeiling;
+            }
             final double kGoalPosTolerance = 1.0; // inches
             if (Util.epsilonEquals(error, 0.0, kGoalPosTolerance)) {
                 // We are on target. Switch back to auto-aim.
                 mDriveControlState = DriveControlState.AIM_TO_GOAL;
+                RobotState.getInstance().resetVision();
                 mIsApproaching = false;
                 updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
                 return;

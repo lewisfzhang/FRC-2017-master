@@ -2,6 +2,7 @@ package com.team254.frc2017;
 
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
+import com.team254.lib.util.math.Translation2d;
 import com.team254.lib.util.math.Twist2d;
 
 /**
@@ -27,7 +28,7 @@ public class Kinematics {
      */
     public static Twist2d forwardKinematics(double left_wheel_delta, double right_wheel_delta,
             double delta_rotation_rads) {
-        double dx = (left_wheel_delta + right_wheel_delta) / 2.0;
+        final double dx = (left_wheel_delta + right_wheel_delta) / 2.0;
         return new Twist2d(dx, 0, delta_rotation_rads);
     }
 
