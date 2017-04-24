@@ -55,7 +55,7 @@ public class ConnectionMonitor extends Subsystem {
 
                    if (mJustDisconnected.update(!has_connection)) {
                        // Reconfigure blink if we are just disconnected.
-                       mLED.configureBlink(LED.kDefaultBlinkCount, LED.kDefaultBlinkDuration * 0.1);
+                       mLED.configureBlink(LED.kDefaultBlinkCount, LED.kDefaultBlinkDuration * 2.0);
                    }
                }
            }
