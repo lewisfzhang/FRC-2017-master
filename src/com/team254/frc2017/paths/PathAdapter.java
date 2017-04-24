@@ -105,27 +105,35 @@ public class PathAdapter {
         return getRedStartPose().intersection(end);
     }
 
+    private static Path sRedGearPath = null;
     public static Path getRedGearPath() {
-        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(getRedStartPose().getTranslation(), 0, 0));
-        sWaypoints.add(new Waypoint(getRedCenterPosition(), kLargeRadius, kSpeed));
-        sWaypoints.add(new Waypoint(getRedGearPositionCorrected(), 0, kSpeed));
+        if (sRedGearPath == null) {
+            ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+            sWaypoints.add(new Waypoint(getRedStartPose().getTranslation(), 0, 0));
+            sWaypoints.add(new Waypoint(getRedCenterPosition(), kLargeRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getRedGearPositionCorrected(), 0, kSpeed));
 
-        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+            sRedGearPath = PathBuilder.buildPathFromWaypoints(sWaypoints);
+        }
+        return sRedGearPath;
     }
 
+    private static Path sRedHopperPath = null;
     public static Path getRedHopperPath() {
-        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(getRedGearPosition(), 0, 0));
-        sWaypoints.add(new Waypoint(getRedGearTurnPosition(), kRadius, kSpeed));
-        sWaypoints.add(new Waypoint(getRedHopperTurnPosition(), kRadius, kSpeed));
-        sWaypoints.add(new Waypoint(getRedHopperPosition(), 0, kSpeed));
+        if (sRedHopperPath == null) {
+            ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+            sWaypoints.add(new Waypoint(getRedGearPosition(), 0, 0));
+            sWaypoints.add(new Waypoint(getRedGearTurnPosition(), kRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getRedHopperTurnPosition(), kRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getRedHopperPosition(), 0, kSpeed));
 
-        Translation2d redHopperEndPosition = new Translation2d(getRedHopperPosition());
-        redHopperEndPosition.setX(kEndHopperPathX); //move y position to desired place
-        sWaypoints.add(new Waypoint(redHopperEndPosition, 0, kSpeed));
+            Translation2d redHopperEndPosition = new Translation2d(getRedHopperPosition());
+            redHopperEndPosition.setX(kEndHopperPathX); //move y position to desired place
+            sWaypoints.add(new Waypoint(redHopperEndPosition, 0, kSpeed));
+            sRedHopperPath = PathBuilder.buildPathFromWaypoints(sWaypoints);
+        }
+        return sRedHopperPath;
 
-        return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
 
     public static Translation2d getBlueHopperPosition() {
@@ -177,27 +185,42 @@ public class PathAdapter {
         return getBlueStartPose().intersection(end);
     }
 
+    private static Path sBlueGearPath = null;
     public static Path getBlueGearPath() {
-        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(getBlueStartPose().getTranslation(), 0, 0));
-        sWaypoints.add(new Waypoint(getBlueCenterPosition(), kLargeRadius, kSpeed));
-        sWaypoints.add(new Waypoint(getBlueGearPositionCorrected(), 0, kSpeed));
+        if (sBlueGearPath == null) {
+            ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+            sWaypoints.add(new Waypoint(getBlueStartPose().getTranslation(), 0, 0));
+            sWaypoints.add(new Waypoint(getBlueCenterPosition(), kLargeRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getBlueGearPositionCorrected(), 0, kSpeed));
 
-        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+            sBlueGearPath = PathBuilder.buildPathFromWaypoints(sWaypoints);
+        }
+        return sBlueGearPath;
     }
 
+    private static Path sBlueHopperPath = null;
     public static Path getBlueHopperPath() {
-        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(getBlueGearPosition(), 0, 0));
-        sWaypoints.add(new Waypoint(getBlueGearTurnPosition(), kRadius, kSpeed));
-        sWaypoints.add(new Waypoint(getBlueHopperTurnPosition(), kRadius, kSpeed));
-        sWaypoints.add(new Waypoint(getBlueHopperPosition(), 0, kSpeed));
-        
-        Translation2d blueHopperEndPosition = new Translation2d(getBlueHopperPosition());
-        blueHopperEndPosition.setX(kEndHopperPathX); //move x position to desired place
-        sWaypoints.add(new Waypoint(blueHopperEndPosition, 0, kSpeed));
+        if (sBlueHopperPath == null) {
+            ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+            sWaypoints.add(new Waypoint(getBlueGearPosition(), 0, 0));
+            sWaypoints.add(new Waypoint(getBlueGearTurnPosition(), kRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getBlueHopperTurnPosition(), kRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getBlueHopperPosition(), 0, kSpeed));
 
-        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+            Translation2d blueHopperEndPosition = new Translation2d(getBlueHopperPosition());
+            blueHopperEndPosition.setX(kEndHopperPathX); //move x position to desired place
+            sWaypoints.add(new Waypoint(blueHopperEndPosition, 0, kSpeed));
+
+            sBlueHopperPath = PathBuilder.buildPathFromWaypoints(sWaypoints);
+        }
+        return sBlueHopperPath;
+    }
+
+    public static void calculatePaths() {
+        getBlueHopperPath();
+        getRedHopperPath();
+        getBlueGearPath();
+        getRedGearPath();
     }
 
     public static void main(String[] args) {

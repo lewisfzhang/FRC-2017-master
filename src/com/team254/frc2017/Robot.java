@@ -5,6 +5,7 @@ import com.team254.frc2017.auto.AutoModeExecuter;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
 import com.team254.frc2017.loops.VisionProcessor;
+import com.team254.frc2017.paths.PathAdapter;
 import com.team254.frc2017.subsystems.*;
 import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
 import com.team254.frc2017.vision.VisionServer;
@@ -91,6 +92,9 @@ public class Robot extends IterativeRobot {
             mDelayedAimButton = new DelayedBoolean(Timer.getFPGATimestamp(), 0.1);
             // Force an true update now to prevent robot from running at start.
             mDelayedAimButton.update(Timer.getFPGATimestamp(), true);
+
+            // Pre calculate the paths we use for auto.
+            PathAdapter.calculatePaths();
 
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
