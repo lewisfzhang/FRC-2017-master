@@ -244,7 +244,7 @@ public class MotorGearGrabber extends Subsystem {
         return SystemState.EXHAUSTING;
     }
 
-    public boolean mWristUp = false;
+    private boolean mWristUp = false;
 
     public void setOpenLoop(double value) {
         mMasterTalon.set(value);
@@ -260,17 +260,17 @@ public class MotorGearGrabber extends Subsystem {
         return mUltrasonicSensor.getAverageDistance();
     }
 
-    public void setWristUp() {
+    private void setWristUp() {
         mWristUp = true;
         mWristSolenoid.set(mWristUp);
     }
 
-    public void setWristDown() {
+    private void setWristDown() {
         mWristUp = false;
         mWristSolenoid.set(mWristUp);
     }
 
-    public void setWantedState(WantedState wanted) {
+    public synchronized void setWantedState(WantedState wanted) {
         mWantedState = wanted;
     }
 
