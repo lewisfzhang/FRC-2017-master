@@ -47,7 +47,6 @@ public class MotorGearGrabber extends Subsystem {
         INTAKE,
         STOWING,
         STOWED,
-        EXHAUSTING,
         EXHAUST,
     }
 
@@ -115,9 +114,6 @@ public class MotorGearGrabber extends Subsystem {
                     case STOWED:
                         newState = handleStowed(timeInState);
                         break;
-                    case EXHAUSTING:
-                        newState = handleExhausting(timeInState);
-                        break;
                     case EXHAUST:
                         newState = handleExhaust(timeInState);
                         break;
@@ -130,7 +126,7 @@ public class MotorGearGrabber extends Subsystem {
                     mUltrasonicSensor.update();
 
                     if (newState != mSystemState) {
-                        System.out.println("Changed state: " + mSystemState + " -> " + newState);
+                        System.out.println(timestamp + ": Changed state: " + mSystemState + " -> " + newState);
                         mSystemState = newState;
                         mCurrentStateStartTime = Timer.getFPGATimestamp();
                     }
@@ -191,7 +187,12 @@ public class MotorGearGrabber extends Subsystem {
 
     private SystemState handleExhaust(double timeInState) {
         setWristDown();
-        mMasterTalon.set(kScoreGearSetpoint);
+
+        if (timeInState > kExhaustDelay) {
+            mMasterTalon.set(kScoreGearSetpoint);
+        } else {
+            mMasterTalon.set(0);
+        }
 
         switch (mWantedState) {
         case SCORE:
@@ -215,7 +216,7 @@ public class MotorGearGrabber extends Subsystem {
     private SystemState handleStowed(double timeInState) {
         switch (mWantedState) {
         case SCORE:
-            return SystemState.EXHAUSTING;
+            return SystemState.EXHAUST;
         case ACQUIRE:
             return SystemState.INTAKE;
         default:
@@ -227,19 +228,6 @@ public class MotorGearGrabber extends Subsystem {
             }
             return SystemState.STOWED;
         }
-    }
-
-    private SystemState handleExhausting(double timeInState) {
-        setWristDown();
-        if (timeInState > kExhaustDelay) {
-            mMasterTalon.set(kScoreGearSetpoint);
-        } else {
-            mMasterTalon.set(0);
-        }
-        if (timeInState > kTransitionDelay) {
-            return SystemState.EXHAUST;
-        }
-        return SystemState.EXHAUSTING;
     }
 
     private boolean mWristUp = false;
