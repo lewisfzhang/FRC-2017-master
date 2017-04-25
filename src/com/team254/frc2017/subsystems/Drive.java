@@ -700,25 +700,62 @@ public class Drive extends Subsystem {
     }
 
     public boolean checkSystem() {
+        System.out.println("Testing DRIVE.---------------------------------");
         final double kCurrentThres = 0.5;
-        final double kRpmThres = 1000;
+        final double kRpmThres = 300;
 
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mRightSlave.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mLeftMaster.changeControlMode(CANTalon.TalonControlMode.Voltage);
+        mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Voltage);
+
+        mRightMaster.set(0.0);
+        mRightSlave.set(0.0);
+        mLeftMaster.set(0.0);
+        mLeftSlave.set(0.0);
+
+        mRightMaster.set(-6.0f);
+        Timer.delay(4.0);
+        final double currentRightMaster = mRightMaster.getOutputCurrent();
+        final double rpmRightMaster = mRightMaster.getSpeed();
+        mRightMaster.set(0.0f);
+
+        Timer.delay(2.0);
+
+        mRightSlave.set(-6.0f);
+        Timer.delay(4.0);
+        final double currentRightSlave = mRightSlave.getOutputCurrent();
+        final double rpmRightSlave = mRightMaster.getSpeed();
+        mRightSlave.set(0.0f);
+
+        Timer.delay(2.0);
+
+        mLeftMaster.set(6.0f);
+        Timer.delay(4.0);
+        final double currentLeftMaster = mLeftMaster.getOutputCurrent();
+        final double rpmLeftMaster = mLeftMaster.getSpeed();
+        mLeftMaster.set(0.0f);
+
+        Timer.delay(2.0);
+
+        mLeftSlave.set(6.0f);
+        Timer.delay(4.0);
+        final double currentLeftSlave = mLeftSlave.getOutputCurrent();
+        final double rpmLeftSlave = mLeftMaster.getSpeed();
+        mLeftSlave.set(0.0);
+
+        mRightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+        mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+
+        mRightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mRightSlave.set(Constants.kRightDriveMasterId);
+
+        mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mLeftSlave.set(Constants.kLeftDriveMasterId);
 
-        setOpenLoop(new DriveSignal(0.5, 0.5));
-
-        Timer.delay(4.0);
-
-        final double currentRightMaster = mRightMaster.getOutputCurrent();
-        final double currentRightSlave = mRightSlave.getOutputCurrent();
-        final double currentLeftMaster = mLeftMaster.getOutputCurrent();
-        final double currentLeftSlave = mLeftSlave.getOutputCurrent();
-
-        final double rpmRight = mRightMaster.getSpeed();
-        final double rpmLeft = mLeftMaster.getSpeed();
-
-        setOpenLoop(DriveSignal.NEUTRAL);
+        System.out.println("Drive Right Master Current: " + currentRightMaster + " Drive Right Slave Current: " + currentRightSlave);
+        System.out.println("Drive Left Master Current: " + currentLeftMaster + " Drive Left Slave Current: " + currentLeftSlave);
+        System.out.println("Drive RPM RMaster: " + rpmRightMaster + " RSlave: " + rpmRightSlave + " LMaster: " + rpmLeftMaster + " LSlave: " + rpmLeftSlave);
 
         boolean failure = false;
 
@@ -754,14 +791,30 @@ public class Drive extends Subsystem {
             System.out.println("!!!!!!!!!!!!!!!!!! Drive Left Currents Different !!!!!!!!!!!!!");
         }
 
-        if (rpmRight < kRpmThres) {
+        if (rpmRightMaster < kRpmThres) {
             failure = true;
-            System.out.println("!!!!!!!!!!!!!!!!!! Drive Right RPM Low !!!!!!!!!!!!!!!!!!!");
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Right Master RPM Low !!!!!!!!!!!!!!!!!!!");
         }
 
-        if (rpmLeft < kRpmThres) {
+        if (rpmRightSlave < kRpmThres) {
             failure = true;
-            System.out.println("!!!!!!!!!!!!!!!!!! Drive Left RPM Low !!!!!!!!!!!!!!!!!!!");
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Right Slave RPM Low !!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (rpmLeftMaster < kRpmThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Left Master RPM Low !!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (rpmLeftSlave < kRpmThres) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!! Drive Left Slave RPM Low !!!!!!!!!!!!!!!!!!!");
+        }
+
+        if (!Util.allCloseTo(Arrays.asList(rpmRightMaster, rpmRightSlave, rpmLeftMaster, rpmLeftSlave),
+                rpmRightMaster, 250)) {
+            failure = true;
+            System.out.println("!!!!!!!!!!!!!!!!!!! Drive RPMs different !!!!!!!!!!!!!!!!!!!");
         }
 
         return !failure;
