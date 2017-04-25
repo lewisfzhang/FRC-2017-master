@@ -1,20 +1,7 @@
 package com.team254.frc2017;
 
 import com.team254.frc2017.auto.AutoModeBase;
-import com.team254.frc2017.auto.modes.ActuateHopperShootModeBlue;
-import com.team254.frc2017.auto.modes.ActuateHopperShootModeRed;
-import com.team254.frc2017.auto.modes.BoilerGearThenShootModeBlue;
-import com.team254.frc2017.auto.modes.BoilerGearThenShootModeRed;
-import com.team254.frc2017.auto.modes.CenterGearThenShootModeBlue;
-import com.team254.frc2017.auto.modes.CenterGearThenShootModeRed;
-import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
-import com.team254.frc2017.auto.modes.GearThenHopperShootModeRed;
-import com.team254.frc2017.auto.modes.GearThenIntakeModeBlue;
-import com.team254.frc2017.auto.modes.GearThenIntakeModeRed;
-import com.team254.frc2017.auto.modes.RamHopperShootModeBlue;
-import com.team254.frc2017.auto.modes.RamHopperShootModeRed;
-import com.team254.frc2017.auto.modes.StandStillMode;
-import com.team254.frc2017.auto.modes.TestLineMode;
+import com.team254.frc2017.auto.modes.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,7 +24,8 @@ public class AutoModeSelector {
         }
     }
 
-    private static final AutoModeCreator mDefaultMode = new AutoModeCreator("Stand Still", () -> new StandStillMode());
+    private static final AutoModeCreator mDefaultMode = new AutoModeCreator("AutoDetect Alliance Gear than Hopper Shoot",
+            () -> new AutoDetectAllianceGearThenShootMode());
     private static final AutoModeCreator[] mAllModes = {
             new AutoModeCreator("Boiler Gear then Intake Shoot Blue", () -> new GearThenIntakeModeBlue()),
             new AutoModeCreator("Boiler Gear then Intake Shoot Red", () -> new GearThenIntakeModeRed()),
@@ -49,6 +37,7 @@ public class AutoModeSelector {
             new AutoModeCreator("Ram Hopper Red", () -> new RamHopperShootModeRed()),
             new AutoModeCreator("Gear then Hopper Shoot Blue", () -> new GearThenHopperShootModeBlue()),
             new AutoModeCreator("Gear then Hopper Shoot Red", () -> new GearThenHopperShootModeRed()),
+            new AutoModeCreator("Standstill", () -> new StandStillMode()),
             new AutoModeCreator("TEST Straight line", () -> new TestLineMode()),
     };
 
