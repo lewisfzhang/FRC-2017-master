@@ -188,7 +188,7 @@ public class Robot extends IterativeRobot {
             double turn = mControlBoard.getTurn();
 
             boolean wants_aim_button = mControlBoard.getAimButton();
-            wants_aim_button = !mDelayedAimButton.update(timestamp, !wants_aim_button);
+//            wants_aim_button = !mDelayedAimButton.update(timestamp, !wants_aim_button);
 
             if (wants_aim_button || mControlBoard.getDriveAimButton()) {
 
