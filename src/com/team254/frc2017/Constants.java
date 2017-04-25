@@ -68,14 +68,14 @@ public class Constants extends ConstantsBase {
 
     // Wheel velocity - High gear
     // Setpoint, error, and output are in inches per second.
-    public static double kDriveHighGearVelocityKp = 1.5;
+    public static double kDriveHighGearVelocityKp = 1.2;
     public static double kDriveHighGearVelocityKi = 0.0;
-    public static double kDriveHighGearVelocityKd = 12.0;
+    public static double kDriveHighGearVelocityKd = 6.0;
     public static double kDriveHighGearVelocityKf = .15;
     public static int kDriveHighGearVelocityIZone = 0;
     public static double kDriveHighGearVelocityRampRate = 240.0;
     public static double kDriveHighGearNominalOutput = 0.5;
-    public static double kDriveHighGearMaxSetpoint = 15.0 * 12.0; // 15 fps
+    public static double kDriveHighGearMaxSetpoint = 17.0 * 12.0; // 17 fps
 
     // Wheel position - Low gear
     // Setpoint is in rotations.
@@ -123,14 +123,14 @@ public class Constants extends ConstantsBase {
     public static double kShooterSetpointDeadbandRpm = 1.0;
 
     // Used to determine when to switch to hold profile.
-    public static double kShooterStartOnTargetRpm = 30.0;
+    public static double kShooterStartOnTargetRpm = 50.0;
     public static double kShooterStopOnTargetRpm = 150.0;
     public static int kShooterKfBufferSize = 20;
     public static int kShooterMinOnTargetSamples = 20;  // Should be <= kShooterKvBufferSize
 
     public static int kShooterJamBufferSize = 30;
-    public static double kShooterDisturbanceThreshold = 50;
-    public static double kShooterJamTimeout = 1.0;  // In secs
+    public static double kShooterDisturbanceThreshold = 25;
+    public static double kShooterJamTimeout = 1.5;  // In secs
     public static double kShooterUnjamDuration = 0.5;  // In secs
     public static double kShooterMinShootingTime = 1.0;  // In secs
 
@@ -223,13 +223,14 @@ public class Constants extends ConstantsBase {
     public static double kSegmentCompletionTolerance = 0.1; // inches
     public static double kPathFollowingMaxAccel = 120.0; // inches per second^2
     public static double kPathFollowingMaxVel = 120.0; // inches per second
-    public static double kPathFollowingProfileKp = 10.00;
+    public static double kPathFollowingProfileKp = 5.00;
     public static double kPathFollowingProfileKi = 0.03;
     public static double kPathFollowingProfileKv = 0.02;
     public static double kPathFollowingProfileKffv = 1.0;
     public static double kPathFollowingProfileKffa = 0.05;
     public static double kPathFollowingGoalPosTolerance = 0.75;
     public static double kPathFollowingGoalVelTolerance = 12.0;
+    public static double kPathStopSteeringDistance = 9.0;
 
     // Goal tracker constants
     public static double kMaxGoalTrackAge = 1.0;

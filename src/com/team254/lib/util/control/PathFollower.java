@@ -50,10 +50,11 @@ public class PathFollower {
         public final double profile_max_abs_acc;
         public final double goal_pos_tolerance;
         public final double goal_vel_tolerance;
+        public final double stop_steering_distance;
 
         public Parameters(Lookahead lookahead, double inertia_gain, double profile_kp, double profile_ki,
                 double profile_kv, double profile_kffv, double profile_kffa, double profile_max_abs_vel,
-                double profile_max_abs_acc, double goal_pos_tolerance, double goal_vel_tolerance) {
+                double profile_max_abs_acc, double goal_pos_tolerance, double goal_vel_tolerance, double stop_steering_distance) {
             this.lookahead = lookahead;
             this.inertia_gain = inertia_gain;
             this.profile_kp = profile_kp;
@@ -65,6 +66,7 @@ public class PathFollower {
             this.profile_max_abs_acc = profile_max_abs_acc;
             this.goal_pos_tolerance = goal_pos_tolerance;
             this.goal_vel_tolerance = goal_vel_tolerance;
+            this.stop_steering_distance = stop_steering_distance;
         }
     }
 
@@ -73,12 +75,14 @@ public class PathFollower {
     ProfileFollower mVelocityController;
     final double mInertiaGain;
     boolean overrideFinished = false;
+    boolean doneSteering = false;
     DebugOutput mDebugOutput = new DebugOutput();
 
     double mMaxProfileVel;
     double mMaxProfileAcc;
     final double mGoalPosTolerance;
     final double mGoalVelTolerance;
+    final double mStopSteeringDistance;
     double mCrossTrackError = 0.0;
     double mAlongTrackError = 0.0;
 
@@ -97,6 +101,7 @@ public class PathFollower {
         mGoalPosTolerance = parameters.goal_pos_tolerance;
         mGoalVelTolerance = parameters.goal_vel_tolerance;
         mInertiaGain = parameters.inertia_gain;
+        mStopSteeringDistance = parameters.stop_steering_distance;
     }
 
     /**
@@ -122,14 +127,16 @@ public class PathFollower {
             mDebugOutput.steering_command_dy = steering_command.delta.dy;
             mDebugOutput.steering_command_dtheta = steering_command.delta.dtheta;
             mCrossTrackError = steering_command.cross_track_error;
-            if (!mSteeringController.isFinished()) {
-                mLastSteeringDelta = steering_command.delta;
-                mVelocityController.setGoalAndConstraints(
-                        new MotionProfileGoal(displacement + steering_command.delta.dx,
-                                Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ACCEL,
-                                mGoalPosTolerance, mGoalVelTolerance),
-                        new MotionProfileConstraints(Math.min(mMaxProfileVel, steering_command.max_velocity),
-                                mMaxProfileAcc));
+            mLastSteeringDelta = steering_command.delta;
+            mVelocityController.setGoalAndConstraints(
+                    new MotionProfileGoal(displacement + steering_command.delta.dx,
+                            Math.abs(steering_command.end_velocity), CompletionBehavior.VIOLATE_MAX_ACCEL,
+                            mGoalPosTolerance, mGoalVelTolerance),
+                    new MotionProfileConstraints(Math.min(mMaxProfileVel, steering_command.max_velocity),
+                            mMaxProfileAcc));
+            
+            if (steering_command.remaining_path_length < mStopSteeringDistance) {
+               doneSteering = true;
             }
         }
 

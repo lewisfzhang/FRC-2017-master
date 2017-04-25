@@ -17,42 +17,48 @@ public class PathAdapter {
     static final double kRedCenterToBoiler = 127.5; //distance from the center of the airship to the corner between the boiler and driver station wall
     static final double kRedWallToAirship = 116.5; //distance from driver station wall to front of the airship
     static final double kRedCenterToHopper = 160.66; //distance from the center of the airship to the hopper pad
-    static final double kBlueCenterToBoiler = 126.5;
+    static final double kRedWallToHopper = 108.0; // x position of front of hopper pad
+    static final double kBlueCenterToBoiler = 125.5;
     static final double kBlueWallToAirship = 114;
-    static final double kBlueCenterToHopper = 162;
+    static final double kBlueCenterToHopper = 161;
+    static final double kBlueWallToHopper = 110.0;
 
     // Correction for actual robot driving.
     // Difference between actual robot position and optimal at the gear peg (in local robot coords at the gear peg).
     static final double kRedBoilerGearXCorrection = 2.5;
     static final double kRedBoilerGearYCorrection = 7.0;
+    static final double kRedHopperYOffset = -6; //how many inches into the hopper you want to go
     static final double kBlueBoilerGearXCorrection = 2.5;
-    static final double kBlueBoilerGearYCorrection = -7.0;
+    static final double kBlueBoilerGearYCorrection = -1.0;
+    static final double kBlueHopperYOffset = -4; //how many inches into the hopper you want to go
 
     // Path Variables
     static final double kLargeRadius = 40;
-    static final double kRadius = 20;
-    static final double kSpeed = 72;
+    static final double kModerateRadius = 30;
+    static final double kNominalRadius = 20;
+    static final double kSmallRadius = 10;
+    static final double kSpeed = 80;
 
     // Don't mess with these
     static final double kPegOffsetX = 17.77; // center of airship to boiler peg
     static final double kPegOffsetY = 30.66; // front of airship to boiler peg
-    static final double kHopperX = 110.5; // x position of hopper TODO: WHAT IS THIS?
-    static final double kHopperOffsetYOffset = 1.5; //how many inches into the hopper you want to go
     static final Rotation2d kRedPegHeading = Rotation2d.fromDegrees(240);
     static final Rotation2d kBluePegHeading = Rotation2d.fromDegrees(120);
-    static final Rotation2d kRedHopperHeading = Rotation2d.fromDegrees(40); //angle to hit the red hopper at
-    static final Rotation2d kBlueHopperHeading = Rotation2d.fromDegrees(320); //angle to hit the blue hopper at
+    static final Rotation2d kRedHopperHeading = Rotation2d.fromDegrees(45); //angle to hit the red hopper at
+    static final Rotation2d kBlueHopperHeading = Rotation2d.fromDegrees(315); //angle to hit the blue hopper at
     static final Rotation2d kStartHeading = Rotation2d.fromDegrees(180); //start angle (backwards)
     static final double kGearPlacementDist = Constants.kCenterToRearBumperDistance + 10; //distance away from the airship wall to place the gear at
+    static final double kHopperOffsetX = 3.0;  // How far from the closest edge of the hopper to aim
+    static final double kHopperSkew = 6.0;  // How far into the wall to place the final point (to ensure we keep nudging into the wall)
     static final double kFrontDist = Constants.kCenterToIntakeDistance;
     static final double kSideDist = Constants.kCenterToSideBumperDistance;
-    static final double kHopperTurnDistance = 36; // how long the third segment in the hopper path should be
-    static final double kGearTurnDistance = 36; // how long the first segment in the hopper path should be
+    static final double kHopperTurnDistance = 40; // how long the third segment in the hopper path should be
+    static final double kGearTurnDistance = 24; // how long the first segment in the hopper path should be
     static final double kEndHopperPathX = 96; // X position we want the hopper path to end at
     static final double kFieldHeight = 324; // total height of the field in inches (doesn't really have to be accurate, everything is relative)
     
     public static Translation2d getRedHopperPosition() {
-        Translation2d contactPoint = new Translation2d(kHopperX, kFieldHeight/2 - kRedCenterToHopper - kHopperOffsetYOffset);
+        Translation2d contactPoint = new Translation2d(kRedWallToHopper + kHopperOffsetX, kFieldHeight/2 - kRedCenterToHopper - kRedHopperYOffset);
         Translation2d robotOffset = new Translation2d(kFrontDist, kSideDist);
         robotOffset = robotOffset.direction().rotateBy(kRedHopperHeading).toTranslation().scale(robotOffset.norm());
         return contactPoint.translateBy(robotOffset);
@@ -82,7 +88,7 @@ public class PathAdapter {
     }
 
     //final position in the gear path, first position in the hopper path
-    private static Translation2d getRedGearPosition() {
+    public static Translation2d getRedGearPosition() {
         Translation2d pegPosition = new Translation2d(kRedWallToAirship + kPegOffsetX, kFieldHeight / 2 - kPegOffsetY);
         Translation2d robotOffset = new Translation2d(kRedPegHeading.cos() * kGearPlacementDist,
                 kRedPegHeading.sin() * kGearPlacementDist);
@@ -109,7 +115,7 @@ public class PathAdapter {
     public static Path getRedGearPath() {
         if (sRedGearPath == null) {
             ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-            sWaypoints.add(new Waypoint(getRedStartPose().getTranslation(), 0, 0));
+            sWaypoints.add(new Waypoint(getRedStartPose().getTranslation(), 0, kSpeed));
             sWaypoints.add(new Waypoint(getRedCenterPosition(), kLargeRadius, kSpeed));
             sWaypoints.add(new Waypoint(getRedGearPositionCorrected(), 0, kSpeed));
 
@@ -122,13 +128,14 @@ public class PathAdapter {
     public static Path getRedHopperPath() {
         if (sRedHopperPath == null) {
             ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-            sWaypoints.add(new Waypoint(getRedGearPosition(), 0, 0));
-            sWaypoints.add(new Waypoint(getRedGearTurnPosition(), kRadius, kSpeed));
-            sWaypoints.add(new Waypoint(getRedHopperTurnPosition(), kRadius, kSpeed));
-            sWaypoints.add(new Waypoint(getRedHopperPosition(), 0, kSpeed));
+            sWaypoints.add(new Waypoint(getRedGearPosition(), 0, kSpeed));
+            sWaypoints.add(new Waypoint(getRedGearTurnPosition(), kSmallRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getRedHopperTurnPosition(), kModerateRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getRedHopperPosition(), kSmallRadius, kSpeed));
 
             Translation2d redHopperEndPosition = new Translation2d(getRedHopperPosition());
-            redHopperEndPosition.setX(kEndHopperPathX); //move y position to desired place
+            redHopperEndPosition.setX(kEndHopperPathX); //move X position to desired place
+            redHopperEndPosition.setY(redHopperEndPosition.y() - kHopperSkew);  // TODO make constant
             sWaypoints.add(new Waypoint(redHopperEndPosition, 0, kSpeed));
             sRedHopperPath = PathBuilder.buildPathFromWaypoints(sWaypoints);
         }
@@ -137,7 +144,7 @@ public class PathAdapter {
     }
 
     public static Translation2d getBlueHopperPosition() {
-        Translation2d contactPoint = new Translation2d(kHopperX, kFieldHeight/2 + kBlueCenterToHopper + kHopperOffsetYOffset);
+        Translation2d contactPoint = new Translation2d(kBlueWallToHopper + kHopperOffsetX, kFieldHeight/2 + kBlueCenterToHopper + kBlueHopperYOffset);
         Translation2d robotOffset = new Translation2d(kFrontDist, -kSideDist);
         robotOffset = robotOffset.direction().rotateBy(kBlueHopperHeading).toTranslation().scale(robotOffset.norm());
         return contactPoint.translateBy(robotOffset);
@@ -168,11 +175,11 @@ public class PathAdapter {
         Translation2d pegPosition = new Translation2d(kBlueWallToAirship + kPegOffsetX, kFieldHeight / 2 + kPegOffsetY);
         Translation2d robotOffset = new Translation2d(kBluePegHeading.cos() * kGearPlacementDist,
                 kBluePegHeading.sin() * kGearPlacementDist);
-        return pegPosition.translateBy(robotOffset).translateBy(getBlueGearCorrection());
+        return pegPosition.translateBy(robotOffset);
     }
 
     private static Translation2d getBlueGearPositionCorrected() {
-        return getBlueGearPosition().translateBy(getBlueGearCorrection().inverse());
+        return getBlueGearPosition().translateBy(getBlueGearCorrection());
     }
 
     public static RigidTransform2d getBlueStartPose() {
@@ -189,7 +196,7 @@ public class PathAdapter {
     public static Path getBlueGearPath() {
         if (sBlueGearPath == null) {
             ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-            sWaypoints.add(new Waypoint(getBlueStartPose().getTranslation(), 0, 0));
+            sWaypoints.add(new Waypoint(getBlueStartPose().getTranslation(), 0, kSpeed));
             sWaypoints.add(new Waypoint(getBlueCenterPosition(), kLargeRadius, kSpeed));
             sWaypoints.add(new Waypoint(getBlueGearPositionCorrected(), 0, kSpeed));
 
@@ -203,12 +210,13 @@ public class PathAdapter {
         if (sBlueHopperPath == null) {
             ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
             sWaypoints.add(new Waypoint(getBlueGearPosition(), 0, 0));
-            sWaypoints.add(new Waypoint(getBlueGearTurnPosition(), kRadius, kSpeed));
-            sWaypoints.add(new Waypoint(getBlueHopperTurnPosition(), kRadius, kSpeed));
-            sWaypoints.add(new Waypoint(getBlueHopperPosition(), 0, kSpeed));
+            sWaypoints.add(new Waypoint(getBlueGearTurnPosition(), kSmallRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getBlueHopperTurnPosition(), kModerateRadius, kSpeed));
+            sWaypoints.add(new Waypoint(getBlueHopperPosition(), kSmallRadius, kSpeed));
 
             Translation2d blueHopperEndPosition = new Translation2d(getBlueHopperPosition());
             blueHopperEndPosition.setX(kEndHopperPathX); //move x position to desired place
+            blueHopperEndPosition.setY(blueHopperEndPosition.y() + kHopperSkew);
             sWaypoints.add(new Waypoint(blueHopperEndPosition, 0, kSpeed));
 
             sBlueHopperPath = PathBuilder.buildPathFromWaypoints(sWaypoints);

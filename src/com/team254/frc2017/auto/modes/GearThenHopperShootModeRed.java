@@ -30,7 +30,9 @@ import com.team254.frc2017.paths.PathAdapter;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToBoilerGearBlue;
 import com.team254.frc2017.paths.StartToBoilerGearRed;
+import com.team254.frc2017.subsystems.Drive;
 import com.team254.lib.util.math.RigidTransform2d;
+import com.team254.lib.util.math.Rotation2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -45,7 +47,7 @@ public class GearThenHopperShootModeRed extends AutoModeBase {
         runAction(
                 new ParallelAction(Arrays.asList(new Action[] {
                         new SetFlywheelRPMAction(2900.0), // spin up flywheel to save time
-                        new DeployIntakeAction(true),
+                        new DeployIntakeAction(false),
                         new ScoreGearAction(),
                         new ActuateHopperAction(true),
                 })));
