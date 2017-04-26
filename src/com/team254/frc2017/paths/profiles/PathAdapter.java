@@ -44,7 +44,7 @@ public class PathAdapter {
     static final double kFieldHeight = 324; // total height of the field in inches (doesn't really have to be accurate, everything is relative)
     
     public static Translation2d getRedHopperPosition() {
-        Translation2d contactPoint = new Translation2d(kFieldProfile.getRedWallToHopper() + kHopperOffsetX, kFieldHeight/2 - kFieldProfile.getRedCenterToHopper() - kRobotProfile.getRedHopperYOffset());
+        Translation2d contactPoint = new Translation2d(kFieldProfile.getRedWallToHopper() + kHopperOffsetX + kRobotProfile.getRedHopperXOffset(), kFieldHeight/2 - kFieldProfile.getRedCenterToHopper() - kRobotProfile.getRedHopperYOffset());
         Translation2d robotOffset = new Translation2d(kFrontDist, kSideDist);
         robotOffset = robotOffset.direction().rotateBy(kRedHopperHeading).toTranslation().scale(robotOffset.norm());
         return contactPoint.translateBy(robotOffset);
@@ -130,7 +130,7 @@ public class PathAdapter {
     }
 
     public static Translation2d getBlueHopperPosition() {
-        Translation2d contactPoint = new Translation2d(kFieldProfile.getBlueWallToHopper() + kHopperOffsetX, kFieldHeight/2 + kFieldProfile.getBlueCenterToHopper() + kRobotProfile.getBlueHopperYOffset());
+        Translation2d contactPoint = new Translation2d(kFieldProfile.getBlueWallToHopper() + kHopperOffsetX + kRobotProfile.getBlueHopperXOffset(), kFieldHeight/2 + kFieldProfile.getBlueCenterToHopper() + kRobotProfile.getBlueHopperYOffset());
         Translation2d robotOffset = new Translation2d(kFrontDist, -kSideDist);
         robotOffset = robotOffset.direction().rotateBy(kBlueHopperHeading).toTranslation().scale(robotOffset.norm());
         return contactPoint.translateBy(robotOffset);
