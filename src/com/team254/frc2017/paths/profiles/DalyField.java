@@ -4,42 +4,42 @@ public class DalyField implements FieldProfile {
 
     @Override
     public double getRedCenterToBoiler() {
-        return 127.5;
+        return 125.44;
     }
 
     @Override
     public double getRedWallToAirship() {
-        return 116.5;
+        return 114.5;
     }
 
     @Override
     public double getRedCenterToHopper() {
-        return 160.66;
+        return 162;
     }
 
     @Override
-    public double getRedWallToHopper() {
-        return 108.0;
+    public double getRedWallToHopper() { //TODO: verify this
+        return 110.5;
     }
 
     @Override
     public double getBlueCenterToBoiler() {
-        return 125.5;
+        return 126.76;
     }
 
     @Override
     public double getBlueWallToAirship() {
-        return 114.0;
+        return 113.75;
     }
 
     @Override
     public double getBlueCenterToHopper() {
-        return 161.0;
+        return 163.5;
     }
 
     @Override
     public double getBlueWallToHopper() {
-        return 110.0;
+        return 109.625;
     }
 
 }
