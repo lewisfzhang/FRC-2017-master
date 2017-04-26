@@ -313,6 +313,8 @@ public class Robot extends IterativeRobot {
             mSubsystemManager.stop();
 
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
+            
+            PathAdapter.calculatePaths();
 
             // If are tuning, dump map so far.
             if (Constants.kIsShooterTuning) {
