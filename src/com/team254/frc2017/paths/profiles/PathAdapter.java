@@ -1,8 +1,9 @@
-package com.team254.frc2017.paths;
+package com.team254.frc2017.paths.profiles;
 
 import java.util.ArrayList;
 
 import com.team254.frc2017.Constants;
+import com.team254.frc2017.paths.PathBuilder;
 import com.team254.frc2017.paths.PathBuilder.Waypoint;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.math.RigidTransform2d;
@@ -13,24 +14,9 @@ import com.team254.lib.util.math.Translation2d;
  * Takes field measurements and creates paths from them
  */
 public class PathAdapter {
-    // Values to measure on the field
-    static final double kRedCenterToBoiler = 127.5; //distance from the center of the airship to the corner between the boiler and driver station wall
-    static final double kRedWallToAirship = 116.5; //distance from driver station wall to front of the airship
-    static final double kRedCenterToHopper = 160.66; //distance from the center of the airship to the hopper pad
-    static final double kRedWallToHopper = 108.0; // x position of front of hopper pad
-    static final double kBlueCenterToBoiler = 125.5;
-    static final double kBlueWallToAirship = 114;
-    static final double kBlueCenterToHopper = 161;
-    static final double kBlueWallToHopper = 110.0;
-
-    // Correction for actual robot driving.
-    // Difference between actual robot position and optimal at the gear peg (in local robot coords at the gear peg).
-    static final double kRedBoilerGearXCorrection = 2.5;
-    static final double kRedBoilerGearYCorrection = 7.0;
-    static final double kRedHopperYOffset = -6; //how many inches into the hopper you want to go
-    static final double kBlueBoilerGearXCorrection = 2.5;
-    static final double kBlueBoilerGearYCorrection = -1.0;
-    static final double kBlueHopperYOffset = -4; //how many inches into the hopper you want to go
+    
+    static final RobotProfile kRobotProfile = new CompBot();
+    static final FieldProfile kFieldProfile = new DalyField();
 
     // Path Variables
     static final double kLargeRadius = 40;
@@ -41,7 +27,7 @@ public class PathAdapter {
 
     // Don't mess with these
     static final double kPegOffsetX = 17.77; // center of airship to boiler peg
-    static final double kPegOffsetY = 30.66; // front of airship to boiler peg
+    static final double kPegOffsetY = 30.66; // front of airship to boiler pegkRobotProfile.getBlueBoilerGearXCorrection()
     static final Rotation2d kRedPegHeading = Rotation2d.fromDegrees(240);
     static final Rotation2d kBluePegHeading = Rotation2d.fromDegrees(120);
     static final Rotation2d kRedHopperHeading = Rotation2d.fromDegrees(45); //angle to hit the red hopper at
@@ -58,7 +44,7 @@ public class PathAdapter {
     static final double kFieldHeight = 324; // total height of the field in inches (doesn't really have to be accurate, everything is relative)
     
     public static Translation2d getRedHopperPosition() {
-        Translation2d contactPoint = new Translation2d(kRedWallToHopper + kHopperOffsetX, kFieldHeight/2 - kRedCenterToHopper - kRedHopperYOffset);
+        Translation2d contactPoint = new Translation2d(kFieldProfile.getRedWallToHopper() + kHopperOffsetX, kFieldHeight/2 - kFieldProfile.getRedCenterToHopper() - kRobotProfile.getRedHopperYOffset());
         Translation2d robotOffset = new Translation2d(kFrontDist, kSideDist);
         robotOffset = robotOffset.direction().rotateBy(kRedHopperHeading).toTranslation().scale(robotOffset.norm());
         return contactPoint.translateBy(robotOffset);
@@ -83,13 +69,13 @@ public class PathAdapter {
     public static Translation2d getRedGearCorrection() {
         return RigidTransform2d.fromRotation(kRedPegHeading)
                 .transformBy(RigidTransform2d
-                        .fromTranslation((new Translation2d(-kRedBoilerGearXCorrection, -kRedBoilerGearYCorrection))))
+                        .fromTranslation((new Translation2d(-kRobotProfile.getRedBoilerGearXCorrection(), -kRobotProfile.getRedBoilerGearYCorrection()))))
                 .getTranslation();
     }
 
     //final position in the gear path, first position in the hopper path
     public static Translation2d getRedGearPosition() {
-        Translation2d pegPosition = new Translation2d(kRedWallToAirship + kPegOffsetX, kFieldHeight / 2 - kPegOffsetY);
+        Translation2d pegPosition = new Translation2d(kFieldProfile.getRedWallToAirship() + kPegOffsetX, kFieldHeight / 2 - kPegOffsetY);
         Translation2d robotOffset = new Translation2d(kRedPegHeading.cos() * kGearPlacementDist,
                 kRedPegHeading.sin() * kGearPlacementDist);
         return pegPosition.translateBy(robotOffset);
@@ -102,7 +88,7 @@ public class PathAdapter {
     //first position in the gear path
     public static RigidTransform2d getRedStartPose() {
         return new RigidTransform2d(new Translation2d(Constants.kCenterToFrontBumperDistance,
-                kFieldHeight / 2 - kRedCenterToBoiler + Constants.kCenterToSideBumperDistance), kStartHeading);
+                kFieldHeight / 2 - kFieldProfile.getRedCenterToBoiler() + Constants.kCenterToSideBumperDistance), kStartHeading);
     }
 
     //second position in the gear path
@@ -144,7 +130,7 @@ public class PathAdapter {
     }
 
     public static Translation2d getBlueHopperPosition() {
-        Translation2d contactPoint = new Translation2d(kBlueWallToHopper + kHopperOffsetX, kFieldHeight/2 + kBlueCenterToHopper + kBlueHopperYOffset);
+        Translation2d contactPoint = new Translation2d(kFieldProfile.getBlueWallToHopper() + kHopperOffsetX, kFieldHeight/2 + kFieldProfile.getBlueCenterToHopper() + kRobotProfile.getBlueHopperYOffset());
         Translation2d robotOffset = new Translation2d(kFrontDist, -kSideDist);
         robotOffset = robotOffset.direction().rotateBy(kBlueHopperHeading).toTranslation().scale(robotOffset.norm());
         return contactPoint.translateBy(robotOffset);
@@ -167,12 +153,12 @@ public class PathAdapter {
     public static Translation2d getBlueGearCorrection() {
         return RigidTransform2d.fromRotation(kBluePegHeading)
                 .transformBy(RigidTransform2d
-                        .fromTranslation((new Translation2d(-kBlueBoilerGearXCorrection, -kBlueBoilerGearYCorrection))))
+                        .fromTranslation((new Translation2d(-kRobotProfile.getBlueBoilerGearXCorrection(), -kRobotProfile.getBlueBoilerGearYCorrection()))))
                 .getTranslation();
     }
 
     private static Translation2d getBlueGearPosition() {
-        Translation2d pegPosition = new Translation2d(kBlueWallToAirship + kPegOffsetX, kFieldHeight / 2 + kPegOffsetY);
+        Translation2d pegPosition = new Translation2d(kFieldProfile.getBlueWallToAirship() + kPegOffsetX, kFieldHeight / 2 + kPegOffsetY);
         Translation2d robotOffset = new Translation2d(kBluePegHeading.cos() * kGearPlacementDist,
                 kBluePegHeading.sin() * kGearPlacementDist);
         return pegPosition.translateBy(robotOffset);
@@ -184,7 +170,7 @@ public class PathAdapter {
 
     public static RigidTransform2d getBlueStartPose() {
         return new RigidTransform2d(new Translation2d(Constants.kCenterToFrontBumperDistance,
-                kFieldHeight / 2 + kBlueCenterToBoiler - Constants.kCenterToSideBumperDistance), kStartHeading);
+                kFieldHeight / 2 + kFieldProfile.getBlueCenterToBoiler() - Constants.kCenterToSideBumperDistance), kStartHeading);
     }
 
     private static Translation2d getBlueCenterPosition() {

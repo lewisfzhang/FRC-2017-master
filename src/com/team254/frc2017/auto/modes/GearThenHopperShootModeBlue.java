@@ -24,9 +24,9 @@ import com.team254.frc2017.auto.actions.WaitAction;
 import com.team254.frc2017.auto.actions.WaitForPathMarkerAction;
 import com.team254.frc2017.paths.BoilerGearToHopperBlue;
 import com.team254.frc2017.paths.BoilerGearToShootBlue;
-import com.team254.frc2017.paths.PathAdapter;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToBoilerGearBlue;
+import com.team254.frc2017.paths.profiles.PathAdapter;
 import com.team254.lib.util.math.RigidTransform2d;
 
 import edu.wpi.first.wpilibj.Timer;
