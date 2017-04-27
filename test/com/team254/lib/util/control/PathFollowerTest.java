@@ -30,7 +30,8 @@ public class PathFollowerTest {
             Constants.kPathFollowingMaxVel, // Profile max abs vel
             Constants.kPathFollowingMaxAccel, // Profile max abs accel
             Constants.kPathFollowingGoalPosTolerance,
-            Constants.kPathFollowingGoalVelTolerance
+            Constants.kPathFollowingGoalVelTolerance,
+            Constants.kPathStopSteeringDistance
     );
 
     @Test
