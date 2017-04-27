@@ -40,7 +40,7 @@ public class PathAdapter {
     static final double kSideDist = Constants.kCenterToSideBumperDistance;
     static final double kHopperTurnDistance = 40; // how long the third segment in the hopper path should be
     static final double kGearTurnDistance = 24; // how long the first segment in the hopper path should be
-    static final double kEndHopperPathX = 96; // X position we want the hopper path to end at
+    static final double kEndHopperPathX = 93.5; // X position we want the hopper path to end at
     static final double kFieldHeight = 324; // total height of the field in inches (doesn't really have to be accurate, everything is relative)
     
     public static Translation2d getRedHopperPosition() {
