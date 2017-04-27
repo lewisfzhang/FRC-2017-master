@@ -40,12 +40,40 @@ public class Shooter extends Subsystem {
         HOLD_WHEN_READY,
         HOLD,
     }
+    
+    private static class RpmProfile {
+        static final double kInitialDelay = 3.0;
+        static final double kTransitionTime = 2.0;
+        static final double kFinalRpmDifference = 50.0;
+        static final double kRpmSlope = kFinalRpmDifference / kTransitionTime;
+        
+        final double mNominalRpm;
+        final double mStartTime;
+        
+        public RpmProfile(double nominal_rpm, double start_time) {
+            mNominalRpm = nominal_rpm;
+            mStartTime = start_time;
+        }
+        
+        public double getRpm(double t) {
+            double dt = Math.max(0.0, t - mStartTime);
+            if (dt < kInitialDelay) {
+                return mNominalRpm;
+            } else if (dt > (kInitialDelay + kTransitionTime)) {
+                return mNominalRpm - kFinalRpmDifference;
+            } else {
+                final double interp = dt - kInitialDelay;
+                return mNominalRpm - interp * kRpmSlope;
+            }
+        }
+    }
 
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
 
     private ControlMethod mControlMethod;
     private double mSetpointRpm;
     private double mLastRpmSpeed;
+    private RpmProfile mRpmProfile;
 
     private CircularBuffer mKfEstimator = new CircularBuffer(Constants.kShooterKfBufferSize);
 
@@ -257,17 +285,19 @@ public class Shooter extends Subsystem {
             }
             if (mKfEstimator.getNumValues() >= Constants.kShooterMinOnTargetSamples) {
                 configureForHold();
+                mRpmProfile = new RpmProfile(mSetpointRpm, timestamp);
             } else {
                 mRightMaster.set(mSetpointRpm);
             }
         }
         // No else because we may have changed control methods above.
-        if (mControlMethod == ControlMethod.HOLD) {            
+        if (mControlMethod == ControlMethod.HOLD && mRpmProfile != null) {            
             // Update Kv if we exceed our target velocity.  As the system heats up, drag is reduced.
-            if (speed > mSetpointRpm) {
-                mKfEstimator.addValue(estimateKf(speed, mRightMaster.getOutputVoltage()));
-                mRightMaster.setF(mKfEstimator.getAverage());
-            }
+            //if (speed > mSetpointRpm) {
+            //    mKfEstimator.addValue(estimateKf(speed, mRightMaster.getOutputVoltage()));
+            //    mRightMaster.setF(mKfEstimator.getAverage());
+            //}
+            mRightMaster.set(mRpmProfile.getRpm(timestamp));
         }
         mDebug.timestamp = timestamp;
         mDebug.rpm = speed;
