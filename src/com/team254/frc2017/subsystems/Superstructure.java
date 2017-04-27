@@ -154,10 +154,6 @@ public class Superstructure extends Subsystem {
                     mSystemState = newState;
                     mCurrentStateStartTime = timestamp;
                     mStateChanged = true;
-                    
-                    if (newState == SystemState.WAITING_FOR_FLYWHEEL) {
-                        System.out.println("Has track? " + RobotState.getInstance().getAimingParameters(timestamp).isPresent());
-                    }
                 } else {
                     mStateChanged = false;
                 }
@@ -492,7 +488,7 @@ public class Superstructure extends Subsystem {
 
                 mLastGoalRange = range;
                 final double setpoint = getShootingSetpointRpm(range);
-                if (allow_shooting) {
+                if (allow_shooting && aim.getStability() >= Constants.kShooterMinTrackStability) {
                     mShooter.setHoldWhenReady(setpoint);
                 } else {
                     mShooter.setSpinUp(setpoint);

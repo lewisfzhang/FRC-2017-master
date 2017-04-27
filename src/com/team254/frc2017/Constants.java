@@ -123,6 +123,7 @@ public class Constants extends ConstantsBase {
     public static double kShooterSetpointDeadbandRpm = 1.0;
 
     // Used to determine when to switch to hold profile.
+    public static double kShooterMinTrackStability = 0.25;
     public static double kShooterStartOnTargetRpm = 50.0;
     public static double kShooterStopOnTargetRpm = 150.0;
     public static int kShooterKfBufferSize = 20;

@@ -171,7 +171,7 @@ public class RobotState {
                     .fromRadians(Math.atan2(robot_to_goal.y(), robot_to_goal.x()));
 
             ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_rotation,
-                    report.latest_timestamp);
+                    report.latest_timestamp, report.stability);
             cached_shooter_aiming_params_ = params;
             
             return Optional.of(params);
