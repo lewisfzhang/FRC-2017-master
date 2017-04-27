@@ -171,10 +171,10 @@ public class RobotState {
     }
 
     public synchronized Optional<ShooterAimingParameters> getAimingParameters(double currentTimestamp) {
-        if (cached_shooter_aiming_params_ != null
+        /*if (cached_shooter_aiming_params_ != null
                 && (currentTimestamp - cached_shooter_aiming_params_ts_ < kCacheTime)) {
             return Optional.of(cached_shooter_aiming_params_);
-        }
+        }*/
 
         List<TrackReport> reports = goal_tracker_.getTracks();
         if (!reports.isEmpty()) {
@@ -188,6 +188,9 @@ public class RobotState {
                     report.latest_timestamp);
             cached_shooter_aiming_params_ = params;
             cached_shooter_aiming_params_ts_ = currentTimestamp;
+            
+            final double kMinStability = 0.25;
+            if (report.stability < kMinStability) return Optional.empty();
             return Optional.of(params);
         } else {
             return Optional.empty();

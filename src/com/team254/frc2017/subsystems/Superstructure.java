@@ -154,6 +154,10 @@ public class Superstructure extends Subsystem {
                     mSystemState = newState;
                     mCurrentStateStartTime = timestamp;
                     mStateChanged = true;
+                    
+                    if (newState == SystemState.WAITING_FOR_FLYWHEEL) {
+                        System.out.println("Has track? " + RobotState.getInstance().getAimingParameters(timestamp).isPresent());
+                    }
                 } else {
                     mStateChanged = false;
                 }
