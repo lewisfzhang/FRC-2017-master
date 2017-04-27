@@ -436,7 +436,7 @@ public class Drive extends Subsystem {
     }
 
     private void updateGoalHeading(double timestamp) {
-        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
+        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp);
         if (aim.isPresent()) {
             mTargetHeading = aim.get().getRobotToGoal();
         }
@@ -488,7 +488,7 @@ public class Drive extends Subsystem {
         if (mIsOnTarget) {
             // Done coarse alignment.
 
-            Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
+            Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp);
             if (aim.isPresent()) {
                 final double distance = aim.get().getRange();
 
@@ -509,7 +509,7 @@ public class Drive extends Subsystem {
     }
 
     private void updateDriveTowardsGoalApproach(double timestamp) {
-        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp, true);
+        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters(timestamp);
         mIsApproaching = true;
         if (aim.isPresent()) {
             final double distance = aim.get().getRange();

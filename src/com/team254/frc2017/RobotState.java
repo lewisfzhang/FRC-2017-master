@@ -63,8 +63,6 @@ public class RobotState {
     private Rotation2d camera_yaw_correction_;
     private double differential_height_;
     private ShooterAimingParameters cached_shooter_aiming_params_ = null;
-    private double cached_shooter_aiming_params_ts_ = 0;
-    private static final double kCacheTime = 1.0 / 20.0;
 
     private RobotState() {
         reset(0, new RigidTransform2d());
@@ -162,20 +160,8 @@ public class RobotState {
         return cached_shooter_aiming_params_ == null ? Optional.empty() : Optional.of(cached_shooter_aiming_params_);
     }
 
-    public synchronized Optional<ShooterAimingParameters> getAimingParameters(double currentTimestamp,
-            boolean forceUpdate) {
-        if (forceUpdate) {
-            cached_shooter_aiming_params_ = null;
-        }
-        return getAimingParameters(currentTimestamp);
-    }
 
     public synchronized Optional<ShooterAimingParameters> getAimingParameters(double currentTimestamp) {
-        /*if (cached_shooter_aiming_params_ != null
-                && (currentTimestamp - cached_shooter_aiming_params_ts_ < kCacheTime)) {
-            return Optional.of(cached_shooter_aiming_params_);
-        }*/
-
         List<TrackReport> reports = goal_tracker_.getTracks();
         if (!reports.isEmpty()) {
             TrackReport report = reports.get(0);
@@ -187,10 +173,7 @@ public class RobotState {
             ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_rotation,
                     report.latest_timestamp);
             cached_shooter_aiming_params_ = params;
-            cached_shooter_aiming_params_ts_ = currentTimestamp;
             
-            final double kMinStability = 0.25;
-            if (report.stability < kMinStability) return Optional.empty();
             return Optional.of(params);
         } else {
             return Optional.empty();
@@ -199,6 +182,7 @@ public class RobotState {
 
     public synchronized void resetVision() {
         goal_tracker_.reset();
+        cached_shooter_aiming_params_ = null;
     }
 
     public synchronized Twist2d generateOdometryFromSensors(double left_encoder_delta_distance,
