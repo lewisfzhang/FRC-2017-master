@@ -220,7 +220,7 @@ public class PathAdapter {
     public static void main(String[] args) {
         System.out.println("Red:\n" + getRedStartPose().getTranslation());
         System.out.println("Center: " + getRedCenterPosition());
-        System.out.println("Gear: " + getRedGearPosition());
+        System.out.println("Gear: " + getRedGearPositionCorrected());
         System.out.println("Gear turn: " + getRedGearTurnPosition());
         System.out.println("Hopper turn: " + getRedHopperTurnPosition());
         System.out.println("Hopper: " + getRedHopperPosition());
@@ -228,7 +228,7 @@ public class PathAdapter {
         System.out.println("Boiler gear to hopper path:\n" + getRedHopperPath());
         System.out.println("\nBlue:\n" + getBlueStartPose().getTranslation());
         System.out.println("Center: " + getBlueCenterPosition());
-        System.out.println("Gear: " + getBlueGearPosition());
+        System.out.println("Gear: " + getBlueGearPositionCorrected());
         System.out.println("Gear turn: " + getBlueGearTurnPosition());
         System.out.println("Hopper turn: " + getBlueHopperTurnPosition());
         System.out.println("Hopper: " + getBlueHopperPosition());

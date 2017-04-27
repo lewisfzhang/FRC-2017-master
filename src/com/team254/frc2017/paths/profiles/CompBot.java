@@ -9,7 +9,7 @@ public class CompBot implements RobotProfile {
 
     @Override
     public double getRedBoilerGearYCorrection() {
-        return 7.0;
+        return 2;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class CompBot implements RobotProfile {
 
     @Override
     public double getBlueBoilerGearYCorrection() {
-        return -1.0;
+        return 1.0;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class CompBot implements RobotProfile {
 
     @Override
     public double getBlueHopperYOffset() {
-        return 5.0;
+        return 6.0;
     }
     
 }
