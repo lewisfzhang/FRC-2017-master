@@ -2,6 +2,8 @@ package com.team254.frc2017.subsystems;
 
 import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
+import com.team254.frc2017.RobotState;
+import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.CircularBuffer;
@@ -14,6 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public class Shooter extends Subsystem {
     private static Shooter mInstance = null;
@@ -25,6 +28,7 @@ public class Shooter extends Subsystem {
         public double voltage;
         public ControlMethod control_method;
         public double kF;
+        public double range;
     }
     
     public static int kSpinUpProfile = 0;
@@ -279,6 +283,12 @@ public class Shooter extends Subsystem {
         mDebug.voltage = voltage;
         mDebug.control_method = mControlMethod;
         mDebug.kF = mKfEstimator.getAverage();
+        Optional<ShooterAimingParameters> params = RobotState.getInstance().getAimingParameters(Timer.getFPGATimestamp()); 
+        if(params.isPresent()) {
+            mDebug.range = params.get().getRange();
+        } else {
+            mDebug.range = 0;
+        }
     }
 
     public synchronized double getSetpointRpm() {
