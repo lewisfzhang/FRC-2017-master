@@ -37,7 +37,7 @@ public class Shooter extends Subsystem {
         return mInstance;
     }
 
-    public enum ControlMethod {
+    private enum ControlMethod {
         OPEN_LOOP,
         SPIN_UP,
         HOLD_WHEN_READY,
