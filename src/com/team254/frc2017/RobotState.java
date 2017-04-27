@@ -161,7 +161,7 @@ public class RobotState {
     }
 
 
-    public synchronized Optional<ShooterAimingParameters> getAimingParameters(double currentTimestamp) {
+    public synchronized Optional<ShooterAimingParameters> getAimingParameters() {
         List<TrackReport> reports = goal_tracker_.getTracks();
         if (!reports.isEmpty()) {
             TrackReport report = reports.get(0);

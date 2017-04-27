@@ -473,7 +473,7 @@ public class Superstructure extends Subsystem {
     public synchronized boolean autoSpinShooter(boolean allow_shooting) {
         final double timestamp = Timer.getFPGATimestamp();
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
-                .getAimingParameters(timestamp);
+                .getAimingParameters();
         mLED.setWantedState(LED.WantedState.FIND_RANGE);
         if (aimOptional.isPresent()) {
             final ShooterAimingParameters aim = aimOptional.get();

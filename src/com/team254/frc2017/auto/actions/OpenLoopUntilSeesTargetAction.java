@@ -25,7 +25,7 @@ public class OpenLoopUntilSeesTargetAction implements Action {
 
     public boolean isFinished() {
         double now = Timer.getFPGATimestamp();
-        Optional<ShooterAimingParameters> aimParams = mState.getAimingParameters(now);
+        Optional<ShooterAimingParameters> aimParams = mState.getAimingParameters();
         if (aimParams.isPresent() && Math.abs(now - aimParams.get().getLastSeenTimestamp()) < 0.5) {
             return true;
         }

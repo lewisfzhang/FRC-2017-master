@@ -283,7 +283,7 @@ public class Shooter extends Subsystem {
         mDebug.voltage = voltage;
         mDebug.control_method = mControlMethod;
         mDebug.kF = mKfEstimator.getAverage();
-        Optional<ShooterAimingParameters> params = RobotState.getInstance().getAimingParameters(Timer.getFPGATimestamp()); 
+        Optional<ShooterAimingParameters> params = RobotState.getInstance().getAimingParameters(); 
         if(params.isPresent()) {
             mDebug.range = params.get().getRange();
         } else {
