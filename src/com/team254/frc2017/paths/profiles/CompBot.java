@@ -39,7 +39,7 @@ public class CompBot implements RobotProfile {
 
     @Override
     public double getBlueHopperYOffset() {
-        return 3.5;
+        return 3.0;
     }
     
 }
