@@ -22,6 +22,9 @@ public class Shooter extends Subsystem {
         public double timestamp;
         public double setpoint;
         public double rpm;
+        public double voltage;
+        public ControlMethod control_method;
+        public double kF;
     }
     
     public static int kSpinUpProfile = 0;
@@ -34,7 +37,7 @@ public class Shooter extends Subsystem {
         return mInstance;
     }
 
-    private enum ControlMethod {
+    public enum ControlMethod {
         OPEN_LOOP,
         SPIN_UP,
         HOLD_WHEN_READY,
@@ -233,6 +236,7 @@ public class Shooter extends Subsystem {
 
     private void handleClosedLoop(double timestamp) {
         final double speed = getSpeedRpm();
+        final double voltage = mRightMaster.getOutputVoltage();
         mLastRpmSpeed = speed;
 
         // See if we should be spinning up or holding.
@@ -253,7 +257,7 @@ public class Shooter extends Subsystem {
 
             if (mOnTarget) {
                 // Update Kv.
-                mKfEstimator.addValue(estimateKf(speed, mRightMaster.getOutputVoltage()));
+                mKfEstimator.addValue(estimateKf(speed, voltage));
             }
             if (mKfEstimator.getNumValues() >= Constants.kShooterMinOnTargetSamples) {
                 configureForHold();
@@ -265,13 +269,16 @@ public class Shooter extends Subsystem {
         if (mControlMethod == ControlMethod.HOLD) {            
             // Update Kv if we exceed our target velocity.  As the system heats up, drag is reduced.
             if (speed > mSetpointRpm) {
-                mKfEstimator.addValue(estimateKf(speed, mRightMaster.getOutputVoltage()));
+                mKfEstimator.addValue(estimateKf(speed, voltage));
                 mRightMaster.setF(mKfEstimator.getAverage());
             }
         }
         mDebug.timestamp = timestamp;
         mDebug.rpm = speed;
         mDebug.setpoint = mSetpointRpm;
+        mDebug.voltage = voltage;
+        mDebug.control_method = mControlMethod;
+        mDebug.kF = mKfEstimator.getAverage();
     }
 
     public synchronized double getSetpointRpm() {
