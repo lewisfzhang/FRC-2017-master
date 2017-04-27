@@ -59,7 +59,7 @@ public class Constants extends ConstantsBase {
 
     // Voltages
     public static double kIntakeVoltageMax = 7.5;
-    public static double kIntakeVoltageMin = 4.5;
+    public static double kIntakeVoltageMin = 5.5;
     public static double kIntakeShootingVoltage = 4.0;
     public static final double kIntakeVoltageDifference = kIntakeVoltageMax - kIntakeVoltageMin;
 
@@ -244,7 +244,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraXOffset = -3.3211;
     public static double kCameraYOffset = 0.0;
     public static double kCameraZOffset = 20.9;
-    public static double kCameraPitchAngleDegrees = 31.3; // Measured on 4/23
+    public static double kCameraPitchAngleDegrees = 29.56; // Measured on 4/26
     public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
 
