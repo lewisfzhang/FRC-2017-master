@@ -43,13 +43,17 @@ public class GearThenHopperShootModeRed extends AutoModeBase {
         PathContainer gearPath = new StartToBoilerGearRed();
         double start = Timer.getFPGATimestamp();
         runAction(new ResetPoseFromPathAction(gearPath));
-        runAction(new DrivePathAction(gearPath));
+        runAction(new ParallelAction(Arrays.asList(new Action[] {
+                new DrivePathAction(gearPath),
+                new ActuateHopperAction(true),
+                new SeriesAction(Arrays.asList(new Action[] {
+                        new WaitAction(1), new DeployIntakeAction(true)
+                    }))
+        })));
         runAction(
                 new ParallelAction(Arrays.asList(new Action[] {
                         new SetFlywheelRPMAction(2900.0), // spin up flywheel to save time
-                        new DeployIntakeAction(true),
-                        new ScoreGearAction(),
-                        new ActuateHopperAction(true),
+                        new ScoreGearAction()
                 })));
         runAction(new CorrectPoseAction(RigidTransform2d.fromTranslation(PathAdapter.getRedGearCorrection())));
         runAction(new DrivePathAction(new BoilerGearToHopperRed()));
