@@ -85,7 +85,7 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized boolean isShooting() {
-        return (mSystemState == SystemState.SHOOTING) || (mSystemState == SystemState.SHOOTING_SPIN_DOWN);
+        return (mSystemState == SystemState.SHOOTING) || (mSystemState == SystemState.SHOOTING_SPIN_DOWN) || (mSystemState == SystemState.UNJAMMING_WITH_SHOOT);
     }
 
     private Loop mLoop = new Loop() {
