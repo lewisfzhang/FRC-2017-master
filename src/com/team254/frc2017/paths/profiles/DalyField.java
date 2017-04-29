@@ -34,7 +34,7 @@ public class DalyField implements FieldProfile {
 
     @Override
     public double getBlueCenterToHopper() {
-        return 163.5;
+        return 162.25;
     }
 
     @Override
