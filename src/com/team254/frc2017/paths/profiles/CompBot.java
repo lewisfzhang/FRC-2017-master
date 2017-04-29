@@ -4,7 +4,7 @@ public class CompBot implements RobotProfile {
 
     @Override
     public double getRedBoilerGearXCorrection() {
-        return 2.5;
+        return 0.5;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class CompBot implements RobotProfile {
 
     @Override
     public double getRedHopperYOffset() {
-        return -6.0;
+        return -5.0;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class CompBot implements RobotProfile {
 
     @Override
     public double getBlueHopperXOffset() {
-        return -1.0;
+        return -4.0;
     }
 
     @Override
