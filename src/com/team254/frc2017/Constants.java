@@ -193,19 +193,11 @@ public class Constants extends ConstantsBase {
     public static final int kGearWristSolenoid = 7; // PCM 0, Solenoid 7
 
     // Analog Inputs
-    public static int kLeftBallSensorId = 1;
-    public static int kRightBallSensorId = 0;
     public static int kLEDOnId = 2;
 
     // Digital Outputs
     public static int kGreenLEDId = 9;
     public static int kRangeLEDId = 8;
-
-    // Relays
-    public static int kLEDRelayId = 0;
-
-    // Camera Number
-    public static int kPixyNumber = 1;
 
     // Phone
     public static int kAndroidAppTcpPort = 8254;
