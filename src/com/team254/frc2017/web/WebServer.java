@@ -17,7 +17,6 @@ public class WebServer {
     private static TaskQueue streamUpdate = new TaskQueue(200);
 
     public static void main(String args[]) {
-
         startServer();
         while (true) {
             try {
@@ -25,7 +24,6 @@ public class WebServer {
             } catch (Exception e) {
             }
         }
-
     }
 
     public static void startServer() {
