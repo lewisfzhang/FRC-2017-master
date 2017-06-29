@@ -1,5 +1,10 @@
 package com.team254.frc2017;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.team254.frc2017.Constants.RobotName;
 import com.team254.frc2017.auto.AutoModeExecuter;
 import com.team254.frc2017.loops.Looper;
@@ -11,11 +16,6 @@ import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
 import com.team254.frc2017.vision.VisionServer;
 import com.team254.lib.util.*;
 import com.team254.lib.util.math.RigidTransform2d;
-
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -188,7 +188,7 @@ public class Robot extends IterativeRobot {
             double turn = mControlBoard.getTurn();
 
             boolean wants_aim_button = mControlBoard.getAimButton();
-//            wants_aim_button = !mDelayedAimButton.update(timestamp, !wants_aim_button);
+            // wants_aim_button = !mDelayedAimButton.update(timestamp, !wants_aim_button);
 
             if (wants_aim_button || mControlBoard.getDriveAimButton()) {
 
@@ -210,7 +210,6 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setWantedState(Superstructure.WantedState.RANGE_FINDING);
                 }
             } else {
-
                 // Make sure not to interrupt shooting spindown.
                 if (!mSuperstructure.isShooting()) {
                     mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),

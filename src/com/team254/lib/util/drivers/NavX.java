@@ -1,11 +1,11 @@
 package com.team254.lib.util.drivers;
 
+import edu.wpi.first.wpilibj.SPI;
+
 import com.kauailabs.navx.AHRSProtocol.AHRSUpdateBase;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.ITimestampedDataSubscriber;
 import com.team254.lib.util.math.Rotation2d;
-
-import edu.wpi.first.wpilibj.SPI;
 
 public class NavX {
     protected class Callback implements ITimestampedDataSubscriber {

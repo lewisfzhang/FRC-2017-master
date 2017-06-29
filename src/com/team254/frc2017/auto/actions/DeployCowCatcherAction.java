@@ -1,9 +1,9 @@
 package com.team254.frc2017.auto.actions;
 
-import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
-import com.team254.frc2017.subsystems.MotorGearGrabber;
-
 import edu.wpi.first.wpilibj.Timer;
+
+import com.team254.frc2017.subsystems.MotorGearGrabber;
+import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
 
 public class DeployCowCatcherAction implements Action {
 

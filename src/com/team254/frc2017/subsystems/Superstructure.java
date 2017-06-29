@@ -1,5 +1,10 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
@@ -7,12 +12,7 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.CircularBuffer;
 import com.team254.lib.util.InterpolatingDouble;
-import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.RevRoboticsAirPressureSensor;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
 

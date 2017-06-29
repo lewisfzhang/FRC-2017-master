@@ -1,6 +1,7 @@
 package com.team254.frc2017.web;
 
 import com.team254.lib.util.SystemManager;
+
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.api.WebSocketException;

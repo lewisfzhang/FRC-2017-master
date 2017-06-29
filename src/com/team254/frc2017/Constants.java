@@ -1,11 +1,12 @@
 package com.team254.frc2017;
 
+import edu.wpi.first.wpilibj.Solenoid;
+
 import com.team254.lib.util.ConstantsBase;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 import com.team254.lib.util.math.PolynomialRegression;
 
-import edu.wpi.first.wpilibj.Solenoid;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;

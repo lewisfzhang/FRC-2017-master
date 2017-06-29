@@ -3,13 +3,14 @@ package com.team254.frc2017.web.handlers;
 import com.team254.frc2017.Constants;
 import com.team254.lib.util.ConstantsBase.Constant;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
 
 public class ConstantsServlet extends HttpServlet {
 

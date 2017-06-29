@@ -1,6 +1,11 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.CANTalon;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
@@ -10,10 +15,6 @@ import com.team254.lib.util.CircularBuffer;
 import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
 import java.util.Optional;

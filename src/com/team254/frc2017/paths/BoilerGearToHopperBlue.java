@@ -1,8 +1,5 @@
 package com.team254.frc2017.paths;
 
-import java.util.ArrayList;
-
-import com.team254.frc2017.paths.PathBuilder.Waypoint;
 import com.team254.frc2017.paths.profiles.PathAdapter;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.math.RigidTransform2d;

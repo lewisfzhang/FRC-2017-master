@@ -1,11 +1,8 @@
 package com.team254.lib.util.drivers;
 
-import java.util.LinkedList;
-
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogTrigger;
-import edu.wpi.first.wpilibj.AnalogTriggerOutput.AnalogTriggerType;
-import edu.wpi.first.wpilibj.Counter;
+
+import java.util.LinkedList;
 
 /**
  * Driver for an analog Ultrasonic Sensor (mainly to help smooth out noise).

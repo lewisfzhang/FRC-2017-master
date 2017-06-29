@@ -1,15 +1,24 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.StatusFrameRate;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.Kinematics;
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import com.team254.lib.util.*;
+import com.team254.lib.util.DriveSignal;
+import com.team254.lib.util.ReflectingCSVWriter;
+import com.team254.lib.util.Util;
 import com.team254.lib.util.control.Lookahead;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.control.PathFollower;
@@ -19,13 +28,6 @@ import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Twist2d;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -615,7 +617,8 @@ public class Drive extends Subsystem {
                             Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
                             Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
                             Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel,
-                            Constants.kPathFollowingGoalPosTolerance, Constants.kPathFollowingGoalVelTolerance, Constants.kPathStopSteeringDistance));
+                            Constants.kPathFollowingGoalPosTolerance, Constants.kPathFollowingGoalVelTolerance,
+                            Constants.kPathStopSteeringDistance));
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         } else {
@@ -753,9 +756,12 @@ public class Drive extends Subsystem {
         mLeftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
         mLeftSlave.set(Constants.kLeftDriveMasterId);
 
-        System.out.println("Drive Right Master Current: " + currentRightMaster + " Drive Right Slave Current: " + currentRightSlave);
-        System.out.println("Drive Left Master Current: " + currentLeftMaster + " Drive Left Slave Current: " + currentLeftSlave);
-        System.out.println("Drive RPM RMaster: " + rpmRightMaster + " RSlave: " + rpmRightSlave + " LMaster: " + rpmLeftMaster + " LSlave: " + rpmLeftSlave);
+        System.out.println("Drive Right Master Current: " + currentRightMaster + " Drive Right Slave Current: "
+                + currentRightSlave);
+        System.out.println(
+                "Drive Left Master Current: " + currentLeftMaster + " Drive Left Slave Current: " + currentLeftSlave);
+        System.out.println("Drive RPM RMaster: " + rpmRightMaster + " RSlave: " + rpmRightSlave + " LMaster: "
+                + rpmLeftMaster + " LSlave: " + rpmLeftSlave);
 
         boolean failure = false;
 

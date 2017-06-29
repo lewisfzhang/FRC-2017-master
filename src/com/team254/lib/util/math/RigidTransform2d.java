@@ -1,6 +1,6 @@
 package com.team254.lib.util.math;
 
-import static com.team254.lib.util.Util.*;
+import static com.team254.lib.util.Util.epsilonEquals;
 
 import com.team254.lib.util.Interpolable;
 

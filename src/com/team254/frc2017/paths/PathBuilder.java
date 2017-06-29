@@ -1,12 +1,12 @@
 package com.team254.frc2017.paths;
 
-import java.util.List;
-
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.control.PathSegment;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
+
+import java.util.List;
 
 public class PathBuilder {
     private static final double kEpsilon = 1E-9;

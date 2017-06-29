@@ -1,14 +1,14 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+
 import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.MovingAverage;
 import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
-
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 
 import java.util.Arrays;
 

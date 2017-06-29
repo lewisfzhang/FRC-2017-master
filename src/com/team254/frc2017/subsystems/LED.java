@@ -1,9 +1,10 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalOutput;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
-import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class LED extends Subsystem {
     public static final int kDefaultBlinkCount = 4;

@@ -1,12 +1,14 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
+
 import com.ctre.CANTalon;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
-import edu.wpi.first.wpilibj.Timer;
 
 import java.util.Arrays;
 
@@ -299,7 +301,7 @@ public class Hopper extends Subsystem {
             System.out.println("!!!!!!!!!!!!!!!! Hooper Slave Current Low !!!!!!!!!!!!!!!!!!!");
         }
 
-        if (!Util.allCloseTo(Arrays.asList(currentMaster, currentSlave), currentMaster, 5.0)){
+        if (!Util.allCloseTo(Arrays.asList(currentMaster, currentSlave), currentMaster, 5.0)) {
             failure = true;
             System.out.println("!!!!!!!!!!!!!!!! Hopper Currents Different !!!!!!!!!!!!!!!!!");
         }

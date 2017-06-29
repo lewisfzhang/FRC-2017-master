@@ -1,16 +1,16 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.CANTalon;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
 import com.team254.lib.util.drivers.MB1043;
-import com.team254.lib.util.drivers.UltrasonicSensor;
-
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MotorGearGrabber extends Subsystem {
 
@@ -122,7 +122,7 @@ public class MotorGearGrabber extends Subsystem {
                         newState = mSystemState;
                         break;
                     }
-                    
+
                     mUltrasonicSensor.update();
 
                     if (newState != mSystemState) {
@@ -165,15 +165,15 @@ public class MotorGearGrabber extends Subsystem {
             return SystemState.BALL_CLEARING;
         case IDLE:
             return SystemState.STOWING;
-            // Fall through intended.
+        // Fall through intended.
         default:
             setWristDown();
             mMasterTalon.set(kIntakeGearSetpoint);
             if (mMasterTalon.getOutputCurrent() > kIntakeThreshold) {
-                if(timeInState - mThresholdStart > kThresholdTime) {
+                if (timeInState - mThresholdStart > kThresholdTime) {
                     LED.getInstance().setWantedState(LED.WantedState.BLINK);
                 } else {
-                    if(mThresholdStart == Double.POSITIVE_INFINITY) {
+                    if (mThresholdStart == Double.POSITIVE_INFINITY) {
                         mThresholdStart = timeInState;
                     }
                 }
@@ -226,7 +226,7 @@ public class MotorGearGrabber extends Subsystem {
             return SystemState.INTAKE;
         default:
             setWristUp();
-            if(timeInState < 1) {
+            if (timeInState < 1) {
                 mMasterTalon.set(kIntakeGearSetpoint);
             } else {
                 mMasterTalon.set(0.0);
@@ -240,12 +240,14 @@ public class MotorGearGrabber extends Subsystem {
     public void setOpenLoop(double value) {
         mMasterTalon.set(value);
     }
-    
+
     public double getLatestRawDistance() {
-        return 0;//mUltrasonicSensor.getLatestDistanceInches();
+        return 0;// mUltrasonicSensor.getLatestDistanceInches();
     }
-    
-    public double getRawDistanceInches(){return 0;}
+
+    public double getRawDistanceInches() {
+        return 0;
+    }
 
     public double getFilteredDistance() {
         return mUltrasonicSensor.getAverageDistance();

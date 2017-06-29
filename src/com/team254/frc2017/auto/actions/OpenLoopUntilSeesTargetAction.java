@@ -1,16 +1,14 @@
 package com.team254.frc2017.auto.actions;
 
-import java.util.Optional;
+import edu.wpi.first.wpilibj.Timer;
 
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.subsystems.LED;
-import com.team254.frc2017.subsystems.MotorGearGrabber.WantedState;
 import com.team254.lib.util.DriveSignal;
-import com.team254.lib.util.math.Rotation2d;
 
-import edu.wpi.first.wpilibj.Timer;
+import java.util.Optional;
 
 public class OpenLoopUntilSeesTargetAction implements Action {
 

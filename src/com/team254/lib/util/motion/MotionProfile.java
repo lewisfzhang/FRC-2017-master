@@ -1,13 +1,12 @@
 package com.team254.lib.util.motion;
 
+import static com.team254.lib.util.Util.epsilonEquals;
+import static com.team254.lib.util.motion.MotionUtil.kEpsilon;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-
-import com.team254.lib.util.motion.MotionState;
-import static com.team254.lib.util.motion.MotionUtil.*;
-import static com.team254.lib.util.Util.*;
 
 /**
  * A motion profile specifies a 1D time-parameterized trajectory. The trajectory is composed of successively coincident

@@ -1,9 +1,9 @@
 package com.team254.lib.util.pixy;
 
+import edu.wpi.first.wpilibj.SPI;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.wpi.first.wpilibj.SPI;
 
 public class PixyCam {
 

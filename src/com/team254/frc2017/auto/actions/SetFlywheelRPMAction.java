@@ -1,7 +1,6 @@
 package com.team254.frc2017.auto.actions;
 
 import com.team254.frc2017.subsystems.Shooter;
-import com.team254.frc2017.subsystems.Superstructure;
 
 public class SetFlywheelRPMAction extends RunOnceAction {
 

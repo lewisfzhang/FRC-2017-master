@@ -1,8 +1,9 @@
 package com.team254.frc2017.auto.modes;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.AutoModeEndedException;
-import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * Auto detect which alliance we are part of.  Default to RED side.

@@ -1,10 +1,11 @@
 package com.team254.frc2017;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.modes.*;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.json.simple.JSONArray;
 
 import java.util.function.Supplier;

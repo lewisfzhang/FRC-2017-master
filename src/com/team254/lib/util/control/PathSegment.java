@@ -1,7 +1,5 @@
 package com.team254.lib.util.control;
 
-import java.util.Optional;
-
 import com.team254.frc2017.Constants;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
@@ -10,6 +8,8 @@ import com.team254.lib.util.motion.MotionProfileConstraints;
 import com.team254.lib.util.motion.MotionProfileGenerator;
 import com.team254.lib.util.motion.MotionProfileGoal;
 import com.team254.lib.util.motion.MotionState;
+
+import java.util.Optional;
 
 /**
  * Class representing a segment of the robot's autonomous path.

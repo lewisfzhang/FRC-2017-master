@@ -1,7 +1,5 @@
 package com.team254.frc2017.auto.modes;
 
-import java.util.Arrays;
-
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.AutoModeEndedException;
 import com.team254.frc2017.auto.actions.Action;
@@ -12,12 +10,12 @@ import com.team254.frc2017.auto.actions.DrivePathAction;
 import com.team254.frc2017.auto.actions.LowerGearAction;
 import com.team254.frc2017.auto.actions.ParallelAction;
 import com.team254.frc2017.auto.actions.ResetPoseFromPathAction;
-import com.team254.frc2017.auto.actions.SeriesAction;
 import com.team254.frc2017.auto.actions.SetFlywheelRPMAction;
 import com.team254.frc2017.auto.actions.WaitAction;
-import com.team254.frc2017.auto.actions.WaitForPathMarkerAction;
 import com.team254.frc2017.paths.BoilerToHopperBlue;
 import com.team254.frc2017.paths.PathContainer;
+
+import java.util.Arrays;
 
 public class ActuateHopperShootModeBlue extends AutoModeBase {
 

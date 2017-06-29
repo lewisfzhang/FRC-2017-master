@@ -1,12 +1,13 @@
 package com.team254.frc2017.web;
 
+import com.team254.frc2017.web.handlers.ConstantsServlet;
+import com.team254.frc2017.web.handlers.ResetConstantsServlet;
 import com.team254.lib.util.TaskQueue;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-
-import com.team254.frc2017.web.handlers.*;
 
 import java.util.ArrayList;
 

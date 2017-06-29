@@ -1,9 +1,9 @@
 package com.team254.frc2017.auto.actions;
 
+import edu.wpi.first.wpilibj.Timer;
+
 import com.team254.frc2017.RobotState;
 import com.team254.lib.util.math.RigidTransform2d;
-
-import edu.wpi.first.wpilibj.Timer;
 
 public class CorrectPoseAction extends RunOnceAction {
     RigidTransform2d mCorrection;

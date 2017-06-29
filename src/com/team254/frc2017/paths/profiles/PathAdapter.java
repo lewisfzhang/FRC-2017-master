@@ -1,7 +1,5 @@
 package com.team254.frc2017.paths.profiles;
 
-import java.util.ArrayList;
-
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.paths.PathBuilder;
 import com.team254.frc2017.paths.PathBuilder.Waypoint;
@@ -9,6 +7,8 @@ import com.team254.lib.util.control.Path;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
+
+import java.util.ArrayList;
 
 /**
  * Takes field measurements and creates paths from them
