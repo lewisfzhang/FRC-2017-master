@@ -81,7 +81,7 @@ CTRE Libs: http://www.ctr-electronics.com/hro.html#product_tabs_technical_resour
           <li>Public inner classes</li>
           <li>Private variables</li>
           <li>Private enums</li>
-          <li>Constructur(s), starting with the lowest number of arguments</li>
+          <li>Constructor(s), starting with the lowest number of arguments</li>
           <li>Public methods</li>
           <li>Private methods</li>
           <li>Private inner classes</li>
@@ -115,7 +115,7 @@ CTRE Libs: http://www.ctr-electronics.com/hro.html#product_tabs_technical_resour
         <li><b>_.vision</b> - For vision code</li>
         </ul></li>
         <li><b>com.team254.lib</b><ul>
-        <li><i>Any libraries / classes (not written by Team 254 </i></li>
+        <li><i>Any libraries / classes (not written by Team 254) </i></li>
         <li><b>_.util</b> - utility classes written by Team 254</li>
         </ul></li>
         </ul>
