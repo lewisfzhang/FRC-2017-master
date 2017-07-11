@@ -27,6 +27,7 @@ import com.team254.frc2017.paths.BoilerGearToShootBlue;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToBoilerGearBlue;
 import com.team254.frc2017.paths.profiles.PathAdapter;
+import com.team254.frc2017.subsystems.Drive;
 import com.team254.lib.util.math.RigidTransform2d;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -41,15 +42,14 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
         runAction(new ParallelAction(Arrays.asList(new Action[] {
                 new DrivePathAction(gearPath),
                 new ActuateHopperAction(true),
-                new SeriesAction(Arrays.asList(new Action[] {
-                        new WaitAction(1), new DeployIntakeAction(true)
-                    }))
         })));
         runAction(
-                new ParallelAction(Arrays.asList(new Action[] {
-                        new SetFlywheelRPMAction(2900.0), // spin up flywheel to save time
-                        new ScoreGearAction()
-                })));
+            new ParallelAction(Arrays.asList(new Action[] {
+                    new SetFlywheelRPMAction(2900.0), // spin up flywheel to save time
+                    new ScoreGearAction(),
+                    new DeployIntakeAction(false)
+            }))
+        );
         runAction(new CorrectPoseAction(RigidTransform2d.fromTranslation(PathAdapter.getBlueGearCorrection())));
         runAction(new DrivePathAction(new BoilerGearToHopperBlue()));
         System.out.println("Shoot Time: " + (Timer.getFPGATimestamp() - start));
