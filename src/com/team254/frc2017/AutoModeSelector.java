@@ -25,7 +25,7 @@ public class AutoModeSelector {
     }
 
     private static final AutoModeCreator mDefaultMode = new AutoModeCreator("AutoDetect Alliance Gear than Hopper Shoot",
-            () -> new AutoDetectAllianceGearThenShootMode());
+            () -> new GearThenHopperShootModeBlue());
     private static final AutoModeCreator[] mAllModes = {
             new AutoModeCreator("Boiler Gear then Intake Shoot Blue", () -> new GearThenIntakeModeBlue()),
             new AutoModeCreator("Boiler Gear then Intake Shoot Red", () -> new GearThenIntakeModeRed()),

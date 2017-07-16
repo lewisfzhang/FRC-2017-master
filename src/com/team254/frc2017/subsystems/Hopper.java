@@ -198,7 +198,8 @@ public class Hopper extends Subsystem {
     }
 
     private SystemState handleSlowReverse() {
-        setOpenLoop(-kFeedPower * 0.25);
+//        setOpenLoop(-kFeedPower * 0.25);
+        setOpenLoop(0.0);
         switch (mWantedState) {
         case FEED:
             return SystemState.FEEDING;
