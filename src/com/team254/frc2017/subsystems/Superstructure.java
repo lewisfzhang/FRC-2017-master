@@ -487,10 +487,11 @@ public class Superstructure extends Subsystem {
             if (!Constants.kIsShooterTuning) {
 
                 mLastGoalRange = range;
-                final double setpoint = getShootingSetpointRpm(range);
+                double setpoint = getShootingSetpointRpm(range);
                 if (allow_shooting && aim.getStability() >= Constants.kShooterMinTrackStability) {
                     mShooter.setHoldWhenReady(setpoint);
                 } else {
+                    setpoint = getShootingSetpointRpm(Constants.kShooterOptimalRange);
                     mShooter.setSpinUp(setpoint);
                 }
 
