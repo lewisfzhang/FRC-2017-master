@@ -24,7 +24,7 @@ public class CompBot implements RobotProfile {
 
     @Override
     public double getBlueBoilerGearXCorrection() {
-        return 2.5;
+        return 0.5;
     }
 
     @Override
