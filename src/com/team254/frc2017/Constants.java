@@ -206,7 +206,7 @@ public class Constants extends ConstantsBase {
     // PATH FOLLOWING
     public static double kMinLookAhead = 12.0; // inches
     public static double kMinLookAheadSpeed = 9.0; // inches per second
-    public static double kMaxLookAhead = 18.0; // inches
+    public static double kMaxLookAhead = 24.0; // inches
     public static double kMaxLookAheadSpeed = 120.0; // inches per second
     public static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
     public static double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;
@@ -262,15 +262,15 @@ public class Constants extends ConstantsBase {
     // TUNE ME
     public static double[][] kFlywheelDistanceRpmValues = {
             // At champs 4/27
-            { 90.0, 2905.0 },
-            { 95.0, 2955.0 },
-            { 100.0, 3005.0 },
-            { 105.0, 3040.0 },
-            { 110.0, 3090.0 },
-            { 115.0, 3140.0 },
-            { 120.0, 3190.0 },
-            { 125.0, 3240.0 },
-            { 130.0, 3290.0 },  
+            { 90.0, 2890.0 },
+            { 95.0, 2940.0 },
+            { 100.0, 2990.0 },
+            { 105.0, 3025.0 },
+            { 110.0, 3075.0 },
+            { 115.0, 3125.0 },
+            { 120.0, 3175.0 },
+            { 125.0, 3225.0 },
+            { 130.0, 3275.0 },  
             
             // Pre-champs 4/9
             /*

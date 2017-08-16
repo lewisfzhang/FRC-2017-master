@@ -16,10 +16,10 @@ import java.util.ArrayList;
 public class PathAdapter {
     
     static final RobotProfile kRobotProfile = new CompBot();
-    static final FieldProfile kFieldProfile = new DalyField();
+    static final FieldProfile kFieldProfile = new BellarmineField();
 
     // Path Variables
-    static final double kLargeRadius = 40;
+    static final double kLargeRadius = 45;
     static final double kModerateRadius = 30;
     static final double kNominalRadius = 20;
     static final double kSmallRadius = 10;
@@ -29,7 +29,7 @@ public class PathAdapter {
     static final double kPegOffsetX = 17.77; // center of airship to boiler peg
     static final double kPegOffsetY = 30.66; // front of airship to boiler pegkRobotProfile.getBlueBoilerGearXCorrection()
     static final Rotation2d kRedPegHeading = Rotation2d.fromDegrees(240);
-    static final Rotation2d kBluePegHeading = Rotation2d.fromDegrees(120);
+    static final Rotation2d kBluePegHeading = Rotation2d.fromDegrees(125);
     static final Rotation2d kRedHopperHeading = Rotation2d.fromDegrees(45); //angle to hit the red hopper at
     static final Rotation2d kBlueHopperHeading = Rotation2d.fromDegrees(315); //angle to hit the blue hopper at
     static final Rotation2d kStartHeading = Rotation2d.fromDegrees(180); //start angle (backwards)
@@ -40,7 +40,7 @@ public class PathAdapter {
     static final double kSideDist = Constants.kCenterToSideBumperDistance;
     static final double kHopperTurnDistance = 40; // how long the third segment in the hopper path should be
     static final double kGearTurnDistance = 24; // how long the first segment in the hopper path should be
-    static final double kEndHopperPathX = 93; // X position we want the hopper path to end at
+    static final double kEndHopperPathX = 84.5; // X position we want the hopper path to end at
     static final double kFieldHeight = 324; // total height of the field in inches (doesn't really have to be accurate, everything is relative)
     
     public static Translation2d getRedHopperPosition() {
