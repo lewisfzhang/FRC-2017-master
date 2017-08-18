@@ -4,6 +4,10 @@ import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.LatchedBoolean;
 
+/**
+ * Keeps track of the robot's connection to the driver station.  If 
+ * it disconnects for more than 1 second, start blinking the LEDs.
+ */
 public class ConnectionMonitor extends Subsystem {
 
     public static double kConnectionTimeoutSec = 1.0;

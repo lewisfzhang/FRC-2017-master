@@ -6,6 +6,15 @@ import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 
+/**
+ * The LED subsystem consists of the green ring light on the front of the robot used for 
+ * aiming and communicating information with the drivers (when a gear is picked up, when
+ * the robot loses connection) and the blue "range finding" LED strip on the back of the 
+ * robot used for signaling to the human player.  The main things this subsystem has to 
+ * do is turn each LED on, off, or make it blink.
+ * 
+ * @see Subsystem.java
+ */
 public class LED extends Subsystem {
     public static final int kDefaultBlinkCount = 4;
     public static final double kDefaultBlinkDuration = 0.2; // seconds for full cycle

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.team254.frc2017.Constants;
+import com.team254.frc2017.Robot;
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
@@ -16,6 +17,27 @@ import com.team254.lib.util.drivers.RevRoboticsAirPressureSensor;
 
 import java.util.Optional;
 
+/**
+ * The superstructure subsystem is the overarching superclass containing all components 
+ * of the superstructure: the intake, hopper, feeder, shooter and LEDs.  The superstructure 
+ * subsystem also contains some miscellaneous hardware that is located in the superstructure 
+ * but isn't part of any other subsystems like the compressor, pressure sensor, and hopper 
+ * wall pistons.  
+ * 
+ * Instead of interacting with subsystems like the feeder and intake directly, the {@link Robot}
+ * class interacts with the superstructure, which passes on the commands to the correct 
+ * subsystem.
+ * 
+ * The superstructure also coordinates actions between different subsystems like the feeder and
+ * shooter.
+ * 
+ * @see Intake
+ * @see Hopper
+ * @see Feeder
+ * @see Shooter
+ * @see LED
+ * @see Subsystem
+ */
 public class Superstructure extends Subsystem {
 
     static Superstructure mInstance = null;
@@ -42,16 +64,17 @@ public class Superstructure extends Subsystem {
     // Intenal state of the system
     public enum SystemState {
         IDLE,
-        WAITING_FOR_ALIGNMENT,
-        WAITING_FOR_FLYWHEEL,
-        SHOOTING,
-        SHOOTING_SPIN_DOWN,
-        UNJAMMING,
-        UNJAMMING_WITH_SHOOT,
-        JUST_FEED,
-        EXHAUSTING,
-        HANGING,
-        RANGE_FINDING
+        WAITING_FOR_ALIGNMENT, // waiting for the drivebase to aim
+        WAITING_FOR_FLYWHEEL, // waiting for the shooter to spin up
+        SHOOTING, // shooting
+        SHOOTING_SPIN_DOWN, // short period after the driver releases the shoot button where the flywheel
+                            // continues to spin so the last couple of shots don't go short
+        UNJAMMING, // unjamming the feeder and hopper
+        UNJAMMING_WITH_SHOOT, // unjamming while the flywheel spins
+        JUST_FEED, // run hopper and feeder but not the shooter
+        EXHAUSTING, // exhaust the feeder, hopper, and intake 
+        HANGING, // run shooter in reverse, everything else is idle
+        RANGE_FINDING // blink the LED strip to let drivers know if they are at an optimal shooting range
     };
 
     // Desired function from user
@@ -223,7 +246,7 @@ public class Superstructure extends Subsystem {
     private SystemState handleWaitingForAlignment() {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
-        mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
+        mHopper.setWantedState(Hopper.WantedState.IDLE);
         setWantIntakeOnForShooting();
         
         // Don't care about this return value - check the drive directly.
@@ -251,7 +274,7 @@ public class Superstructure extends Subsystem {
     private SystemState handleWaitingForFlywheel() {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
-        mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
+        mHopper.setWantedState(Hopper.WantedState.IDLE);
         setWantIntakeOnForShooting();
 
         if (autoSpinShooter(true)) {

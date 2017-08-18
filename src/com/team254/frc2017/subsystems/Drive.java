@@ -31,6 +31,16 @@ import com.team254.lib.util.math.Twist2d;
 import java.util.Arrays;
 import java.util.Optional;
 
+
+/**
+ * This subsystem consists of the robot's drivetrain: 4 CIM motors, 4 talons, 
+ * one solenoid and 2 pistons to shift gears, and a navX board.  The Drive subsystem 
+ * has several control methods including open loop, velocity control, and position
+ * control.  The Drive subsystem also has several methods that handle automatic 
+ * aiming, autonomous path driving, and manual control.
+ * 
+ * @see Subsystem.java
+ */
 public class Drive extends Subsystem {
 
     private static Drive mInstance = new Drive();
@@ -38,24 +48,24 @@ public class Drive extends Subsystem {
     private static final int kLowGearPositionControlSlot = 0;
     private static final int kHighGearVelocityControlSlot = 1;
 
-    private static double kPegDistanceGoal = 16.0;
-
     public static Drive getInstance() {
         return mInstance;
     }
 
     // The robot drivetrain's various states.
     public enum DriveControlState {
-        OPEN_LOOP,
-        VELOCITY_SETPOINT,
-        PATH_FOLLOWING,
-        AIM_TO_GOAL,
-        TURN_TO_HEADING,
-        DRIVE_TOWARDS_GOAL_COARSE_ALIGN,
-        DRIVE_TOWARDS_GOAL_APPROACH,
-        DRIVE_TO_PEG
+        OPEN_LOOP, // open loop voltage control
+        VELOCITY_SETPOINT, // velocity PID control
+        PATH_FOLLOWING, // used for autonomous driving
+        AIM_TO_GOAL, // turn to face the boiler
+        TURN_TO_HEADING, // turn in place
+        DRIVE_TOWARDS_GOAL_COARSE_ALIGN, // turn to face the boiler, then DRIVE_TOWARDS_GOAL_COARSE_ALIGN
+        DRIVE_TOWARDS_GOAL_APPROACH // drive forwards until we are at optimal shooting distance
     }
 
+    /**
+     * Check if the drive talons are configured for velocity control
+     */
     protected static boolean usesTalonVelocityControl(DriveControlState state) {
         if (state == DriveControlState.VELOCITY_SETPOINT || state == DriveControlState.PATH_FOLLOWING) {
             return true;
@@ -63,12 +73,14 @@ public class Drive extends Subsystem {
         return false;
     }
 
+    /**
+     * Check if the drive talons are configured for position control
+     */
     protected static boolean usesTalonPositionControl(DriveControlState state) {
         if (state == DriveControlState.AIM_TO_GOAL ||
                 state == DriveControlState.TURN_TO_HEADING ||
                 state == DriveControlState.DRIVE_TOWARDS_GOAL_COARSE_ALIGN ||
-                state == DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH ||
-                state == DriveControlState.DRIVE_TO_PEG) {
+                state == DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH) {
             return true;
         }
         return false;
@@ -137,9 +149,6 @@ public class Drive extends Subsystem {
                     return;
                 case DRIVE_TOWARDS_GOAL_APPROACH:
                     updateDriveTowardsGoalApproach(timestamp);
-                    return;
-                case DRIVE_TO_PEG:
-                    updateDriveToPeg();
                     return;
                 default:
                     System.out.println("Unexpected drive control state: " + mDriveControlState);
@@ -218,6 +227,9 @@ public class Drive extends Subsystem {
         in.register(mLoop);
     }
 
+    /**
+     * Configure talons for open loop control
+     */
     public synchronized void setOpenLoop(DriveSignal signal) {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mLeftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
@@ -323,6 +335,9 @@ public class Drive extends Subsystem {
         updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
     }
 
+    /**
+     * Configures talons for velocity control
+     */
     private void configureTalonsForSpeedControl() {
         if (!usesTalonVelocityControl(mDriveControlState)) {
             // We entered a velocity control state.
@@ -340,6 +355,9 @@ public class Drive extends Subsystem {
         }
     }
 
+    /**
+     * Configures talons for position control
+     */
     private void configureTalonsForPositionControl() {
         if (!usesTalonPositionControl(mDriveControlState)) {
             // We entered a position control state.
@@ -376,7 +394,13 @@ public class Drive extends Subsystem {
             mRightMaster.set(0);
         }
     }
-
+    
+    /**
+     * Adjust position setpoint (if already in position mode)
+     * 
+     * @param left_inches_per_sec
+     * @param right_inches_per_sec
+     */
     private synchronized void updatePositionSetpoint(double left_position_inches, double right_position_inches) {
         if (usesTalonPositionControl(mDriveControlState)) {
             mLeftMaster.set(inchesToRotations(left_position_inches));
@@ -437,6 +461,11 @@ public class Drive extends Subsystem {
         return mNavXBoard.getYawRateDegreesPerSec();
     }
 
+    /**
+     * Update the heading at which the robot thinks the boiler is.
+     * 
+     * Is called periodically when the robot is auto-aiming towards the boiler.
+     */
     private void updateGoalHeading(double timestamp) {
         Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
         if (aim.isPresent()) {
@@ -444,6 +473,11 @@ public class Drive extends Subsystem {
         }
     }
 
+    /**
+     * Turn the robot to a target heading.
+     * 
+     * Is called periodically when the robot is auto-aiming towards the boiler.
+     */
     private void updateTurnToHeading(double timestamp) {
         if (Superstructure.getInstance().isShooting()) {
             // Do not update heading while shooting - just base lock. By not updating the setpoint, we will fight to
@@ -455,6 +489,7 @@ public class Drive extends Subsystem {
         // Figure out the rotation necessary to turn to face the goal.
         final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
 
+        // Check if we are on target
         final double kGoalPosTolerance = 0.75; // degrees
         final double kGoalVelTolerance = 5.0; // inches per second
         if (Math.abs(robot_to_target.getDegrees()) < kGoalPosTolerance
@@ -472,17 +507,11 @@ public class Drive extends Subsystem {
                 wheel_delta.right + getRightDistanceInches());
     }
 
-    private void updateDriveToPeg() {
-        double cur = MotorGearGrabber.getInstance().getRawDistanceInches();
-        double error = kPegDistanceGoal - cur; // Positive error means we are too close to wall
-        SmartDashboard.putNumber("peg_distance_error", error);
-        if (Math.abs(error) < 10) {
-            updatePositionSetpoint(getLeftDistanceInches() + error, getRightDistanceInches() + error);
-        } else {
-            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
-        }
-    }
-
+    /**
+     * Essentially does the same thing as updateTurnToHeading but sends the robot
+     * into the DRIVE_TOWARDS_GOAL_APPROACH state if it detects we are not at an
+     * optimal shooting range
+     */
     private void updateDriveTowardsGoalCoarseAlign(double timestamp) {
         updateGoalHeading(timestamp);
         updateTurnToHeading(timestamp);
@@ -510,6 +539,11 @@ public class Drive extends Subsystem {
         }
     }
 
+    /**
+     * Drives the robot straight forwards until it is at an optimal shooting
+     * distance.  Then sends the robot into the AIM_TO_GOAL state for one final
+     * alignment
+     */
     private void updateDriveTowardsGoalApproach(double timestamp) {
         Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
         mIsApproaching = true;
@@ -536,6 +570,11 @@ public class Drive extends Subsystem {
         }
     }
 
+    /**
+     * Called periodically when the robot is in path following mode.  Updates
+     * the path follower with the robots latest pose, distance driven, and velocity,
+     * the updates the wheel velocity setpoints.
+     */
     private void updatePathFollower(double timestamp) {
         RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
         Twist2d command = mPathFollower.update(timestamp, robot_pose,
@@ -557,6 +596,9 @@ public class Drive extends Subsystem {
         return mDriveControlState == DriveControlState.AIM_TO_GOAL;
     }
 
+    /**
+     * Configures the drivebase for auto aiming
+     */
     public synchronized void setWantAimToGoal() {
         if (mDriveControlState != DriveControlState.AIM_TO_GOAL) {
             mIsOnTarget = false;
@@ -568,6 +610,9 @@ public class Drive extends Subsystem {
         setHighGear(false);
     }
 
+    /**
+     * Configures the drivebase for auto driving
+     */
     public synchronized void setWantDriveTowardsGoal() {
         if (mDriveControlState != DriveControlState.DRIVE_TOWARDS_GOAL_COARSE_ALIGN &&
                 mDriveControlState != DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH &&
@@ -581,6 +626,9 @@ public class Drive extends Subsystem {
         setHighGear(false);
     }
 
+    /**
+     * Configures the drivebase to turn to a desired heading
+     */
     public synchronized void setWantTurnToHeading(Rotation2d heading) {
         if (mDriveControlState != DriveControlState.TURN_TO_HEADING) {
             configureTalonsForPositionControl();
@@ -594,17 +642,11 @@ public class Drive extends Subsystem {
         setHighGear(false);
     }
 
-    public synchronized void setWantDriveToPeg() {
-        if (mDriveControlState != DriveControlState.DRIVE_TO_PEG) {
-            mIsOnTarget = false;
-            configureTalonsForPositionControl();
-            mDriveControlState = DriveControlState.DRIVE_TO_PEG;
-            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
-            mTargetHeading = getGyroAngle();
-        }
-        setHighGear(false);
-    }
-
+    /**
+     * Configures the drivebase to drive a path.  Used for autonomous driving
+     * 
+     * @see Path
+     */
     public synchronized void setWantDrivePath(Path path, boolean reversed) {
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             configureTalonsForSpeedControl();
