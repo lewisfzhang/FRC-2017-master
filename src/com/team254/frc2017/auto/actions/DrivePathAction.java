@@ -4,6 +4,14 @@ import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.subsystems.Drive;
 import com.team254.lib.util.control.Path;
 
+/**
+ * Drives the robot along the Path defined in the PathContainer object.
+ * The action finishes once the robot reaches the end of the path.
+ * 
+ * @see PathContainer
+ * @see Path
+ * @see Action
+ */
 public class DrivePathAction implements Action {
 
     private PathContainer mPathContainer;

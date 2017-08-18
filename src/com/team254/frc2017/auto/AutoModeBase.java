@@ -3,7 +3,7 @@ package com.team254.frc2017.auto;
 import com.team254.frc2017.auto.actions.Action;
 
 /**
- * An abstract class that is the basis of the robot's autonomous routines. This is implemented in auto.modes (which are
+ * An abstract class that is the basis of the robot's autonomous routines. This is implemented in auto modes (which are
  * routines that do actions).
  */
 public abstract class AutoModeBase {

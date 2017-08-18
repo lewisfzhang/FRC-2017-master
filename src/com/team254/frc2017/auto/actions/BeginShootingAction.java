@@ -4,6 +4,12 @@ import com.team254.frc2017.subsystems.Drive;
 import com.team254.frc2017.subsystems.Intake;
 import com.team254.frc2017.subsystems.Superstructure;
 
+/**
+ * Action to begin shooting.
+ * 
+ * @see Action
+ * @see RunOnceAction
+ */
 public class BeginShootingAction extends RunOnceAction implements Action {
 
     @Override

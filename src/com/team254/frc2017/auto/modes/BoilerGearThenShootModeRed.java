@@ -13,6 +13,12 @@ import com.team254.frc2017.paths.BoilerGearToShootRed;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToBoilerGearRed;
 
+/**
+ * Scores the preload gear onto the boiler-side peg then shoots the 
+ * 10 preloaded fuel
+ * 
+ * @see AutoModeBase
+ */
 public class BoilerGearThenShootModeRed extends AutoModeBase {
 
     @Override

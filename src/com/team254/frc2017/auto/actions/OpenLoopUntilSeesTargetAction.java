@@ -10,6 +10,11 @@ import com.team254.lib.util.DriveSignal;
 
 import java.util.Optional;
 
+/**
+ * Runs the drivebase in open loop until the robot sees the boiler.
+ *
+ * @see Action
+ */
 public class OpenLoopUntilSeesTargetAction implements Action {
 
     RobotState mState = RobotState.getInstance();
