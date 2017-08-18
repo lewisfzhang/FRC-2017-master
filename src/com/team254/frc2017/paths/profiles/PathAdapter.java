@@ -11,12 +11,16 @@ import com.team254.lib.util.math.Translation2d;
 import java.util.ArrayList;
 
 /**
- * Takes field measurements and creates paths from them
+ * Uses a field and robot profile to calculate Waypoints for the paths
+ * used by the GearThenHopperShoot auto modes. 
+ * 
+ * @see RobotProfile
+ * @see FieldProfile
  */
 public class PathAdapter {
     
     static final RobotProfile kRobotProfile = new CompBot();
-    static final FieldProfile kFieldProfile = new BellarmineField();
+    static final FieldProfile kFieldProfile = new PracticeField();
 
     // Path Variables
     static final double kLargeRadius = 45;

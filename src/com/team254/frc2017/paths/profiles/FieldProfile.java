@@ -1,7 +1,9 @@
 package com.team254.frc2017.paths.profiles;
 
 /**
- * Holds field measurements
+ * Interface that holds all the field measurements required by the PathAdapter
+ * 
+ * @see PathAdapter
  */
 public interface FieldProfile {
  

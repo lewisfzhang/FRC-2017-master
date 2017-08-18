@@ -1,7 +1,10 @@
 package com.team254.frc2017.paths.profiles;
 
 /**
- * Holds corrective values for how each robot actually drives
+ * Interface that holds all the corrective values for how 
+ * each robot actually drives.
+ * 
+ * @see PathAdapter
  */
 public interface RobotProfile {
     

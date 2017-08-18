@@ -1,5 +1,7 @@
 package com.team254.frc2017.paths;
 
+import com.team254.frc2017.auto.modes.BoilerGearThenShootModeBlue;
+import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
 import com.team254.frc2017.paths.PathBuilder.Waypoint;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.math.RigidTransform2d;
@@ -8,6 +10,14 @@ import com.team254.lib.util.math.Translation2d;
 
 import java.util.ArrayList;
 
+/**
+ * Path from the blue boiler side peg to the blue boiler.
+ * 
+ * Used in BoilerGearThenShootModeBlue
+ * 
+ * @see BoilerGearThenShootModeBlue
+ * @see PathContainer
+ */
 public class BoilerGearToShootBlue implements PathContainer {
 
     @Override

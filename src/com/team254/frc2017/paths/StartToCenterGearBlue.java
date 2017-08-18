@@ -8,6 +8,14 @@ import com.team254.lib.util.math.Translation2d;
 
 import java.util.ArrayList;
 
+/**
+ * Path from the blue alliance wall to the blue center peg.
+ * 
+ * Used in CenterGearToShootBlue
+ * 
+ * @see CenterGearToShootBlue
+ * @see PathContainer
+ */
 public class StartToCenterGearBlue implements PathContainer {
 
     @Override

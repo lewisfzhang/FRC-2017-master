@@ -1,6 +1,9 @@
 package com.team254.frc2017.paths.profiles;
 
-public class BellarmineField implements FieldProfile {
+/**
+ * Contains the measurements for the practice field at the 254 lab
+ */
+public class PracticeField implements FieldProfile {
 
     @Override
     public double getRedCenterToBoiler() {
