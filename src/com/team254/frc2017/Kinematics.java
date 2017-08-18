@@ -48,11 +48,17 @@ public class Kinematics {
         return integrateForwardKinematics(current_pose, with_gyro);
     }
 
+    /**
+     * For convenience, integrate forward kinematics with a Twist2d and previous rotation.
+     */
     public static RigidTransform2d integrateForwardKinematics(RigidTransform2d current_pose,
             Twist2d forward_kinematics) {
         return current_pose.transformBy(RigidTransform2d.exp(forward_kinematics));
     }
 
+    /**
+     * Class that contains left and right wheel velocities
+     */
     public static class DriveVelocity {
         public final double left;
         public final double right;
@@ -63,6 +69,9 @@ public class Kinematics {
         }
     }
 
+    /**
+     * Uses inverse kinematics to convert a Twist2d into left and right wheel velocities
+     */
     public static DriveVelocity inverseKinematics(Twist2d velocity) {
         if (Math.abs(velocity.dtheta) < kEpsilon) {
             return new DriveVelocity(velocity.dx, velocity.dx);

@@ -6,7 +6,7 @@ import com.team254.frc2017.subsystems.Subsystem;
 import java.util.List;
 
 /**
- * Updates all the subsystems
+ * Used to reset, start, stop, and update all subsystems at once
  */
 public class SubsystemManager {
 
