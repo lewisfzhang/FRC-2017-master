@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * @author bg Manages a set of serializable objects
+ * Manages a set of serializable objects
  */
 public class SystemManager {
     private static SystemManager inst = null;

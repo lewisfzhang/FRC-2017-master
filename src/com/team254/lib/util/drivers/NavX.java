@@ -7,6 +7,9 @@ import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.ITimestampedDataSubscriber;
 import com.team254.lib.util.math.Rotation2d;
 
+/**
+ * Driver for a NavX board.  Basically a wrapper for the {@link AHRS} class
+ */
 public class NavX {
     protected class Callback implements ITimestampedDataSubscriber {
         @Override

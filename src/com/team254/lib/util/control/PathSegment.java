@@ -13,8 +13,6 @@ import java.util.Optional;
 
 /**
  * Class representing a segment of the robot's autonomous path.
- * 
- * @author MarioRuiz
  */
 
 public class PathSegment {

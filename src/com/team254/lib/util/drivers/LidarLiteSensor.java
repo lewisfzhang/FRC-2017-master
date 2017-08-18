@@ -6,6 +6,9 @@ import edu.wpi.first.wpilibj.Timer;
 
 import java.util.TimerTask;
 
+/**
+ * Driver for a Lidar Lite sensor
+ */
 public class LidarLiteSensor {
     private I2C mI2C;
     private byte[] mDistance;
