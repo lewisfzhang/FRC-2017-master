@@ -2,6 +2,9 @@ package com.team254.lib.util;
 
 import java.util.LinkedList;
 
+/**
+ * Implements a simple circular buffer.
+ */
 public class CircularBuffer {
     int mWindowSize;
     LinkedList<Double> mSamples;

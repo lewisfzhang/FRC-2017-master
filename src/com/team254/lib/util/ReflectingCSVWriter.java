@@ -5,6 +5,9 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+/**
+ * Writes data to a CSV file
+ */
 public class ReflectingCSVWriter<T> {
     ConcurrentLinkedDeque<String> mLinesToWrite = new ConcurrentLinkedDeque<>();
     PrintWriter mOutput = null;
