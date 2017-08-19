@@ -17,4 +17,4 @@ Android-based Vision System
 
 ## How to Install ADB on the RoboRIO
 
-Download and run the install.os.sh script in the installation folder. Note that this script has only been tested on Mac OS X; it hasn't been tested on Windows or Linux.
+Download and run the [install.os.sh](../installation/install.os.sh) script in the installation folder. Note that this script has only been tested on Mac OS X; it hasn't been tested on Windows or Linux.
