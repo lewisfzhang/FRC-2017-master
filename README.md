@@ -49,6 +49,30 @@ Run the mqtt broker server:
 
 Point your browser at `file:///Users/*YOUR_USERNAME*/pofs/robot/FRC-2017/logger/logger.html` (replacing the path with wherever your repo lives).
 
+## Code Highlights
+- Lag-compensating auto targeting code
+
+	To compensate for camera latency, the [RobotState](src/com/team254/frc2017/RobotState.java) class keeps track of the robot's pose over time and uses the robot's pose at the time the frame was captured rather than the time the frame was recieved to calculate angle displacement.  The [Drive](src/com/team254/frc2017/subsystems/Drive.java) subsystem then takes the aiming parameters calculated by RobotState and uses Motion Magic to turn to the correct heading.   
+
+- Path following with an adaptive pure pursuit controller and motion profiling
+
+	To control autonomous driving, the robot utilizes an [adaptive pure pursuit controller](src/com/team254/lib/util/control/AdaptivePurePursuitController.java) to control steering and a [custom trapezoidal motion profile generator](src/com/team254/lib/util/motion) to control velocity.  
+
+- Path generation and visualization via JavaScript app
+
+	[Cheesy path](cheesy_path), and external JavaScript app. is used for fast and simple path creation.  The app allows a user to create, visualize, export, and import autonomous paths.
+
+- Self-test modes for each subsystem
+
+	Each subsystem contains a [checkSystem()](src/com/team254/frc2017/subsystems/Drive.java#L742) method that tests motor output currents and RPMs.  These self tests allow us to quickly verify that all motors are working properly.
+
+- Automatic path adjustments based on field measurements
+
+	The [PathAdapter](src/com/team254/frc2017/paths/profiles/PathAdapter.java) class enables easy autonomous path recalculation based on field measurements.  The PathAdapter uses field measurements to calculate the waypoint positions used in the [GearThenHopperShoot](src/com/team254/frc2017/auto/modes/GearThenHopperShootModeRed.java) autonomous modes.
+
+- Android-based Vision System for target detection
+
+	[Cheezdroid](vision_app), an android-based vision processing system, is used for image processing and target detection.  The app runs on a Nexus 5 phone.  Since all processing is done on the Nexus 5 itself, the app is able to maintain a smooth 30 FPS output for maximum performance.
 
 ## Package Functions
 - com.team254.frc2017
