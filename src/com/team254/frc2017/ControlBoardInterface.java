@@ -14,7 +14,7 @@ public interface ControlBoardInterface {
     boolean getLowGear();
 
     boolean getAimButton();
-    
+
     boolean getDriveAimButton();
 
     // OPERATOR CONTROLS

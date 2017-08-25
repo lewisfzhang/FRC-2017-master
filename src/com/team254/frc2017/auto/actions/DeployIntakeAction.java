@@ -5,8 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import com.team254.frc2017.subsystems.Intake;
 
 /**
- * Deploys the intake.  Based on the runIntake parameter, waits 0.25
- * seconds to let the intake deploy reliably.
+ * Deploys the intake. Based on the runIntake parameter, waits 0.25 seconds to let the intake deploy reliably.
  * 
  * @see Action
  */

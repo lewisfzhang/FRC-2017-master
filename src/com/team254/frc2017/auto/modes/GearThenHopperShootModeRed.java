@@ -25,11 +25,10 @@ import com.team254.lib.util.math.RigidTransform2d;
 import java.util.Arrays;
 
 /**
- * Scores the preload gear onto the boiler-side peg then deploys 
- * the hopper and shoots all 60 balls (10 preload + 50 hopper).
+ * Scores the preload gear onto the boiler-side peg then deploys the hopper and shoots all 60 balls (10 preload + 50
+ * hopper).
  * 
- * This was the primary autonomous mode used at SVR, St. Louis Champs,
- * and FOC.
+ * This was the primary autonomous mode used at SVR, St. Louis Champs, and FOC.
  * 
  * @see AutoModeBase
  */

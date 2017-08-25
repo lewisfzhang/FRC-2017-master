@@ -88,8 +88,8 @@ public class RobotState {
     }
 
     /**
-     * Returns the robot's position on the field at a certain time.  Linearly interpolates
-     * between stored robot positions to fill in the gaps.
+     * Returns the robot's position on the field at a certain time. Linearly interpolates between stored robot positions
+     * to fill in the gaps.
      */
     public synchronized RigidTransform2d getFieldToVehicle(double timestamp) {
         return field_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
@@ -167,7 +167,6 @@ public class RobotState {
         return cached_shooter_aiming_params_ == null ? Optional.empty() : Optional.of(cached_shooter_aiming_params_);
     }
 
-
     public synchronized Optional<ShooterAimingParameters> getAimingParameters() {
         List<TrackReport> reports = goal_tracker_.getTracks();
         if (!reports.isEmpty()) {
@@ -180,7 +179,7 @@ public class RobotState {
             ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_rotation,
                     report.latest_timestamp, report.stability);
             cached_shooter_aiming_params_ = params;
-            
+
             return Optional.of(params);
         } else {
             return Optional.empty();

@@ -10,8 +10,7 @@ import com.team254.lib.util.math.Rotation2d;
 import java.util.Optional;
 
 /**
- * Turns the robot towards a target heading until the robot either reaches that
- * heading or sees the boiler.
+ * Turns the robot towards a target heading until the robot either reaches that heading or sees the boiler.
  *
  * @see Action
  */

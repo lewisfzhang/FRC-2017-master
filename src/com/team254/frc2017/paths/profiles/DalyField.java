@@ -21,7 +21,7 @@ public class DalyField implements FieldProfile {
     }
 
     @Override
-    public double getRedWallToHopper() { //TODO: verify this
+    public double getRedWallToHopper() { // TODO: verify this
         return 110.5;
     }
 

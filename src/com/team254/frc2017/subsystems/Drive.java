@@ -31,13 +31,11 @@ import com.team254.lib.util.math.Twist2d;
 import java.util.Arrays;
 import java.util.Optional;
 
-
 /**
- * This subsystem consists of the robot's drivetrain: 4 CIM motors, 4 talons, 
- * one solenoid and 2 pistons to shift gears, and a navX board.  The Drive subsystem 
- * has several control methods including open loop, velocity control, and position
- * control.  The Drive subsystem also has several methods that handle automatic 
- * aiming, autonomous path driving, and manual control.
+ * This subsystem consists of the robot's drivetrain: 4 CIM motors, 4 talons, one solenoid and 2 pistons to shift gears,
+ * and a navX board. The Drive subsystem has several control methods including open loop, velocity control, and position
+ * control. The Drive subsystem also has several methods that handle automatic aiming, autonomous path driving, and
+ * manual control.
  * 
  * @see Subsystem.java
  */
@@ -394,7 +392,7 @@ public class Drive extends Subsystem {
             mRightMaster.set(0);
         }
     }
-    
+
     /**
      * Adjust position setpoint (if already in position mode)
      * 
@@ -508,9 +506,8 @@ public class Drive extends Subsystem {
     }
 
     /**
-     * Essentially does the same thing as updateTurnToHeading but sends the robot
-     * into the DRIVE_TOWARDS_GOAL_APPROACH state if it detects we are not at an
-     * optimal shooting range
+     * Essentially does the same thing as updateTurnToHeading but sends the robot into the DRIVE_TOWARDS_GOAL_APPROACH
+     * state if it detects we are not at an optimal shooting range
      */
     private void updateDriveTowardsGoalCoarseAlign(double timestamp) {
         updateGoalHeading(timestamp);
@@ -540,9 +537,8 @@ public class Drive extends Subsystem {
     }
 
     /**
-     * Drives the robot straight forwards until it is at an optimal shooting
-     * distance.  Then sends the robot into the AIM_TO_GOAL state for one final
-     * alignment
+     * Drives the robot straight forwards until it is at an optimal shooting distance. Then sends the robot into the
+     * AIM_TO_GOAL state for one final alignment
      */
     private void updateDriveTowardsGoalApproach(double timestamp) {
         Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
@@ -571,9 +567,8 @@ public class Drive extends Subsystem {
     }
 
     /**
-     * Called periodically when the robot is in path following mode.  Updates
-     * the path follower with the robots latest pose, distance driven, and velocity,
-     * the updates the wheel velocity setpoints.
+     * Called periodically when the robot is in path following mode. Updates the path follower with the robots latest
+     * pose, distance driven, and velocity, the updates the wheel velocity setpoints.
      */
     private void updatePathFollower(double timestamp) {
         RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
@@ -643,7 +638,7 @@ public class Drive extends Subsystem {
     }
 
     /**
-     * Configures the drivebase to drive a path.  Used for autonomous driving
+     * Configures the drivebase to drive a path. Used for autonomous driving
      * 
      * @see Path
      */

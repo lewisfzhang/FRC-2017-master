@@ -26,8 +26,8 @@ import com.team254.lib.util.math.Rotation2d;
 import java.util.Arrays;
 
 /**
- * Rams the field hopper head on with the robot's intake then waits
- * for the balls to fall into the robot and shoots them.
+ * Rams the field hopper head on with the robot's intake then waits for the balls to fall into the robot and shoots
+ * them.
  * 
  * @see AutoModeBase
  */

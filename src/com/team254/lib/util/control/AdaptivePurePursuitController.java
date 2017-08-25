@@ -87,7 +87,8 @@ public class AdaptivePurePursuitController {
                 new Twist2d(scale_factor * arc.length, 0.0,
                         arc.length * getDirection(pose, report.lookahead_point) * Math.abs(scale_factor) / arc.radius),
                 report.closest_point_distance, report.max_speed,
-                report.lookahead_point_speed * Math.signum(scale_factor), report.lookahead_point, report.remaining_path_distance);
+                report.lookahead_point_speed * Math.signum(scale_factor), report.lookahead_point,
+                report.remaining_path_distance);
     }
 
     public boolean hasPassedMarker(String marker) {

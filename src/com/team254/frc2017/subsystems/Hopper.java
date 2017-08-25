@@ -13,11 +13,9 @@ import com.team254.lib.util.drivers.CANTalonFactory;
 import java.util.Arrays;
 
 /**
- * The hopper subsystem consists of the 11 floor rollers and 4 shelf rollers
- * that funnel fuel from the robot's storage hopper into the feeder.  The rollers
- * are all powered by two 775 Pro motors hooked up two 2 talons.  The motors are open
- * loop controlled.  The main things this subsystem has to are feed fuel, exhaust fuel, 
- * and unjam fuel.
+ * The hopper subsystem consists of the 11 floor rollers and 4 shelf rollers that funnel fuel from the robot's storage
+ * hopper into the feeder. The rollers are all powered by two 775 Pro motors hooked up two 2 talons. The motors are open
+ * loop controlled. The main things this subsystem has to are feed fuel, exhaust fuel, and unjam fuel.
  * 
  * @see Subsystem.java
  */

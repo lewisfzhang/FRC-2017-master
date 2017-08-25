@@ -13,13 +13,11 @@ import com.team254.lib.util.drivers.CANTalonFactory;
 import com.team254.lib.util.drivers.MB1043;
 
 /**
- * The gear grabber subsystem consists of one BAG motor used to intake and exhaust 
- * gears and one pancake piston used to pivot the entire subsystem from a floor 
- * pickup position to a scoring position.  The motor is driven in open loop.  Since
- * the subsystem lacks any encoders, it detects when a gear has been acquired by
- * checking whether current is above a threshold value.  The main things this subsystem 
- * has to are intake gears, score gears, and clear balls (run motor in reverse while the
- * grabber is down to push balls away).
+ * The gear grabber subsystem consists of one BAG motor used to intake and exhaust gears and one pancake piston used to
+ * pivot the entire subsystem from a floor pickup position to a scoring position. The motor is driven in open loop.
+ * Since the subsystem lacks any encoders, it detects when a gear has been acquired by checking whether current is above
+ * a threshold value. The main things this subsystem has to are intake gears, score gears, and clear balls (run motor in
+ * reverse while the grabber is down to push balls away).
  * 
  * @see Subsystem.java
  */
@@ -221,7 +219,7 @@ public class MotorGearGrabber extends Subsystem {
 
     public SystemState handleStowing(double timeInState) {
         setWristUp();
-        // keep sucking the gear in to make sure it doesn't fly out as the 
+        // keep sucking the gear in to make sure it doesn't fly out as the
         // grabber pivots up
         mMasterTalon.set(kIntakeGearSetpoint);
         if (timeInState > kTransitionDelay) {

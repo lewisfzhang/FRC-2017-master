@@ -44,5 +44,5 @@ public class CompBot implements RobotProfile {
     public double getBlueHopperYOffset() {
         return 0.0;
     }
-    
+
 }

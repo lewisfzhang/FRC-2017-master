@@ -44,5 +44,5 @@ public class PracticeBot implements RobotProfile {
     public double getBlueHopperYOffset() {
         return -4.0;
     }
-    
+
 }

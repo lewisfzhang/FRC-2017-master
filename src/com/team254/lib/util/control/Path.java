@@ -102,18 +102,14 @@ public class Path {
         PathSegment currentSegment = segments.get(0);
         rv.closest_point = currentSegment.getClosestPoint(robot);
         rv.closest_point_distance = new Translation2d(robot, rv.closest_point).norm();
-        /*if (segments.size() > 1) {
-            // Check next segment to see if it is closer.
-            final Translation2d next_segment_closest_point = segments.get(1).getClosestPoint(robot);
-            final double next_segment_closest_point_distance = new Translation2d(robot, next_segment_closest_point)
-                    .norm();
-            if (next_segment_closest_point_distance < rv.closest_point_distance) {
-                rv.closest_point = next_segment_closest_point;
-                rv.closest_point_distance = next_segment_closest_point_distance;
-                removeCurrentSegment();
-                currentSegment = segments.get(0);
-            }
-        }*/
+        /*
+         * if (segments.size() > 1) { // Check next segment to see if it is closer. final Translation2d
+         * next_segment_closest_point = segments.get(1).getClosestPoint(robot); final double
+         * next_segment_closest_point_distance = new Translation2d(robot, next_segment_closest_point) .norm(); if
+         * (next_segment_closest_point_distance < rv.closest_point_distance) { rv.closest_point =
+         * next_segment_closest_point; rv.closest_point_distance = next_segment_closest_point_distance;
+         * removeCurrentSegment(); currentSegment = segments.get(0); } }
+         */
         rv.remaining_segment_distance = currentSegment.getRemainingDistance(rv.closest_point);
         rv.remaining_path_distance = rv.remaining_segment_distance;
         for (int i = 1; i < segments.size(); ++i) {
@@ -188,10 +184,10 @@ public class Path {
             maxStartSpeed += Math
                     .sqrt(maxStartSpeed * maxStartSpeed + 2 * Constants.kPathFollowingMaxAccel * segment.getLength());
             startSpeeds[i] = segment.getStartState().vel();
-            //System.out.println(maxStartSpeed + ", " + startSpeeds[i]);
+            // System.out.println(maxStartSpeed + ", " + startSpeeds[i]);
             if (startSpeeds[i] > maxStartSpeed) {
                 startSpeeds[i] = maxStartSpeed;
-                //System.out.println("Segment starting speed is too high!");
+                // System.out.println("Segment starting speed is too high!");
             }
             maxStartSpeed = startSpeeds[i];
         }

@@ -26,11 +26,10 @@ import com.team254.lib.util.math.RigidTransform2d;
 import java.util.Arrays;
 
 /**
- * Scores the preload gear onto the boiler-side peg then deploys 
- * the hopper and shoots all 60 balls (10 preload + 50 hopper).
+ * Scores the preload gear onto the boiler-side peg then deploys the hopper and shoots all 60 balls (10 preload + 50
+ * hopper).
  * 
- * This was the primary autonomous mode used at SVR, St. Louis Champs,
- * and FOC.
+ * This was the primary autonomous mode used at SVR, St. Louis Champs, and FOC.
  * 
  * @see AutoModeBase
  */
@@ -46,12 +45,11 @@ public class GearThenHopperShootModeBlue extends AutoModeBase {
                 new ActuateHopperAction(true),
         })));
         runAction(
-            new ParallelAction(Arrays.asList(new Action[] {
-                    new SetFlywheelRPMAction(2900.0), // spin up flywheel to save time
-                    new ScoreGearAction(),
-                    new DeployIntakeAction(true)
-            }))
-        );
+                new ParallelAction(Arrays.asList(new Action[] {
+                        new SetFlywheelRPMAction(2900.0), // spin up flywheel to save time
+                        new ScoreGearAction(),
+                        new DeployIntakeAction(true)
+                })));
         runAction(new CorrectPoseAction(RigidTransform2d.fromTranslation(PathAdapter.getBlueGearCorrection())));
         runAction(new DrivePathAction(new BoilerGearToHopperBlue()));
         System.out.println("Shoot Time: " + (Timer.getFPGATimestamp() - start));

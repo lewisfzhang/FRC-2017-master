@@ -13,8 +13,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 /**
- * A list of constants used by the rest of the robot code. This include physics
- * constants as well as constants determined through calibrations.
+ * A list of constants used by the rest of the robot code. This include physics constants as well as constants
+ * determined through calibrations.
  */
 public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
@@ -35,7 +35,7 @@ public class Constants extends ConstantsBase {
     public static double kShooterTuningRpm = 3500.0;
 
     /* ROBOT PHYSICAL CONSTANTS */
-    
+
     // Wheels
     public static double kDriveWheelDiameterInches = 3.419;
     public static double kTrackWidthInches = 26.655;
@@ -117,13 +117,13 @@ public class Constants extends ConstantsBase {
     public static double kShooterStartOnTargetRpm = 50.0;
     public static double kShooterStopOnTargetRpm = 150.0;
     public static int kShooterKfBufferSize = 20;
-    public static int kShooterMinOnTargetSamples = 20;  // Should be <= kShooterKvBufferSize
+    public static int kShooterMinOnTargetSamples = 20; // Should be <= kShooterKvBufferSize
 
     public static int kShooterJamBufferSize = 30;
     public static double kShooterDisturbanceThreshold = 25;
-    public static double kShooterJamTimeout = 1.5;  // In secs
-    public static double kShooterUnjamDuration = 0.5;  // In secs
-    public static double kShooterMinShootingTime = 1.0;  // In secs
+    public static double kShooterJamTimeout = 1.5; // In secs
+    public static double kShooterUnjamDuration = 0.5; // In secs
+    public static double kShooterMinShootingTime = 1.0; // In secs
 
     public static double kShooterSpinDownTime = 0.25;
 
@@ -148,7 +148,7 @@ public class Constants extends ConstantsBase {
     /* TALONS */
     // (Note that if multiple talons are dedicated to a mechanism, any sensors
     // are attached to the master)
-   
+
     // Drive
     public static final int kLeftDriveMasterId = 12;
     public static final int kLeftDriveSlaveId = 11;
@@ -231,7 +231,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraDeadband = 0.0;
 
     /* AIM PARAMETERS */
-    
+
     public static double kDefaultShootingDistanceInches = 95.8;
     public static double kDefaultShootingRPM = 2950.0;
     public static boolean kUseFlywheelAutoAimPolynomial = true; // Change to 'true' to use the best-fit polynomial
@@ -239,9 +239,9 @@ public class Constants extends ConstantsBase {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
-    public static double kShooterOptimalRange = 100.0;  
+    public static double kShooterOptimalRange = 100.0;
     public static double kShooterOptimalRangeFloor = 95.0;
-    public static double kShooterOptimalRangeCeiling = 105.0; 
+    public static double kShooterOptimalRangeCeiling = 105.0;
 
     public static double kShooterAbsoluteRangeFloor = 90.0;
     public static double kShooterAbsoluteRangeCeiling = 130.0;
@@ -256,7 +256,7 @@ public class Constants extends ConstantsBase {
             { 115.0, 3125.0 },
             { 120.0, 3175.0 },
             { 125.0, 3225.0 },
-            { 130.0, 3275.0 },  
+            { 130.0, 3275.0 },
     };
 
     static {

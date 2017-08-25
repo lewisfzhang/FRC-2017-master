@@ -14,10 +14,9 @@ import com.team254.lib.util.drivers.CANTalonFactory;
 import java.util.Arrays;
 
 /**
- * The feeder subsystem consists of the 5 rollers that feed fuel upwards
- * into the shooter.  The rollers are powered by 2 775 Pro motors hooked up
- * to two talons.  The motors are open loop controlled.  The main things this 
- * subsystem has to are feed fuel, exhaust fuel, and unjam
+ * The feeder subsystem consists of the 5 rollers that feed fuel upwards into the shooter. The rollers are powered by 2
+ * 775 Pro motors hooked up to two talons. The motors are open loop controlled. The main things this subsystem has to
+ * are feed fuel, exhaust fuel, and unjam
  * 
  * @see Subsystem.java
  */
@@ -72,11 +71,11 @@ public class Feeder extends Subsystem {
         UNJAMMING_IN, // used for unjamming fuel
         UNJAMMING_OUT, // used for unjamming fuel
         IDLE, // stop all motors
-        EXHAUSTING // run feeder in reverse 
+        EXHAUSTING // run feeder in reverse
     }
 
     public enum WantedState {
-        IDLE, 
+        IDLE,
         UNJAM,
         EXHAUST,
         FEED,
@@ -195,8 +194,8 @@ public class Feeder extends Subsystem {
 
     private SystemState handleFeeding() {
         if (mStateChanged) {
-            //mMasterTalon.changeControlMode(TalonControlMode.Speed);
-            //mMasterTalon.setSetpoint(Constants.kFeederFeedSpeedRpm * Constants.kFeederSensorGearReduction);
+            // mMasterTalon.changeControlMode(TalonControlMode.Speed);
+            // mMasterTalon.setSetpoint(Constants.kFeederFeedSpeedRpm * Constants.kFeederSensorGearReduction);
             mMasterTalon.set(1.0);
         }
         return defaultStateTransfer();
@@ -265,7 +264,8 @@ public class Feeder extends Subsystem {
         mSlaveTalon.changeControlMode(TalonControlMode.Follower);
         mSlaveTalon.set(Constants.kFeederMasterId);
 
-        System.out.println("Feeder Master Current: " + currentMaster + " Slave Current: " + currentSlave + " rpmMaster: " + rpmMaster + " rpmSlave: " + rpmSlave);
+        System.out.println("Feeder Master Current: " + currentMaster + " Slave Current: " + currentSlave
+                + " rpmMaster: " + rpmMaster + " rpmSlave: " + rpmSlave);
 
         boolean failure = false;
 

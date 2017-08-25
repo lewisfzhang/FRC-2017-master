@@ -1,8 +1,7 @@
 package com.team254.frc2017.auto.actions;
 
 /**
- * Template action for something that only needs to be done once
- * and has no need for updates.
+ * Template action for something that only needs to be done once and has no need for updates.
  * 
  * @see Action
  */
