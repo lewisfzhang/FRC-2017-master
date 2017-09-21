@@ -1,9 +1,14 @@
 package com.team254.frc2017.auto.actions;
 
-import com.team254.frc2017.subsystems.Intake;
-
 import edu.wpi.first.wpilibj.Timer;
 
+import com.team254.frc2017.subsystems.Intake;
+
+/**
+ * Deploys the intake. Based on the runIntake parameter, waits 0.25 seconds to let the intake deploy reliably.
+ * 
+ * @see Action
+ */
 public class DeployIntakeAction implements Action {
 
     Intake mIntake = Intake.getInstance();

@@ -1,13 +1,21 @@
 package com.team254.frc2017.paths;
 
-import java.util.List;
-
+import com.team254.frc2017.auto.actions.WaitForPathMarkerAction;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.control.PathSegment;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
+import java.util.List;
+
+/**
+ * Class used to convert a list of Waypoints into a Path object consisting of arc and line PathSegments
+ * 
+ * @see Waypoint
+ * @see Path
+ * @see PathSegment
+ */
 public class PathBuilder {
     private static final double kEpsilon = 1E-9;
     private static final double kReallyBigNumber = 1E9;
@@ -36,6 +44,14 @@ public class PathBuilder {
         return w.get(i);
     }
 
+    /**
+     * A waypoint along a path. Contains a position, radius (for creating curved paths), and speed. The information from
+     * these waypoints is used by the PathBuilder class to generate Paths. Waypoints also contain an optional marker
+     * that is used by the WaitForPathMarkerAction.
+     *
+     * @see PathBuilder
+     * @see WaitForPathMarkerAction
+     */
     public static class Waypoint {
         Translation2d position;
         double radius;
@@ -66,6 +82,9 @@ public class PathBuilder {
         }
     }
 
+    /**
+     * A Line object is formed by two Waypoints. Contains a start and end position, slope, and speed.
+     */
     static class Line {
         Waypoint a;
         Waypoint b;
@@ -98,6 +117,9 @@ public class PathBuilder {
         }
     }
 
+    /**
+     * An Arc object is formed by two Lines that share a common Waypoint. Contains a center position, radius, and speed.
+     */
     static class Arc {
         Line a;
         Line b;

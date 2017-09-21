@@ -1,5 +1,8 @@
 package com.team254.frc2017.paths.profiles;
 
+/**
+ * Contains the measurements for the Daly field at St. Louis champs
+ */
 public class DalyField implements FieldProfile {
 
     @Override
@@ -18,7 +21,7 @@ public class DalyField implements FieldProfile {
     }
 
     @Override
-    public double getRedWallToHopper() { //TODO: verify this
+    public double getRedWallToHopper() { // TODO: verify this
         return 110.5;
     }
 

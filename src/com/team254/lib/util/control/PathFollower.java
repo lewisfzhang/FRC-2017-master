@@ -54,7 +54,8 @@ public class PathFollower {
 
         public Parameters(Lookahead lookahead, double inertia_gain, double profile_kp, double profile_ki,
                 double profile_kv, double profile_kffv, double profile_kffa, double profile_max_abs_vel,
-                double profile_max_abs_acc, double goal_pos_tolerance, double goal_vel_tolerance, double stop_steering_distance) {
+                double profile_max_abs_acc, double goal_pos_tolerance, double goal_vel_tolerance,
+                double stop_steering_distance) {
             this.lookahead = lookahead;
             this.inertia_gain = inertia_gain;
             this.profile_kp = profile_kp;
@@ -134,9 +135,9 @@ public class PathFollower {
                             mGoalPosTolerance, mGoalVelTolerance),
                     new MotionProfileConstraints(Math.min(mMaxProfileVel, steering_command.max_velocity),
                             mMaxProfileAcc));
-            
+
             if (steering_command.remaining_path_length < mStopSteeringDistance) {
-               doneSteering = true;
+                doneSteering = true;
             }
         }
 

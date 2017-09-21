@@ -1,17 +1,18 @@
 package com.team254.frc2017.vision;
 
-import com.team254.frc2017.Constants;
+import edu.wpi.first.wpilibj.Timer;
 
+import com.team254.frc2017.Constants;
 import com.team254.frc2017.vision.messages.HeartbeatMessage;
 import com.team254.frc2017.vision.messages.OffWireMessage;
 import com.team254.frc2017.vision.messages.VisionMessage;
 import com.team254.lib.util.CrashTrackingRunnable;
-import edu.wpi.first.wpilibj.Timer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 

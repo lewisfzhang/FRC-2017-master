@@ -1,5 +1,8 @@
 package com.team254.lib.util.control;
 
+/**
+ * A utility class for interpolating lookahead distance based on current speed.
+ */
 public class Lookahead {
     public final double min_distance;
     public final double max_distance;

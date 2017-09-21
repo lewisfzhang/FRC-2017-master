@@ -1,21 +1,40 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.team254.frc2017.Constants;
+import com.team254.frc2017.Robot;
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.CircularBuffer;
 import com.team254.lib.util.InterpolatingDouble;
-import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.RevRoboticsAirPressureSensor;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
 
+/**
+ * The superstructure subsystem is the overarching superclass containing all components of the superstructure: the
+ * intake, hopper, feeder, shooter and LEDs. The superstructure subsystem also contains some miscellaneous hardware that
+ * is located in the superstructure but isn't part of any other subsystems like the compressor, pressure sensor, and
+ * hopper wall pistons.
+ * 
+ * Instead of interacting with subsystems like the feeder and intake directly, the {@link Robot} class interacts with
+ * the superstructure, which passes on the commands to the correct subsystem.
+ * 
+ * The superstructure also coordinates actions between different subsystems like the feeder and shooter.
+ * 
+ * @see Intake
+ * @see Hopper
+ * @see Feeder
+ * @see Shooter
+ * @see LED
+ * @see Subsystem
+ */
 public class Superstructure extends Subsystem {
 
     static Superstructure mInstance = null;
@@ -42,16 +61,17 @@ public class Superstructure extends Subsystem {
     // Intenal state of the system
     public enum SystemState {
         IDLE,
-        WAITING_FOR_ALIGNMENT,
-        WAITING_FOR_FLYWHEEL,
-        SHOOTING,
-        SHOOTING_SPIN_DOWN,
-        UNJAMMING,
-        UNJAMMING_WITH_SHOOT,
-        JUST_FEED,
-        EXHAUSTING,
-        HANGING,
-        RANGE_FINDING
+        WAITING_FOR_ALIGNMENT, // waiting for the drivebase to aim
+        WAITING_FOR_FLYWHEEL, // waiting for the shooter to spin up
+        SHOOTING, // shooting
+        SHOOTING_SPIN_DOWN, // short period after the driver releases the shoot button where the flywheel
+                            // continues to spin so the last couple of shots don't go short
+        UNJAMMING, // unjamming the feeder and hopper
+        UNJAMMING_WITH_SHOOT, // unjamming while the flywheel spins
+        JUST_FEED, // run hopper and feeder but not the shooter
+        EXHAUSTING, // exhaust the feeder, hopper, and intake
+        HANGING, // run shooter in reverse, everything else is idle
+        RANGE_FINDING // blink the LED strip to let drivers know if they are at an optimal shooting range
     };
 
     // Desired function from user
@@ -75,7 +95,7 @@ public class Superstructure extends Subsystem {
     public boolean isDriveOnTarget() {
         return mDrive.isOnTarget() && mDrive.isAutoAiming();
     }
-    
+
     public boolean isOnTargetToShoot() {
         return isDriveOnTarget() && mShooter.isOnTarget();
     }
@@ -85,7 +105,8 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized boolean isShooting() {
-        return (mSystemState == SystemState.SHOOTING) || (mSystemState == SystemState.SHOOTING_SPIN_DOWN) || (mSystemState == SystemState.UNJAMMING_WITH_SHOOT);
+        return (mSystemState == SystemState.SHOOTING) || (mSystemState == SystemState.SHOOTING_SPIN_DOWN)
+                || (mSystemState == SystemState.UNJAMMING_WITH_SHOOT);
     }
 
     private Loop mLoop = new Loop() {
@@ -223,9 +244,9 @@ public class Superstructure extends Subsystem {
     private SystemState handleWaitingForAlignment() {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
-        mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
+        mHopper.setWantedState(Hopper.WantedState.IDLE);
         setWantIntakeOnForShooting();
-        
+
         // Don't care about this return value - check the drive directly.
         autoSpinShooter(false);
         if (isDriveOnTarget()) {
@@ -247,11 +268,11 @@ public class Superstructure extends Subsystem {
             return SystemState.IDLE;
         }
     }
-    
+
     private SystemState handleWaitingForFlywheel() {
         mCompressor.setClosedLoopControl(false);
         mFeeder.setWantedState(Feeder.WantedState.FEED);
-        mHopper.setWantedState(Hopper.WantedState.SLOW_REVERSE);
+        mHopper.setWantedState(Hopper.WantedState.IDLE);
         setWantIntakeOnForShooting();
 
         if (autoSpinShooter(true)) {
@@ -362,22 +383,22 @@ public class Superstructure extends Subsystem {
 
         if (timestamp - mCurrentStateStartTime > Constants.kShooterSpinDownTime) {
             switch (mWantedState) {
-                case UNJAM:
-                    return SystemState.UNJAMMING;
-                case UNJAM_SHOOT:
-                    return SystemState.UNJAMMING_WITH_SHOOT;
-                case SHOOT:
-                    return SystemState.WAITING_FOR_ALIGNMENT;
-                case MANUAL_FEED:
-                    return SystemState.JUST_FEED;
-                case EXHAUST:
-                    return SystemState.EXHAUSTING;
-                case HANG:
-                    return SystemState.HANGING;
-                case RANGE_FINDING:
-                    return SystemState.RANGE_FINDING;
-                default:
-                    return SystemState.IDLE;
+            case UNJAM:
+                return SystemState.UNJAMMING;
+            case UNJAM_SHOOT:
+                return SystemState.UNJAMMING_WITH_SHOOT;
+            case SHOOT:
+                return SystemState.WAITING_FOR_ALIGNMENT;
+            case MANUAL_FEED:
+                return SystemState.JUST_FEED;
+            case EXHAUST:
+                return SystemState.EXHAUSTING;
+            case HANG:
+                return SystemState.HANGING;
+            case RANGE_FINDING:
+                return SystemState.RANGE_FINDING;
+            default:
+                return SystemState.IDLE;
             }
         }
         return SystemState.SHOOTING_SPIN_DOWN;
@@ -469,7 +490,7 @@ public class Superstructure extends Subsystem {
             return Constants.kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(range)).value;
         }
     }
-    
+
     public synchronized boolean autoSpinShooter(boolean allow_shooting) {
         final double timestamp = Timer.getFPGATimestamp();
         final Optional<ShooterAimingParameters> aimOptional = RobotState.getInstance()
@@ -523,7 +544,8 @@ public class Superstructure extends Subsystem {
         } else {
             mLED.setRangeBlicking(true);
             if (mShooter.getSetpointRpm() < Constants.kShooterTuningRpmFloor) {
-                // Hold setpoint if we were already spinning, since it's our best guess as to the range once the goal re-appears.
+                // Hold setpoint if we were already spinning, since it's our best guess as to the range once the goal
+                // re-appears.
                 mShooter.setSpinUp(getShootingSetpointRpm(Constants.kDefaultShootingDistanceInches));
             }
             return false;
@@ -592,7 +614,7 @@ public class Superstructure extends Subsystem {
     public void setWantIntakeOn() {
         mIntake.setOn();
     }
-    
+
     public void setWantIntakeOnForShooting() {
         mIntake.setOnWhileShooting();
     }

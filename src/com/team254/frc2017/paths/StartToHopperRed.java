@@ -1,13 +1,22 @@
 package com.team254.frc2017.paths;
 
-import java.util.ArrayList;
-
+import com.team254.frc2017.auto.modes.RamHopperShootModeRed;
 import com.team254.frc2017.paths.PathBuilder.Waypoint;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
+import java.util.ArrayList;
+
+/**
+ * Path from the red alliance wall to the red hopper.
+ * 
+ * Used in RamHopperShootModeRed
+ * 
+ * @see RamHopperShootModeRed
+ * @see PathContainer
+ */
 public class StartToHopperRed implements PathContainer {
     @Override
     public Path buildPath() {

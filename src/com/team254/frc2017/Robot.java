@@ -1,6 +1,10 @@
 package com.team254.frc2017;
 
-import com.team254.frc2017.Constants.RobotName;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.team254.frc2017.auto.AutoModeExecuter;
 import com.team254.frc2017.loops.Looper;
 import com.team254.frc2017.loops.RobotStateEstimator;
@@ -12,21 +16,25 @@ import com.team254.frc2017.vision.VisionServer;
 import com.team254.lib.util.*;
 import com.team254.lib.util.math.RigidTransform2d;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.Arrays;
 import java.util.Map;
 
 /**
+ * The main robot class, which instantiates all robot parts and helper classes and initializes all loops. Some classes
+ * are already instantiated upon robot startup; for those classes, the robot gets the instance as opposed to creating a
+ * new object
+ * 
+ * After initializing all robot parts, the code sets up the autonomous and teleoperated cycles and also code that runs
+ * periodically inside both routines.
+ * 
+ * This is the nexus/converging point of the robot code and the best place to start exploring.
+ * 
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
  * described in the IterativeRobot documentation. If you change the name of this class or the package after creating
  * this project, you must also update the manifest file in the resource directory.
  */
 public class Robot extends IterativeRobot {
-    // Subsystems
+    // Get subsystem instances
     private Drive mDrive = Drive.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
     private MotorGearGrabber mGearGrabber = MotorGearGrabber.getInstance();
@@ -34,14 +42,14 @@ public class Robot extends IterativeRobot {
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
 
-    // All Subsystems
+    // Create subsystem manager
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
             Arrays.asList(Drive.getInstance(), Superstructure.getInstance(), Shooter.getInstance(),
                     Feeder.getInstance(), Hopper.getInstance(), Intake.getInstance(),
                     ConnectionMonitor.getInstance(), LED.getInstance(),
                     MotorGearGrabber.getInstance()));
 
-    // Other parts of the robot
+    // Initialize other helper objects
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
     private ControlBoardInterface mControlBoard = ControlBoard.getInstance();
 
@@ -74,16 +82,9 @@ public class Robot extends IterativeRobot {
         try {
             CrashTracker.logRobotInit();
 
-            // SmartDashboardUtil.deleteAllKeys();
-
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
-
-            // initialize robot constants
-            RobotName name = Constants.getRobotName();
-            SmartDashboard.putString("MAC Address", Constants.getMACAddress());
-            ConstantsModifier.initConstants(name);
 
             mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
 
@@ -104,13 +105,10 @@ public class Robot extends IterativeRobot {
     }
 
     /**
-     * This autonomous (along with the chooser code above) shows how to select between different autonomous modes using
-     * the dashboard. The sendable chooser code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
-     * remove all of the chooser code and uncomment the getString line to get the auto name from the text box below the
-     * Gyro
-     *
-     * You can add additional auto modes by adding additional comparisons to the switch structure below with additional
-     * strings. If using the SendableChooser make sure to add them to the chooser code above as well.
+     * Initializes the robot for the beginning of autonomous mode (set drivebase, intake and superstructure to correct
+     * states). Then gets the correct auto mode from the AutoModeSelector
+     * 
+     * @see AutoModeSelector.java
      */
     @Override
     public void autonomousInit() {
@@ -156,6 +154,9 @@ public class Robot extends IterativeRobot {
         allPeriodic();
     }
 
+    /**
+     * Initializes the robot for the beginning of teleop
+     */
     @Override
     public void teleopInit() {
         try {
@@ -177,7 +178,13 @@ public class Robot extends IterativeRobot {
     }
 
     /**
-     * This function is called periodically during operator control
+     * This function is called periodically during operator control.
+     * 
+     * The code uses state machines to ensure that no matter what buttons the driver presses, the robot behaves in a
+     * safe and consistent manner.
+     * 
+     * Based on driver input, the code sets a desired state for each subsystem. Each subsystem will constantly compare
+     * its desired and actual states and act to bring the two closer.
      */
     @Override
     public void teleopPeriodic() {
@@ -188,19 +195,20 @@ public class Robot extends IterativeRobot {
             double turn = mControlBoard.getTurn();
 
             boolean wants_aim_button = mControlBoard.getAimButton();
-//            wants_aim_button = !mDelayedAimButton.update(timestamp, !wants_aim_button);
+            // wants_aim_button = !mDelayedAimButton.update(timestamp, !wants_aim_button);
 
             if (wants_aim_button || mControlBoard.getDriveAimButton()) {
 
                 if (Constants.kIsShooterTuning) {
                     mDrive.setWantAimToGoal();
-                } else if(mControlBoard.getDriveAimButton()) {
+                } else if (mControlBoard.getDriveAimButton()) {
                     mDrive.setWantDriveTowardsGoal();
                 } else {
                     mDrive.setWantAimToGoal();
                 }
-                
-                if((mControlBoard.getDriveAimButton() && !mDrive.isApproaching()) || !mControlBoard.getDriveAimButton()) {
+
+                if ((mControlBoard.getDriveAimButton() && !mDrive.isApproaching())
+                        || !mControlBoard.getDriveAimButton()) {
                     if (mControlBoard.getUnjamButton()) {
                         mSuperstructure.setWantedState(Superstructure.WantedState.UNJAM_SHOOT);
                     } else {
@@ -210,7 +218,6 @@ public class Robot extends IterativeRobot {
                     mSuperstructure.setWantedState(Superstructure.WantedState.RANGE_FINDING);
                 }
             } else {
-
                 // Make sure not to interrupt shooting spindown.
                 if (!mSuperstructure.isShooting()) {
                     mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
@@ -313,7 +320,7 @@ public class Robot extends IterativeRobot {
             mSubsystemManager.stop();
 
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
-            
+
             PathAdapter.calculatePaths();
 
             // If are tuning, dump map so far.
@@ -364,6 +371,9 @@ public class Robot extends IterativeRobot {
     public void testPeriodic() {
     }
 
+    /**
+     * Helper function that is called in all periodic functions
+     */
     public void allPeriodic() {
         mRobotState.outputToSmartDashboard();
         mSubsystemManager.outputToSmartDashboard();

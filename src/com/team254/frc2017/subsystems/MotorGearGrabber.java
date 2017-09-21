@@ -1,17 +1,26 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.CANTalon;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.drivers.CANTalonFactory;
 import com.team254.lib.util.drivers.MB1043;
-import com.team254.lib.util.drivers.UltrasonicSensor;
 
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+/**
+ * The gear grabber subsystem consists of one BAG motor used to intake and exhaust gears and one pancake piston used to
+ * pivot the entire subsystem from a floor pickup position to a scoring position. The motor is driven in open loop.
+ * Since the subsystem lacks any encoders, it detects when a gear has been acquired by checking whether current is above
+ * a threshold value. The main things this subsystem has to are intake gears, score gears, and clear balls (run motor in
+ * reverse while the grabber is down to push balls away).
+ * 
+ * @see Subsystem.java
+ */
 public class MotorGearGrabber extends Subsystem {
 
     public static boolean kWristDown = false;
@@ -25,7 +34,6 @@ public class MotorGearGrabber extends Subsystem {
     public static double kThresholdTime = 0.15;
 
     private static MotorGearGrabber mInstance;
-    private static MB1043 mUltrasonicSensor;
 
     public static MotorGearGrabber getInstance() {
         if (mInstance == null) {
@@ -36,18 +44,18 @@ public class MotorGearGrabber extends Subsystem {
 
     public enum WantedState {
         IDLE,
-        FORCE_LOWERED, // Mostly for auto mode
         ACQUIRE,
         SCORE,
         CLEAR_BALLS
     }
 
     private enum SystemState {
-        BALL_CLEARING,
-        INTAKE,
-        STOWING,
-        STOWED,
-        EXHAUST,
+        BALL_CLEARING, // grabber down, motors in reverse
+        INTAKE, // grabber down, motor intaking
+        STOWING, // transition state between INTAKE and STOWED where the motor
+                 // intakes so the gear doesn't fly out as the subsystem pivots up
+        STOWED, // grabber up, motor stopped
+        EXHAUST, // grabber down, motor in reverse
     }
 
     private final Solenoid mWristSolenoid;
@@ -62,13 +70,11 @@ public class MotorGearGrabber extends Subsystem {
         mMasterTalon = CANTalonFactory.createDefaultTalon(Constants.kGearGrabberId);
         mMasterTalon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 15);
         mMasterTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
-        mUltrasonicSensor = new MB1043(Constants.kUltrasonicSensorId);
     }
 
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Gear Grabber Current", mMasterTalon.getOutputCurrent());
-        SmartDashboard.putNumber("Ultrasonic Distance", getLatestRawDistance());
     }
 
     @Override
@@ -122,8 +128,6 @@ public class MotorGearGrabber extends Subsystem {
                         newState = mSystemState;
                         break;
                     }
-                    
-                    mUltrasonicSensor.update();
 
                     if (newState != mSystemState) {
                         System.out.println(timestamp + ": Changed state: " + mSystemState + " -> " + newState);
@@ -165,15 +169,17 @@ public class MotorGearGrabber extends Subsystem {
             return SystemState.BALL_CLEARING;
         case IDLE:
             return SystemState.STOWING;
-            // Fall through intended.
+        // Fall through intended.
         default:
             setWristDown();
             mMasterTalon.set(kIntakeGearSetpoint);
+            // check if the current has been above a threshold value for enough time.
+            // If so, blink the LED to let the drivers know we have a gear
             if (mMasterTalon.getOutputCurrent() > kIntakeThreshold) {
-                if(timeInState - mThresholdStart > kThresholdTime) {
+                if (timeInState - mThresholdStart > kThresholdTime) {
                     LED.getInstance().setWantedState(LED.WantedState.BLINK);
                 } else {
-                    if(mThresholdStart == Double.POSITIVE_INFINITY) {
+                    if (mThresholdStart == Double.POSITIVE_INFINITY) {
                         mThresholdStart = timeInState;
                     }
                 }
@@ -188,6 +194,8 @@ public class MotorGearGrabber extends Subsystem {
     private SystemState handleExhaust(double timeInState) {
         setWristDown();
 
+        // let the grabber lower a little bit before spitting the gear out.
+        // leads to more consistent scoring
         if (timeInState > kExhaustDelay) {
             mMasterTalon.set(kScoreGearSetpoint);
         } else {
@@ -211,6 +219,8 @@ public class MotorGearGrabber extends Subsystem {
 
     public SystemState handleStowing(double timeInState) {
         setWristUp();
+        // keep sucking the gear in to make sure it doesn't fly out as the
+        // grabber pivots up
         mMasterTalon.set(kIntakeGearSetpoint);
         if (timeInState > kTransitionDelay) {
             return SystemState.STOWED;
@@ -226,7 +236,9 @@ public class MotorGearGrabber extends Subsystem {
             return SystemState.INTAKE;
         default:
             setWristUp();
-            if(timeInState < 1) {
+            // for the first second of the idle state, intake with the motor
+            // to make sure we get a good grip on the gear
+            if (timeInState < 1) {
                 mMasterTalon.set(kIntakeGearSetpoint);
             } else {
                 mMasterTalon.set(0.0);
@@ -239,16 +251,6 @@ public class MotorGearGrabber extends Subsystem {
 
     public void setOpenLoop(double value) {
         mMasterTalon.set(value);
-    }
-    
-    public double getLatestRawDistance() {
-        return 0;//mUltrasonicSensor.getLatestDistanceInches();
-    }
-    
-    public double getRawDistanceInches(){return 0;}
-
-    public double getFilteredDistance() {
-        return mUltrasonicSensor.getAverageDistance();
     }
 
     private void setWristUp() {

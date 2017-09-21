@@ -1,5 +1,8 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+
 import com.ctre.CANTalon;
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Looper;
@@ -7,11 +10,16 @@ import com.team254.lib.util.MovingAverage;
 import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-
 import java.util.Arrays;
 
+/**
+ * The intake subsystem consists of the 2 rollers used to intake fuel from. the ground. The rollers are powered by 2 775
+ * Pros hooked up to 2 talons. The motors are all driven in open loop. The subsystem also has 2 pistons used to deploy
+ * the intake at the beginning of a match. The main things this subsystem has to are deploy, intake fuel, and exhaust
+ * fuel. exhaust fuel, and unjam
+ * 
+ * @see Subsystem.java
+ */
 public class Intake extends Subsystem {
     private static Intake sInstance = null;
 
@@ -22,6 +30,7 @@ public class Intake extends Subsystem {
         return sInstance;
     }
 
+    // hardware
     private CANTalon mMasterTalon, mSlaveTalon;
     private Solenoid mDeploySolenoid;
 
@@ -78,7 +87,7 @@ public class Intake extends Subsystem {
         deploy();
         setOpenLoop(getScaledIntakeVoltage());
     }
-    
+
     public synchronized void setOnWhileShooting() {
         deploy();
         setOpenLoop(Constants.kIntakeShootingVoltage);

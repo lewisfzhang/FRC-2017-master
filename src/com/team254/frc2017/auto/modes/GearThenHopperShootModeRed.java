@@ -1,9 +1,7 @@
 package com.team254.frc2017.auto.modes;
 
-import java.util.Arrays;
+import edu.wpi.first.wpilibj.Timer;
 
-import com.team254.frc2017.Constants;
-import com.team254.frc2017.RobotState;
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.AutoModeEndedException;
 import com.team254.frc2017.auto.actions.Action;
@@ -12,30 +10,28 @@ import com.team254.frc2017.auto.actions.BeginShootingAction;
 import com.team254.frc2017.auto.actions.CorrectPoseAction;
 import com.team254.frc2017.auto.actions.DeployIntakeAction;
 import com.team254.frc2017.auto.actions.DrivePathAction;
-import com.team254.frc2017.auto.actions.EndShootingAction;
-import com.team254.frc2017.auto.actions.ForceEndPathAction;
-import com.team254.frc2017.auto.actions.LowerGearAction;
 import com.team254.frc2017.auto.actions.ParallelAction;
-import com.team254.frc2017.auto.actions.PrintDebugAction;
 import com.team254.frc2017.auto.actions.ResetPoseFromPathAction;
 import com.team254.frc2017.auto.actions.ScoreGearAction;
 import com.team254.frc2017.auto.actions.SeriesAction;
 import com.team254.frc2017.auto.actions.SetFlywheelRPMAction;
 import com.team254.frc2017.auto.actions.WaitAction;
-import com.team254.frc2017.auto.actions.WaitForPathMarkerAction;
-import com.team254.frc2017.paths.BoilerGearToHopperBlue;
 import com.team254.frc2017.paths.BoilerGearToHopperRed;
-import com.team254.frc2017.paths.BoilerGearToShootBlue;
 import com.team254.frc2017.paths.PathContainer;
-import com.team254.frc2017.paths.StartToBoilerGearBlue;
 import com.team254.frc2017.paths.StartToBoilerGearRed;
 import com.team254.frc2017.paths.profiles.PathAdapter;
-import com.team254.frc2017.subsystems.Drive;
 import com.team254.lib.util.math.RigidTransform2d;
-import com.team254.lib.util.math.Rotation2d;
 
-import edu.wpi.first.wpilibj.Timer;
+import java.util.Arrays;
 
+/**
+ * Scores the preload gear onto the boiler-side peg then deploys the hopper and shoots all 60 balls (10 preload + 50
+ * hopper).
+ * 
+ * This was the primary autonomous mode used at SVR, St. Louis Champs, and FOC.
+ * 
+ * @see AutoModeBase
+ */
 public class GearThenHopperShootModeRed extends AutoModeBase {
 
     @Override
@@ -48,7 +44,7 @@ public class GearThenHopperShootModeRed extends AutoModeBase {
                 new ActuateHopperAction(true),
                 new SeriesAction(Arrays.asList(new Action[] {
                         new WaitAction(1), new DeployIntakeAction(true)
-                    }))
+                }))
         })));
         runAction(
                 new ParallelAction(Arrays.asList(new Action[] {

@@ -1,5 +1,8 @@
 package com.team254.frc2017.paths.profiles;
 
+/**
+ * Contains the corrective values for Practice bot
+ */
 public class PracticeBot implements RobotProfile {
 
     @Override
@@ -41,5 +44,5 @@ public class PracticeBot implements RobotProfile {
     public double getBlueHopperYOffset() {
         return -4.0;
     }
-    
+
 }

@@ -11,7 +11,8 @@ public class ShooterAimingParameters {
     double stability;
     Rotation2d robot_to_goal;
 
-    public ShooterAimingParameters(double range, Rotation2d robot_to_goal, double last_seen_timestamp, double stability) {
+    public ShooterAimingParameters(double range, Rotation2d robot_to_goal, double last_seen_timestamp,
+            double stability) {
         this.range = range;
         this.robot_to_goal = robot_to_goal;
         this.last_seen_timestamp = last_seen_timestamp;
@@ -29,7 +30,7 @@ public class ShooterAimingParameters {
     public double getLastSeenTimestamp() {
         return last_seen_timestamp;
     }
-    
+
     public double getStability() {
         return stability;
     }

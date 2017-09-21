@@ -1,14 +1,18 @@
 package com.team254.frc2017;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.team254.frc2017.auto.AutoModeBase;
 import com.team254.frc2017.auto.modes.*;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.json.simple.JSONArray;
 
 import java.util.function.Supplier;
 
+/**
+ * Class that allows a user to select which autonomous mode to execute from the web dashboard.
+ */
 public class AutoModeSelector {
 
     public static final String AUTO_OPTIONS_DASHBOARD_KEY = "auto_options";
@@ -24,11 +28,10 @@ public class AutoModeSelector {
         }
     }
 
-    private static final AutoModeCreator mDefaultMode = new AutoModeCreator("AutoDetect Alliance Gear than Hopper Shoot",
-            () -> new GearThenHopperShootModeBlue());
+    private static final AutoModeCreator mDefaultMode = new AutoModeCreator(
+            "AutoDetect Alliance Gear than Hopper Shoot",
+            () -> new AutoDetectAllianceGearThenShootMode());
     private static final AutoModeCreator[] mAllModes = {
-            new AutoModeCreator("Boiler Gear then Intake Shoot Blue", () -> new GearThenIntakeModeBlue()),
-            new AutoModeCreator("Boiler Gear then Intake Shoot Red", () -> new GearThenIntakeModeRed()),
             new AutoModeCreator("Boiler Gear then 10 Ball Shoot Red", () -> new BoilerGearThenShootModeRed()),
             new AutoModeCreator("Boiler Gear then 10 Ball Shoot Blue", () -> new BoilerGearThenShootModeBlue()),
             new AutoModeCreator("Center Gear then Shoot Red", () -> new CenterGearThenShootModeRed()),
@@ -38,7 +41,6 @@ public class AutoModeSelector {
             new AutoModeCreator("Gear then Hopper Shoot Blue", () -> new GearThenHopperShootModeBlue()),
             new AutoModeCreator("Gear then Hopper Shoot Red", () -> new GearThenHopperShootModeRed()),
             new AutoModeCreator("Standstill", () -> new StandStillMode()),
-            new AutoModeCreator("TEST Straight line", () -> new TestLineMode()),
     };
 
     public static void initAutoModeSelector() {

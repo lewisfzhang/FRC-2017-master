@@ -68,6 +68,9 @@ public class RobotState {
         reset(0, new RigidTransform2d());
     }
 
+    /**
+     * Resets the field to robot transform (robot's position on the field)
+     */
     public synchronized void reset(double start_time, RigidTransform2d initial_field_to_vehicle) {
         field_to_vehicle_ = new InterpolatingTreeMap<>(kObservationBufferSize);
         field_to_vehicle_.put(new InterpolatingDouble(start_time), initial_field_to_vehicle);
@@ -84,6 +87,10 @@ public class RobotState {
         distance_driven_ = 0.0;
     }
 
+    /**
+     * Returns the robot's position on the field at a certain time. Linearly interpolates between stored robot positions
+     * to fill in the gaps.
+     */
     public synchronized RigidTransform2d getFieldToVehicle(double timestamp) {
         return field_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
     }
@@ -160,7 +167,6 @@ public class RobotState {
         return cached_shooter_aiming_params_ == null ? Optional.empty() : Optional.of(cached_shooter_aiming_params_);
     }
 
-
     public synchronized Optional<ShooterAimingParameters> getAimingParameters() {
         List<TrackReport> reports = goal_tracker_.getTracks();
         if (!reports.isEmpty()) {
@@ -173,7 +179,7 @@ public class RobotState {
             ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.norm(), robot_to_goal_rotation,
                     report.latest_timestamp, report.stability);
             cached_shooter_aiming_params_ = params;
-            
+
             return Optional.of(params);
         } else {
             return Optional.empty();

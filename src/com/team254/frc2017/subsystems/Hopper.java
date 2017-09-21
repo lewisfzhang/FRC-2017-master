@@ -1,15 +1,24 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
+
 import com.ctre.CANTalon;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.loops.Loop;
 import com.team254.frc2017.loops.Looper;
 import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
-import edu.wpi.first.wpilibj.Timer;
 
 import java.util.Arrays;
 
+/**
+ * The hopper subsystem consists of the 11 floor rollers and 4 shelf rollers that funnel fuel from the robot's storage
+ * hopper into the feeder. The rollers are all powered by two 775 Pro motors hooked up two 2 talons. The motors are open
+ * loop controlled. The main things this subsystem has to are feed fuel, exhaust fuel, and unjam fuel.
+ * 
+ * @see Subsystem.java
+ */
 public class Hopper extends Subsystem {
     private static final double kUnjamInPeriod = .1;
     private static final double kUnjamOutPeriod = .2;
@@ -29,20 +38,17 @@ public class Hopper extends Subsystem {
     private CANTalon mMasterTalon, mSlaveTalon;
 
     public enum SystemState {
-        FEEDING,
-        UNJAMMING_IN,
-        UNJAMMING_OUT,
-        IDLE,
-        EXHAUSTING,
-        SLOW_REVERSE,
-        OPEN_LOOP_OVERRIDE,
+        FEEDING, // feed balls into the feeder subsystem
+        UNJAMMING_IN, // used for unjamming fuel
+        UNJAMMING_OUT, // used for unjamming fuel
+        IDLE, // stop all motors
+        EXHAUSTING, // run rollers in reverse
     }
 
     public enum WantedState {
         IDLE,
         UNJAM,
         EXHAUST,
-        SLOW_REVERSE,
         FEED,
     }
 
@@ -82,9 +88,6 @@ public class Hopper extends Subsystem {
                 case EXHAUSTING:
                     newState = handleExhaust();
                     break;
-                case SLOW_REVERSE:
-                    newState = handleSlowReverse();
-                    break;
                 default:
                     newState = SystemState.IDLE;
                 }
@@ -113,8 +116,6 @@ public class Hopper extends Subsystem {
             return SystemState.UNJAMMING_OUT;
         case EXHAUST:
             return SystemState.EXHAUSTING;
-        case SLOW_REVERSE:
-            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
@@ -138,8 +139,6 @@ public class Hopper extends Subsystem {
             return newState;
         case EXHAUST:
             return SystemState.EXHAUSTING;
-        case SLOW_REVERSE:
-            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
@@ -158,8 +157,6 @@ public class Hopper extends Subsystem {
             return newState;
         case EXHAUST:
             return SystemState.EXHAUSTING;
-        case SLOW_REVERSE:
-            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
@@ -174,8 +171,6 @@ public class Hopper extends Subsystem {
             return SystemState.UNJAMMING_OUT;
         case EXHAUST:
             return SystemState.EXHAUSTING;
-        case SLOW_REVERSE:
-            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
@@ -190,25 +185,6 @@ public class Hopper extends Subsystem {
             return SystemState.UNJAMMING_OUT;
         case EXHAUST:
             return SystemState.EXHAUSTING;
-        case SLOW_REVERSE:
-            return SystemState.SLOW_REVERSE;
-        default:
-            return SystemState.IDLE;
-        }
-    }
-
-    private SystemState handleSlowReverse() {
-//        setOpenLoop(-kFeedPower * 0.25);
-        setOpenLoop(0.0);
-        switch (mWantedState) {
-        case FEED:
-            return SystemState.FEEDING;
-        case UNJAM:
-            return SystemState.UNJAMMING_OUT;
-        case EXHAUST:
-            return SystemState.EXHAUSTING;
-        case SLOW_REVERSE:
-            return SystemState.SLOW_REVERSE;
         default:
             return SystemState.IDLE;
         }
@@ -300,7 +276,7 @@ public class Hopper extends Subsystem {
             System.out.println("!!!!!!!!!!!!!!!! Hooper Slave Current Low !!!!!!!!!!!!!!!!!!!");
         }
 
-        if (!Util.allCloseTo(Arrays.asList(currentMaster, currentSlave), currentMaster, 5.0)){
+        if (!Util.allCloseTo(Arrays.asList(currentMaster, currentSlave), currentMaster, 5.0)) {
             failure = true;
             System.out.println("!!!!!!!!!!!!!!!! Hopper Currents Different !!!!!!!!!!!!!!!!!");
         }

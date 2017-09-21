@@ -1,6 +1,11 @@
 package com.team254.frc2017.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.CANTalon;
+
 import com.team254.frc2017.Constants;
 import com.team254.frc2017.RobotState;
 import com.team254.frc2017.ShooterAimingParameters;
@@ -11,13 +16,28 @@ import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.Util;
 import com.team254.lib.util.drivers.CANTalonFactory;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * The shooter subsystem consists of 4 775 Pro motors driving twin backspin flywheels. When run in reverse, these motors
+ * power the robot's climber through a 1 way bearing. The shooter subsystem goes through 3 stages when shooting. 
+ * 1. Spin Up 
+ *  Use a PIDF controller to spin up to the desired RPM. We acquire this desired RPM by converting the camera's range
+ *  value into an RPM value using the range map in the {@link Constants} class. 
+ * 2. Hold When Ready
+ *  Once the flywheel's
+ *  RPM stabilizes (remains within a certain bandwidth for certain amount of time), the shooter switches to the hold when
+ *  ready stage. In this stage, we collect kF samples. The idea is that we want to run the shooter in open loop when we
+ *  start firing, so in this stage we calculate the voltage we need to supply to spin the flywheel at the desired RPM. 
+ * 3. Hold 
+ *  Once we collect enough kF samples, the shooter switches to the hold stage. This is the stage that we begin
+ *  firing balls. We set kP, kI, and kD all to 0 and use the kF value we calculated in the previous stage for essentially
+ *  open loop control. The reason we fire in open loop is that we found it creates a much narrower stream and leads to
+ *  smaller RPM drops between fuel shots.
+ * 
+ * @see Subsystem.java
+ */
 public class Shooter extends Subsystem {
     private static Shooter mInstance = null;
 
@@ -30,7 +50,7 @@ public class Shooter extends Subsystem {
         public double kF;
         public double range;
     }
-    
+
     public static int kSpinUpProfile = 0;
     public static int kHoldProfile = 1;
 
@@ -42,10 +62,10 @@ public class Shooter extends Subsystem {
     }
 
     public enum ControlMethod {
-        OPEN_LOOP,
-        SPIN_UP,
-        HOLD_WHEN_READY,
-        HOLD,
+        OPEN_LOOP, // open loop voltage control for running the climber
+        SPIN_UP, // PIDF to desired RPM
+        HOLD_WHEN_READY, // calculate average kF
+        HOLD, // switch to pure kF control
     }
 
     private final CANTalon mRightMaster, mRightSlave, mLeftSlave1, mLeftSlave2;
@@ -98,6 +118,9 @@ public class Shooter extends Subsystem {
                 ShooterDebugOutput.class);
     }
 
+    /**
+     * Load PIDF profiles onto the master talon
+     */
     public void refreshControllerConsts() {
         mRightMaster.setProfile(kSpinUpProfile);
         mRightMaster.setP(Constants.kShooterTalonKP);
@@ -105,14 +128,14 @@ public class Shooter extends Subsystem {
         mRightMaster.setD(Constants.kShooterTalonKD);
         mRightMaster.setF(Constants.kShooterTalonKF);
         mRightMaster.setIZone(Constants.kShooterTalonIZone);
-        
+
         mRightMaster.setProfile(kHoldProfile);
         mRightMaster.setP(0.0);
         mRightMaster.setI(0.0);
         mRightMaster.setD(0.0);
         mRightMaster.setF(Constants.kShooterTalonKF);
         mRightMaster.setIZone(0);
-        
+
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
 
@@ -175,6 +198,9 @@ public class Shooter extends Subsystem {
         });
     }
 
+    /**
+     * Run the shooter in open loop, used for climbing
+     */
     public synchronized void setOpenLoop(double voltage) {
         if (mControlMethod != ControlMethod.OPEN_LOOP) {
             mControlMethod = ControlMethod.OPEN_LOOP;
@@ -185,13 +211,19 @@ public class Shooter extends Subsystem {
         mRightMaster.set(voltage);
     }
 
+    /**
+     * Put the shooter in spinup mode
+     */
     public synchronized void setSpinUp(double setpointRpm) {
         if (mControlMethod != ControlMethod.SPIN_UP) {
             configureForSpinUp();
         }
         mSetpointRpm = setpointRpm;
     }
-    
+
+    /**
+     * Put the shooter in hold when ready mode
+     */
     public synchronized void setHoldWhenReady(double setpointRpm) {
         if (mControlMethod == ControlMethod.OPEN_LOOP || mControlMethod == ControlMethod.SPIN_UP) {
             configureForHoldWhenReady();
@@ -199,6 +231,9 @@ public class Shooter extends Subsystem {
         mSetpointRpm = setpointRpm;
     }
 
+    /**
+     * Configure talons for spin up
+     */
     private void configureForSpinUp() {
         mControlMethod = ControlMethod.SPIN_UP;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
@@ -207,7 +242,10 @@ public class Shooter extends Subsystem {
         mRightMaster.DisableNominalClosedLoopVoltage();
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
-    
+
+    /**
+     * Configure talons for hold when ready
+     */
     private void configureForHoldWhenReady() {
         mControlMethod = ControlMethod.HOLD_WHEN_READY;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
@@ -217,6 +255,9 @@ public class Shooter extends Subsystem {
         mRightMaster.setVoltageRampRate(Constants.kShooterRampRate);
     }
 
+    /**
+     * Configure talons for hold
+     */
     private void configureForHold() {
         mControlMethod = ControlMethod.HOLD;
         mRightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
@@ -231,13 +272,20 @@ public class Shooter extends Subsystem {
         mKfEstimator.clear();
         mOnTarget = false;
     }
-    
+
+    /**
+     * Estimate the kF value from current RPM and voltage
+     */
     private double estimateKf(double rpm, double voltage) {
         final double speed_in_ticks_per_100ms = 4096.0 / 600.0 * rpm;
         final double output = 1023.0 / 12.0 * voltage;
         return output / speed_in_ticks_per_100ms;
     }
 
+    /**
+     * Main control loop of the shooter. This method will progress the shooter through the spin up, hold when ready, and
+     * hold stages.
+     */
     private void handleClosedLoop(double timestamp) {
         final double speed = getSpeedRpm();
         final double voltage = mRightMaster.getOutputVoltage();
@@ -270,8 +318,8 @@ public class Shooter extends Subsystem {
             }
         }
         // No else because we may have changed control methods above.
-        if (mControlMethod == ControlMethod.HOLD) {            
-            // Update Kv if we exceed our target velocity.  As the system heats up, drag is reduced.
+        if (mControlMethod == ControlMethod.HOLD) {
+            // Update Kv if we exceed our target velocity. As the system heats up, drag is reduced.
             if (speed > mSetpointRpm) {
                 mKfEstimator.addValue(estimateKf(speed, voltage));
                 mRightMaster.setF(mKfEstimator.getAverage());
@@ -283,8 +331,8 @@ public class Shooter extends Subsystem {
         mDebug.voltage = voltage;
         mDebug.control_method = mControlMethod;
         mDebug.kF = mKfEstimator.getAverage();
-        Optional<ShooterAimingParameters> params = RobotState.getInstance().getAimingParameters(); 
-        if(params.isPresent()) {
+        Optional<ShooterAimingParameters> params = RobotState.getInstance().getAimingParameters();
+        if (params.isPresent()) {
             mDebug.range = params.get().getRange();
         } else {
             mDebug.range = 0;
@@ -367,9 +415,12 @@ public class Shooter extends Subsystem {
         mLeftSlave1.set(Constants.kRightShooterMasterId);
         mLeftSlave2.set(Constants.kRightShooterMasterId);
 
-        System.out.println("Shooter Right Master Current: " + currentRightMaster + " Shooter Right Slave Current: " + currentRightSlave);
-        System.out.println("Shooter Left Slave One Current: " + currentLeftSlave1 + " Shooter Left Slave Two Current: " + currentLeftSlave2);
-        System.out.println("Shooter RPM Master: " + rpmMaster + " RPM Right slave: " + rpmRightSlave + " RPM Left Slave 1: " + rpmLeftSlave1 + " RPM Left Slave 2: " + rpmLeftSlave2);
+        System.out.println("Shooter Right Master Current: " + currentRightMaster + " Shooter Right Slave Current: "
+                + currentRightSlave);
+        System.out.println("Shooter Left Slave One Current: " + currentLeftSlave1 + " Shooter Left Slave Two Current: "
+                + currentLeftSlave2);
+        System.out.println("Shooter RPM Master: " + rpmMaster + " RPM Right slave: " + rpmRightSlave
+                + " RPM Left Slave 1: " + rpmLeftSlave1 + " RPM Left Slave 2: " + rpmLeftSlave2);
 
         boolean failure = false;
 

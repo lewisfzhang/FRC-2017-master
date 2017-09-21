@@ -1,7 +1,7 @@
 package com.team254.lib.util;
 
-import java.util.TreeMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Interpolating Tree Maps are used to get values at points that are not defined by making a guess from points that are

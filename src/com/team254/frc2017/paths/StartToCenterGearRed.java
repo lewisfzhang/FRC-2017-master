@@ -1,13 +1,21 @@
 package com.team254.frc2017.paths;
 
-import java.util.ArrayList;
-
 import com.team254.frc2017.paths.PathBuilder.Waypoint;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
+import java.util.ArrayList;
+
+/**
+ * Path from the red alliance wall to the red center peg.
+ * 
+ * Used in CenterGearToShootRed
+ * 
+ * @see CenterGearToShootRed
+ * @see PathContainer
+ */
 public class StartToCenterGearRed implements PathContainer {
 
     @Override

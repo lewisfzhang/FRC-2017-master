@@ -12,6 +12,11 @@ import com.team254.frc2017.paths.CenterGearToShootRed;
 import com.team254.frc2017.paths.PathContainer;
 import com.team254.frc2017.paths.StartToCenterGearRed;
 
+/**
+ * Scores the preload gear onto the center peg then shoots the 10 preloaded fuel
+ * 
+ * @see AutoModeBase
+ */
 public class CenterGearThenShootModeRed extends AutoModeBase {
 
     @Override

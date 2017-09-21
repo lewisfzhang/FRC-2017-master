@@ -1,13 +1,22 @@
 package com.team254.frc2017.paths;
 
-import java.util.ArrayList;
-
+import com.team254.frc2017.auto.modes.CenterGearThenShootModeRed;
 import com.team254.frc2017.paths.PathBuilder.Waypoint;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.math.RigidTransform2d;
 import com.team254.lib.util.math.Rotation2d;
 import com.team254.lib.util.math.Translation2d;
 
+import java.util.ArrayList;
+
+/**
+ * Path from the red center peg to the red boiler.
+ * 
+ * Used in CenterGearThenShootModeRed
+ * 
+ * @see CenterGearThenShootModeRed
+ * @see PathContainer
+ */
 public class CenterGearToShootRed implements PathContainer {
 
     @Override

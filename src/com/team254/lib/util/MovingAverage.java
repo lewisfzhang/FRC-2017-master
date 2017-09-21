@@ -2,6 +2,9 @@ package com.team254.lib.util;
 
 import java.util.ArrayList;
 
+/**
+ * Helper class for storing and calculating a moving average
+ */
 public class MovingAverage {
 
     ArrayList<Double> numbers = new ArrayList<Double>();

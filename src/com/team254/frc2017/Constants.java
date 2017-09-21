@@ -1,11 +1,12 @@
 package com.team254.frc2017;
 
+import edu.wpi.first.wpilibj.Solenoid;
+
 import com.team254.lib.util.ConstantsBase;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 import com.team254.lib.util.math.PolynomialRegression;
 
-import edu.wpi.first.wpilibj.Solenoid;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
@@ -14,8 +15,6 @@ import java.util.HashMap;
 /**
  * A list of constants used by the rest of the robot code. This include physics constants as well as constants
  * determined through calibrations.
- * 
- * @TODO Update the robot MAC addresses (comp, practice, programming)
  */
 public class Constants extends ConstantsBase {
     public static double kLooperDt = 0.005;
@@ -25,26 +24,20 @@ public class Constants extends ConstantsBase {
     // Section 3.13
     // ...and https://firstfrc.blob.core.windows.net/frc2017/Drawings/2017FieldComponents.pdf
     // Parts GE-17203-FLAT and GE-17371 (sheet 7)
-    public static double kBoilerTargetTopHeight = 88.0; // TODO: Verify on field
-    public static double kBoilerRadius = 7.5; // TODO: Verify on field
+    public static double kBoilerTargetTopHeight = 88.0;
+    public static double kBoilerRadius = 7.5;
 
+    // Shooter tuning parameters
     public static boolean kIsShooterTuning = false;
     public static double kShooterTuningRpmFloor = 2900;
     public static double kShooterTuningRpmCeiling = 3500;
     public static double kShooterTuningRpmStep = 50;
-
     public static double kShooterTuningRpm = 3500.0;
 
-    public enum RobotName {
-        COMP_BOT, PRAC_BOT, PROG_BOT
-    }
+    /* ROBOT PHYSICAL CONSTANTS */
 
-    public static RobotName kRobotName;
-    public static HashMap<String, RobotName> kMACAddresses = new HashMap<String, RobotName>();
-
-    // ROBOT PHYSICAL CONSTANTS
     // Wheels
-    public static double kDriveWheelDiameterInches = 3.419; // calibrated on 2/15/17
+    public static double kDriveWheelDiameterInches = 3.419;
     public static double kTrackWidthInches = 26.655;
     public static double kTrackScrubFactor = 0.924;
 
@@ -57,17 +50,16 @@ public class Constants extends ConstantsBase {
     // Shooting suggestions
     public static double kOnTargetErrorThreshold = 3.0;
 
-    // Voltages
+    // Intake Voltages
     public static double kIntakeVoltageMax = 7.5;
     public static double kIntakeVoltageMin = 5.5;
     public static double kIntakeShootingVoltage = 4.0;
     public static final double kIntakeVoltageDifference = kIntakeVoltageMax - kIntakeVoltageMin;
 
-    // CONTROL LOOP GAINS
-    // DRIVE GAINS
+    /* CONTROL LOOP GAINS */
 
-    // Wheel velocity - High gear
-    // Setpoint, error, and output are in inches per second.
+    // PID gains for drive velocity loop (HIGH GEAR)
+    // Units: setpoint, error, and output are in inches per second.
     public static double kDriveHighGearVelocityKp = 1.2;
     public static double kDriveHighGearVelocityKi = 0.0;
     public static double kDriveHighGearVelocityKd = 6.0;
@@ -77,10 +69,8 @@ public class Constants extends ConstantsBase {
     public static double kDriveHighGearNominalOutput = 0.5;
     public static double kDriveHighGearMaxSetpoint = 17.0 * 12.0; // 17 fps
 
-    // Wheel position - Low gear
-    // Setpoint is in rotations.
-    // Error is in encoder ticks (4096 per revolution)
-    // Output is +/- 1023, where 1023 corresponds to +12V
+    // PID gains for drive velocity loop (LOW GEAR)
+    // Units: setpoint, error, and output are in inches per second.
     public static double kDriveLowGearPositionKp = 1.0;
     public static double kDriveLowGearPositionKi = 0.002;
     public static double kDriveLowGearPositionKd = 100.0;
@@ -95,7 +85,7 @@ public class Constants extends ConstantsBase {
 
     public static double kDriveVoltageCompensationRampRate = 0.0;
 
-    // Turn to heading
+    // Turn to heading gains
     public static double kDriveTurnKp = 3.0;
     public static double kDriveTurnKi = 1.5;
     public static double kDriveTurnKv = 0.0;
@@ -104,7 +94,7 @@ public class Constants extends ConstantsBase {
     public static double kDriveTurnMaxVel = 360.0;
     public static double kDriveTurnMaxAcc = 720.0;
 
-    // SHOOTER GAINS
+    // Shooter gains
     public static double kShooterTalonKP = 0.16;
     public static double kShooterTalonKI = 0.00008;
     public static double kShooterTalonKD = 0.0;
@@ -127,13 +117,13 @@ public class Constants extends ConstantsBase {
     public static double kShooterStartOnTargetRpm = 50.0;
     public static double kShooterStopOnTargetRpm = 150.0;
     public static int kShooterKfBufferSize = 20;
-    public static int kShooterMinOnTargetSamples = 20;  // Should be <= kShooterKvBufferSize
+    public static int kShooterMinOnTargetSamples = 20; // Should be <= kShooterKvBufferSize
 
     public static int kShooterJamBufferSize = 30;
     public static double kShooterDisturbanceThreshold = 25;
-    public static double kShooterJamTimeout = 1.5;  // In secs
-    public static double kShooterUnjamDuration = 0.5;  // In secs
-    public static double kShooterMinShootingTime = 1.0;  // In secs
+    public static double kShooterJamTimeout = 1.5; // In secs
+    public static double kShooterUnjamDuration = 0.5; // In secs
+    public static double kShooterMinShootingTime = 1.0; // In secs
 
     public static double kShooterSpinDownTime = 0.25;
 
@@ -155,9 +145,10 @@ public class Constants extends ConstantsBase {
     // Port assignments should match up with the spreadsheet here:
     // https://docs.google.com/spreadsheets/d/12_Mrd6xKmxCjKtsWNpWZDqT7ukrB9-1KKFCuRrO4aPM/edit#gid=0
 
-    // TALONS
+    /* TALONS */
     // (Note that if multiple talons are dedicated to a mechanism, any sensors
     // are attached to the master)
+
     // Drive
     public static final int kLeftDriveMasterId = 12;
     public static final int kLeftDriveSlaveId = 11;
@@ -182,11 +173,10 @@ public class Constants extends ConstantsBase {
     public static final int kLeftShooterSlave1Id = 13;
     public static final int kLeftShooterSlave2Id = 14;
 
-    // Grabber
+    // Gear Grabber
     public static final int kGearGrabberId = 15;
-    public static final int kUltrasonicSensorId = 0;
 
-    // SOLENOIDS
+    // Solenoids
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0
     public static final int kIntakeDeploySolenoidId = 1; // PCM 0, Solenoid 1
     public static final int kHopperSolenoidId = 2; // PCM 0, Solenoid 2
@@ -202,7 +192,7 @@ public class Constants extends ConstantsBase {
     // Phone
     public static int kAndroidAppTcpPort = 8254;
 
-    // PATH FOLLOWING
+    // Path following constants
     public static double kMinLookAhead = 12.0; // inches
     public static double kMinLookAheadSpeed = 9.0; // inches per second
     public static double kMaxLookAhead = 24.0; // inches
@@ -232,7 +222,6 @@ public class Constants extends ConstantsBase {
     public static double kTrackReportComparatorStablityWeight = 1.0;
     public static double kTrackReportComparatorAgeWeight = 1.0;
 
-    // Robot state
     // Pose of the camera frame w.r.t. the robot frame
     public static double kCameraXOffset = -3.3211;
     public static double kCameraYOffset = 0.0;
@@ -241,8 +230,7 @@ public class Constants extends ConstantsBase {
     public static double kCameraYawAngleDegrees = 0.0;
     public static double kCameraDeadband = 0.0;
 
-    // Flywheel PID
-    // TODO give these actual values
+    /* AIM PARAMETERS */
 
     public static double kDefaultShootingDistanceInches = 95.8;
     public static double kDefaultShootingRPM = 2950.0;
@@ -251,14 +239,13 @@ public class Constants extends ConstantsBase {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kFlywheelAutoAimMap = new InterpolatingTreeMap<>();
     public static PolynomialRegression kFlywheelAutoAimPolynomial;
 
-    public static double kShooterOptimalRange = 100.0;  // TUNE ME
-    public static double kShooterOptimalRangeFloor = 95.0;  // TUNE ME
-    public static double kShooterOptimalRangeCeiling = 105.0;  // TUNE ME
+    public static double kShooterOptimalRange = 100.0;
+    public static double kShooterOptimalRangeFloor = 95.0;
+    public static double kShooterOptimalRangeCeiling = 105.0;
 
-    public static double kShooterAbsoluteRangeFloor = 90.0;  // TUNE ME
-    public static double kShooterAbsoluteRangeCeiling = 130.0;  // TUNE ME
+    public static double kShooterAbsoluteRangeFloor = 90.0;
+    public static double kShooterAbsoluteRangeCeiling = 130.0;
 
-    // TUNE ME
     public static double[][] kFlywheelDistanceRpmValues = {
             // At champs 4/27
             { 90.0, 2890.0 },
@@ -269,29 +256,7 @@ public class Constants extends ConstantsBase {
             { 115.0, 3125.0 },
             { 120.0, 3175.0 },
             { 125.0, 3225.0 },
-            { 130.0, 3275.0 },  
-            
-            // Pre-champs 4/9
-            /*
-            { 89.14, 2900.0 },
-            { 94.87, 2950.0 },
-            { 104.33, 3000.0 },
-            { 107.64, 3050.0 },
-            { 114.34, 3100.0 },
-            { 121.23, 3150.0 },
-            { 125.18, 3200.0 },
-            { 128.23, 3250.0 }
-            { 90.0, 2900.0 },
-            { 95.0, 2950.0 },
-            { 100.0, 3000.0 },
-            { 105.0, 3050.0 },
-            { 110.0, 3100.0 },
-            { 115.0, 3150.0 },
-            { 120.0, 3200.0 },
-            { 125.0, 3250.0 },
-            { 130.0, 3300.0 },
-            { 122.4, 3050.0 },
-            { 126.3, 3150.0 },*/
+            { 130.0, 3275.0 },
     };
 
     static {
@@ -348,24 +313,5 @@ public class Constants extends ConstantsBase {
             e.printStackTrace();
         }
         return "";
-    }
-
-    /**
-     * @return the robot's name, either COMP_BOT, PRAC_BOT, or PROG_BOT
-     */
-    public static RobotName getRobotName() {
-        RobotName name = kMACAddresses.get(getMACAddress());
-        if (name == null) {
-            name = RobotName.COMP_BOT;
-        }
-        return name;
-    }
-
-    static {
-        kMACAddresses.put("herp", RobotName.COMP_BOT);
-        kMACAddresses.put("derp", RobotName.PRAC_BOT);
-        kMACAddresses.put("00-80-2F-25-78-B0", RobotName.PROG_BOT);
-
-        new Constants().loadFromFile();
     }
 }

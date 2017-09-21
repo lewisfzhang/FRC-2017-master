@@ -1,7 +1,7 @@
 package com.team254.frc2017;
 
 /**
- * Created by leighpauls on 3/11/17.
+ * A basic framework for robot controls that other controller classes implement
  */
 public interface ControlBoardInterface {
     // DRIVER CONTROLS
@@ -14,7 +14,7 @@ public interface ControlBoardInterface {
     boolean getLowGear();
 
     boolean getAimButton();
-    
+
     boolean getDriveAimButton();
 
     // OPERATOR CONTROLS

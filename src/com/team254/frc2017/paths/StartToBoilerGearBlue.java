@@ -1,14 +1,18 @@
 package com.team254.frc2017.paths;
 
-import java.util.ArrayList;
-
-import com.team254.frc2017.paths.PathBuilder.Waypoint;
+import com.team254.frc2017.auto.modes.GearThenHopperShootModeBlue;
 import com.team254.frc2017.paths.profiles.PathAdapter;
 import com.team254.lib.util.control.Path;
 import com.team254.lib.util.math.RigidTransform2d;
-import com.team254.lib.util.math.Rotation2d;
-import com.team254.lib.util.math.Translation2d;
 
+/**
+ * Path from the blue alliance wall to the blue boiler peg.
+ * 
+ * Used in GearThenHopperShootModeBlue
+ * 
+ * @see GearThenHopperShootModeBlue
+ * @see PathContainer
+ */
 public class StartToBoilerGearBlue implements PathContainer {
 
     @Override
